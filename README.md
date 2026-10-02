@@ -1,10 +1,2 @@
-# JULI.PROZ Store
-
-Первая версия Telegram Mini App для каталога JULI.PROZ.
-
-Файлы:
-- index.html — приложение
-- style.css — дизайн
-- app.js — каталог, фильтры, избранное и карточки
-
-Следующий этап: подключение реальной базы товаров и админки.
+# JULI.PROZ Store v2
+Luxury Telegram Mini App prototype.
