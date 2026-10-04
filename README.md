@@ -1,15 +1,12 @@
-# JULI.PROZ Store
+# JULI.PROZ Store — Supabase version
 
-Версия 2.1 Telegram Mini App для каталога JULI.PROZ.
+Эта версия подключена к таблице `public.products` в Supabase.
+Каталог загружает только товары, где `available = true`.
 
-Файлы:
-- index.html — приложение
-- style.css — дизайн
-- app.js — каталог, поиск, фильтры, избранное и карточки
+Файлы для Vercel:
+- index.html
+- style.css
+- app.js
 
-Версия 2.1:
-- улучшен поиск;
-- исправлена работа избранного;
-- товар передаётся менеджеру с ID, брендом, размером и ценой;
-- безопасный вывод данных товаров;
-- улучшено управление карточками.
+Для карточек используются поля:
+brand, name, category, size, price, currency, image_url, available, description.

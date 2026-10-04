@@ -1,16 +1,73 @@
-const products=[["JP-001","HERMÈS","Kelly 25","Сумки","25 см","€ 28 500","Etoupe"],["JP-002","CHANEL","Classic Flap","Сумки","Medium","€ 10 900","Black"],["JP-003","GOLDEN GOOSE","Super-Star","Обувь","38","€ 590","White"],["JP-004","PRADA","Кардиган","Одежда","S","€ 1 490","Cream"],["JP-005","GUCCI","Лоферы","Обувь","39","€ 790","Black"],["JP-006","JIL SANDER","Пальто","Одежда","M","€ 1 250","Camel"]].map(x=>({id:x[0],brand:x[1],name:x[2],category:x[3],size:x[4],price:x[5],color:x[6]}));
-const $=s=>document.querySelector(s), grid=$("#grid"); function favs(){try{let x=JSON.parse(localStorage.getItem("jpFav")||"[]");return new Set(Array.isArray(x)?x:[])}catch{return new Set()}} let state={category:null,brand:null,size:null,q:"",fav:favs(),tab:"catalog"},curFilter,temp,current;
-const labels={category:"Категория",brand:"Бренд",size:"Размер"}, vals={category:["Все","Сумки","Одежда","Обувь","Украшения","Часы","Аксессуары"],brand:["Все","HERMÈS","CHANEL","GUCCI","PRADA","GOLDEN GOOSE","JIL SANDER","LORO PIANA","MESSIKA","CARTIER"],size:["Все","XS","S","M","L","35","36","37","38","39","40","41","25 см","Medium"]};
-function norm(s=""){return s.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/\s+/g," ").trim()}
-function node(t,c,txt){let n=document.createElement(t);if(c)n.className=c;if(txt!=null)n.textContent=txt;return n}
-function list(){let q=norm(state.q);return products.filter(p=>(state.tab!="favorites"||state.fav.has(p.id))&&(!state.category||p.category==state.category)&&(!state.brand||p.brand==state.brand)&&(!state.size||p.size==state.size)&&(!q||norm(`${p.brand} ${p.name} ${p.id} ${p.size}`).includes(q)))}
-function render(){document.querySelectorAll("[data-filter]").forEach(b=>{let k=b.dataset.filter;b.textContent=state[k]||labels[k]});let a=list();$("#count").textContent=state.tab=="favorites"?`Избранное · ${a.length}`:`В наличии ${a.length} товаров`;grid.replaceChildren();if(!a.length){grid.append(node("div","empty","Здесь пока ничего нет"));return}a.forEach(p=>{let c=node("article","product");c.tabIndex=0;c.dataset.id=p.id;c.setAttribute("role","button");let ph=node("div","photo","J.P"),h=node("button","heart",state.fav.has(p.id)?"♥":"♡");h.dataset.heart=p.id;c.append(ph,h,node("h3","",p.brand),node("p","",`${p.name} · ${p.size}`),node("div","price",p.price));grid.append(c)})}
-$("#search").oninput=e=>{state.q=e.target.value;render()}; document.querySelectorAll("[data-filter]").forEach(b=>b.onclick=()=>{curFilter=b.dataset.filter;temp=state[curFilter];$("#filterTitle").textContent=labels[curFilter];$("#options").replaceChildren(...vals[curFilter].map(v=>{let b=node("button",(temp==v||(!temp&&v=="Все"))?"selected":"",v);b.dataset.v=v;return b}));$("#filterDialog").showModal()});
-$("#options").onclick=e=>{if(!e.target.dataset.v)return;temp=e.target.dataset.v=="Все"?null:e.target.dataset.v;[...$("#options").children].forEach(x=>x.classList.toggle("selected",(temp==x.dataset.v)||(!temp&&x.dataset.v=="Все")))};
-$("#apply").onclick=()=>{state[curFilter]=temp;$("#filterDialog").close();render()};$("#close").onclick=()=>$("#filterDialog").close();
-function saveFav(){try{localStorage.setItem("jpFav",JSON.stringify([...state.fav]));return true}catch{return false}}
-grid.onclick=e=>{let h=e.target.closest("[data-heart]");if(h){e.stopPropagation();let old=new Set(state.fav);state.fav.has(h.dataset.heart)?state.fav.delete(h.dataset.heart):state.fav.add(h.dataset.heart);if(!saveFav())state.fav=old;render();return}let c=e.target.closest("[data-id]");if(c)openProduct(c.dataset.id)};
-grid.onkeydown=e=>{let c=e.target.closest("[data-id]");if(c&&(e.key=="Enter"||e.key==" ")){e.preventDefault();openProduct(c.dataset.id)}};
-function openProduct(id){current=products.find(p=>p.id==id);let d=$("#detail");d.replaceChildren(node("div","hero","J.P"),node("h3","",current.brand),node("h1","",current.name),node("div","",current.price));[["ID",current.id],["Категория",current.category],["Размер",current.size],["Цвет",current.color]].forEach(x=>{let r=node("div","spec");r.append(node("span","",x[0]),node("b","",x[1]));d.append(r)});let b=node("button","buy","Купить / Написать менеджеру");b.onclick=()=>contact(current);d.append(b);$("#productDialog").showModal()}
-$("#back").onclick=()=>$("#productDialog").close();document.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>{state.tab=b.dataset.tab;document.querySelectorAll("[data-tab]").forEach(x=>x.classList.remove("active"));b.classList.add("active");render()});
-function contact(p){let text=p?`Здравствуйте! Хочу заказать ${p.id} — ${p.brand} ${p.name}, размер ${p.size}, ${p.price}.`:"Здравствуйте! Хочу уточнить наличие.";let u=`https://t.me/juliproz?text=${encodeURIComponent(text)}`;window.Telegram?.WebApp?.openTelegramLink?Telegram.WebApp.openTelegramLink(u):window.open(u,"_blank","noopener,noreferrer")}$("#chat").onclick=()=>contact(null);if(window.Telegram?.WebApp){Telegram.WebApp.ready();Telegram.WebApp.expand()}render();
+const SUPABASE_URL="https://qhgzzhgxwpcctafpzjid.supabase.co";
+const SUPABASE_KEY="sb_publishable_AD6Hie5z_KycK1unCJ-Khg_5d0gjGq_";
+
+let products=[];
+let state={category:null,brand:null,size:null,search:"",favorites:new Set(JSON.parse(localStorage.getItem("jpFav")||"[]")),tab:"catalog"};
+const grid=document.getElementById("grid"),count=document.getElementById("count"),sheet=document.getElementById("sheet"),options=document.getElementById("sheetOptions");
+let currentFilter=null,tempValue=null;
+
+function money(p){
+  if(p.price===null||p.price===undefined||p.price==="") return "";
+  const symbols={EUR:"€",USD:"$",GBP:"£",AED:"AED",RUB:"₽"};
+  const cur=(p.currency||"").toUpperCase();
+  const n=Number(p.price);
+  const amount=Number.isFinite(n)?new Intl.NumberFormat("ru-RU",{maximumFractionDigits:2}).format(n):p.price;
+  return symbols[cur]?`${symbols[cur]} ${amount}`:`${amount}${cur?` ${cur}`:""}`;
+}
+function imageOf(p){return p.image_url||p.image||""}
+function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
+function valuesFor(type){
+  return ["Все",...Array.from(new Set(products.map(p=>p[type]).filter(Boolean))).sort((a,b)=>String(a).localeCompare(String(b),"ru"))];
+}
+function filtered(){
+  return products.filter(p=>(state.tab!=="favorites"||state.favorites.has(Number(p.id)))&&(!state.category||p.category===state.category)&&(!state.brand||p.brand===state.brand)&&(!state.size||p.size===state.size)&&(`${p.brand||""} ${p.name||""}`.toLowerCase().includes(state.search.toLowerCase())))
+}
+function render(){
+  const list=filtered();
+  count.textContent=state.tab==="favorites"?`Избранное · ${list.length}`:`В наличии ${list.length} ${list.length===1?"товар":list.length>=2&&list.length<=4?"товара":"товаров"}`;
+  grid.innerHTML=list.length?list.map(p=>`<article class="product" data-id="${p.id}"><div class="photo">${imageOf(p)?`<img src="${esc(imageOf(p))}" alt="${esc(p.name)}">`:"J.P"}</div><button class="heart" data-heart="${p.id}">${state.favorites.has(Number(p.id))?"♥":"♡"}</button><h3>${esc(p.brand)}</h3><p>${esc(p.name)}${p.size?` · ${esc(p.size)}`:""}</p><div class="price">${esc(money(p))}</div></article>`).join(""):`<div class="empty">Здесь пока ничего нет</div>`;
+}
+async function loadProducts(){
+  count.textContent="Загружаем наличие…";
+  grid.innerHTML='<div class="empty">Загружаем товары…</div>';
+  try{
+    const r=await fetch(`${SUPABASE_URL}/rest/v1/products?select=*&available=eq.true&order=created_at.desc`,{
+      headers:{apikey:SUPABASE_KEY,Authorization:`Bearer ${SUPABASE_KEY}`}
+    });
+    if(!r.ok) throw new Error(`Supabase ${r.status}: ${await r.text()}`);
+    products=await r.json();
+    render();
+  }catch(e){
+    console.error(e);
+    count.textContent="Не удалось загрузить наличие";
+    grid.innerHTML='<div class="empty">Не удалось загрузить товары. Обновите страницу чуть позже.</div>';
+  }
+}
+document.getElementById("search").oninput=e=>{state.search=e.target.value;render()};
+document.querySelectorAll("[data-filter]").forEach(b=>b.onclick=()=>openFilter(b.dataset.filter));
+function openFilter(type){
+  currentFilter=type;tempValue=state[type];
+  document.getElementById("sheetTitle").textContent={category:"Категория",brand:"Бренд",size:"Размер"}[type];
+  options.innerHTML=valuesFor(type).map(v=>`<button class="${(tempValue===v||(!tempValue&&v==="Все"))?"selected":""}" data-v="${esc(v)}">${esc(v)}</button>`).join("");
+  sheet.classList.remove("hidden");
+}
+options.onclick=e=>{if(!e.target.dataset.v)return;tempValue=e.target.dataset.v==="Все"?null:e.target.dataset.v;[...options.children].forEach(x=>x.classList.toggle("selected",(tempValue===x.dataset.v)||(!tempValue&&x.dataset.v==="Все")))};
+document.getElementById("applyFilter").onclick=()=>{state[currentFilter]=tempValue;sheet.classList.add("hidden");render()};
+document.getElementById("closeSheet").onclick=()=>sheet.classList.add("hidden");
+document.getElementById("reset").onclick=()=>{state.category=state.brand=state.size=null;state.search="";document.getElementById("search").value="";render()};
+grid.onclick=e=>{
+  const h=e.target.closest("[data-heart]");
+  if(h){e.stopPropagation();const id=Number(h.dataset.heart);state.favorites.has(id)?state.favorites.delete(id):state.favorites.add(id);localStorage.setItem("jpFav",JSON.stringify([...state.favorites]));render();return}
+  const card=e.target.closest("[data-id]");if(card)openProduct(Number(card.dataset.id));
+};
+function openProduct(id){
+  const p=products.find(x=>Number(x.id)===id);if(!p)return;
+  document.getElementById("productContent").innerHTML=`<div class="hero">${imageOf(p)?`<img src="${esc(imageOf(p))}" alt="${esc(p.name)}">`:"J.P"}</div><div class="detail"><div class="brandname">${esc(p.brand)}</div><h1>${esc(p.name)}</h1><div class="detail-price">${esc(money(p))}</div><div class="spec"><span>Категория</span><b>${esc(p.category||"—")}</b></div><div class="spec"><span>Размер</span><b>${esc(p.size||"—")}</b></div>${p.description?`<div class="spec"><span>Описание</span><b>${esc(p.description)}</b></div>`:""}<button class="primary buy" onclick="contact()">Купить / Написать менеджеру</button></div>`;
+  document.getElementById("productModal").classList.remove("hidden");
+}
+document.getElementById("backProduct").onclick=()=>document.getElementById("productModal").classList.add("hidden");
+document.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>{state.tab=b.dataset.tab;document.querySelectorAll("[data-tab]").forEach(x=>x.classList.remove("active"));b.classList.add("active");render()});
+function contact(){window.open("https://t.me/juliproz","_blank")}
+document.getElementById("chatBtn").onclick=contact;
+if(window.Telegram?.WebApp){Telegram.WebApp.ready();Telegram.WebApp.expand()}
+loadProducts();
