@@ -18,3 +18,4 @@ button,input{font:inherit}.app{max-width:720px;margin:auto;padding:18px 18px 100
 .hero{height:52vh;background:var(--card);display:flex;align-items:center;justify-content:center}.hero img{width:100%;height:100%;object-fit:cover}.detail{padding:22px}.detail h1{font-family:"Playfair Display",serif;margin:3px 0 4px;font-size:31px}.detail .brandname{letter-spacing:.08em;font-size:13px}.detail .detail-price{font-size:21px;margin:8px 0 20px}.spec{display:flex;justify-content:space-between;border-top:1px solid var(--line);padding:12px 0;font-size:14px}.buy{margin-top:18px}
 .empty{text-align:center;grid-column:1/-1;padding:80px 20px;color:var(--muted)}
 @media(min-width:600px){.grid{grid-template-columns:repeat(3,1fr)}}
+.photo-picker{display:flex;gap:8px;padding:12px 22px;overflow-x:auto}.photo-picker button{padding:0;border:1px solid var(--line);background:transparent;flex-shrink:0}.photo-picker img{width:64px;height:64px;object-fit:cover}
