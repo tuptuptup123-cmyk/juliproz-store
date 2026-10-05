@@ -43,6 +43,7 @@ const response=(body,status=200)=>({ok:status<400,status,json:async()=>body});
  signup.get('login').reportValidity=()=>true;signup.get('login').email={value:'owner@example.com'};signup.get('login').password={value:'chosen-password'};
  await signup.get('signup').onclick();assert.match(signup.get('status').textContent,/Письмо отправлено/);assert.equal(signup.run('session'),null);assert.equal(signup.get('login').password.value,'');
  await signup.get('confirmEmail').onsubmit({preventDefault(){},submitter:element(),target:{confirmation:{value:'https://test.supabase.co/auth/v1/verify?token=private-hash&type=signup'}}});
+ await signup.get('resendConfirmation').onclick();assert.equal(JSON.parse(signupCalls.find(c=>c.path.endsWith('/resend')).options.body).type,'signup');
  assert.equal(signup.run('session.access_token'),'verified');assert.equal(JSON.parse(signupCalls.find(c=>c.path.endsWith('/verify')).options.body).token_hash,'private-hash');
  console.log('PASS owner signup and confirmation link exchange without a privileged endpoint');
  console.log('PASS admin login, allowlist denial, add product, remove availability and authenticated mutations (mock Supabase)');

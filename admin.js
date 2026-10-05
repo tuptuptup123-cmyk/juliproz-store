@@ -33,6 +33,15 @@ $('signup').onclick=async()=>{
   $('confirmEmail').classList.remove('hidden');status('Письмо отправлено. Подтверди почту, чтобы открыть админку.');
  }catch(err){status(err.message)}finally{b.disabled=false}
 };
+$('resendConfirmation').onclick=async()=>{
+ const email=$('login').email.value.trim();
+ if(!email){status('Введи свою почту в поле Email выше.');return}
+ const b=$('resendConfirmation');b.disabled=true;
+ try{
+  await request('/auth/v1/resend',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:'signup',email})});
+  status('Запрос на повторную отправку принят. Проверь входящие и папку «Спам».');
+ }catch(err){status(err.message)}finally{b.disabled=false}
+};
 $('confirmEmail').onsubmit=async e=>{
  e.preventDefault();const b=e.submitter;b.disabled=true;
  try{
@@ -60,3 +69,6 @@ $('editor').onsubmit=async e=>{e.preventDefault();if(busy)return;busy=true;const
   $('uploads').value='';renderPhotos();if(!photos.length)throw Error('Добавь хотя бы одну фотографию.');const f=e.target.elements;const payload={brand:f.brand.value.trim(),name:f.name.value.trim(),category:f.category.value.trim(),size:f.size.value.trim()||null,price:f.price.value===''?null:Number(f.price.value),currency:f.currency.value,description:f.description.value.trim()||null,available:f.available.checked,image_url:photos[0],photos};if(!payload.brand||!payload.name||!payload.category)throw Error('Заполни бренд, название и категорию.');const saved=await request(`/rest/v1/products${editing===null?'':`?id=eq.${encodeURIComponent(editing)}`}`,{method:editing===null?'POST':'PATCH',headers:{'Content-Type':'application/json',Prefer:'return=representation'},body:JSON.stringify(payload)});if(saved?.length!==1)throw Error('Не удалось подтвердить сохранение. Обнови список товаров.');editing=saved[0].id;$('editor').classList.add('hidden');status('Товар сохранён');await load();
 }catch(err){status(err.message)}finally{busy=false;b.disabled=false}};
 $('logout').onclick=async()=>{if(busy)return;try{await request('/auth/v1/logout',{method:'POST'})}catch{}session=null;items=[];photos=[];$('inventory').innerHTML='';$('editor').reset();$('editor').classList.add('hidden');$('workspace').classList.add('hidden');$('confirmEmail').classList.add('hidden');$('login').classList.remove('hidden');status('Вы вышли')};
+
+$('showConfirmation').onclick=()=>{$('confirmEmail').classList.remove('hidden')};
+if(new URLSearchParams(location.search).get('confirm')==='1')$('confirmEmail').classList.remove('hidden');
