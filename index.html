@@ -14,8 +14,8 @@
 <body>
   <main class="app">
     <header class="brand">
-      <div class="logo">J.P</div>
-      <div class="brand-line"><span class="paw">♟</span></div>
+      <div class="logo">JP</div>
+      <div class="brand-line" aria-hidden="true"></div>
     </header>
 
     <section class="search-wrap">
@@ -24,14 +24,14 @@
     </section>
 
     <section class="filters">
-      <button data-filter="category">Категория⌄</button>
-      <button data-filter="brand">Бренд⌄</button>
-      <button data-filter="size">Размер⌄</button>
+      <button data-filter="category">Категория</button>
+      <button data-filter="brand">Бренд</button>
+      <button data-filter="size">Размер</button>
     </section>
 
     <section class="catalog-head">
       <span id="count">Загружаем наличие…</span>
-      <button id="reset" class="reset">↕</button>
+      <button id="reset" class="reset" aria-label="Сбросить фильтры">Сбросить</button>
     </section>
 
     <section id="grid" class="grid"></section>
