@@ -117,3 +117,37 @@ loadProducts();
 
 // Broken or unsupported images keep the existing J.P placeholder.
 document.addEventListener("error",e=>{if(e.target.tagName==="IMG"&&e.target.closest(".photo,.hero")){const parent=e.target.parentElement;e.target.remove();parent.textContent="J.P"}},true);
+
+// Horizontal photo swipes leave vertical page scrolling to the browser.
+function enablePhotoSwipes(root, selector, productFor){
+  let gesture=null;
+  root.addEventListener('touchstart',e=>{
+    const area=e.target.closest(selector);
+    if(!area||e.target.closest('button')||e.touches.length!==1){gesture=null;return}
+    const p=productFor(area), photos=p?photosOf(p):[];
+    if(photos.length<2)return;
+    const t=e.touches[0];gesture={area,photos,x:t.clientX,y:t.clientY,dx:0,dy:0};
+  },{passive:true});
+  root.addEventListener('touchmove',e=>{
+    if(!gesture)return;
+    if(e.touches.length!==1){gesture=null;return}
+    gesture.dx=e.touches[0].clientX-gesture.x;gesture.dy=e.touches[0].clientY-gesture.y;
+    if(Math.abs(gesture.dy)>Math.abs(gesture.dx)&&Math.abs(gesture.dy)>10){gesture=null;return}
+    if(Math.abs(gesture.dx)>10&&e.cancelable)e.preventDefault();
+  },{passive:false});
+  root.addEventListener('touchend',()=>{
+    const g=gesture;gesture=null;
+    if(!g||Math.abs(g.dx)<35||Math.abs(g.dx)<=Math.abs(g.dy))return;
+    const img=g.area.querySelector('img');if(!img)return;
+    const index=Math.max(0,g.photos.indexOf(img.getAttribute('src')));
+    img.src=g.photos[(index+(g.dx<0?1:-1)+g.photos.length)%g.photos.length];
+    g.area.dataset.swipedAt=String(Date.now());
+  },{passive:true});
+  root.addEventListener('touchcancel',()=>{gesture=null},{passive:true});
+  root.addEventListener('click',e=>{
+    const area=e.target.closest(selector);
+    if(area&&!e.target.closest('button')&&Date.now()-Number(area.dataset.swipedAt||0)<500){e.preventDefault();e.stopImmediatePropagation()}
+  },true);
+}
+enablePhotoSwipes(grid,'.photo',area=>products.find(p=>String(p.id)===area.closest('[data-id]').dataset.id));
+enablePhotoSwipes(document.getElementById('productContent'),'.hero',()=>selectedProduct);

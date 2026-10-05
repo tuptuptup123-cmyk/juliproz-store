@@ -21,3 +21,6 @@ button,input{font:inherit;color:inherit}button{-webkit-appearance:none;appearanc
 .photo-picker{display:flex;gap:8px;padding:12px 22px;overflow-x:auto}.photo-picker button{padding:0;border:1px solid var(--line);background:transparent;flex-shrink:0}.photo-picker img{width:64px;height:64px;object-fit:contain}
 
 .filters button,.options button{min-width:0;overflow-wrap:anywhere}.product h3,.product p{overflow-wrap:anywhere}.spec{gap:14px}.spec b{min-width:0;overflow-wrap:anywhere;text-align:right}.sheet-card{padding-bottom:calc(20px + env(safe-area-inset-bottom))}
+
+.photo,.hero{touch-action:pan-y pinch-zoom}
+.photo img,.hero img{-webkit-user-drag:none;user-select:none}

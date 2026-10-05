@@ -1,0 +1,22 @@
+const {test}=require('node:test');
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const vm=require('node:vm');
+test('photo swipes cycle both ways, suppress opening and preserve vertical scrolling',()=>{
+ const source=fs.readFileSync(__dirname+'/../app.js','utf8');
+ const fn=source.slice(source.indexOf('function enablePhotoSwipes'),source.indexOf("enablePhotoSwipes(grid"));
+ const handlers={};let src='a';
+ const area={dataset:{},querySelector:()=>({getAttribute:()=>src,set src(v){src=v}})};
+ const target={closest:s=>s==='button'?null:area};
+ const root={addEventListener:(n,f)=>handlers[n]=f};
+ const context=vm.createContext({photosOf:p=>p.photos,Date});vm.runInContext(fn,context);
+ context.enablePhotoSwipes(root,'.photo',()=>({photos:['a','b','c']}));
+ const start=()=>handlers.touchstart({target,touches:[{clientX:100,clientY:100}]});
+ const move=(x,y)=>{let prevented=false;handlers.touchmove({touches:[{clientX:x,clientY:y}],cancelable:true,preventDefault(){prevented=true}});return prevented};
+ start();assert.equal(move(40,102),true);handlers.touchend();assert.equal(src,'b');
+ let blocked=false;handlers.click({target,preventDefault(){},stopImmediatePropagation(){blocked=true}});assert.equal(blocked,true);
+ start();move(160,100);handlers.touchend();assert.equal(src,'a');
+ start();move(160,100);handlers.touchend();assert.equal(src,'c');
+ start();assert.equal(move(102,180),false);handlers.touchend();assert.equal(src,'c');
+ start();move(90,100);handlers.touchend();assert.equal(src,'c');
+});
