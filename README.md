@@ -24,3 +24,11 @@ Sessions are kept only in memory. Supabase RLS validates every read/write; hidin
 4. Deploy these static files to the existing Vercel project. Verify admin login, add/edit/hide/restore, photo upload, public reads and denial of anonymous writes.
 
 The migration must be applied and an admin user registered before the admin panel works. A GitHub deployment alone does not configure Supabase.
+
+## Owner onboarding
+
+Apply `supabase/verified-admin-enrollment.sql` after the main migration, then register the explicitly approved owner's email in the private `store_private.admin_invitations` table. This table is not exposed to browser roles. A non-privileged internal Auth trigger enrolls only invited email accounts after email verification; unverified accounts and other addresses receive no admin access.
+
+On `/admin.html`, the owner chooses a password and selects “Первый вход — создать аккаунт”. Supabase sends its normal confirmation email. The owner can copy the confirmation link from the email into the admin panel; the panel exchanges it directly with Supabase, so initial enrollment does not depend on the project's redirect URL configuration. No service-role key or privileged setup endpoint is used. Returning owners sign in with email and password.
+
+Validation: `node tests/store.test.cjs`. Database RLS and owner enrollment were additionally verified in rolled-back transactions; project security advisors returned no findings. Actual owner registration and image upload should be verified after the owner completes email confirmation.

@@ -7,7 +7,7 @@ function setup(file,fetch,query=''){
  const nodes=new Map();const get=id=>{if(!nodes.has(id))nodes.set(id,element());return nodes.get(id)};
  const document={getElementById:get,querySelectorAll:()=>[],querySelector:()=>element(),addEventListener(){}};
  const links=[];const window={STORE_CONFIG:{url:'https://test.supabase.co',key:'publishable'},Telegram:{WebApp:{ready(){},expand(){},openTelegramLink:u=>links.push(u),initDataUnsafe:{}}}};
- const context=vm.createContext({document,window,Telegram:window.Telegram,fetch,console,URL,URLSearchParams,AbortSignal,Intl,Set,Number,String,Array,JSON,Date,crypto:{randomUUID:crypto.randomUUID},location:{search:query},navigator:{clipboard:{writeText:async u=>links.push(u)}},localStorage:{getItem:()=>'{broken',setItem(){throw Error('storage denied')}}});
+ const context=vm.createContext({document,window,Telegram:window.Telegram,fetch,console:{...console,error(){}},URL,URLSearchParams,AbortSignal,Intl,Set,Number,String,Array,JSON,Date,crypto:{randomUUID:crypto.randomUUID},location:{search:query},navigator:{clipboard:{writeText:async u=>links.push(u)}},localStorage:{getItem:()=>'{broken',setItem(){throw Error('storage denied')}}});
  vm.runInContext(fs.readFileSync(`${__dirname}/../${file}`,'utf8'),context);
  return {context,get,links,run:s=>vm.runInContext(s,context)};
 }
@@ -39,5 +39,11 @@ const response=(body,status=200)=>({ok:status<400,status,json:async()=>body});
  await admin.get('inventory').onclick({target:{dataset:{toggle:'10'},disabled:false}});assert.equal(inventory[0].available,false);
  assert.ok(calls.filter(c=>c.options.method==='POST'||c.options.method==='PATCH').filter(c=>c.path.includes('/products')).every(c=>c.options.headers.Authorization==='Bearer admin-token'));
  const denied=setup('admin.js',async path=>response(path.includes('grant_type=password')?{access_token:'user',expires_at:Date.now()/1000+3600,user:{id:'outsider'}}:[]));await denied.get('login').onsubmit({preventDefault(){},submitter:element(),target:{email:{value:'no@example.com'},password:{value:'test'}}});assert.match(denied.get('status').textContent,/нет доступа/);assert.equal(denied.run('session'),null);
+ const signupCalls=[];const signup=setup('admin.js',async(path,options)=>{signupCalls.push({path,options});if(path.endsWith('/signup'))return response({user:{id:'owner'}});if(path.endsWith('/verify'))return response({access_token:'verified',expires_in:3600,user:{id:'owner'}});if(path.includes('store_admins'))return response([{user_id:'owner'}]);return response([])});
+ signup.get('login').reportValidity=()=>true;signup.get('login').email={value:'owner@example.com'};signup.get('login').password={value:'chosen-password'};
+ await signup.get('signup').onclick();assert.match(signup.get('status').textContent,/Письмо отправлено/);assert.equal(signup.run('session'),null);assert.equal(signup.get('login').password.value,'');
+ await signup.get('confirmEmail').onsubmit({preventDefault(){},submitter:element(),target:{confirmation:{value:'https://test.supabase.co/auth/v1/verify?token=private-hash&type=signup'}}});
+ assert.equal(signup.run('session.access_token'),'verified');assert.equal(JSON.parse(signupCalls.find(c=>c.path.endsWith('/verify')).options.body).token_hash,'private-hash');
+ console.log('PASS owner signup and confirmation link exchange without a privileged endpoint');
  console.log('PASS admin login, allowlist denial, add product, remove availability and authenticated mutations (mock Supabase)');
 })().catch(e=>{console.error(e);process.exitCode=1});
