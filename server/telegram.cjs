@@ -53,7 +53,28 @@ function messageResponse(update) {
   };
 }
 
-function createHandler(env = process.env) {
+// Best-effort warm-instance guard, NOT a distributed limiter or cost protection.
+// Bounded memory; no message text retained. Saturation fails closed for new chats.
+function createReplyGuard(now = () => performance.now()) {
+  const chats = new Map();
+  const seen = new Map();
+  const windowMs = 60_000;
+  const duplicateMs = 300_000;
+  return function allow(chatId, updateId) {
+    const time = now();
+    for (const [id, expiry] of seen) if (expiry <= time) seen.delete(id);
+    for (const [id, state] of chats) if (state.reset <= time) chats.delete(id);
+    if (seen.has(updateId)) return false;
+    const state = chats.get(chatId);
+    if ((!state && chats.size >= 2000) || seen.size >= 10000 || (state && state.count >= 5)) return false;
+    seen.set(updateId, time + duplicateMs);
+    if (state) state.count++;
+    else chats.set(chatId, { count: 1, reset: time + windowMs });
+    return true;
+  };
+}
+
+function createHandler(env = process.env, allowReply = createReplyGuard()) {
   return function telegram(req, res) {
     res.setHeader('Cache-Control', 'no-store');
     res.setHeader('X-Content-Type-Options', 'nosniff');
@@ -88,8 +109,10 @@ function createHandler(env = process.env) {
       return res.status(400).json({ error: 'Invalid JSON' });
     }
     // Telegram executes this response as a Bot API method; no chat data or token is logged.
-    return res.status(200).json(messageResponse(update) || { ok: true });
+    const reply = messageResponse(update);
+    // Acknowledge suppressed updates to avoid Telegram retry storms.
+    return res.status(200).json(reply && allowReply(reply.chat_id, update.update_id) ? reply : { ok: true });
   };
 }
 
-module.exports = { BOT_USERNAME, SHOP_URL, WEBHOOK_URL, WELCOME, readToken, webhookSecret, messageResponse, createHandler };
+module.exports = { BOT_USERNAME, SHOP_URL, WEBHOOK_URL, WELCOME, readToken, webhookSecret, messageResponse, createReplyGuard, createHandler };
