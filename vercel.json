@@ -38,5 +38,7 @@
         }
       ]
     }
-  ]
+  ],
+  "buildCommand": "node scripts/configure-telegram.cjs",
+  "outputDirectory": "."
 }
