@@ -25,10 +25,12 @@ Sessions are kept only in memory. Supabase RLS validates every read/write; hidin
 
 The migration must be applied and an admin user registered before the admin panel works. A GitHub deployment alone does not configure Supabase.
 
-## Owner onboarding
+## Reliability and account recovery
 
-Apply `supabase/verified-admin-enrollment.sql` after the main migration, then register the explicitly approved owner's email in the private `store_private.admin_invitations` table. This table is not exposed to browser roles. A non-privileged internal Auth trigger enrolls only invited email accounts after email verification; unverified accounts and other addresses receive no admin access.
+Apply SQL in order: `setup.sql`, `catalog-hardening.sql`, then `catalog-reliability.sql`. The reliability migration adds a server-managed revision and a unique creation key. Apply it before deploying the admin UI. Existing owner membership is preserved; automatic email enrollment is retired. Public signup should be disabled in Supabase Auth settings. Invite new administrators through the dashboard, then add their UUID to `store_admins`.
 
-On `/admin.html`, the owner chooses a password and selects “Первый вход — создать аккаунт”. Supabase sends its normal confirmation email. The owner can copy the confirmation link from the email into the admin panel; the panel exchanges it directly with Supabase, so initial enrollment does not depend on the project's redirect URL configuration. No service-role key or privileged setup endpoint is used. Returning owners sign in with email and password.
+The editor updates only changed fields and requires the original revision to match. A concurrent change produces a conflict instead of overwriting inventory. New-card retries reconcile the same creation key. Upload retries reuse object paths, decode and resize images to WebP, preserving transparency and discarding metadata. Removed gallery links do not delete shared stored files; automatic storage deletion is deliberately not enabled.
 
-Validation: `node tests/store.test.cjs`. Database RLS and owner enrollment were additionally verified in rolled-back transactions; project security advisors returned no findings. Actual owner registration and image upload should be verified after the owner completes email confirmation.
+Password recovery uses Supabase's recovery email and a new-password form (minimum 12 characters). Sessions are memory-only, concurrent refreshes share one request, and a failed refresh closes the workspace. Network calls time out after 20 seconds. The admin page disallows framing and caching; the storefront retains Telegram framing support.
+
+Validation: `node tests/store.test.cjs` and `node --test tests/swipe.test.cjs`.
