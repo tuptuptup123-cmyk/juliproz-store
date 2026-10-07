@@ -109,7 +109,7 @@ async function openLinkedProduct(id){
 }
 async function contact(p){
   if(p?.id!=null){try{const r=await fetch(`${SUPABASE_URL}/rest/v1/products?select=${CATALOG_FIELDS}&id=eq.${encodeURIComponent(p.id)}&available=eq.true`,{headers:{apikey:SUPABASE_KEY},signal:AbortSignal.timeout(20000)});if(!r.ok)throw Error();const rows=await r.json();if(!rows.length){document.getElementById("shareStatus").textContent="Товар уже снят с наличия.";return}p=rows[0]}catch{document.getElementById("shareStatus").textContent="Не удалось проверить наличие. Попробуйте ещё раз.";return}}
-  const text=p?.id!=null?`Здравствуйте! Меня интересует ${p.brand||""} ${p.name||""}${p.size?`, размер ${p.size}`:""}${money(p)?`. ${money(p)}`:""}\nАртикул: ${p.id}\n${productLink(p)}`:"";
+  const text=p?.id!=null?`Здравствуйте! Меня интересует ${p.brand||""} ${p.name||""}${p.size?`, размер ${p.size}`:""}.\nАртикул: ${p.id}\n${productLink(p)}`:"";
   telegramLink(`https://t.me/juliproz${text?`?text=${encodeURIComponent(text)}`:""}`);
 }
 document.getElementById("productContent").addEventListener("click",e=>{const action=e.target.closest("[data-action]")?.dataset.action;if(action==="contact")contact(selectedProduct);const b=e.target.closest("[data-photo]");if(b){const img=document.querySelector(".hero img");if(img){img.hidden=false;img.src=b.dataset.photo;img.parentElement.querySelector(".image-fallback")?.remove()}}});

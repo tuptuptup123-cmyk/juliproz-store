@@ -22,7 +22,7 @@ const response=(body,status=200)=>({ok:status<400,status,json:async()=>body});
  assert.equal(app.run('photosOf(selectedProduct).length'),2);
  assert.match(app.run('money(selectedProduct)'),/^€ /);
  await app.run('contact(selectedProduct)');
- const draft=new URL(app.links[0]);assert.equal(draft.pathname,'/juliproz');assert.match(draft.searchParams.get('text'),/Артикул: 6ee10/);assert.match(draft.searchParams.get('text'),/startapp=p_/);
+ const draft=new URL(app.links[0]);assert.equal(draft.pathname,'/juliproz');assert.match(draft.searchParams.get('text'),/Артикул: 6ee10/);assert.match(draft.searchParams.get('text'),/startapp=p_/);assert.doesNotMatch(draft.searchParams.get('text'),/[€$£₽]|1700|1[\s\u00a0\u202f]700/);
  app.run('state.search="38"');assert.equal(app.run('filtered().length'),1);
  app.get('grid').onclick({target:{closest:s=>s==='[data-heart]'?{dataset:{heart:product.id}}:null},stopPropagation(){}});
  app.run('state.tab="favorites"');assert.equal(app.run('filtered().length'),1);
