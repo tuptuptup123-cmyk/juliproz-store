@@ -1,6 +1,6 @@
 // Product images come only from our deployment or our public storage bucket.
 function safeProductImage(value){
-  if(typeof value!=='string')return false;
+  if(typeof value!=='string'||value.length>2048)return false;
   try{
     const u=new URL(value);
     if(u.protocol!=='https:'||u.username||u.password||u.port)return false;
@@ -8,3 +8,4 @@ function safeProductImage(value){
       (u.origin===window.STORE_CONFIG.url&&u.pathname.startsWith('/storage/v1/object/public/product-photos/'));
   }catch{return false}
 }
+

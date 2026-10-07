@@ -1,4 +1,6 @@
 begin;
+create schema if not exists store_private;
+revoke create on schema store_private from public,anon,authenticated;
 alter table public.products add column if not exists photos jsonb not null default '[]'::jsonb;
 create table if not exists public.store_admins (user_id uuid primary key references auth.users(id) on delete cascade);
 alter table public.store_admins enable row level security;
@@ -33,3 +35,4 @@ create index if not exists products_available_created_idx on public.products(cre
 commit;
 -- After creating the owner in Supabase Authentication, register the UUID:
 -- insert into public.store_admins(user_id) values ('OWNER_AUTH_USER_UUID') on conflict do nothing;
+
