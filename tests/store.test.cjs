@@ -8,12 +8,13 @@ function setup(file,fetch,query=''){
  const document={getElementById:get,querySelectorAll:()=>[],querySelector:()=>element(),addEventListener(){}};
  const links=[];const window={STORE_CONFIG:{url:'https://test.supabase.co',key:'publishable'},Telegram:{WebApp:{ready(){},expand(){},openTelegramLink:u=>links.push(u),initDataUnsafe:{}}}};
  const context=vm.createContext({document,window,Telegram:window.Telegram,fetch,console:{...console,error(){}},URL,URLSearchParams,AbortSignal,Intl,Set,Number,String,Array,JSON,Date,crypto:{randomUUID:crypto.randomUUID},location:{search:query},navigator:{clipboard:{writeText:async u=>links.push(u)}},localStorage:{getItem:()=>'{broken',setItem(){throw Error('storage denied')}}});
+ vm.runInContext(fs.readFileSync(`${__dirname}/../image-policy.js`,'utf8'),context);
  vm.runInContext(fs.readFileSync(`${__dirname}/../${file}`,'utf8'),context);
  return {context,get,links,run:s=>vm.runInContext(s,context)};
 }
 const response=(body,status=200)=>({ok:status<400,status,json:async()=>body});
 (async()=>{
- const product={id:'6ee10a72-4423-4988-9e92-c7c8d3141091',brand:'CHANEL',name:'Балетки <script>',size:'38',price:1700,currency:'€',category:'Обувь',available:true,image_url:'https://example.com/a.jpg',photos:['https://example.com/b.jpg','javascript:alert(1)']};
+ const product={id:'6ee10a72-4423-4988-9e92-c7c8d3141091',brand:'CHANEL',name:'Балетки <script>',size:'38',price:1700,currency:'€',category:'Обувь',available:true,image_url:'https://juliproz-store.vercel.app/images/a.jpg',photos:['https://juliproz-store.vercel.app/images/b.jpg','javascript:alert(1)']};
  const app=setup('app.js',async()=>response([product]),`?startapp=p_${product.id}`);
  await new Promise(setImmediate);
  assert.match(app.get('productContent').innerHTML,/Балетки &lt;script&gt;/);
@@ -33,7 +34,7 @@ const response=(body,status=200)=>({ok:status<400,status,json:async()=>body});
  const calls=[];let inventory=[];const admin=setup('admin.js',async(path,options)=>{calls.push({path,options});if(path.includes('grant_type=password'))return response({access_token:'admin-token',expires_at:Date.now()/1000+3600,user:{id:'owner'}});if(path.includes('store_admins'))return response([{user_id:'owner'}]);if(options.method==='POST'&&path.includes('/rest/v1/products')){const p=JSON.parse(options.body);inventory=[{...p,id:10}];return response(inventory)}if(options.method==='PATCH'){inventory[0].available=JSON.parse(options.body).available;return response(inventory)}return response(inventory)});
  const fields=Object.fromEntries(['brand','name','category','size','price','currency','description','available'].map(n=>[n,element()]));admin.get('editor').elements=fields;
  await admin.get('login').onsubmit({preventDefault(){},submitter:element(),target:{email:{value:'owner@example.com'},password:{value:'test'}}});
- admin.run('edit(null)');Object.assign(fields.brand,{value:'CHANEL'});Object.assign(fields.name,{value:'Балетки'});Object.assign(fields.category,{value:'Обувь'});fields.price.value='1700';fields.currency.value='EUR';fields.available.checked=true;admin.run('photos=["https://example.com/a.jpg"]');
+ admin.run('edit(null)');Object.assign(fields.brand,{value:'CHANEL'});Object.assign(fields.name,{value:'Балетки'});Object.assign(fields.category,{value:'Обувь'});fields.price.value='1700';fields.currency.value='EUR';fields.available.checked=true;admin.run('photos=["https://juliproz-store.vercel.app/images/a.jpg"]');
  await admin.get('editor').onsubmit({preventDefault(){},target:{elements:fields}});
  assert.equal(inventory.length,1);assert.equal(inventory[0].available,true);assert.equal(inventory[0].photos.length,1);assert.match(admin.get('status').textContent,/сохранён/);
  await admin.get('inventory').onclick({target:{dataset:{toggle:'10'},disabled:false}});assert.equal(inventory[0].available,false);

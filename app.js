@@ -4,7 +4,8 @@ const SUPABASE_KEY=window.STORE_CONFIG.key;
 let products=[];
 let selectedProduct=null;
 function productLink(p){return `https://t.me/JuliProzBot/shop?startapp=p_${encodeURIComponent(String(p.id))}`}
-function photosOf(p){return [...new Set([p.image_url,p.image,...(Array.isArray(p.photos)?p.photos:[])].filter(v=>typeof v==="string"&&/^https?:\/\//i.test(v)))]}
+const CATALOG_FIELDS='id,created_at,brand,name,category,size,price,currency,image_url,available,description,photos';
+function photosOf(p){return [...new Set([p.image_url,p.image,...(Array.isArray(p.photos)?p.photos:[])].filter(safeProductImage))]}
 function telegramLink(url){if(window.Telegram?.WebApp?.openTelegramLink) Telegram.WebApp.openTelegramLink(url);else window.open(url,"_blank","noopener")}
 
 let state={category:null,brand:null,size:null,search:"",favorites:new Set((()=>{try{return JSON.parse(localStorage.getItem("jpFav")||"[]").map(String)}catch{return []}})()),tab:"catalog"};
@@ -38,7 +39,7 @@ async function loadProducts(){
   try{
     const rows=[];
     for(let offset=0;;offset+=500){
-      const r=await fetch(`${SUPABASE_URL}/rest/v1/products?select=*&available=eq.true&order=created_at.desc,id.desc&limit=500&offset=${offset}`,{headers:{apikey:SUPABASE_KEY},signal:AbortSignal.timeout(20000)});
+      const r=await fetch(`${SUPABASE_URL}/rest/v1/products?select=${CATALOG_FIELDS}&available=eq.true&order=created_at.desc,id.desc&limit=500&offset=${offset}`,{headers:{apikey:SUPABASE_KEY},signal:AbortSignal.timeout(20000)});
       if(!r.ok) throw new Error(`Supabase ${r.status}`);
       const page=await r.json();
       if(!Array.isArray(page))throw new Error("Invalid catalog response");
@@ -52,7 +53,7 @@ async function loadProducts(){
     const id=params.get("product")||(start?.startsWith("p_")?start.slice(2):null);
     if(id) await openLinkedProduct(id);
   }catch(e){
-    console.error(e);
+
     count.textContent="Не удалось загрузить наличие";
     grid.innerHTML='<div class="empty">Не удалось загрузить товары. <button id="retryProducts" type="button">Повторить</button></div>';
   }
@@ -79,7 +80,7 @@ grid.onkeydown=e=>{if(e.target.matches("[data-id]")&&(e.key==="Enter"||e.key==="
 function openProduct(id){
   const p=products.find(x=>String(x.id)===String(id));if(!p)return;
   selectedProduct=p;
-  document.getElementById("productContent").innerHTML=`<div class="hero">${imageOf(p)?`<img src="${esc(imageOf(p))}" alt="${esc(p.name)}" loading="lazy">`:"JP"}</div>${photosOf(p).length>1?`<div class="photo-picker">${photosOf(p).map(url=>`<button type="button" data-photo="${esc(url)}"><img src="${esc(url)}" alt="${esc(p.name)}"></button>`).join("")}</div>`:""}<div class="detail"><div class="brandname">${esc(p.brand)}</div><h1>${esc(p.name)}</h1><div class="detail-price">${esc(money(p))}</div><div class="spec"><span>Категория</span><b>${esc(p.category||"—")}</b></div><div class="spec"><span>Размер</span><b>${esc(p.size||"—")}</b></div>${p.description?`<div class="spec"><span>Описание</span><b>${esc(p.description)}</b></div>`:""}<button class="primary buy" onclick="contact(selectedProduct)">Купить / Написать менеджеру</button><button class="primary buy" onclick="shareProduct()">Поделиться товаром</button><p id="shareStatus" role="status"></p></div>`;
+  document.getElementById("productContent").innerHTML=`<div class="hero">${imageOf(p)?`<img src="${esc(imageOf(p))}" alt="${esc(p.name)}" loading="lazy">`:"JP"}</div>${photosOf(p).length>1?`<div class="photo-picker">${photosOf(p).map(url=>`<button type="button" data-photo="${esc(url)}"><img src="${esc(url)}" alt="${esc(p.name)}"></button>`).join("")}</div>`:""}<div class="detail"><div class="brandname">${esc(p.brand)}</div><h1>${esc(p.name)}</h1><div class="detail-price">${esc(money(p))}</div><div class="spec"><span>Категория</span><b>${esc(p.category||"—")}</b></div><div class="spec"><span>Размер</span><b>${esc(p.size||"—")}</b></div>${p.description?`<div class="spec"><span>Описание</span><b>${esc(p.description)}</b></div>`:""}<button class="primary buy" data-action="contact">Купить / Написать менеджеру</button><button class="primary buy" data-action="share">Поделиться товаром</button><p id="shareStatus" role="status"></p></div>`;
   document.getElementById("productModal").classList.remove("hidden");
   document.getElementById("productModal").scrollTop=0;
 }
@@ -88,7 +89,7 @@ document.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>{state.tab=b.da
 async function openLinkedProduct(id){
   if(products.some(p=>String(p.id)===String(id))){openProduct(id);return}
   try{
-    const r=await fetch(`${SUPABASE_URL}/rest/v1/products?select=*&id=eq.${encodeURIComponent(id)}&available=eq.true`,{headers:{apikey:SUPABASE_KEY}});
+    const r=await fetch(`${SUPABASE_URL}/rest/v1/products?select=${CATALOG_FIELDS}&id=eq.${encodeURIComponent(id)}&available=eq.true`,{headers:{apikey:SUPABASE_KEY}});
     if(!r.ok)throw new Error();
     const rows=await r.json();
     if(rows.length){products.push(rows[0]);openProduct(id);return}
@@ -110,7 +111,7 @@ async function shareProduct(){
   try{await navigator.clipboard.writeText(url);document.getElementById("shareStatus").textContent="Ссылка скопирована"}
   catch{telegramLink(`https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(`${selectedProduct.brand||""} ${selectedProduct.name||""}`)}`)}
 }
-document.getElementById("productContent").addEventListener("click",e=>{const b=e.target.closest("[data-photo]");if(b)document.querySelector(".hero img").src=b.dataset.photo});
+document.getElementById("productContent").addEventListener("click",e=>{const action=e.target.closest("[data-action]")?.dataset.action;if(action==="contact")contact(selectedProduct);if(action==="share")shareProduct();const b=e.target.closest("[data-photo]");if(b)document.querySelector(".hero img").src=b.dataset.photo});
 document.getElementById("chatBtn").onclick=()=>contact();
 if(window.Telegram?.WebApp){Telegram.WebApp.ready();Telegram.WebApp.expand()}
 loadProducts();
