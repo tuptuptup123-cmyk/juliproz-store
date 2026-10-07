@@ -85,7 +85,7 @@ grid.onkeydown=e=>{if(e.target.matches("[data-id]")&&(e.key==="Enter"||e.key==="
 function openProduct(id){
   const p=products.find(x=>String(x.id)===String(id));if(!p)return;
   selectedProduct=p;
-  document.getElementById("productContent").innerHTML=`<div class="hero">${imageOf(p)?`<img src="${esc(imageOf(p))}" alt="${esc(p.name)}" loading="lazy">`:"JP"}</div>${photosOf(p).length>1?`<div class="photo-picker">${photosOf(p).map(url=>`<button type="button" data-photo="${esc(url)}"><img src="${esc(url)}" alt="${esc(p.name)}"></button>`).join("")}</div>`:""}<div class="detail"><div class="brandname">${esc(p.brand)}</div><h1>${esc(p.name)}</h1><div class="detail-price">${esc(money(p))}</div><div class="spec"><span>Категория</span><b>${esc(p.category||"—")}</b></div><div class="spec"><span>Размер</span><b>${esc(p.size||"—")}</b></div>${p.description?`<div class="spec"><span>Описание</span><b>${esc(p.description)}</b></div>`:""}<button class="primary buy" data-action="contact">Купить / Написать менеджеру</button><button class="primary buy" data-action="share">Поделиться товаром</button><p id="shareStatus" role="status"></p></div>`;
+  document.getElementById("productContent").innerHTML=`<div class="hero">${imageOf(p)?`<img src="${esc(imageOf(p))}" alt="${esc(p.name)}" loading="lazy">`:"JP"}</div>${photosOf(p).length>1?`<div class="photo-picker">${photosOf(p).map(url=>`<button type="button" data-photo="${esc(url)}"><img src="${esc(url)}" alt="${esc(p.name)}"></button>`).join("")}</div>`:""}<div class="detail"><div class="brandname">${esc(p.brand)}</div><h1>${esc(p.name)}</h1><div class="detail-price">${esc(money(p))}</div><div class="spec"><span>Категория</span><b>${esc(p.category||"—")}</b></div><div class="spec"><span>Размер</span><b>${esc(p.size||"—")}</b></div>${p.description?`<div class="spec"><span>Описание</span><b>${esc(p.description)}</b></div>`:""}<button class="primary buy" data-action="contact">Купить</button><p id="shareStatus" role="status"></p></div>`;
   document.getElementById("productModal").classList.remove("hidden");
   document.getElementById("productModal").scrollTop=0;
 }
@@ -112,13 +112,7 @@ async function contact(p){
   const text=p?.id!=null?`Здравствуйте! Меня интересует ${p.brand||""} ${p.name||""}${p.size?`, размер ${p.size}`:""}${money(p)?`. ${money(p)}`:""}\nАртикул: ${p.id}\n${productLink(p)}`:"";
   telegramLink(`https://t.me/juliproz${text?`?text=${encodeURIComponent(text)}`:""}`);
 }
-async function shareProduct(){
-  if(!selectedProduct)return;
-  const url=productLink(selectedProduct);
-  try{await navigator.clipboard.writeText(url);document.getElementById("shareStatus").textContent="Ссылка скопирована"}
-  catch{telegramLink(`https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(`${selectedProduct.brand||""} ${selectedProduct.name||""}`)}`)}
-}
-document.getElementById("productContent").addEventListener("click",e=>{const action=e.target.closest("[data-action]")?.dataset.action;if(action==="contact")contact(selectedProduct);if(action==="share")shareProduct();const b=e.target.closest("[data-photo]");if(b){const img=document.querySelector(".hero img");if(img){img.hidden=false;img.src=b.dataset.photo;img.parentElement.querySelector(".image-fallback")?.remove()}}});
+document.getElementById("productContent").addEventListener("click",e=>{const action=e.target.closest("[data-action]")?.dataset.action;if(action==="contact")contact(selectedProduct);const b=e.target.closest("[data-photo]");if(b){const img=document.querySelector(".hero img");if(img){img.hidden=false;img.src=b.dataset.photo;img.parentElement.querySelector(".image-fallback")?.remove()}}});
 document.getElementById("chatBtn").onclick=()=>contact();
 if(window.Telegram?.WebApp){Telegram.WebApp.ready();Telegram.WebApp.expand()}
 loadProducts();
