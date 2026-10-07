@@ -8,7 +8,7 @@ Static Vercel storefront using Supabase `public.products`. Existing storefront c
 
 The storefront loads available products in batches, supports search, filters and favorites, and displays an image gallery. Invalid or broken cover URLs display the existing J.P placeholder.
 
-Every product has a link `https://t.me/JuliProzBot/shop?startapp=p_<id>`. The app reads Telegram's start parameter or `?product=<id>` when opened directly on the website. Sold or unavailable products show an unavailable message. The purchase button opens `@juliproz` with a draft containing the product name, size, price, ID and product link. The customer presses Send; the app does not send messages on their behalf.
+Every product has a link `https://t.me/JuliProzBot/shop?startapp=p_<id>`. The app reads Telegram's start parameter or `?product=<id>` when opened directly on the website. Sold or unavailable products show an unavailable message. The purchase button opens `@juliproz` with a draft containing the product name, size, ID and product link. The customer presses Send; the app does not send messages on their behalf.
 
 ## Admin
 
@@ -34,3 +34,20 @@ The editor updates only changed fields and requires the original revision to mat
 Password recovery uses Supabase's recovery email and a new-password form (minimum 12 characters). Sessions are memory-only, concurrent refreshes share one request, and a failed refresh closes the workspace. Network calls time out after 20 seconds. The admin page disallows framing and caching; the storefront retains Telegram framing support.
 
 Validation: `node tests/store.test.cjs` and `node --test tests/swipe.test.cjs`.
+
+
+## Security controls
+
+The additive migration `supabase/security-safe-fixes.sql` is applied to production. It validates required text, finite prices and photo limits, and installs a private change log. Boutique-price cards retain `price=null`. Existing rows and permissions were preserved. `security-safe-rollback.sql` removes only the new constraints and triggers while retaining audit history.
+
+TOTP challenge handling is implemented for existing verified factors, including password recovery. New enrollment is disabled by default (`mfaEnrollmentEnabled` must be explicitly true). Do not enable it until a separately reviewed MFA database migration installs `enforce_store_mfa` and restrictive write policies. Sticky server enforcement, enrollment and legacy-invitation cleanup remain pending. Existing-factor UI challenges alone are not database enforcement.
+
+Product and admin-membership changes are logged in `store_private.store_change_log`. Browser roles cannot read, edit or delete the log. Trusted SQL can inspect actor_id, time and before/after rows. Database administrators retain their normal privileges; the log is not tamper-proof against them. Remove secrets from product fields, even though this audit log is private.
+
+Logout revokes the current server session with `scope=local`, always clears forms and memory, and distinguishes a server failure from confirmed sign-out. A successful logout does not promise immediate revocation of already-issued access JWTs. An expired refresh token or API 401 clears local editor and enrollment state.
+
+GitHub Actions `security-tests` runs on PRs and main with read-only repository permissions and pinned official actions. Require this check in branch protection/rulesets after it has run successfully. Dashboard settings for signup, password strength, leaked-password protection, SMTP, redirect URLs, account MFA and deployment protection require separate verification; this migration does not modify them.
+
+The admin CSP applies to `/admin`, `/admin.html` and `/admin/`, blocks framing and caching, and allows data images solely for the MFA QR. The storefront CSP remains unchanged.
+
+Validation: `node --test tests/*.test.cjs`. Production database write probes run in a transaction ending in ROLLBACK; they leave no test products or audit events. Identity sequences may advance during those probes.

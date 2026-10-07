@@ -15,8 +15,9 @@ returns boolean language plpgsql immutable strict security invoker set search_pa
 declare photo jsonb;
 begin
  if jsonb_typeof(value)<>'array' then return false; end if;
+ if jsonb_array_length(value)>20 then return false; end if;
  for photo in select * from jsonb_array_elements(value) loop
-   if jsonb_typeof(photo)<>'string' or not coalesce(store_private.valid_product_image(photo #>> '{}'),false) then return false; end if;
+   if jsonb_typeof(photo)<>'string' or char_length(photo #>> '{}')>2048 or not coalesce(store_private.valid_product_image(photo #>> '{}'),false) then return false; end if;
  end loop;
  return true;
 end;
@@ -24,6 +25,7 @@ $$;
 revoke all on function store_private.valid_product_image(text),store_private.valid_product_photos(jsonb) from public,anon;
 grant usage on schema store_private to authenticated,service_role;
 grant execute on function store_private.valid_product_image(text),store_private.valid_product_photos(jsonb) to authenticated,service_role;
-alter table public.products add constraint products_trusted_image check(image_url is null or store_private.valid_product_image(image_url));
-alter table public.products add constraint products_trusted_photos check(store_private.valid_product_photos(photos));
+do $$ begin if not exists(select 1 from pg_constraint where conrelid='public.products'::regclass and conname='products_trusted_image') then alter table public.products add constraint products_trusted_image check(image_url is null or store_private.valid_product_image(image_url)); end if; end $$;
+do $$ begin if not exists(select 1 from pg_constraint where conrelid='public.products'::regclass and conname='products_trusted_photos') then alter table public.products add constraint products_trusted_photos check(store_private.valid_product_photos(photos)); end if; end $$;
 commit;
+
