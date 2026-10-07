@@ -97,10 +97,11 @@ test('unknown user and forged account response cannot enter workspace',async()=>
  await assert.rejects(h.run('enterWorkspace()'),/проверить аккаунт/);assert.equal(h.run('session'),null);
 });
 
-test('production default disables enrollment and does not call undeployed RPC',async()=>{
+test('disabled enrollment feature flag does not call the activation RPC',async()=>{
  const a=api({factors:[factor]}),h=setup(a.fetch,false);h.seed(session('aal2',[factor]));await h.run('enterWorkspace()');
  assert.equal(h.get('securityBtn').classList.contains('hidden'),true);
  await h.get('securityBtn').onclick();
  assert.equal(a.calls.some(c=>c.path.includes('/rpc/')||c.path.endsWith('/auth/v1/factors')),false);
  assert.equal(h.get('workspace').classList.contains('hidden'),false);
 });
+

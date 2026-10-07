@@ -2,7 +2,7 @@
 
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { createHandler, webhookSecret, WEBHOOK_URL, WELCOME } = require('../server/telegram.cjs');
+const { createHandler, createReplyGuard, webhookSecret, WEBHOOK_URL, WELCOME } = require('../server/telegram.cjs');
 const { configureTelegram } = require('../scripts/configure-telegram.cjs');
 
 // Fabricated test credential; never a real bot token.
@@ -23,7 +23,7 @@ function invoke(body, options = {}) {
     status(code) { result.status = code; return this; },
     json(value) { result.body = value; return this; }
   };
-  createHandler(options.env || ENV)(req, res);
+  (options.handler || createHandler(options.env || ENV))(req, res);
   return result;
 }
 
@@ -38,6 +38,35 @@ test('start creates a private greeting with a real Mini App button and manager l
   assert.equal(result.headers['Cache-Control'], 'no-store');
   assert.equal(JSON.stringify(result).includes(TOKEN), false);
   assert.equal(invoke(update('/start@JuliProzBot campaign')).body.text, WELCOME);
+});
+
+test('warm-instance guard limits each chat and suppresses duplicate updates with successful acknowledgement', () => {
+  let time = 0;
+  const handler = createHandler(ENV, createReplyGuard(() => time));
+  const send = (id, chat = 42) => {
+    const body = update('/start'); body.update_id = id;
+    body.message.chat.id = chat; body.message.from.id = chat;
+    return invoke(body, { handler });
+  };
+  assert.equal(send(1).body.method, 'sendMessage');
+  assert.deepEqual(send(1).body, { ok: true });
+  for (let id = 2; id <= 5; id++) assert.equal(send(id).body.method, 'sendMessage');
+  assert.deepEqual(send(6).body, { ok: true });
+  assert.equal(send(7, 43).body.method, 'sendMessage');
+  time = 60000;
+  assert.equal(send(8).body.method, 'sendMessage');
+  assert.deepEqual(send(1).body, { ok: true });
+  time = 300000;
+  assert.equal(send(1).body.method, 'sendMessage');
+});
+
+test('guard bounds memory and recovers capacity after expiry', () => {
+  let time = 0;
+  const allow = createReplyGuard(() => time);
+  for (let id = 1; id <= 2000; id++) assert.equal(allow(id, id), true);
+  assert.equal(allow(2001, 2001), false);
+  time = 60000;
+  assert.equal(allow(2001, 2001), true);
 });
 
 test('webhook authentication rejects spoofed requests before accessing the body', () => {
