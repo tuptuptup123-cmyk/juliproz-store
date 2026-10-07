@@ -2,7 +2,7 @@
 
 Telegram Mini App: https://t.me/JuliProzBot/shop
 
-Static Vercel storefront using Supabase `public.products`. Existing storefront colors, typography and layout are retained. No package build step is required.
+Static Vercel storefront using Supabase `public.products`. Existing storefront colors, typography and layout are retained. No npm dependencies are required. The production build configures the Telegram webhook when its server token is present.
 
 ## Catalog and product links
 
@@ -51,3 +51,23 @@ GitHub Actions `security-tests` runs on PRs and main with read-only repository p
 The admin CSP applies to `/admin`, `/admin.html` and `/admin/`, blocks framing and caching, and allows data images solely for the MFA QR. The storefront CSP remains unchanged.
 
 Validation: `node --test tests/*.test.cjs`. Production database write probes run in a transaction ending in ROLLBACK; they leave no test products or audit events. Identity sequences may advance during those probes.
+
+
+## Telegram chat bot
+
+`api/telegram.js` handles private messages to @JuliProzBot. `/start` returns the JULI.PROZ welcome and buttons for the existing shop and @juliproz. `/shop`, `/help` and `/manager` work too. Other text explains how to contact the manager; it is not silently forwarded. Group/channel messages, edits and service events are ignored. No conversation database or AI service is involved.
+
+### Activate once
+
+1. In BotFather, select @JuliProzBot and copy its existing API token. Never put it in GitHub, browser JavaScript, screenshots or chat.
+2. In the existing Vercel project, Settings → Environment Variables, save `TELEGRAM_BOT_TOKEN` as a Sensitive variable for **Production only**.
+3. Redeploy the current main deployment. `scripts/configure-telegram.cjs` checks the bot identity and installs the webhook automatically. Existing integrations at a different webhook URL are refused rather than overwritten. Previews, local builds and builds without a token do not change Telegram. Vercel system environment variables must be enabled so `VERCEL_ENV` is available.
+4. After the production deployment is Ready, send `/start` to @JuliProzBot. Confirm the greeting and both buttons. `/api/telegram` reports `configured: true` only when the production runtime has a valid-format token; this does not independently prove message delivery.
+
+The setup uses HTTPS requests to the official Telegram Bot API. It derives a separate webhook secret from the server token, authenticates incoming POSTs before reading their body, and never writes either secret to a file or a log. The webhook returns Telegram's `sendMessage` response directly. Telegram does not return a delivery result for this mode, and retried updates may cause duplicate greetings; this handler intentionally does not store chat history or claim exactly-once delivery.
+
+Registration runs during the production build, before its new version is promoted. Telegram can briefly receive 503 during first activation or token rotation and retries failed webhook deliveries. Pending updates are not deleted. An invalid token, a different existing webhook, or a Telegram API error fails that deployment; the previous production site stays live. If activation fails after registration, fix the configuration and redeploy promptly.
+
+To disable replies, remove the Production token and redeploy (incoming requests are then rejected). Also remove the webhook through Telegram's `deleteWebhook` with `drop_pending_updates: false` using an authorized secure admin environment. Removing the webhook alone permits a later configured production build to register it again.
+
+Tests: `node --test tests/*.test.cjs`. Bot tests use fabricated credentials and mocked Telegram responses; they send no real messages.

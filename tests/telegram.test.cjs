@@ -1,0 +1,137 @@
+'use strict';
+
+const test = require('node:test');
+const assert = require('node:assert/strict');
+const { createHandler, webhookSecret, WEBHOOK_URL, WELCOME } = require('../server/telegram.cjs');
+const { configureTelegram } = require('../scripts/configure-telegram.cjs');
+
+// Fabricated test credential; never a real bot token.
+const TOKEN = `123456789:${'x'.repeat(35)}`;
+const ENV = { VERCEL_ENV: 'production', TELEGRAM_BOT_TOKEN: TOKEN };
+const update = text => ({ update_id: 100, message: { message_id: 8, from: { id: 42, is_bot: false }, chat: { id: 42, type: 'private' }, text } });
+
+function invoke(body, options = {}) {
+  const req = {
+    method: 'POST',
+    headers: { 'content-type': 'application/json', 'x-telegram-bot-api-secret-token': webhookSecret(TOKEN) },
+    body,
+    ...options.request
+  };
+  const result = { headers: {} };
+  const res = {
+    setHeader(name, value) { result.headers[name] = value; },
+    status(code) { result.status = code; return this; },
+    json(value) { result.body = value; return this; }
+  };
+  createHandler(options.env || ENV)(req, res);
+  return result;
+}
+
+test('start creates a private greeting with a real Mini App button and manager link', () => {
+  const result = invoke(update('/start'));
+  assert.equal(result.status, 200);
+  assert.equal(result.body.method, 'sendMessage');
+  assert.equal(result.body.chat_id, 42);
+  assert.equal(result.body.text, WELCOME);
+  assert.equal(result.body.reply_markup.inline_keyboard[0][0].web_app.url, 'https://juliproz-store.vercel.app/');
+  assert.equal(result.body.reply_markup.inline_keyboard[1][0].url, 'https://t.me/juliproz');
+  assert.equal(result.headers['Cache-Control'], 'no-store');
+  assert.equal(JSON.stringify(result).includes(TOKEN), false);
+  assert.equal(invoke(update('/start@JuliProzBot campaign')).body.text, WELCOME);
+});
+
+test('webhook authentication rejects spoofed requests before accessing the body', () => {
+  for (const secret of [undefined, '', TOKEN, '0'.repeat(64), ['0'.repeat(64)]]) {
+    let read = false;
+    const req = { method: 'POST', headers: { 'x-telegram-bot-api-secret-token': secret } };
+    Object.defineProperty(req, 'body', { get() { read = true; throw new Error('must not read'); } });
+    const res = { setHeader() {}, status(code) { this.code = code; return this; }, json() {} };
+    createHandler(ENV)(req, res);
+    assert.equal(res.code, 401);
+    assert.equal(read, false);
+  }
+});
+
+test('production credentials are required and preview deployments cannot answer', () => {
+  for (const env of [{}, { VERCEL_ENV: 'production' }, { ...ENV, VERCEL_ENV: 'preview' }, { ...ENV, TELEGRAM_BOT_TOKEN: 'invalid' }]) {
+    assert.equal(invoke(update('/start'), { env }).status, 503);
+    assert.equal(invoke(null, { env, request: { method: 'GET' } }).body.configured, false);
+  }
+  assert.equal(invoke(null, { request: { method: 'GET' } }).body.configured, true);
+  assert.equal(invoke(null, { request: { method: 'DELETE' } }).status, 405);
+});
+
+test('groups, edits, service events, other bots and invalid recipients produce no reply', () => {
+  const group = update('/start'); group.message.chat.type = 'group';
+  const bot = update('/start'); bot.message.from.is_bot = true;
+  const mismatch = update('/start'); mismatch.message.from.id = 43;
+  const invalidId = update('/start'); invalidId.message.chat.id = 1.5;
+  const service = update(undefined); service.message.new_chat_members = [{ id: 42 }];
+  for (const body of [group, bot, mismatch, invalidId, service, { update_id: 2, edited_message: update('/start').message }, update('/start@OtherBot'), null, [], { update_id: -1 }]) {
+    assert.deepEqual(invoke(body).body, { ok: true });
+  }
+});
+
+test('ordinary messages explain how to contact a human without echoing personal text', () => {
+  const result = invoke(update('<b>my phone and address</b>'));
+  assert.match(result.body.text, /автоматически менеджеру не пересылаются/);
+  assert.equal(result.body.text.includes('my phone'), false);
+  assert.equal(result.body.parse_mode, undefined);
+  assert.match(invoke(update('/shop')).body.text, /каталог/);
+  assert.match(invoke(update('/manager')).body.text, /задать вопрос/);
+});
+
+test('malformed JSON, unsupported bodies and oversized input are bounded', () => {
+  assert.equal(invoke('{').status, 400);
+  assert.equal(invoke(undefined).status, 400);
+  assert.equal(invoke('a'.repeat(128 * 1024 + 1)).status, 413);
+  assert.equal(invoke(update('/start'), { request: { headers: { 'x-telegram-bot-api-secret-token': webhookSecret(TOKEN), 'content-type': 'text/plain' } } }).status, 415);
+  assert.equal(invoke(JSON.stringify(update('/start'))).body.text, WELCOME);
+  const req = { method: 'POST', headers: { 'content-type': 'application/json', 'x-telegram-bot-api-secret-token': webhookSecret(TOKEN) } };
+  Object.defineProperty(req, 'body', { get() { throw new Error('bad JSON'); } });
+  const res = { setHeader() {}, status(code) { this.code = code; return this; }, json() {} };
+  createHandler(ENV)(req, res);
+  assert.equal(res.code, 400);
+});
+
+function apiMock(results) {
+  const calls = [];
+  const request = async (url, options) => {
+    calls.push({ method: url.split('/').at(-1), body: JSON.parse(options.body), options });
+    assert.equal(new URL(url).origin, 'https://api.telegram.org');
+    const result = results.shift();
+    if (result instanceof Error) throw result;
+    return { ok: true, json: async () => ({ ok: true, result }) };
+  };
+  return { request, calls };
+}
+
+test('registration checks identity, preserves pending updates and verifies the webhook', async () => {
+  const mock = apiMock([{ is_bot: true, username: 'JuliProzBot' }, { url: '' }, true, { url: WEBHOOK_URL }]);
+  const logs = [];
+  assert.deepEqual(await configureTelegram(ENV, mock.request, line => logs.push(line)), { configured: true });
+  assert.deepEqual(mock.calls.map(x => x.method), ['getMe', 'getWebhookInfo', 'setWebhook', 'getWebhookInfo']);
+  assert.deepEqual(mock.calls[2].body, { url: WEBHOOK_URL, secret_token: webhookSecret(TOKEN), allowed_updates: ['message'], max_connections: 10, drop_pending_updates: false });
+  assert.equal(mock.calls[2].options.redirect, 'error');
+  assert.equal(logs.join('\n').includes(TOKEN), false);
+  assert.equal(logs.join('\n').includes(webhookSecret(TOKEN)), false);
+});
+
+test('registration never touches another bot or replaces an existing integration', async () => {
+  const wrongBot = apiMock([{ is_bot: true, username: 'OtherBot' }]);
+  await assert.rejects(configureTelegram(ENV, wrongBot.request, () => {}), /must belong to/);
+  assert.deepEqual(wrongBot.calls.map(x => x.method), ['getMe']);
+  const conflict = apiMock([{ is_bot: true, username: 'JuliProzBot' }, { url: 'https://example.com/existing-bot' }]);
+  await assert.rejects(configureTelegram(ENV, conflict.request, () => {}), /different webhook/);
+  assert.deepEqual(conflict.calls.map(x => x.method), ['getMe', 'getWebhookInfo']);
+});
+
+test('setup errors cannot expose tokens and inert builds never call Telegram', async () => {
+  const mock = apiMock([new Error(`private URL: https://api.telegram.org/bot${TOKEN}/getMe`)]);
+  await assert.rejects(configureTelegram(ENV, mock.request, () => {}), error => !error.message.includes(TOKEN) && /getMe failed/.test(error.message));
+  let called = false;
+  for (const env of [{}, { VERCEL_ENV: 'production' }, { ...ENV, VERCEL_ENV: 'preview' }]) {
+    assert.deepEqual(await configureTelegram(env, async () => { called = true; }, () => {}), { configured: false });
+  }
+  assert.equal(called, false);
+});
