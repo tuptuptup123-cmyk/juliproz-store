@@ -22,8 +22,8 @@ begin
 end;
 $$;
 revoke all on function store_private.valid_product_image(text),store_private.valid_product_photos(jsonb) from public,anon;
-grant usage on schema store_private to authenticated;
-grant execute on function store_private.valid_product_image(text),store_private.valid_product_photos(jsonb) to authenticated;
+grant usage on schema store_private to authenticated,service_role;
+grant execute on function store_private.valid_product_image(text),store_private.valid_product_photos(jsonb) to authenticated,service_role;
 alter table public.products add constraint products_trusted_image check(image_url is null or store_private.valid_product_image(image_url));
 alter table public.products add constraint products_trusted_photos check(store_private.valid_product_photos(photos));
 commit;
