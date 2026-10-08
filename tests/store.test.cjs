@@ -2,11 +2,11 @@ const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const vm=require('node:vm');
 const crypto=require('node:crypto');
-function element(){return {innerHTML:'',textContent:'',value:'',disabled:false,dataset:{},children:[],files:[],classList:{add(){},remove(){},toggle(){}},addEventListener(){},setAttribute(){},scrollIntoView(){},reset(){}}}
+function element(){return {innerHTML:'',textContent:'',value:'',disabled:false,dataset:{},children:[],files:[],classList:{add(){},remove(){},toggle(){}},addEventListener(){},focus(){},setAttribute(){},scrollIntoView(){},reset(){}}}
 function setup(file,fetch,query=''){
  const nodes=new Map();const get=id=>{if(!nodes.has(id))nodes.set(id,element());return nodes.get(id)};
  const document={getElementById:get,querySelectorAll:()=>[],querySelector:()=>element(),addEventListener(){}};
- const links=[];const window={STORE_CONFIG:{url:'https://test.supabase.co',key:'publishable'},Telegram:{WebApp:{ready(){},expand(){},openTelegramLink:u=>links.push(u),initDataUnsafe:{}}}};
+ const links=[];const window={addEventListener(){},STORE_CONFIG:{url:'https://test.supabase.co',key:'publishable'},Telegram:{WebApp:{ready(){},expand(){},openTelegramLink:u=>links.push(u),initDataUnsafe:{}}}};
  const context=vm.createContext({document,window,Telegram:window.Telegram,fetch,console:{...console,error(){}},URL,URLSearchParams,atob,AbortSignal,AbortController,setTimeout,clearTimeout,structuredClone,Intl,Set,Number,String,Array,JSON,Date,crypto:{randomUUID:crypto.randomUUID},location:{search:query},navigator:{clipboard:{writeText:async u=>links.push(u)}},localStorage:{getItem:()=>'{broken',setItem(){throw Error('storage denied')}}});
  vm.runInContext(fs.readFileSync(`${__dirname}/../product-sizes.js`,'utf8'),context);
  context.ProductSizes=context.window.ProductSizes;
@@ -54,4 +54,3 @@ const response=(body,status=200)=>({ok:status<400,status,json:async()=>body});
  refresh.run('endSession()');await assert.rejects(refresh.run("request('/rest/v1/products')"),/Сессия завершена/);
  console.log('PASS admin allowlist, authenticated writes, concurrent refresh, expired session denial and zero-row update rejection');
 })().catch(e=>{console.error(e);process.exitCode=1});
-
