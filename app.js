@@ -73,7 +73,7 @@ function render(){
   document.getElementById("filterSummary").classList.toggle("hidden",state.tab!=="catalog"||!document.getElementById("filterSummary").textContent);
   const list=filtered();
   count.textContent=state.tab==="favorites"?`Виш-лист · ${list.length}`:`В каталоге ${list.length} ${list.length===1?"товар":list.length>=2&&list.length<=4?"товара":"товаров"}`;
-  grid.innerHTML=list.length?list.map(p=>`<article class="product" tabindex="0" role="button" data-id="${esc(p.id)}"><div class="photo">${imageOf(p)?`<img src="${esc(imageOf(p))}" alt="${esc(p.name)}" loading="lazy">`:"JP"}<button class="heart ${state.favorites.has(String(p.id))?"is-favorite":""}" aria-label="Виш-лист" aria-pressed="${state.favorites.has(String(p.id))}" data-heart="${esc(p.id)}"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"/></svg></button></div><h3>${esc(p.brand)}</h3><p>${esc(displayName(p))}</p><div class="card-size">${sizesOf(p).length?`${sizesOf(p).length>1?"Размеры":"Размер"}: ${esc(sizesOf(p).join(" · "))}`:"Размер уточняйте"}</div><div class="price">${esc(money(p))}</div><div class="catalog-status ${p.reserved?'is-reserved':onOrder(p)?"on-order":""}">${availabilityLabel(p)}</div><div class="card-delivery">Доставка ${deliveryLabel(p)}</div></article>`).join(""):`<div class="empty">${state.tab==="favorites"?"Ваш виш-лист пока пуст. Нажмите на сердечко у понравившегося товара.":"Здесь пока ничего нет"}</div>`;
+  grid.innerHTML=list.length?list.map(p=>`<article class="product" tabindex="0" role="button" data-id="${esc(p.id)}"><div class="photo">${imageOf(p)?`<img src="${esc(imageOf(p))}" alt="${esc(p.name)}" loading="lazy">`:"JP"}<button class="heart ${state.favorites.has(String(p.id))?"is-favorite":""}" aria-label="Виш-лист" aria-pressed="${state.favorites.has(String(p.id))}" data-heart="${esc(p.id)}"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"/></svg></button></div><h3>${esc(p.brand)}</h3><p>${esc(displayName(p))}</p><div class="card-size">${sizesOf(p).length?`${sizesOf(p).length>1?"Размеры":"Размер"}: ${esc(sizesOf(p).join(" · "))}`:"Размер уточняйте"}</div><div class="card-footer"><div class="price">${esc(money(p))}</div><div class="catalog-status ${p.reserved?'is-reserved':onOrder(p)?"on-order":""}">${availabilityLabel(p)}</div></div><div class="card-delivery">Доставка ${deliveryLabel(p)}</div></article>`).join(""):`<div class="empty">${state.tab==="favorites"?"Ваш виш-лист пока пуст. Нажмите на сердечко у понравившегося товара.":"Здесь пока ничего нет"}</div>`;
 }
 let menuOpenGroup='category';
 let menuCloseTimer=null;
@@ -83,11 +83,11 @@ function renderCatalogMenu(){
   const badge=document.getElementById('menuBadge');badge.textContent=String(labels.length);badge.classList.toggle('hidden',!labels.length);
   const summary=document.getElementById('filterSummary');summary.textContent=labels.join(' · ');summary.classList.toggle('hidden',!labels.length);
   document.getElementById('showMenuProducts').textContent=`Показать товары · ${filtered().length}`;
-  document.getElementById('menuGroups').innerHTML=Object.entries(menuLabels).map(([type,label])=>{
+  document.getElementById('menuGroups').innerHTML=Object.entries(menuLabels).map(([type,label],index)=>{
     const expanded=menuOpenGroup===type;
     const chosen=type==='fulfillment_status'?statusLabels[state[type]]:state[type];
     const choices=type==='size'&&!state.category?'<p class="menu-hint">Сначала выберите категорию — покажем только подходящие размеры.</p>':valuesFor(type).map(v=>`<button type="button" class="menu-choice" data-menu-type="${type}" data-menu-value="${esc(v)}" aria-pressed="${(state[type]===v||(!state[type]&&v==='Все'))}">${esc(type==='fulfillment_status'?(statusLabels[v]||v):v)}</button>`).join('');
-    return `<section class="menu-group"><button type="button" class="menu-group-toggle" data-menu-group="${type}" aria-expanded="${expanded}" aria-controls="menuChoices-${type}"><span>${label}<small>${esc(chosen||'Все')}</small></span><span class="menu-chevron" aria-hidden="true">+</span></button><div id="menuChoices-${type}" class="menu-accordion" ${expanded?'':'inert'}><div class="menu-choices">${choices}</div></div></section>`;
+    return `<section class="menu-group"><button type="button" class="menu-group-toggle" data-menu-group="${type}" aria-expanded="${expanded}" aria-controls="menuChoices-${type}"><span class="menu-index" aria-hidden="true">${String(index+1).padStart(2,'0')}</span><span>${label}<small>${esc(chosen||'Все')}</small></span><span class="menu-chevron" aria-hidden="true">+</span></button><div id="menuChoices-${type}" class="menu-accordion" ${expanded?'':'inert'}><div class="menu-choices">${choices}</div></div></section>`;
   }).join('');
 }
 function setCatalogMenu(open){
@@ -115,7 +115,7 @@ function setCatalogMenu(open){
   menu.classList.add('is-closing');menuCloseTimer=setTimeout(finish,280);
 }
 document.getElementById('openCatalogMenu').onclick=()=>setCatalogMenu(true);
-let pawTimer=null,navPawTimer=null;
+let pawTimer=null,navPawTimer=null,moneyPawTimer=null;
 function grabLogo(){
   const brand=document.querySelector('.brand');
   if(!brand||window.matchMedia?.('(prefers-reduced-motion: reduce)').matches)return;
@@ -130,10 +130,20 @@ function pressNavWithPaw(button){
   if(!paw||!button.getBoundingClientRect||window.matchMedia?.('(prefers-reduced-motion: reduce)').matches)return;
   const box=button.getBoundingClientRect();
   clearTimeout(navPawTimer);paw.classList.remove('is-pressing');
-  paw.style.left=`${box.left+box.width/2-30}px`;
-  paw.style.top=`${box.top+20-66}px`;
+  paw.style.left=`${box.left+box.width/2-15}px`;
+  paw.style.top=`${box.top+20-33}px`;
   void paw.offsetWidth;paw.classList.add('is-pressing');
   navPawTimer=setTimeout(()=>paw.classList.remove('is-pressing'),850);
+}
+function showMoneyPaw(button){
+  const paw=document.getElementById('moneyPaw');
+  if(!paw||!button?.getBoundingClientRect||window.matchMedia?.('(prefers-reduced-motion: reduce)').matches)return;
+  const box=button.getBoundingClientRect(),width=110;
+  clearTimeout(moneyPawTimer);paw.classList.remove('is-presenting');
+  paw.style.left=`${Math.max(8,Math.min(innerWidth-width-8,box.right-width))}px`;
+  paw.style.top=`${Math.max(8,box.top-115)}px`;
+  void paw.offsetWidth;paw.classList.add('is-presenting');
+  moneyPawTimer=setTimeout(()=>paw.classList.remove('is-presenting'),1050);
 }
 ['closeCatalogMenu','menuBackdrop','showMenuProducts'].forEach(id=>document.getElementById(id).onclick=()=>setCatalogMenu(false));
 document.getElementById('resetMenu').onclick=()=>{document.getElementById('reset').onclick();menuOpenGroup='category';renderCatalogMenu()};
@@ -255,7 +265,7 @@ function addToCart(){
   if(sizesOf(p).length>1&&!selectedSize){document.getElementById('sizeHint').textContent='Пожалуйста, выберите размер.';document.querySelector('[data-size]')?.focus();return}
   const size=selectedSize||'',row=cart.find(x=>x.id===String(p.id)&&x.size===size);
   if(row){if(row.quantity>=cartLimit(p)){document.getElementById('shareStatus').textContent=onOrder(p)?'Достигнуто максимальное количество.':'Товар этого размера уже в корзине — в наличии одна штука.';return}row.quantity=Math.min(cartLimit(p),row.quantity+1);row.product=cartSnapshot(p)}else{if(cart.length>=50){document.getElementById('shareStatus').textContent='В корзине максимум 50 позиций.';return}cart.push({id:String(p.id),size,quantity:1,product:cartSnapshot(p)})}
-  saveCart();renderCart();document.querySelector('[data-action="add-cart"]')?.classList.add('motion-pop');document.getElementById('cartBadge').classList.add('motion-pop');document.getElementById('shareStatus').textContent='Товар добавлен в корзину.';
+  showMoneyPaw(document.querySelector('[data-action="add-cart"]'));saveCart();renderCart();document.querySelector('[data-action="add-cart"]')?.classList.add('motion-pop');document.getElementById('cartBadge').classList.add('motion-pop');document.getElementById('shareStatus').textContent='Товар добавлен в корзину.';
 }
 function cartTotals(rows=cart){
   const totals=new Map();let unknown=false;
@@ -268,7 +278,7 @@ function renderCart(){
   const detailCount=document.querySelector('.detail-cart-count');if(detailCount)detailCount.textContent=String(cartCount());
   if(!cart.length){document.getElementById('cartContent').innerHTML='<div class="cart-empty"><p>Ваша корзина пока пуста.</p><button type="button" class="primary" data-cart-action="catalog">Перейти в каталог</button></div>';return}
   const total=cartTotals();
-  document.getElementById('cartContent').innerHTML=`<div class="cart-items">${cart.map((row,i)=>{const p=cartProduct(row),live=products.find(x=>String(x.id)===row.id),valid=live&&(row.size?sizesOf(live).includes(row.size):sizesOf(live).length===0);return `<article class="cart-item"><button type="button" class="cart-photo" data-cart-action="product" data-index="${i}" aria-label="Открыть ${esc(p.brand||'')} ${esc(p.name||'товар')}">${imageOf(p)?`<img src="${esc(imageOf(p))}" alt="${esc(p.name||'')}">`:'J.P'}</button><div class="cart-item-info"><h2>${esc(p.brand||'')}</h2><button type="button" class="cart-name" data-cart-action="product" data-index="${i}">${esc(displayName(p)||'Товар')}</button><p>${row.size?`Размер: ${esc(row.size)}`:'Размер уточняйте'}</p><strong>${esc(money(p)||'Цена по запросу')}</strong><p class="cart-delivery">${valid?`${availabilityLabel(p)} · ${deliveryLabel(p)}`:'Товар или размер сейчас недоступен'}</p><div class="cart-item-controls"><div class="quantity-control" aria-label="Количество"><button type="button" data-cart-action="minus" data-index="${i}" aria-label="Уменьшить количество" ${row.quantity<=1?'disabled':''}>−</button><span>${row.quantity}</span><button type="button" data-cart-action="plus" data-index="${i}" aria-label="Увеличить количество" ${p.reserved||row.quantity>=cartLimit(p)?'disabled':''}>+</button></div><button type="button" class="cart-remove" data-cart-action="remove" data-index="${i}">Удалить</button></div></div></article>`}).join('')}</div><aside class="cart-summary"><h2>Итого</h2><p>${cartCount()} ${cartCount()===1?'вещь':cartCount()<5?'вещи':'вещей'}</p>${total.totals.map(t=>`<strong>${esc(money(t))}</strong>`).join('')}${total.unknown?'<p>Стоимость некоторых товаров уточнит менеджер.</p>':''}<button type="button" class="primary" data-cart-action="checkout" ${checkoutBusy?'disabled':''}>${checkoutBusy?'Проверяем наличие…':'Оформить через менеджера'}</button><p class="checkout-note">Откроется Telegram с вашим заказом. Доставку и оплату согласуем с менеджером.</p></aside>`;
+  document.getElementById('cartContent').innerHTML=`<div class="cart-items">${cart.map((row,i)=>{const p=cartProduct(row),live=products.find(x=>String(x.id)===row.id),valid=live&&(row.size?sizesOf(live).includes(row.size):sizesOf(live).length===0);return `<article class="cart-item"><button type="button" class="cart-photo" data-cart-action="product" data-index="${i}" aria-label="Открыть ${esc(p.brand||'')} ${esc(p.name||'товар')}">${imageOf(p)?`<img src="${esc(imageOf(p))}" alt="${esc(p.name||'')}">`:'J.P'}</button><div class="cart-item-info"><h2>${esc(p.brand||'')}</h2><button type="button" class="cart-name" data-cart-action="product" data-index="${i}">${esc(displayName(p)||'Товар')}</button><p>${row.size?`Размер: ${esc(row.size)}`:'Размер уточняйте'}</p><strong>${esc(money(p)||'Цена по запросу')}</strong><p class="cart-delivery">${valid?`${availabilityLabel(p)} · ${deliveryLabel(p)}`:'Товар или размер сейчас недоступен'}</p><div class="cart-item-controls"><div class="quantity-control" aria-label="Количество"><button type="button" data-cart-action="minus" data-index="${i}" aria-label="Уменьшить количество" ${row.quantity<=1?'disabled':''}>−</button><span>${row.quantity}</span><button type="button" data-cart-action="plus" data-index="${i}" aria-label="Увеличить количество" ${p.reserved||row.quantity>=cartLimit(p)?'disabled':''}>+</button></div><button type="button" class="cart-remove" data-cart-action="remove" data-index="${i}">Удалить</button></div></div></article>`}).join('')}</div><aside class="cart-summary"><div class="order-signature"><span class="order-logo">J.P</span><span>JULI.PROZ<br>PERSONAL SHOPPING</span></div><span class="order-eyebrow">ВАШ ВЫБОР</span><h2>Итого</h2><p class="order-count">${cartCount()} ${cartCount()===1?'вещь':cartCount()<5?'вещи':'вещей'}</p><div class="order-totals">${total.totals.map(t=>`<strong>${esc(money(t))}</strong>`).join('')}</div>${total.unknown?'<p>Стоимость некоторых товаров уточнит менеджер.</p>':''}<button type="button" class="primary" data-cart-action="checkout" ${checkoutBusy?'disabled':''}>${checkoutBusy?'Проверяем наличие…':'Оформить через менеджера'}</button><div class="order-service"><span>01</span><p>Проверим наличие и подтвердим заказ</p><span>02</span><p>Согласуем доставку и способ оплаты</p></div><p class="checkout-note">Ваш персональный менеджер продолжит оформление в Telegram.</p></aside>`;
 }
 async function checkoutCart(){
   if(checkoutBusy||!cart.length)return;checkoutBusy=true;renderCart();const status=document.getElementById('cartStatus');status.textContent='Проверяем наличие и цены…';
@@ -290,7 +300,7 @@ async function checkoutCart(){
 }
 document.getElementById('cartContent').addEventListener('click',e=>{
   const button=e.target.closest('[data-cart-action]');if(!button)return;const action=button.dataset.cartAction;
-  if(action==='catalog'){setTab('catalog');return}if(action==='checkout'){checkoutCart();return}
+  if(action==='catalog'){setTab('catalog');return}if(action==='checkout'){showMoneyPaw(button);checkoutCart();return}
   const index=Number(button.dataset.index),row=cart[index];if(!row)return;
   if(action==='product'){openLinkedProduct(row.id);return}
   if(action==='remove')cart.splice(index,1);else if(action==='plus'&&!cartProduct(row).reserved)row.quantity=Math.min(cartLimit(cartProduct(row)),row.quantity+1);else if(action==='minus')row.quantity=Math.max(1,row.quantity-1);
