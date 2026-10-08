@@ -205,7 +205,7 @@ function addToCart(){
 }
 function cartTotals(rows=cart){
   const totals=new Map();let unknown=false;
-  for(const row of rows){const p=cartProduct(row),price=Number(p.price),currency=String(p.currency||'EUR').toUpperCase();if(p.price==null||p.price===''||!Number.isFinite(price)||price<0){unknown=true;continue}totals.set(currency,(totals.get(currency)||0)+Math.round(price*100)*row.quantity)}
+  for(const row of rows){const p=cartProduct(row),price=Number(p.price),currency=({'€':'EUR','$':'USD','£':'GBP'}[p.currency]||String(p.currency||'').toUpperCase());if(p.price==null||p.price===''||!Number.isFinite(price)||price<0){unknown=true;continue}totals.set(currency,(totals.get(currency)||0)+Math.round(price*100)*row.quantity)}
   return {totals:[...totals].map(([currency,cents])=>({currency,price:cents/100})),unknown};
 }
 function renderCart(){
