@@ -98,6 +98,7 @@ function setCatalogMenu(open){
     menu.classList.remove('hidden','is-closing');
     if(document.body?.style)document.body.style.overflow='hidden';
     document.querySelector('main')?.toggleAttribute?.('inert',true);
+    document.querySelector('.brand')?.toggleAttribute?.('inert',true);
     document.querySelector('.bottom-nav')?.toggleAttribute?.('inert',true);
     renderCatalogMenu();document.getElementById('closeCatalogMenu').focus?.();
     return;
@@ -106,13 +107,27 @@ function setCatalogMenu(open){
     menu.classList.add('hidden');menu.classList.remove('is-closing');menuCloseTimer=null;
     if(document.body?.style)document.body.style.overflow='';
     document.querySelector('main')?.toggleAttribute?.('inert',false);
+    document.querySelector('.brand')?.toggleAttribute?.('inert',false);
     document.querySelector('.bottom-nav')?.toggleAttribute?.('inert',false);
     document.getElementById('openCatalogMenu').focus?.();
   };
   if(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches){finish();return}
   menu.classList.add('is-closing');menuCloseTimer=setTimeout(finish,280);
 }
-document.getElementById('openCatalogMenu').onclick=()=>setCatalogMenu(true);
+let menuHoverTimer=null;
+document.getElementById('openCatalogMenu').onclick=()=>{clearTimeout(menuHoverTimer);setCatalogMenu(true)};
+document.getElementById('openCatalogMenu').addEventListener('mouseenter',()=>{
+  if(window.matchMedia?.('(hover: hover) and (pointer: fine)').matches){
+    menuHoverTimer=setTimeout(()=>{if(document.getElementById('catalogMenu').classList.contains('hidden'))setCatalogMenu(true)},180);
+  }
+});
+document.getElementById('openCatalogMenu').addEventListener('mouseleave',()=>clearTimeout(menuHoverTimer));
+let pawTimer=null;
+document.getElementById('brandPaw').onclick=()=>{
+  const paw=document.getElementById('brandPaw');
+  clearTimeout(pawTimer);paw.classList.add('is-playing');
+  pawTimer=setTimeout(()=>paw.classList.remove('is-playing'),900);
+};
 ['closeCatalogMenu','menuBackdrop','showMenuProducts'].forEach(id=>document.getElementById(id).onclick=()=>setCatalogMenu(false));
 document.getElementById('resetMenu').onclick=()=>{document.getElementById('reset').onclick();menuOpenGroup='category';renderCatalogMenu()};
 document.getElementById('menuGroups').onclick=e=>{
