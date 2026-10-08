@@ -145,3 +145,61 @@ button,input{font:inherit;color:inherit}button{-webkit-appearance:none;appearanc
 .telegram-fullscreen .brand{padding-top:calc(32px + max(var(--tg-safe-area-inset-top,0px),var(--tg-content-safe-area-inset-top,0px)))}
 .telegram-fullscreen .app{padding-top:18px}
 @media(min-width:900px){.brand{padding:32px 40px}.telegram-fullscreen .app{padding-top:24px}}
+
+/* J.P motion: soft entrances, deliberate controls and a signed masthead. */
+:root{--motion-ease:cubic-bezier(.22,1,.36,1)}
+.brand-lockup{display:flex;align-items:baseline;justify-content:center;gap:clamp(12px,3vw,28px)}
+.brand-credit{color:#000;font-size:clamp(14px,2vw,20px);font-weight:500;letter-spacing:.12em;white-space:nowrap}
+.brand-lockup{animation:jp-rise .65s var(--motion-ease) both}
+.catalog-menu-button{position:relative;overflow:hidden;background:var(--brand-pink);border-color:#caadc0;border-radius:16px;box-shadow:0 5px 18px #25394f0c;gap:14px;padding:0 22px;transition:transform .25s var(--motion-ease),box-shadow .25s,background .25s}
+.menu-icon{display:flex;flex-direction:column;justify-content:center;gap:5px;width:22px;height:24px;color:var(--ink)}
+.menu-icon span{display:block;height:2px;width:22px;border-radius:2px;background:currentColor;transition:transform .3s var(--motion-ease),width .3s,opacity .3s}
+.menu-icon span:nth-child(2){width:15px}
+.catalog-menu-button[aria-expanded=true] .menu-icon span:first-child{transform:translateY(7px) rotate(45deg)}
+.catalog-menu-button[aria-expanded=true] .menu-icon span:nth-child(2){opacity:0}
+.catalog-menu-button[aria-expanded=true] .menu-icon span:last-child{transform:translateY(-7px) rotate(-45deg)}
+.search-toggle{border-radius:16px}
+.menu-panel{animation:jp-menu-in .5s var(--motion-ease) both}
+.menu-backdrop{animation:jp-fade .4s ease both}
+.catalog-menu.is-closing .menu-panel{animation:jp-menu-out .28s ease-in both}
+.catalog-menu.is-closing .menu-backdrop{animation:jp-fade .28s ease reverse both}
+.catalog-menu:not(.is-closing) .menu-header,.catalog-menu:not(.is-closing) .audience-tabs,.catalog-menu:not(.is-closing) .menu-group,.catalog-menu:not(.is-closing) .menu-footer{animation:jp-rise .45s var(--motion-ease) both}
+.catalog-menu .audience-tabs{animation-delay:60ms!important}
+.catalog-menu .menu-group:nth-child(1){animation-delay:90ms}
+.catalog-menu .menu-group:nth-child(2){animation-delay:130ms}
+.catalog-menu .menu-group:nth-child(3){animation-delay:170ms}
+.catalog-menu .menu-group:nth-child(4){animation-delay:210ms}
+.catalog-menu .menu-footer{animation-delay:160ms}
+.menu-group-toggle{transition:color .2s}
+.menu-chevron{display:inline-block;transition:transform .3s var(--motion-ease)}
+.menu-group-toggle[aria-expanded=true] .menu-chevron{transform:rotate(45deg)}
+.menu-accordion{display:grid;grid-template-rows:0fr;opacity:0;transition:grid-template-rows .35s var(--motion-ease),opacity .25s}
+.menu-group:has(.menu-group-toggle[aria-expanded=true]) .menu-accordion{grid-template-rows:1fr;opacity:1}
+.menu-accordion>.menu-choices{min-height:0;overflow:hidden;padding:0;transition:padding .35s var(--motion-ease)}
+.menu-group:has(.menu-group-toggle[aria-expanded=true]) .menu-choices{padding-bottom:20px}
+.menu-choice,.audience-tabs button,.menu-close,.primary,.secondary,.search-toggle,.size-options button{transition:background .2s,border-color .2s,transform .2s var(--motion-ease),box-shadow .2s}
+.product,.related-card{transition:transform .3s var(--motion-ease)}
+.photo img,.related-photo img{transition:transform .45s var(--motion-ease)}
+.heart,.detail-wishlist{transition:color .2s,background .2s,transform .2s}
+.bottom-nav button{position:relative;transition:color .25s,background .25s}
+.bottom-nav button::after{content:"";position:absolute;bottom:8px;left:calc(50% - 12px);width:24px;height:2px;background:var(--ink);border-radius:2px;transform:scaleX(0);transition:transform .3s var(--motion-ease)}
+.bottom-nav button.active::after{transform:scaleX(1)}
+.product-modal:not(.hidden) .product-layout,.cart-page:not(.hidden),.search-wrap:not(.hidden),.sheet:not(.hidden) .sheet-card{animation:jp-rise .4s var(--motion-ease) both}
+.motion-pop{animation:jp-pop .36s var(--motion-ease)}
+button:not(:disabled):active{transform:scale(.96)}
+@media(hover:hover) and (pointer:fine){
+  .catalog-menu-button:hover{transform:translateY(-2px);box-shadow:0 8px 24px #25394f1a}
+  .catalog-menu-button:hover .menu-icon span:nth-child(2){width:22px}
+  .product:hover,.related-card:hover{transform:translateY(-4px)}
+  .product:hover .photo img,.related-card:hover img{transform:scale(1.035)}
+  .menu-choice:hover{border-color:var(--brand-blue);background:#eaf0f7}
+  .menu-close:hover{transform:rotate(90deg)}
+}
+@keyframes jp-rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes jp-fade{from{opacity:0}to{opacity:1}}
+@keyframes jp-menu-in{from{transform:translateX(-100%);opacity:.5}to{transform:translateX(0);opacity:1}}
+@keyframes jp-menu-out{from{transform:translateX(0);opacity:1}to{transform:translateX(-100%);opacity:.5}}
+@keyframes jp-pop{0%,100%{transform:scale(1)}45%{transform:scale(1.16)}}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
