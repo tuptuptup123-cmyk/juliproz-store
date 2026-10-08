@@ -17,6 +17,9 @@ END
 $block$;
 COMMENT ON COLUMN public.products.fulfillment_status IS
   'in_stock or on_order. available separately controls catalog visibility.';
+-- Extend column grants only; preserve all existing row policies.
+GRANT SELECT (fulfillment_status) ON public.products TO anon, authenticated;
+GRANT INSERT (fulfillment_status), UPDATE (fulfillment_status) ON public.products TO authenticated;
 NOTIFY pgrst, 'reload schema';
 COMMIT;
 

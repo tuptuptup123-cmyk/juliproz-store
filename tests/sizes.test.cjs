@@ -1,6 +1,8 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm'),path=require('node:path');
 const root=path.resolve(__dirname,'..');
 const sizes=require('../product-sizes.js');
+assert.deepEqual(sizes.parse('18.5 см, регулируемый'),['18.5 см, регулируемый']);
+assert.deepEqual(sizes.parse('Верх L / C80; низ L / 175/74'),['Верх L / C80; низ L / 175/74']);
 assert.deepEqual(sizes.parse('44.5'),['44.5']);assert.deepEqual(sizes.parse('44,5'),['44.5']);assert.deepEqual(sizes.parse('40\n41\n40'),['40','41']);assert.deepEqual(sizes.parse('S, M; L'),['S','M','L']);assert.deepEqual(sizes.parse(null),[]);assert.equal(sizes.serialize('40\n41'),'40; 41');assert.throws(()=>sizes.serialize('X'.repeat(101)));
 const nodes=new Map();function node(id){if(!nodes.has(id))nodes.set(id,{innerHTML:'',textContent:'',value:'',dataset:{},classList:{add(){},remove(){},toggle(){}},addEventListener(){},querySelector(){return null},focus(){}});return nodes.get(id)}
 let rows=[],contactUrl=null;
