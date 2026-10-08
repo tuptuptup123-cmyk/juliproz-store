@@ -115,12 +115,26 @@ function setCatalogMenu(open){
   menu.classList.add('is-closing');menuCloseTimer=setTimeout(finish,280);
 }
 document.getElementById('openCatalogMenu').onclick=()=>setCatalogMenu(true);
-let pawTimer=null;
-document.getElementById('brandPaw').onclick=()=>{
-  const paw=document.getElementById('brandPaw');
-  clearTimeout(pawTimer);paw.classList.add('is-playing');
-  pawTimer=setTimeout(()=>paw.classList.remove('is-playing'),900);
-};
+let pawTimer=null,navPawTimer=null;
+function grabLogo(){
+  const brand=document.querySelector('.brand');
+  if(!brand||window.matchMedia?.('(prefers-reduced-motion: reduce)').matches)return;
+  clearTimeout(pawTimer);brand.classList.remove('is-grabbing');void brand.offsetWidth;
+  brand.classList.add('is-grabbing');
+  pawTimer=setTimeout(()=>brand.classList.remove('is-grabbing'),1600);
+}
+document.getElementById('brandPaw').onclick=grabLogo;
+setTimeout(grabLogo,1200);
+function pressNavWithPaw(button){
+  const paw=document.getElementById('navPaw');
+  if(!paw||!button.getBoundingClientRect||window.matchMedia?.('(prefers-reduced-motion: reduce)').matches)return;
+  const box=button.getBoundingClientRect();
+  clearTimeout(navPawTimer);paw.classList.remove('is-pressing');
+  paw.style.left=`${box.left+box.width/2-30}px`;
+  paw.style.top=`${box.top+20-66}px`;
+  void paw.offsetWidth;paw.classList.add('is-pressing');
+  navPawTimer=setTimeout(()=>paw.classList.remove('is-pressing'),850);
+}
 ['closeCatalogMenu','menuBackdrop','showMenuProducts'].forEach(id=>document.getElementById(id).onclick=()=>setCatalogMenu(false));
 document.getElementById('resetMenu').onclick=()=>{document.getElementById('reset').onclick();menuOpenGroup='category';renderCatalogMenu()};
 document.getElementById('menuGroups').onclick=e=>{
@@ -301,7 +315,7 @@ function openProduct(id){
   document.getElementById("productModal").scrollTop=0;
 }
 document.getElementById("backProduct").onclick=()=>{selectedProduct=null;selectedSize=null;document.getElementById("productModal").classList.add("hidden")};
-document.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>setTab(b.dataset.tab));
+document.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>{setTab(b.dataset.tab);pressNavWithPaw(b)});
 async function openLinkedProduct(id){
   id=String(id);if(/^\d+$/.test(id))id=id.replace(/^0+(?=\d)/,"");
   if(products.some(p=>String(p.id)===String(id))){openProduct(id);return}

@@ -182,8 +182,7 @@ button,input{font:inherit;color:inherit}button{-webkit-appearance:none;appearanc
 .photo img,.related-photo img{transition:transform .45s var(--motion-ease)}
 .heart,.detail-wishlist{transition:color .2s,background .2s,transform .2s}
 .bottom-nav button{position:relative;transition:color .25s,background .25s}
-.bottom-nav button::after{content:"";position:absolute;bottom:8px;left:calc(50% - 12px);width:24px;height:2px;background:var(--ink);border-radius:2px;transform:scaleX(0);transition:transform .3s var(--motion-ease)}
-.bottom-nav button.active::after{transform:scaleX(1)}
+.bottom-nav button::after{content:none}
 .product-modal:not(.hidden) .product-layout,.cart-page:not(.hidden),.search-wrap:not(.hidden),.sheet:not(.hidden) .sheet-card{animation:jp-rise .4s var(--motion-ease) both}
 .motion-pop{animation:jp-pop .36s var(--motion-ease)}
 button:not(:disabled):active{transform:scale(.96)}
@@ -243,3 +242,14 @@ button:not(:disabled):active{transform:scale(.96)}
 }
 .telegram-fullscreen .brand{padding-top:max(var(--tg-safe-area-inset-top,0px),var(--tg-content-safe-area-inset-top,0px))}
 @media(prefers-reduced-motion:reduce){.brand-paw{animation:none!important;transition:none!important}}
+
+/* A brief decorative paw press follows the selected navigation icon. */
+.nav-paw-layer{position:fixed;inset:0;z-index:100;overflow:hidden;pointer-events:none}
+.nav-paw{position:absolute;pointer-events:none;width:140px;height:auto;opacity:0;visibility:hidden;transform-origin:25% 72%;filter:drop-shadow(0 3px 4px #25394f24)}
+.nav-paw.is-pressing{visibility:visible;animation:jp-nav-press .85s var(--motion-ease) both}
+.brand.is-grabbing .brand-paw{z-index:3;animation:jp-paw-grab 1.6s var(--motion-ease) both}
+.brand.is-grabbing .brand-lockup{animation:jp-logo-grab 1.6s var(--motion-ease) both}
+@keyframes jp-nav-press{0%{opacity:0;transform:translate(45px,-65px) rotate(-15deg)}25%{opacity:1;transform:translate(0,0) rotate(0)}40%{opacity:1;transform:translate(-2px,5px) scale(.96)}55%{opacity:1;transform:translate(0,0) rotate(0)}100%{opacity:0;transform:translate(45px,-65px) rotate(-15deg)}}
+@keyframes jp-paw-grab{0%,100%{transform:translate(18px,-12px) rotate(-10deg)}30%{transform:translate(-5px,18px) rotate(-4deg)}48%{transform:translate(0,28px) rotate(-1deg)}66%{transform:translate(-4px,18px) rotate(-4deg)}}
+@keyframes jp-logo-grab{0%,28%,100%{transform:translate(0,0) rotate(0)}48%{transform:translate(5px,10px) rotate(3deg)}66%{transform:translate(0,2px) rotate(-1deg)}}
+@media(prefers-reduced-motion:reduce){.nav-paw{display:none}.brand.is-grabbing .brand-paw,.brand.is-grabbing .brand-lockup{animation:none!important}}
