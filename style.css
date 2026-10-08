@@ -216,7 +216,7 @@ button:not(:disabled):active{transform:scale(.96)}
 .masthead-controls .search-toggle[aria-expanded=true]{background:var(--brand-pink);color:var(--ink)}
 .masthead-controls .menu-badge{color:var(--ink)}
 .masthead-inner>.search-wrap{grid-column:1/-1;grid-row:2;z-index:3;width:min(620px,100%);justify-self:center;margin-top:24px;border-radius:30px;background:var(--bg);height:48px}
-.brand-paw{position:absolute;z-index:1;right:calc(50% - 290px);top:-26px;width:270px;height:220px;background:none;border:0;padding:0;cursor:pointer;transform:translate(18px,-12px) rotate(-10deg);transition:transform .8s var(--motion-ease);animation:jp-paw-arrive 1.1s var(--motion-ease) backwards}
+.brand-paw{position:absolute;z-index:1;right:calc(50% - 254px);top:-26px;width:270px;height:220px;background:none;border:0;padding:0;cursor:pointer;transform:translate(18px,-12px) rotate(-10deg);transition:transform .8s var(--motion-ease);animation:jp-paw-arrive 1.1s var(--motion-ease) backwards}
 .brand-paw img{display:block;width:100%;height:100%;object-fit:contain;pointer-events:none;filter:drop-shadow(0 10px 12px #25394f28)}
 .brand-paw:hover,.brand-paw.is-playing{transform:translate(0,12px) rotate(2deg)}
 .brand-paw:focus-visible{outline:2px solid var(--brand-pink);outline-offset:-24px;border-radius:50%}
@@ -238,7 +238,7 @@ button:not(:disabled):active{transform:scale(.96)}
   .brand{padding:0 16px}.masthead-inner{min-height:164px;gap:0 12px;padding:28px 0}
   .brand .logo{font-size:72px}.masthead-controls .catalog-menu-button{padding:0 13px;gap:8px;font-size:12px;min-height:44px}
   .masthead-controls .search-toggle{width:44px;height:44px}.masthead-controls .menu-icon{width:18px}.masthead-controls .menu-icon span{width:18px}
-  .brand-paw{width:158px;height:160px;top:-30px;right:calc(50% - 172px)}
+  .brand-paw{width:158px;height:160px;top:-30px;right:calc(50% - 152px)}
   .product p{font-size:13px}.product h3{font-size:11px}.grid{gap:28px 12px}
 }
 .telegram-fullscreen .brand{padding-top:max(var(--tg-safe-area-inset-top,0px),var(--tg-content-safe-area-inset-top,0px))}
