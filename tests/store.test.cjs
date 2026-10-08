@@ -28,7 +28,7 @@ const response=(body,status=200)=>({ok:status<400,status,json:async()=>body});
  app.run('state.search="38"');assert.equal(app.run('filtered().length'),1);
  app.get('grid').onclick({target:{closest:s=>s==='[data-heart]'?{dataset:{heart:product.id}}:null},stopPropagation(){}});
  app.run('state.tab="favorites"');assert.equal(app.run('filtered().length'),1);
- assert.match(app.get("productContent").innerHTML,/data-action="contact">Купить<\/button>/);assert.doesNotMatch(app.get("productContent").innerHTML,/data-action="share"/);
+ assert.match(app.get("productContent").innerHTML,/data-action="add-cart"/);assert.doesNotMatch(app.get("productContent").innerHTML,/data-action="share"/);
  const missing=setup('app.js',async()=>response([]),'?product=999');await new Promise(setImmediate);assert.match(missing.get('productContent').innerHTML,/скрыт из каталога/);
  let attempts=0;const retry=setup('app.js',async()=>response(attempts++?[]:{},attempts===1?503:200));await new Promise(setImmediate);assert.match(retry.get('grid').innerHTML,/retryProducts/);await retry.run('loadProducts()');assert.match(retry.get('grid').innerHTML,/Здесь пока ничего нет/);
  const pages=[];const paginated=setup('app.js',async url=>{pages.push(url);return response(pages.length===1?Array.from({length:500},(_,i)=>({...product,id:i})):[])});await new Promise(setImmediate);assert.equal(pages.length,2);assert.match(pages[1],/offset=500/);assert.equal(paginated.run('products.length'),500);
