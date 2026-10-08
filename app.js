@@ -20,8 +20,8 @@ let currentFilter=null,tempValue=null;
 
 function money(p){
   if(p.price===null||p.price===undefined||p.price==="") return "";
-  const symbols={EUR:"€",USD:"$",GBP:"£",AED:"AED",RUB:"₽"};
-  const cur=({"€":"EUR","$":"USD","£":"GBP","₽":"RUB"}[p.currency]||p.currency||"").toUpperCase();
+  const symbols={EUR:"€",USD:"$",GBP:"£",AED:"AED"};
+  const cur=({"€":"EUR","$":"USD","£":"GBP"}[p.currency]||p.currency||"").toUpperCase();
   const n=Number(p.price);
   const amount=Number.isFinite(n)?new Intl.NumberFormat("ru-RU",{maximumFractionDigits:2}).format(n):p.price;
   return symbols[cur]?`${symbols[cur]} ${amount}`:`${amount}${cur?` ${cur}`:""}`;
