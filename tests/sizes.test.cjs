@@ -12,7 +12,7 @@ const run=s=>vm.runInContext(s,context);
 (async()=>{
  await new Promise(r=>setImmediate(r));
  run(`products=[{id:1,brand:'Gucci',name:'Rhyton',category:'Обувь',size:'40; 41; 44.5',description:'<script>test</script>',photos:[]},{id:2,size:'38',photos:[]}];openProduct(1)`);
- assert.equal((node('productContent').innerHTML.match(/data-size=/g)||[]).length,3);assert.doesNotMatch(node('productContent').innerHTML,/product-reference|Артикул:/);assert.match(node('productContent').innerHTML,/&lt;script&gt;/);
+ assert.equal((node('productContent').innerHTML.match(/data-size=/g)||[]).length,3);assert.doesNotMatch(node('productContent').innerHTML,/product-reference|Артикул:/);assert.doesNotMatch(node('productContent').innerHTML,/product-description|<script>|test<\/script>/);assert.match(node('productContent').innerHTML,/product-sourcing/);assert.equal(run('esc("<script>")'),'&lt;script&gt;');
  await run('contact(selectedProduct)');assert.equal(contactUrl,null);assert.match(node('sizeHint').textContent,/выберите/);
  run("selectedSize='41'");rows=[{id:1,brand:'Gucci',name:'Rhyton',size:'40; 41'}];await run('contact(selectedProduct)');assert.match(decodeURIComponent(contactUrl),/размер 41/);
  contactUrl=null;rows=[{id:1,size:'40'}];await run('contact(selectedProduct)');assert.equal(contactUrl,null);assert.match(node('shareStatus').textContent,/больше недоступен/);
