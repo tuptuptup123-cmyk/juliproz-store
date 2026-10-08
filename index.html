@@ -16,17 +16,16 @@
       <div class="brand-line" aria-hidden="true"></div>
     </header>
 
+    <div class="catalog-toolbar">
+    <button id="openCatalogMenu" class="catalog-menu-button" type="button" aria-expanded="false" aria-controls="catalogMenu"><span class="menu-icon" aria-hidden="true">☰</span>Меню каталога<span id="menuBadge" class="menu-badge hidden">0</span></button>
     <section class="search-wrap">
       <span>⌕</span>
       <input id="search" placeholder="Поиск по каталогу..." autocomplete="off" />
     </section>
 
-    <section class="audience-tabs" aria-label="Раздел каталога">
-      <button type="button" data-gender="" aria-pressed="true">Все</button>
-      <button type="button" data-gender="women" aria-pressed="false">Женское</button>
-      <button type="button" data-gender="men" aria-pressed="false">Мужское</button>
-    </section>
-    <section class="filters">
+    </div>
+    <p id="filterSummary" class="filter-summary hidden" aria-live="polite"></p>
+    <section class="filters hidden" aria-hidden="true">
       <button data-filter="category">Категория</button>
       <button data-filter="brand">Бренд</button>
       <button data-filter="size">Размер</button>
@@ -40,6 +39,24 @@
 
     <section id="grid" class="grid"></section>
   </main>
+
+
+  <div id="catalogMenu" class="catalog-menu hidden">
+    <button class="menu-backdrop" id="menuBackdrop" type="button" aria-label="Закрыть меню каталога" tabindex="-1"></button>
+    <section class="menu-panel" role="dialog" aria-modal="true" aria-labelledby="catalogMenuTitle">
+      <header class="menu-header"><div><span class="menu-eyebrow">J.P STORE</span><h2 id="catalogMenuTitle">Ваш выбор</h2></div><button id="closeCatalogMenu" class="menu-close" type="button" aria-label="Закрыть меню каталога">×</button></header>
+      <div class="menu-scroll">
+        <h3 class="menu-section-label">Для кого</h3>
+    <section class="audience-tabs" aria-label="Раздел каталога">
+      <button type="button" data-gender="" aria-pressed="true">Все</button>
+      <button type="button" data-gender="women" aria-pressed="false">Женское</button>
+      <button type="button" data-gender="men" aria-pressed="false">Мужское</button>
+    </section>
+        <div id="menuGroups" class="menu-groups"></div>
+      </div>
+      <footer class="menu-footer"><button id="showMenuProducts" class="primary" type="button">Показать товары</button><button id="resetMenu" class="menu-reset" type="button">Сбросить выбор</button></footer>
+    </section>
+  </div>
 
   <nav class="bottom-nav">
     <button class="active" data-tab="catalog">⌂<small>Каталог</small></button>
