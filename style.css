@@ -109,3 +109,12 @@ button,input{font:inherit;color:inherit}button{-webkit-appearance:none;appearanc
 @media(prefers-reduced-motion:reduce){.menu-panel{animation:none}}
 @media(min-width:900px){.catalog-toolbar{grid-template-columns:220px minmax(0,1fr);margin-bottom:26px}.catalog-menu-button{min-height:48px}.catalog-toolbar .search-wrap{height:48px}}
 @media(max-width:480px){.catalog-toolbar{grid-template-columns:1fr;gap:10px}.catalog-menu-button{justify-content:flex-start;min-height:46px}.catalog-toolbar .search-wrap{height:48px}.menu-header{padding:22px}.menu-scroll{padding:22px}.menu-footer{padding:16px 22px}}
+
+/* Compact menu and search icon share one row on every screen. */
+.catalog-toolbar{grid-template-columns:auto 48px minmax(0,1fr);align-items:center}
+.catalog-menu-button{min-height:48px}
+.search-toggle{display:grid;place-items:center;width:48px;height:48px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink);cursor:pointer}
+.search-toggle[aria-expanded=true]{background:var(--brand-pink);border-color:#caadc0}
+.search-toggle:focus-visible{outline:2px solid var(--brand-blue);outline-offset:3px}
+.catalog-toolbar .search-wrap{height:48px}
+@media(max-width:700px){.catalog-toolbar{grid-template-columns:auto 48px;justify-content:start}.catalog-toolbar .search-wrap{grid-column:1/-1;min-width:0;width:100%}.catalog-toolbar:has(.search-wrap:not(.hidden)){grid-template-columns:minmax(0,1fr) 48px}}
