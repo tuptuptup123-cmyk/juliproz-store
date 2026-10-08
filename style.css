@@ -118,3 +118,5 @@ button,input{font:inherit;color:inherit}button{-webkit-appearance:none;appearanc
 .search-toggle:focus-visible{outline:2px solid var(--brand-blue);outline-offset:3px}
 .catalog-toolbar .search-wrap{height:48px}
 @media(max-width:700px){.catalog-toolbar{grid-template-columns:auto 48px;justify-content:start}.catalog-toolbar .search-wrap{grid-column:1/-1;min-width:0;width:100%}.catalog-toolbar:has(.search-wrap:not(.hidden)){grid-template-columns:minmax(0,1fr) 48px}}
+
+.card-size{font-size:12px;line-height:1.5;color:var(--ink);margin:7px 0;overflow-wrap:anywhere}.card-delivery{font-size:11px;line-height:1.5;color:var(--muted);margin-top:3px}.detail-size{font-size:14px;margin:18px 0}.product{display:flex;flex-direction:column}.product .price{margin-top:auto;padding-top:6px}
