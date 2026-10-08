@@ -61,3 +61,6 @@ button,input{font:inherit;color:inherit}button{-webkit-appearance:none;appearanc
 
 .filters{display:grid;grid-template-columns:repeat(4,minmax(0,1fr))}.filters button{min-width:0;min-height:44px;padding:10px 6px;overflow-wrap:anywhere}
 @media(max-width:480px){.filters{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.telegram-fullscreen .app{padding-top:calc(18px + max(var(--tg-safe-area-inset-top,0px),var(--tg-content-safe-area-inset-top,0px)))}
+.telegram-fullscreen .back{top:calc(14px + max(var(--tg-safe-area-inset-top,0px),var(--tg-content-safe-area-inset-top,0px)))}
+.telegram-fullscreen .product-modal{padding-top:max(var(--tg-safe-area-inset-top,0px),var(--tg-content-safe-area-inset-top,0px))}
