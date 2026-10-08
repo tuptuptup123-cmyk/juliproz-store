@@ -2,7 +2,7 @@ const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const vm=require('node:vm');
 const crypto=require('node:crypto');
-function element(){return {innerHTML:'',textContent:'',value:'',disabled:false,dataset:{},children:[],files:[],classList:{add(){},remove(){},toggle(){}},addEventListener(){},scrollIntoView(){},reset(){}}}
+function element(){return {innerHTML:'',textContent:'',value:'',disabled:false,dataset:{},children:[],files:[],classList:{add(){},remove(){},toggle(){}},addEventListener(){},setAttribute(){},scrollIntoView(){},reset(){}}}
 function setup(file,fetch,query=''){
  const nodes=new Map();const get=id=>{if(!nodes.has(id))nodes.set(id,element());return nodes.get(id)};
  const document={getElementById:get,querySelectorAll:()=>[],querySelector:()=>element(),addEventListener(){}};
