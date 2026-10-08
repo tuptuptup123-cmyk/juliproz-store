@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#f7f4ef" />
+  <meta name="theme-color" content="#6c90b9" />
   <title>J.P Store</title>
   <link rel="stylesheet" href="fonts.css" />
   <link rel="stylesheet" href="style.css" />
@@ -12,13 +12,13 @@
 <body>
   <main class="app">
     <header class="brand">
-      <div class="logo">JP</div>
+      <div class="logo">J.P</div>
       <div class="brand-line" aria-hidden="true"></div>
     </header>
 
     <section class="search-wrap">
       <span>⌕</span>
-      <input id="search" placeholder="Поиск по наличию..." autocomplete="off" />
+      <input id="search" placeholder="Поиск по каталогу..." autocomplete="off" />
     </section>
 
     <section class="filters">
@@ -36,7 +36,7 @@
   </main>
 
   <nav class="bottom-nav">
-    <button class="active" data-tab="catalog">⌂<small>В наличии</small></button>
+    <button class="active" data-tab="catalog">⌂<small>Каталог</small></button>
     <button data-tab="favorites">♡<small>Избранное</small></button>
     <button id="chatBtn">◌<small>Чат</small></button>
   </nav>
@@ -50,12 +50,12 @@
   </div>
 
   <div id="productModal" class="product-modal hidden">
-    <button id="backProduct" class="back">‹</button>
+    <button id="backProduct" class="back" aria-label="Вернуться в каталог">‹</button>
     <div id="productContent"></div>
   </div>
 
   <script src="config.js"></script>
   <script src="image-policy.js"></script>
-  <script src="app.js"></script>
+  <script src="product-sizes.js"></script><script src="app.js"></script>
 </body>
 </html>

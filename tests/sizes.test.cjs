@@ -1,0 +1,25 @@
+const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm'),path=require('node:path');
+const root=path.resolve(__dirname,'..');
+const sizes=require('../product-sizes.js');
+assert.deepEqual(sizes.parse('44.5'),['44.5']);assert.deepEqual(sizes.parse('44,5'),['44.5']);assert.deepEqual(sizes.parse('40\n41\n40'),['40','41']);assert.deepEqual(sizes.parse('S, M; L'),['S','M','L']);assert.deepEqual(sizes.parse(null),[]);assert.equal(sizes.serialize('40\n41'),'40; 41');assert.throws(()=>sizes.serialize('X'.repeat(101)));
+const nodes=new Map();function node(id){if(!nodes.has(id))nodes.set(id,{innerHTML:'',textContent:'',value:'',dataset:{},classList:{add(){},remove(){},toggle(){}},addEventListener(){},querySelector(){return null},focus(){}});return nodes.get(id)}
+let rows=[],contactUrl=null;
+const context=vm.createContext({ProductSizes:sizes,safeProductImage:()=>false,window:{STORE_CONFIG:{url:'https://test.invalid',key:'public'},open:u=>contactUrl=u,addEventListener(){}},document:{getElementById:node,querySelectorAll:()=>[],querySelector:()=>null,addEventListener(){}},localStorage:{getItem:()=>null},location:{search:''},URLSearchParams,AbortSignal,setTimeout,fetch:async()=>({ok:true,json:async()=>rows})});
+vm.runInContext(fs.readFileSync(root+'/app.js','utf8'),context);
+const run=s=>vm.runInContext(s,context);
+(async()=>{
+ await new Promise(r=>setImmediate(r));
+ run(`products=[{id:1,brand:'Gucci',name:'Rhyton',category:'Обувь',size:'40; 41; 44.5',description:'<script>test</script>',photos:[]},{id:2,size:'38',photos:[]}];openProduct(1)`);
+ assert.equal((node('productContent').innerHTML.match(/data-size=/g)||[]).length,3);assert.match(node('productContent').innerHTML,/&lt;script&gt;/);
+ await run('contact(selectedProduct)');assert.equal(contactUrl,null);assert.match(node('sizeHint').textContent,/выберите/);
+ run("selectedSize='41'");rows=[{id:1,brand:'Gucci',name:'Rhyton',size:'40; 41'}];await run('contact(selectedProduct)');assert.match(decodeURIComponent(contactUrl),/размер 41/);
+ contactUrl=null;rows=[{id:1,size:'40'}];await run('contact(selectedProduct)');assert.equal(contactUrl,null);assert.match(node('shareStatus').textContent,/больше недоступен/);
+ run('products=[{id:2,size:"38",photos:[]}];openProduct(2)');assert.equal(node('productContent').innerHTML.includes('data-size='),false);rows=[{id:2,size:'38'}];await run('contact(selectedProduct)');assert.match(decodeURIComponent(contactUrl),/размер 38/);
+ run('products=[{id:1,size:"40; 41"},{id:2,size:"38"}];state.size="41"');assert.equal(run('filtered().length'),1);assert.equal(run('valuesFor("size").includes("41")'),true);
+ run('state.size=null;products=[{id:3,brand:"Gucci",name:"Rhyton",fulfillment_status:"on_order",available:true,photos:[]}];render();openProduct(3)');
+ assert.match(node('grid').innerHTML,/Под заказ/);assert.match(node('productContent').innerHTML,/Под заказ/);assert.match(node('productContent').innerHTML,/>Заказать<\/button>/);
+ rows=[{id:3,name:'Rhyton',fulfillment_status:'on_order'}];await run('contact(selectedProduct)');assert.match(decodeURIComponent(contactUrl),/Статус: Под заказ/);
+ run('products=[{id:4,fulfillment_status:"in_stock",photos:[]}];openProduct(4)');assert.match(node('productContent').innerHTML,/В наличии/);assert.match(node('productContent').innerHTML,/>Купить<\/button>/);
+ const admin=fs.readFileSync(root+'/admin.js','utf8');assert.match(admin,/fulfillment_status:f\.fulfillment_status\.value/);assert.match(admin,/fulfillment_status.value=p\?\.fulfillment_status==='on_order'/);assert.match(admin,/available:!p.available/);
+ console.log('Sizes, card, escaping, contact, stale availability, filters, order status and admin field checks passed.');
+})().catch(e=>{console.error(e);process.exitCode=1});

@@ -4,7 +4,7 @@ const $=id=>document.getElementById(id);
 let session=null,items=[],editing=null,photos=[],busy=false;
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function status(s){$('status').textContent=s}
-const ADMIN_FIELDS='id,created_at,brand,name,category,size,price,currency,image_url,available,description,photos,revision,creation_key';
+const ADMIN_FIELDS='id,created_at,brand,name,category,size,price,currency,image_url,available,fulfillment_status,description,photos,revision,creation_key';
 let sessionEpoch=0,refreshPromise=null,original=null,creationKey=null;
 const stagedUploads=new Map();
 let mfaFactorId=null,mfaMode=null,mfaEnrollment=null,recovering=false;
@@ -102,9 +102,9 @@ $('confirmEmail').onsubmit=async e=>{
  }catch(err){if(epoch===sessionEpoch||!session)status(err.message)}finally{busy=false;b.disabled=false}
 };
 async function load(){const rows=[];for(let offset=0;;offset+=500){const page=await request(`/rest/v1/products?select=${ADMIN_FIELDS}&order=created_at.desc,id.desc&limit=500&offset=${offset}`);rows.push(...page);if(page.length<500)break}items=rows;render()}
-function render(){const q=$('adminSearch').value.toLowerCase();$('inventory').innerHTML=items.filter(p=>`${p.brand} ${p.name} ${p.id}`.toLowerCase().includes(q)).map(p=>`<article>${safeProductImage(p.image_url)?`<img src="${esc(p.image_url)}" alt="">`:''}<div>${esc(p.brand)} · ${esc(p.name)}<br><small>№ ${esc(p.id)} · ${p.available?'В наличии':'Снят с наличия'}</small></div><button data-edit="${esc(p.id)}">Изменить</button><button data-toggle="${esc(p.id)}">${p.available?'Снять':'Вернуть'}</button></article>`).join('')||'<p>Товары не найдены</p>'}
+function render(){const q=$('adminSearch').value.toLowerCase();$('inventory').innerHTML=items.filter(p=>`${p.brand} ${p.name} ${p.id}`.toLowerCase().includes(q)).map(p=>`<article>${safeProductImage(p.image_url)?`<img src="${esc(p.image_url)}" alt="">`:''}<div>${esc(p.brand)} · ${esc(p.name)}<br><small>№ ${esc(p.id)} · ${p.available?(p.fulfillment_status==='on_order'?'Под заказ':'В наличии'):'Скрыт из каталога'}</small></div><button data-edit="${esc(p.id)}">Изменить</button><button data-toggle="${esc(p.id)}">${p.available?'Скрыть':'Показать'}</button></article>`).join('')||'<p>Товары не найдены</p>'}
 $('adminSearch').oninput=render;
-function edit(p){original=p?structuredClone(p):null;creationKey=crypto.randomUUID();stagedUploads.clear();editing=p?.id??null;photos=[...new Set([p?.image_url,...(Array.isArray(p?.photos)?p.photos:[])].filter(safeProductImage))];$('editor').reset();for(const field of ['brand','name','category','size','price','description'])$('editor').elements[field].value=p?.[field]??'';const currency={'€':'EUR','$':'USD','₽':'RUB','£':'GBP'}[p?.currency]||p?.currency||'EUR';$('editor').elements.currency.value=currency;$('editor').elements.available.checked=p?.available??true;$('editorTitle').textContent=editing===null?'Новый товар':`Товар № ${editing}`;$('editor').classList.remove('hidden');renderPhotos();$('editor').scrollIntoView({behavior:'smooth'})}
+function edit(p){original=p?structuredClone(p):null;creationKey=crypto.randomUUID();stagedUploads.clear();editing=p?.id??null;photos=[...new Set([p?.image_url,...(Array.isArray(p?.photos)?p.photos:[])].filter(safeProductImage))];$('editor').reset();for(const field of ['brand','name','category','size','price','description'])$('editor').elements[field].value=p?.[field]??'';$('editor').elements.size.value=ProductSizes.parse(p?.size).join('\n');const currency={'€':'EUR','$':'USD','₽':'RUB','£':'GBP'}[p?.currency]||p?.currency||'EUR';$('editor').elements.currency.value=currency;$('editor').elements.available.checked=p?.available??true;$('editor').elements.fulfillment_status.value=p?.fulfillment_status==='on_order'?'on_order':'in_stock';$('editorTitle').textContent=editing===null?'Новый товар':`Товар № ${editing}`;$('editor').classList.remove('hidden');renderPhotos();$('editor').scrollIntoView({behavior:'smooth'})}
 function renderPhotos(){$('photos').innerHTML=photos.map((x,i)=>`<div><img src="${esc(x)}" alt="Фото ${i+1}"><button type="button" data-cover="${i}">${i===0?'Обложка ✓':'Обложка'}</button><button type="button" data-remove="${i}">Убрать</button></div>`).join('')}
 $('photos').onclick=e=>{if(busy)return;if(e.target.dataset.remove!==undefined)photos.splice(Number(e.target.dataset.remove),1);if(e.target.dataset.cover!==undefined){const [photo]=photos.splice(Number(e.target.dataset.cover),1);photos.unshift(photo)}renderPhotos()};
 $('newProduct').onclick=()=>{if(!busy)edit(null)};
@@ -114,7 +114,7 @@ const writeHeaders={'Content-Type':'application/json',Prefer:'return=representat
 function verifiedRow(rows,id){if(!Array.isArray(rows)||rows.length!==1||(id!=null&&String(rows[0].id)!==String(id)))throw Error('Карточка изменилась или доступ закрыт. Обнови список и открой товар заново.');return rows[0]}
 $('inventory').onclick=async e=>{if(busy)return;const id=e.target.dataset.edit??e.target.dataset.toggle;if(id===undefined)return;const p=items.find(x=>String(x.id)===id);if(!p)return;if(e.target.dataset.edit!==undefined){edit(p);return}busy=true;e.target.disabled=true;try{
  const row=verifiedRow(await request(`/rest/v1/products?id=eq.${encodeURIComponent(id)}&revision=eq.${p.revision}&select=${ADMIN_FIELDS}`,{method:'PATCH',headers:writeHeaders,body:JSON.stringify({available:!p.available})}),id);
- if(row.available!==!p.available)throw Error('Не удалось подтвердить изменение наличия.');await load();status(p.available?'Товар снят с наличия':'Товар возвращён в каталог')
+ if(row.available!==!p.available)throw Error('Не удалось подтвердить изменение наличия.');await load();status(p.available?'Товар скрыт из каталога':'Товар возвращён в каталог')
 }catch(err){status(err.message)}finally{busy=false;e.target.disabled=false}};
 async function preparePhoto(file){
  if(!['image/jpeg','image/png','image/webp'].includes(file.type)||file.size>6*1024*1024)throw Error('Фото должно быть JPG, PNG или WebP, не больше 6 МБ.');
@@ -135,7 +135,8 @@ async function uploadPhoto(file){
 }
 $('editor').onsubmit=async e=>{e.preventDefault();if(busy)return;busy=true;const b=$('save');b.disabled=true;try{
  const f=e.target.elements,files=[...$('uploads').files];
- const payload={brand:f.brand.value.trim(),name:f.name.value.trim(),category:f.category.value.trim(),size:f.size.value.trim()||null,price:f.price.value===''?null:Number(f.price.value),currency:f.currency.value,description:f.description.value.trim()||null,available:f.available.checked};
+ const payload={brand:f.brand.value.trim(),name:f.name.value.trim(),category:f.category.value.trim(),size:ProductSizes.serialize(f.size.value),price:f.price.value===''?null:Number(f.price.value),currency:f.currency.value,description:f.description.value.trim()||null,available:f.available.checked,fulfillment_status:f.fulfillment_status.value};
+ if(!['in_stock','on_order'].includes(payload.fulfillment_status))throw Error('Выбери статус товара.');
  if(!payload.brand||!payload.name||!payload.category)throw Error('Заполни бренд, название и категорию.');
  if(payload.price!==null&&(!Number.isFinite(payload.price)||payload.price<0))throw Error('Проверь цену.');
  if(!['EUR','USD','AED','RUB','GBP'].includes(payload.currency))throw Error('Проверь валюту.');

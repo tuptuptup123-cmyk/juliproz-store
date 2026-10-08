@@ -24,3 +24,35 @@ button,input{font:inherit;color:inherit}button{-webkit-appearance:none;appearanc
 
 .photo,.hero{touch-action:pan-y pinch-zoom}
 .photo img,.hero img{-webkit-user-drag:none;user-select:none}
+
+
+/* Product page: gallery, shopping controls and readable description. */
+.product-modal{padding:0 0 env(safe-area-inset-bottom)}
+.product-layout{max-width:1120px;margin:auto}
+.product-gallery{min-width:0}.hero{height:auto;aspect-ratio:1/1;max-height:65vh}.hero img{padding:7%;object-fit:contain}
+.detail{padding:26px 22px 36px}.detail .brandname{font-weight:600;font-size:13px;text-transform:uppercase;letter-spacing:.12em;margin:18px 0 8px}
+.detail h1{font-family:"DM Sans",sans-serif;font-size:clamp(23px,4vw,32px);line-height:1.25;font-weight:500;overflow-wrap:anywhere;margin:0;letter-spacing:-.025em}
+.detail .detail-price{font-size:25px;font-weight:600;margin:16px 0 24px}
+.product-eyebrow{display:flex;justify-content:space-between;gap:16px;font-size:12px;color:var(--muted)}.product-eyebrow span{color:#52664b}
+.size-selector{border:0;padding:0;margin:0 0 22px;min-width:0}.size-selector legend{font-size:14px;font-weight:600;margin-bottom:12px}.size-options{display:flex;flex-wrap:wrap;gap:9px}
+.size-options button{min-width:52px;min-height:46px;padding:10px 15px;border:1px solid var(--line);background:transparent;border-radius:6px;cursor:pointer;overflow-wrap:anywhere;max-width:100%}
+.size-options button[aria-pressed=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.size-options button:focus-visible,.photo-picker button:focus-visible,.buy:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+.size-hint{font-size:12px;color:var(--muted);margin:10px 0 0}.buy{border-radius:7px;min-height:52px;margin-top:0;font-size:15px}.purchase-note{text-align:center;font-size:12px;color:var(--muted);margin:12px 0 24px}
+.product-description{border-top:1px solid var(--line);padding-top:22px;margin-top:22px}.product-description h2{font-size:15px;font-weight:600;margin:0 0 12px}.product-description p{font-size:14px;line-height:1.7;white-space:pre-wrap;overflow-wrap:anywhere;margin:0;font-weight:400}
+.product-reference{font-size:12px;color:var(--muted);margin-top:22px}.photo-picker{padding:12px 16px;gap:10px}.photo-picker button{border-radius:5px;overflow:hidden}.photo-picker img{display:block;width:65px;height:72px}
+#shareStatus{font-size:13px;line-height:1.5}
+@media(min-width:800px){.product-layout{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:36px;padding:72px 32px 40px}.hero{max-height:none;aspect-ratio:4/5;border-radius:8px}.detail{padding:16px 0}.product-gallery{align-self:start}.back{left:max(16px,calc((100vw - 1120px)/2 + 16px))}}
+
+/* JULI.PROZ palette sampled from the supplied J.P brand reference. */
+:root{--brand-blue:#6c90b9;--brand-pink:#e1c6d7;--bg:#f5f7fb;--ink:#25394f;--muted:#566b82;--line:#d8e1ec;--card:#edf2f8}
+.brand{background:var(--brand-blue);border-radius:12px;padding:24px 16px;margin-bottom:22px;color:#fff}.brand .logo{color:var(--brand-pink);font-size:54px}.brand-line{background:var(--brand-pink);width:72px;opacity:.8}.brand p{color:#fff}.brand a{color:#fff;text-underline-offset:4px}
+.search-wrap{background:#eaf0f7;border:1px solid var(--line);border-radius:10px}.search-wrap input::placeholder{color:var(--muted)}
+.filters button{background:#fff;border-radius:7px;font-size:13px;min-height:44px}.filters button.selected,.options button.selected{background:var(--brand-pink);border-color:#caadc0;color:var(--ink)}
+.photo{background:#edf2f8;border-radius:8px}.heart{background:#ffffffed}.heart.is-favorite{color:#9a496e}.product h3{font-size:14px}.product p{font-size:13px;line-height:1.45;color:var(--muted)}.price{font-size:15px;margin-top:6px}
+.bottom-nav{background:rgba(245,247,251,.97);border-color:var(--line)}.bottom-nav button{color:var(--muted)}.bottom-nav button.active{color:var(--ink);background:#e1c6d74a}.sheet-card{background:var(--bg)}
+.primary{background:var(--brand-pink);color:var(--ink);border-radius:7px}.primary:hover{background:#d8b7cd}.primary:active{background:#cfabc3}.options button{background:#fff;border-radius:7px}.back{background:#ffffffed;color:var(--ink);box-shadow:0 2px 12px #25394f0d}
+.size-options button{background:#fff}.size-options button[aria-pressed=true]{background:var(--brand-pink);border-color:#bd94ad;color:var(--ink)}
+.product-eyebrow span{color:#355875;background:#e5edf6;padding:4px 8px;border-radius:4px}.product-eyebrow{align-items:center}
+.product-description{border-color:var(--line)}
+.catalog-status{font-size:11px;line-height:1.4;color:#355875;margin-top:7px}.catalog-status.on-order{color:#7b4160}.product-eyebrow span.on-order{background:#f0e4ec;color:#7b4160}
