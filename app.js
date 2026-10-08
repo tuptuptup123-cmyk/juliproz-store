@@ -132,6 +132,14 @@ async function loadProducts(quiet=false){
 }
 document.querySelectorAll('[data-gender]').forEach(b=>b.onclick=()=>{state.gender=b.dataset.gender||null;reconcileFilters();render()});
 document.getElementById("search").oninput=e=>{state.search=e.target.value;render()};
+document.getElementById('toggleSearch').onclick=()=>{
+  const field=document.getElementById('catalogSearch');
+  const open=field.classList.contains('hidden');
+  field.classList.toggle('hidden',!open);
+  document.getElementById('toggleSearch').setAttribute('aria-expanded',String(open));
+  if(open)document.getElementById('search').focus?.();
+  else{state.search='';document.getElementById('search').value='';render()}
+};
 document.querySelectorAll("[data-filter]").forEach(b=>b.onclick=()=>openFilter(b.dataset.filter));
 function openFilter(type){
   currentFilter=type;tempValue=state[type];
