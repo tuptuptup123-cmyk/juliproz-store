@@ -8,3 +8,6 @@
 @media(min-width:701px) and (max-width:1050px){.inventory-head{display:none}#inventory article{grid-template-columns:minmax(0,1fr) auto;gap:12px}.product-cell{grid-column:1/-1}.product-size{grid-column:1;grid-row:2}.product-price{grid-column:2;grid-row:2}.product-status{grid-column:1;grid-row:3}.row-actions{grid-column:2;grid-row:3;margin:0}.filter-bar{grid-template-columns:repeat(2,minmax(0,1fr))}.search-label{grid-column:1/-1}.stats-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 
 #editorFields{margin:0;padding:0;border:0;min-width:0}#editorFields:disabled{opacity:.7}
+
+.reserved{color:#946239;background:#fbefdf}.row-actions{flex-wrap:wrap;gap:5px}.row-actions .delete-action{color:#a54a51;border-color:#efd8db}.row-actions .reserve-action{color:#946239;background:#fff8ef;border-color:#ebd6bb}.row-actions button{flex:1 0 auto}
+@media(max-width:1050px){.row-actions{grid-column:1/-1;grid-row:4}.product-status{grid-column:1/-1}}

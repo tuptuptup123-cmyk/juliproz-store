@@ -204,3 +204,5 @@ button:not(:disabled):active{transform:scale(.96)}
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none!important;transition:none!important}
 }
+
+.catalog-status.is-reserved{color:#946239}.purchase-action:disabled{background:#a89983;cursor:default}.purchase-action:disabled:active{transform:none}

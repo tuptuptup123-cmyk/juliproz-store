@@ -20,5 +20,11 @@ run("cart=[];openProduct(8);products=[{...products[0],price:120}];addToCart()");
 // An unspecified-size cart row cannot skip a size added by the administrator.
 fail=false;rows=[{id:9,name:'Товар',size:'',price:100,currency:'EUR',fulfillment_status:'in_stock'}];context.fixture=rows;run('cart=[];products=fixture;openProduct(9);addToCart()');rows=[{...rows[0],size:'42'}];const linksBefore=links.length;await run('checkoutCart()');assert.equal(links.length,linksBefore);assert.match(get('cartStatus').textContent,/недоступны/);assert.match(get('cartContent').innerHTML,/размер сейчас недоступен/);
 run("products=[{id:1,category:'Обувь',brand:'Gucci',gender:'men'},{id:2,category:'Обувь',brand:'Gucci',gender:'unisex'},{id:3,category:'Сумки',brand:'Gucci'},{id:4,category:'Обувь',brand:'Gucci',available:false},{id:5,category:'Обувь',gender:'women'}]");assert.deepEqual(JSON.parse(run('JSON.stringify(relatedProducts(products[0]).map(x=>x.id))')),[2]);assert.match(run('relatedMarkup(products[0])'),/Похожие товары/);
+// Reservation stays visible, prevents adding, and is checked again for old carts.
+rows=[{id:11,name:'На брони',size:'',price:100,currency:'EUR',available:true,fulfillment_status:'in_stock',reserved:true}];context.fixture=rows;
+run('cart=[];products=fixture;openProduct(11);addToCart()');assert.equal(run('cart.length'),0);assert.match(get('productContent').innerHTML,/На брони/);assert.match(get('productContent').innerHTML,/data-action="add-cart"[^>]*disabled/);assert.match(get('shareStatus').textContent,/на брони/);
+rows=[{...rows[0],reserved:false}];context.fixture=rows;run('products=fixture;openProduct(11);addToCart()');assert.equal(run('cart.length'),1);
+rows=[{...rows[0],reserved:true}];const beforeReservation=links.length;await run('checkoutCart()');assert.equal(links.length,beforeReservation);assert.match(get('cartStatus').textContent,/на брони/);assert.equal(run('cart[0].product.reserved'),true);
+rows=[{...rows[0],reserved:false}];await run('checkoutCart()');assert.equal(links.length,beforeReservation+1);
 console.log('PASS cart: sizes, quantities, separate currencies, persistence, changed-price confirmation, unavailable sizes, network failures, wishlist independent of filters, corrupt storage');
 })().catch(e=>{console.error(e);process.exitCode=1});

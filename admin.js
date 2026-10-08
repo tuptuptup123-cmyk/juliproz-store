@@ -5,7 +5,7 @@ const $=id=>document.getElementById(id);
 let session=null,items=[],editing=null,photos=[],busy=false;
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function status(s){$('status').textContent=s; if(s)$('status').scrollIntoView({block:'nearest'})}
-const ADMIN_FIELDS='id,created_at,brand,name,category,size,price,currency,image_url,available,fulfillment_status,gender,description,photos,revision,creation_key';
+const ADMIN_FIELDS='id,created_at,brand,name,category,size,price,currency,image_url,available,fulfillment_status,gender,description,photos,revision,creation_key,reserved';
 let sessionEpoch=0,refreshPromise=null,original=null,creationKey=null;
 const stagedUploads=new Map();
 let mfaFactorId=null,mfaMode=null,mfaEnrollment=null,recovering=false;
@@ -105,8 +105,8 @@ $('confirmEmail').onsubmit=async e=>{
 };
 async function load(){const rows=[];for(let offset=0;;offset+=500){const page=await request(`/rest/v1/products?select=${ADMIN_FIELDS}&order=created_at.desc,id.desc&limit=500&offset=${offset}`);rows.push(...page);if(page.length<500)break}items=rows;render()}
 let activeView='all',editorDirty=false,pendingPreviews=[],previewEpoch=0;
-const viewNames={all:'Все товары',in_stock:'В наличии',on_order:'Под заказ',hidden:'Скрытые товары'};
-function matchesView(p,view){return view==='all'||(view==='hidden'?!p.available:p.available&&(p.fulfillment_status==='on_order'?'on_order':'in_stock')===view)}
+const viewNames={all:'Все товары',in_stock:'В наличии',on_order:'Под заказ',hidden:'Скрытые товары',reserved:'На брони'};
+function matchesView(p,view){return view==='all'||(view==='reserved'?p.reserved===true:view==='hidden'?!p.available:p.available&&!p.reserved&&(p.fulfillment_status==='on_order'?'on_order':'in_stock')===view)}
 function formatPrice(p){if(p.price===null||p.price===undefined||p.price==='')return 'Цена по запросу';const c={'€':'EUR','$':'USD','£':'GBP'}[p.currency]||p.currency||'EUR';try{return new Intl.NumberFormat('ru-RU',{style:'currency',currency:c,maximumFractionDigits:2}).format(Number(p.price))}catch{return String(p.price)+' '+c}}
 function render(){
  const q=$('adminSearch').value.trim().toLowerCase(),category=$('categoryFilter').value,gender=$('genderFilter').value;
@@ -118,7 +118,7 @@ function render(){
  const categories=[...new Set(items.map(p=>p.category).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'ru'));
  $('categoryFilter').innerHTML='<option value="">Все категории</option>'+categories.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join('');$('categoryFilter').value=currentCategory;
  $('brands').innerHTML=[...new Set(items.map(p=>p.brand).filter(Boolean))].sort().map(b=>`<option value="${esc(b)}"></option>`).join('');
- $('inventory').innerHTML=filtered.map(p=>`<article><div class="product-cell">${safeProductImage(p.image_url)?`<img class="product-thumb" src="${esc(p.image_url)}" alt="${esc(p.name)}" loading="lazy">`:'<span class="product-thumb thumb-placeholder">J.P</span>'}<div class="product-title"><strong>${esc(p.brand)}</strong><p>${esc(p.name)}</p><small>№ ${esc(p.id)} · ${esc(p.category)} · ${{women:'Женское',men:'Мужское',unisex:'Унисекс'}[p.gender]||'Унисекс'}</small></div></div><div class="product-size">${esc(p.size||'Размер уточняйте')}</div><div class="product-price">${esc(formatPrice(p))}</div><div class="product-status"><span class="badge ${!p.available?'concealed':p.fulfillment_status==='on_order'?'order':'stock'}">${!p.available?'Скрыт':p.fulfillment_status==='on_order'?'Под заказ':'В наличии'}</span></div><div class="row-actions"><button type="button" data-edit="${esc(p.id)}" aria-label="Изменить ${esc(p.brand)} ${esc(p.name)}">Изменить</button><button type="button" data-toggle="${esc(p.id)}" aria-label="${p.available?'Скрыть':'Показать'} ${esc(p.brand)} ${esc(p.name)}">${p.available?'Скрыть':'Показать'}</button></div></article>`).join('')||'<div class="empty-state"><h2>Товары не найдены</h2><p>Измените поиск или фильтры.</p></div>';
+ $('inventory').innerHTML=filtered.map(p=>`<article><div class="product-cell">${safeProductImage(p.image_url)?`<img class="product-thumb" src="${esc(p.image_url)}" alt="${esc(p.name)}" loading="lazy">`:'<span class="product-thumb thumb-placeholder">J.P</span>'}<div class="product-title"><strong>${esc(p.brand)}</strong><p>${esc(p.name)}</p><small>№ ${esc(p.id)} · ${esc(p.category)} · ${{women:'Женское',men:'Мужское',unisex:'Унисекс'}[p.gender]||'Унисекс'}</small></div></div><div class="product-size">${esc(p.size||'Размер уточняйте')}</div><div class="product-price">${esc(formatPrice(p))}</div><div class="product-status"><span class="badge ${!p.available?'concealed':p.reserved?'reserved':p.fulfillment_status==='on_order'?'order':'stock'}">${!p.available?'Скрыт':p.reserved?'На брони':p.fulfillment_status==='on_order'?'Под заказ':'В наличии'}</span></div><div class="row-actions"><button type="button" data-edit="${esc(p.id)}" aria-label="Изменить ${esc(p.brand)} ${esc(p.name)}">Изменить</button><button type="button" data-toggle="${esc(p.id)}" aria-label="${p.available?'Скрыть':'Показать'} ${esc(p.brand)} ${esc(p.name)}">${p.available?'Скрыть':'Показать'}</button><button type="button" data-reserve="${esc(p.id)}" class="reserve-action">${p.reserved?'Снять бронь':'Бронь'}</button><button type="button" data-delete="${esc(p.id)}" class="delete-action" aria-label="Удалить ${esc(p.brand)} ${esc(p.name)}">Удалить</button></div></article>`).join('')||'<div class="empty-state"><h2>Товары не найдены</h2><p>Измените поиск или фильтры.</p></div>';
 }
 function showInventory(){editorDirty=false;pendingPreviews=[];previewEpoch++;$('editor').classList.add('hidden');$('inventoryPanel').classList.remove('hidden');}
 function leaveEditor(){if(busy)return false;if(editorDirty&&!confirm('Выйти без сохранения изменений?'))return false;showInventory();return true}
@@ -131,8 +131,8 @@ function updatePreview(){
  $('previewBrand').textContent=f.brand.value.trim()||'БРЕНД';$('previewName').textContent=f.name.value.trim()||'Название товара';
  $('previewSize').textContent=f.size.value.trim()?'Размер: '+ProductSizes.parse(f.size.value).join(' / '):'Размер уточняйте';
  $('previewPrice').textContent=formatPrice({price:f.price.value,currency:f.currency.value});
- const onOrder=f.fulfillment_status.value==='on_order',visible=f.available.checked;
- $('previewAvailability').textContent=!visible?'Скрыт из каталога':onOrder?'Под заказ':'В наличии';$('previewAvailability').className='badge '+(!visible?'concealed':onOrder?'order':'stock');
+ const onOrder=f.fulfillment_status.value==='on_order',visible=f.available.checked,reserved=f.reserved?.checked;
+ $('previewAvailability').textContent=!visible?'Скрыт из каталога':reserved?'На брони':onOrder?'Под заказ':'В наличии';$('previewAvailability').className='badge '+(!visible?'concealed':reserved?'reserved':onOrder?'order':'stock');
  const delivery=onOrder?'10–14':'7–10';$('previewDelivery').textContent=`Доставка ${delivery} рабочих дней`;$('deliveryHint').textContent=`Доставка: ${delivery} рабочих дней.`;
  $('saveHint').textContent=visible?'После сохранения карточка будет видна покупателям.':'После сохранения карточка останется скрытой.';
  const image=photos[0]||pendingPreviews[0]?.src;
@@ -140,7 +140,7 @@ function updatePreview(){
 }
 $('editor').addEventListener('input',()=>{editorDirty=true;updatePreview()});$('editor').addEventListener('change',()=>{editorDirty=true;updatePreview()});
 window.addEventListener('beforeunload',e=>{if(editorDirty||busy){e.preventDefault();e.returnValue=''}});
-function edit(p){window.PhotoStudio?.close();if(editorDirty&&!confirm('Открыть другую карточку без сохранения изменений?'))return;editorDirty=false;pendingPreviews=[];previewEpoch++;$('uploads').value='';$('photoUrl').value='';status('');original=p?structuredClone(p):null;creationKey=crypto.randomUUID();stagedUploads.clear();editing=p?.id??null;photos=[...new Set([p?.image_url,...(Array.isArray(p?.photos)?p.photos:[])].filter(safeProductImage))];$('editor').reset();for(const field of ['brand','name','category','size','price','description'])$('editor').elements[field].value=p?.[field]??'';$('editor').elements.size.value=ProductSizes.parse(p?.size).join('\n');const currency={'€':'EUR','$':'USD','£':'GBP'}[p?.currency]||p?.currency||'EUR';$('editor').elements.currency.value=currency;$('editor').elements.available.checked=p?.available??true;$('editor').elements.fulfillment_status.value=p?.fulfillment_status==='on_order'?'on_order':'in_stock';$('editor').elements.gender.value=['women','men','unisex'].includes(p?.gender)?p.gender:'unisex';$('editorTitle').textContent=editing===null?'Новый товар':`Товар № ${editing}`;$('editorRef').textContent=editing===null?'СОЗДАНИЕ КАРТОЧКИ':`АРТИКУЛ ${editing}`;$('inventoryPanel').classList.add('hidden');$('editor').classList.remove('hidden');renderPhotos();updatePreview();$('editor').scrollIntoView({behavior:'smooth',block:'start'});$('editor').elements.brand.focus({preventScroll:true})}
+function edit(p){window.PhotoStudio?.close();if(editorDirty&&!confirm('Открыть другую карточку без сохранения изменений?'))return;editorDirty=false;pendingPreviews=[];previewEpoch++;$('uploads').value='';$('photoUrl').value='';status('');original=p?structuredClone(p):null;creationKey=crypto.randomUUID();stagedUploads.clear();editing=p?.id??null;photos=[...new Set([p?.image_url,...(Array.isArray(p?.photos)?p.photos:[])].filter(safeProductImage))];$('editor').reset();for(const field of ['brand','name','category','size','price','description'])$('editor').elements[field].value=p?.[field]??'';$('editor').elements.size.value=ProductSizes.parse(p?.size).join('\n');const currency={'€':'EUR','$':'USD','£':'GBP'}[p?.currency]||p?.currency||'EUR';$('editor').elements.currency.value=currency;$('editor').elements.available.checked=p?.available??true;$('editor').elements.reserved.checked=p?.reserved??false;$('editor').elements.fulfillment_status.value=p?.fulfillment_status==='on_order'?'on_order':'in_stock';$('editor').elements.gender.value=['women','men','unisex'].includes(p?.gender)?p.gender:'unisex';$('editorTitle').textContent=editing===null?'Новый товар':`Товар № ${editing}`;$('editorRef').textContent=editing===null?'СОЗДАНИЕ КАРТОЧКИ':`АРТИКУЛ ${editing}`;$('inventoryPanel').classList.add('hidden');$('editor').classList.remove('hidden');renderPhotos();updatePreview();$('editor').scrollIntoView({behavior:'smooth',block:'start'});$('editor').elements.brand.focus({preventScroll:true})}
 function renderPhotos(){
  $('photos').innerHTML=photos.map((x,i)=>`<div class="photo-tile"><img src="${esc(x)}" alt="Фото ${i+1}"><button type="button" class="${i===0?'cover-selected':''}" data-cover="${i}">${i===0?'Обложка ✓':'Сделать обложкой'}</button><button type="button" data-remove="${i}" aria-label="Убрать фото ${i+1}">Убрать</button></div>`).join('')+pendingPreviews.map((p,i)=>`<div class="photo-tile"><img src="${esc(p.src)}" alt="${esc(p.name)}"><span class="pending-label">${photos.length===0&&i===0?'Обложка · ':''}${p.state?(p.reviewed?'Проверено ✓':'Проверьте обработку'):'Оригинал'}</span><button type="button" data-studio="${i}">${p.state?'Редактировать фото':'Оформить фото'}</button><button type="button" class="pending-photo-remove" data-pending-remove="${i}" aria-label="Убрать новое фото ${i+1}">Убрать</button></div>`).join('');updatePreview();
 }
@@ -185,10 +185,19 @@ $('cancel').onclick=leaveEditor;$('backToCatalog').onclick=leaveEditor;
 $('addUrl').onclick=()=>{if(busy)return;try{const u=new URL($('photoUrl').value);if(!safeProductImage(u.href))throw Error();if(photos.length+$('uploads').files.length>=20){status('Максимум 20 фотографий.');return}if(!photos.includes(u.href))photos.push(u.href);$('photoUrl').value='';editorDirty=true;renderPhotos()}catch{status('Разрешены фото магазина и его хранилища. Для других фото используй загрузку файла.')}};
 const writeHeaders={'Content-Type':'application/json',Prefer:'return=representation'};
 function verifiedRow(rows,id){if(!Array.isArray(rows)||rows.length!==1||(id!=null&&String(rows[0].id)!==String(id)))throw Error('Карточка изменилась или доступ закрыт. Обнови список и открой товар заново.');return rows[0]}
-$('inventory').onclick=async e=>{if(busy)return;const id=e.target.dataset.edit??e.target.dataset.toggle;if(id===undefined)return;const p=items.find(x=>String(x.id)===id);if(!p)return;if(e.target.dataset.edit!==undefined){edit(p);return}busy=true;e.target.disabled=true;try{
- const row=verifiedRow(await request(`/rest/v1/products?id=eq.${encodeURIComponent(id)}&revision=eq.${p.revision}&select=${ADMIN_FIELDS}`,{method:'PATCH',headers:writeHeaders,body:JSON.stringify({available:!p.available})}),id);
- if(row.available!==!p.available)throw Error('Не удалось подтвердить изменение наличия.');await load();status(p.available?'Товар скрыт из каталога':'Товар возвращён в каталог')
-}catch(err){status(err.message)}finally{busy=false;e.target.disabled=false}};
+$('inventory').onclick=async e=>{if(busy)return;const button=e.target.closest?.('button')||e.target;
+ const id=button.dataset.edit??button.dataset.toggle??button.dataset.reserve??button.dataset.delete;if(id===undefined)return;const p=items.find(x=>String(x.id)===id);if(!p)return;
+ if(button.dataset.edit!==undefined){edit(p);return}
+ const deleting=button.dataset.delete!==undefined,reserving=button.dataset.reserve!==undefined;
+ if(deleting&&!confirm(`Удалить «${p.brand} ${p.name}» (№ ${p.id})? Карточка будет удалена из магазина. Это действие нельзя отменить.`))return;
+ busy=true;button.disabled=true;
+ try{
+  const change=reserving?{reserved:!p.reserved}:{available:!p.available};
+  const row=verifiedRow(await request(`/rest/v1/products?id=eq.${encodeURIComponent(id)}&revision=eq.${p.revision}&select=${ADMIN_FIELDS}`,{method:deleting?'DELETE':'PATCH',headers:writeHeaders,...(deleting?{}:{body:JSON.stringify(change)})}),id);
+  if(!deleting&&Object.entries(change).some(([k,v])=>row[k]!==v))throw Error('Не удалось подтвердить изменение. Обновите список.');
+  await load();status(deleting?'Товар удалён':reserving?(change.reserved?'Товар на брони — покупка заблокирована':p.available?'Бронь снята — товар снова можно купить':'Бронь снята. Товар остаётся скрытым'):(change.available?'Товар возвращён в каталог':'Товар скрыт из каталога'));
+ }catch(err){status(err.message)}finally{busy=false;button.disabled=false}
+};
 async function preparePhoto(file){
  if(!['image/jpeg','image/png','image/webp'].includes(file.type)||file.size>6*1024*1024)throw Error('Фото должно быть JPG, PNG или WebP, не больше 6 МБ.');
  let bitmap;try{bitmap=await createImageBitmap(file)}catch{throw Error('Не удалось прочитать фото.')}
@@ -208,7 +217,7 @@ async function uploadPhoto(file){
 }
 $('editor').onsubmit=async e=>{e.preventDefault();if(busy)return;busy=true;const b=$('save');b.disabled=true;$('editorFields').disabled=true;try{
  const f=e.target.elements,files=[...$('uploads').files];
- const payload={brand:f.brand.value.trim(),name:f.name.value.trim(),category:f.category.value.trim(),size:ProductSizes.serialize(f.size.value),price:f.price.value===''?null:Number(f.price.value),currency:f.currency.value,description:f.description.value.trim()||null,available:f.available.checked,fulfillment_status:f.fulfillment_status.value,gender:f.gender.value};
+ const payload={brand:f.brand.value.trim(),name:f.name.value.trim(),category:f.category.value.trim(),size:ProductSizes.serialize(f.size.value),price:f.price.value===''?null:Number(f.price.value),currency:f.currency.value,description:f.description.value.trim()||null,available:f.available.checked,fulfillment_status:f.fulfillment_status.value,gender:f.gender.value,reserved:f.reserved?.checked===true};
  if(!['women','men','unisex'].includes(payload.gender))throw Error('Выбери раздел товара.');
  if(!['in_stock','on_order'].includes(payload.fulfillment_status))throw Error('Выбери статус товара.');
  if(!payload.brand||!payload.name||!payload.category)throw Error('Заполни бренд, название и категорию.');
