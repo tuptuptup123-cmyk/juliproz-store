@@ -17,10 +17,11 @@
     </header>
 
     <div class="catalog-toolbar">
-    <button id="openCatalogMenu" class="catalog-menu-button" type="button" aria-expanded="false" aria-controls="catalogMenu"><span class="menu-icon" aria-hidden="true">☰</span>Меню каталога<span id="menuBadge" class="menu-badge hidden">0</span></button>
-    <section class="search-wrap">
+    <button id="openCatalogMenu" class="catalog-menu-button" type="button" aria-expanded="false" aria-controls="catalogMenu"><span class="menu-icon" aria-hidden="true">☰</span>Меню<span id="menuBadge" class="menu-badge hidden">0</span></button>
+    <button id="toggleSearch" class="search-toggle" type="button" aria-label="Поиск по каталогу" aria-expanded="false" aria-controls="catalogSearch"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg></button>
+    <section id="catalogSearch" class="search-wrap hidden">
       <span>⌕</span>
-      <input id="search" placeholder="Поиск по каталогу..." autocomplete="off" />
+      <input id="search" aria-label="Поиск по каталогу" placeholder="Поиск по каталогу..." autocomplete="off" />
     </section>
 
     </div>
