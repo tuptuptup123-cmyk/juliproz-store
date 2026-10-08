@@ -21,10 +21,16 @@
       <input id="search" placeholder="Поиск по каталогу..." autocomplete="off" />
     </section>
 
+    <section class="audience-tabs" aria-label="Раздел каталога">
+      <button type="button" data-gender="" aria-pressed="true">Все</button>
+      <button type="button" data-gender="women" aria-pressed="false">Женское</button>
+      <button type="button" data-gender="men" aria-pressed="false">Мужское</button>
+    </section>
     <section class="filters">
       <button data-filter="category">Категория</button>
       <button data-filter="brand">Бренд</button>
       <button data-filter="size">Размер</button>
+      <button data-filter="fulfillment_status">Наличие</button>
     </section>
 
     <section class="catalog-head">
