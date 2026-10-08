@@ -1,0 +1,5 @@
+vendor/photo-editor/*.wasm
+vendor/photo-editor/*.mjs
+vendor/photo-editor/*.onnx
+vendor/photo-editor/ort.min.js
+browser-qa/

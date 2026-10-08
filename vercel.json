@@ -37,8 +37,17 @@
           "value": "camera=(), microphone=(), geolocation=()"
         }
       ]
+    },
+    {
+      "source": "/photo-worker.js",
+      "headers": [
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; connect-src 'self'; object-src 'none'; base-uri 'none'"
+        }
+      ]
     }
   ],
-  "buildCommand": "node scripts/configure-telegram.cjs",
+  "buildCommand": "node scripts/prepare-photo-runtime.cjs && node scripts/configure-telegram.cjs",
   "outputDirectory": "."
 }
