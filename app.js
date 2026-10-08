@@ -76,6 +76,7 @@ function render(){
   grid.innerHTML=list.length?list.map(p=>`<article class="product" tabindex="0" role="button" data-id="${esc(p.id)}"><div class="photo">${imageOf(p)?`<img src="${esc(imageOf(p))}" alt="${esc(p.name)}" loading="lazy">`:"JP"}<button class="heart ${state.favorites.has(String(p.id))?"is-favorite":""}" aria-label="Виш-лист" aria-pressed="${state.favorites.has(String(p.id))}" data-heart="${esc(p.id)}"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"/></svg></button></div><h3>${esc(p.brand)}</h3><p>${esc(displayName(p))}</p><div class="card-size">${sizesOf(p).length?`${sizesOf(p).length>1?"Размеры":"Размер"}: ${esc(sizesOf(p).join(" · "))}`:"Размер уточняйте"}</div><div class="price">${esc(money(p))}</div><div class="catalog-status ${onOrder(p)?"on-order":""}">${availabilityLabel(p)}</div><div class="card-delivery">Доставка ${deliveryLabel(p)}</div></article>`).join(""):`<div class="empty">${state.tab==="favorites"?"Ваш виш-лист пока пуст. Нажмите на сердечко у понравившегося товара.":"Здесь пока ничего нет"}</div>`;
 }
 let menuOpenGroup='category';
+let menuCloseTimer=null;
 const menuLabels={category:'Категория',size:'Размер',brand:'Бренд',fulfillment_status:'Наличие'};
 function renderCatalogMenu(){
   const labels=[state.gender?({men:'Мужское',women:'Женское'}[state.gender]):null,state.category,state.brand,state.size,state.fulfillment_status?statusLabels[state.fulfillment_status]:null].filter(Boolean);
@@ -86,24 +87,45 @@ function renderCatalogMenu(){
     const expanded=menuOpenGroup===type;
     const chosen=type==='fulfillment_status'?statusLabels[state[type]]:state[type];
     const choices=type==='size'&&!state.category?'<p class="menu-hint">Сначала выберите категорию — покажем только подходящие размеры.</p>':valuesFor(type).map(v=>`<button type="button" class="menu-choice" data-menu-type="${type}" data-menu-value="${esc(v)}" aria-pressed="${(state[type]===v||(!state[type]&&v==='Все'))}">${esc(type==='fulfillment_status'?(statusLabels[v]||v):v)}</button>`).join('');
-    return `<section class="menu-group"><button type="button" class="menu-group-toggle" data-menu-group="${type}" aria-expanded="${expanded}" aria-controls="menuChoices-${type}"><span>${label}<small>${esc(chosen||'Все')}</small></span><span class="menu-chevron" aria-hidden="true">${expanded?'−':'+'}</span></button><div id="menuChoices-${type}" class="menu-choices ${expanded?'':'hidden'}">${choices}</div></section>`;
+    return `<section class="menu-group"><button type="button" class="menu-group-toggle" data-menu-group="${type}" aria-expanded="${expanded}" aria-controls="menuChoices-${type}"><span>${label}<small>${esc(chosen||'Все')}</small></span><span class="menu-chevron" aria-hidden="true">+</span></button><div id="menuChoices-${type}" class="menu-accordion" ${expanded?'':'inert'}><div class="menu-choices">${choices}</div></div></section>`;
   }).join('');
 }
 function setCatalogMenu(open){
-  document.getElementById('catalogMenu').classList.toggle('hidden',!open);
+  const menu=document.getElementById('catalogMenu');
+  if(menuCloseTimer!==null){clearTimeout(menuCloseTimer);menuCloseTimer=null}
   document.getElementById('openCatalogMenu').setAttribute('aria-expanded',String(open));
-  if(document.body?.style)document.body.style.overflow=open?'hidden':'';
-  document.querySelector('main')?.toggleAttribute?.('inert',open);
-  document.querySelector('.bottom-nav')?.toggleAttribute?.('inert',open);
-  if(open){renderCatalogMenu();document.getElementById('closeCatalogMenu').focus?.()}
-  else document.getElementById('openCatalogMenu').focus?.();
+  if(open){
+    menu.classList.remove('hidden','is-closing');
+    if(document.body?.style)document.body.style.overflow='hidden';
+    document.querySelector('main')?.toggleAttribute?.('inert',true);
+    document.querySelector('.bottom-nav')?.toggleAttribute?.('inert',true);
+    renderCatalogMenu();document.getElementById('closeCatalogMenu').focus?.();
+    return;
+  }
+  const finish=()=>{
+    menu.classList.add('hidden');menu.classList.remove('is-closing');menuCloseTimer=null;
+    if(document.body?.style)document.body.style.overflow='';
+    document.querySelector('main')?.toggleAttribute?.('inert',false);
+    document.querySelector('.bottom-nav')?.toggleAttribute?.('inert',false);
+    document.getElementById('openCatalogMenu').focus?.();
+  };
+  if(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches){finish();return}
+  menu.classList.add('is-closing');menuCloseTimer=setTimeout(finish,280);
 }
 document.getElementById('openCatalogMenu').onclick=()=>setCatalogMenu(true);
 ['closeCatalogMenu','menuBackdrop','showMenuProducts'].forEach(id=>document.getElementById(id).onclick=()=>setCatalogMenu(false));
 document.getElementById('resetMenu').onclick=()=>{document.getElementById('reset').onclick();menuOpenGroup='category';renderCatalogMenu()};
 document.getElementById('menuGroups').onclick=e=>{
   const group=e.target.closest('[data-menu-group]');
-  if(group){menuOpenGroup=menuOpenGroup===group.dataset.menuGroup?null:group.dataset.menuGroup;renderCatalogMenu();document.querySelector(`[data-menu-group="${group.dataset.menuGroup}"]`)?.focus?.();return}
+  if(group){
+    menuOpenGroup=menuOpenGroup===group.dataset.menuGroup?null:group.dataset.menuGroup;
+    document.querySelectorAll('[data-menu-group]').forEach(button=>{
+      const expanded=button.dataset.menuGroup===menuOpenGroup;
+      button.setAttribute('aria-expanded',String(expanded));
+      document.getElementById(`menuChoices-${button.dataset.menuGroup}`).toggleAttribute('inert',!expanded);
+    });
+    return;
+  }
   const option=e.target.closest('[data-menu-type]');if(!option)return;
   const type=option.dataset.menuType,value=option.dataset.menuValue;
   state[type]=value==='Все'?null:value;
@@ -115,7 +137,7 @@ document.addEventListener('keydown',e=>{
   const menu=document.getElementById('catalogMenu');if(menu.classList.contains('hidden'))return;
   if(e.key==='Escape'){e.preventDefault();setCatalogMenu(false);return}
   if(e.key==='Tab'){
-    const focusable=[...menu.querySelectorAll('button:not([tabindex="-1"])')].filter(b=>!b.closest('.hidden'));
+    const focusable=[...menu.querySelectorAll('button:not([tabindex="-1"])')].filter(b=>!b.closest('.hidden,[inert]'));
     const first=focusable[0],last=focusable[focusable.length-1];
     if(e.shiftKey&&document.activeElement===first){e.preventDefault();last?.focus()}
     else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first?.focus()}
@@ -195,7 +217,11 @@ function setTab(tab){
 function toggleWishlist(id){
   if(id==null)return;id=String(id);state.favorites.has(id)?state.favorites.delete(id):state.favorites.add(id);
   try{localStorage.setItem('jpFav',JSON.stringify([...state.favorites]))}catch{}
-  render();const button=document.querySelector('.detail-wishlist');if(button&&selectedProduct){const saved=state.favorites.has(String(selectedProduct.id));button.setAttribute('aria-pressed',String(saved));button.classList.toggle('is-saved',saved)}
+  render();
+  const heart=[...grid.querySelectorAll?.('[data-heart]')||[]].find(b=>b.dataset.heart===id);
+  heart?.classList.add('motion-pop');
+  document.querySelector('.detail-wishlist')?.classList.add('motion-pop');
+  const button=document.querySelector('.detail-wishlist');if(button&&selectedProduct){const saved=state.favorites.has(String(selectedProduct.id));button.setAttribute('aria-pressed',String(saved));button.classList.toggle('is-saved',saved)}
 }
 function addToCart(){
   if(!selectedProduct)return;
@@ -206,7 +232,7 @@ function addToCart(){
   if(sizesOf(p).length>1&&!selectedSize){document.getElementById('sizeHint').textContent='Пожалуйста, выберите размер.';document.querySelector('[data-size]')?.focus();return}
   const size=selectedSize||'',row=cart.find(x=>x.id===String(p.id)&&x.size===size);
   if(row){if(row.quantity>=cartLimit(p)){document.getElementById('shareStatus').textContent=onOrder(p)?'Достигнуто максимальное количество.':'Товар этого размера уже в корзине — в наличии одна штука.';return}row.quantity=Math.min(cartLimit(p),row.quantity+1);row.product=cartSnapshot(p)}else{if(cart.length>=50){document.getElementById('shareStatus').textContent='В корзине максимум 50 позиций.';return}cart.push({id:String(p.id),size,quantity:1,product:cartSnapshot(p)})}
-  saveCart();renderCart();document.getElementById('shareStatus').textContent='Товар добавлен в корзину.';
+  saveCart();renderCart();document.querySelector('[data-action="add-cart"]')?.classList.add('motion-pop');document.getElementById('cartBadge').classList.add('motion-pop');document.getElementById('shareStatus').textContent='Товар добавлен в корзину.';
 }
 function cartTotals(rows=cart){
   const totals=new Map();let unknown=false;
@@ -350,3 +376,6 @@ function enablePhotoSwipes(root, selector, productFor){
 }
 enablePhotoSwipes(grid,'.photo',area=>products.find(p=>String(p.id)===area.closest('[data-id]').dataset.id));
 enablePhotoSwipes(document.getElementById('productContent'),'.hero',()=>selectedProduct);
+
+// Clear finite feedback effects so subsequent taps animate again.
+document.addEventListener('animationend',e=>{if(e.animationName==='jp-pop')e.target.classList.remove('motion-pop')});
