@@ -7,4 +7,4 @@ label{display:block;margin:16px 0}input:not([type=checkbox]),textarea,select{dis
 #editor{background:#fff;border:1px solid var(--line);border-radius:12px;padding:22px;margin-top:24px}input:not([type=checkbox]),textarea,select{background:#fff}input:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid var(--brand-blue);outline-offset:2px}.toolbar button{background:#fff}.toolbar .primary{background:var(--brand-pink)}#inventory article{border-color:var(--line)}
 
 #inventory article{display:grid;grid-template-columns:70px minmax(0,1fr) auto auto}#inventory article div{grid-column:2;min-width:0;overflow-wrap:anywhere}
-@media(max-width:600px){#inventory article{grid-template-columns:70px minmax(0,1fr)}#inventory article>button{grid-row:2}.toolbar{flex-wrap:wrap}.toolbar button{flex:1 1 120px}}
+@media(max-width:600px){#inventory article{grid-template-columns:70px minmax(0,1fr)}#inventory article>button{grid-column:1/-1}#inventory article>button[data-edit]{grid-row:2}#inventory article>button[data-toggle]{grid-row:3}.toolbar{flex-wrap:wrap}.toolbar button{flex:1 1 120px}}
