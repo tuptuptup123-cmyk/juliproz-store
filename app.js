@@ -114,14 +114,7 @@ function setCatalogMenu(open){
   if(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches){finish();return}
   menu.classList.add('is-closing');menuCloseTimer=setTimeout(finish,280);
 }
-let menuHoverTimer=null;
-document.getElementById('openCatalogMenu').onclick=()=>{clearTimeout(menuHoverTimer);setCatalogMenu(true)};
-document.getElementById('openCatalogMenu').addEventListener('mouseenter',()=>{
-  if(window.matchMedia?.('(hover: hover) and (pointer: fine)').matches){
-    menuHoverTimer=setTimeout(()=>{if(document.getElementById('catalogMenu').classList.contains('hidden'))setCatalogMenu(true)},180);
-  }
-});
-document.getElementById('openCatalogMenu').addEventListener('mouseleave',()=>clearTimeout(menuHoverTimer));
+document.getElementById('openCatalogMenu').onclick=()=>setCatalogMenu(true);
 let pawTimer=null;
 document.getElementById('brandPaw').onclick=()=>{
   const paw=document.getElementById('brandPaw');
