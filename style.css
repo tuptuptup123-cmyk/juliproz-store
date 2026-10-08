@@ -148,9 +148,10 @@ button,input{font:inherit;color:inherit}button{-webkit-appearance:none;appearanc
 
 /* J.P motion: soft entrances, deliberate controls and a signed masthead. */
 :root{--motion-ease:cubic-bezier(.22,1,.36,1)}
-.brand-lockup{display:flex;align-items:baseline;justify-content:center;gap:clamp(12px,3vw,28px)}
-.brand-credit{color:#000;font-size:clamp(14px,2vw,20px);font-weight:500;letter-spacing:.12em;white-space:nowrap}
-.brand-lockup{animation:jp-rise .65s var(--motion-ease) both}
+.brand{position:relative}
+.brand-lockup{display:contents}
+.brand-credit{position:absolute;right:clamp(16px,3vw,40px);bottom:14px;color:#000;font-family:"Playfair Display",serif;font-size:clamp(12px,1vw,14px);font-weight:400;line-height:1.4;letter-spacing:.08em;white-space:nowrap}
+.brand .logo{animation:jp-rise .65s var(--motion-ease) both}
 .catalog-menu-button{position:relative;overflow:hidden;background:var(--brand-pink);border-color:#caadc0;border-radius:16px;box-shadow:0 5px 18px #25394f0c;gap:14px;padding:0 22px;transition:transform .25s var(--motion-ease),box-shadow .25s,background .25s}
 .menu-icon{display:flex;flex-direction:column;justify-content:center;gap:5px;width:22px;height:24px;color:var(--ink)}
 .menu-icon span{display:block;height:2px;width:22px;border-radius:2px;background:currentColor;transition:transform .3s var(--motion-ease),width .3s,opacity .3s}
