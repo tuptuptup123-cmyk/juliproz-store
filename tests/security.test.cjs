@@ -156,3 +156,7 @@ test('login persists across new tabs and migrates legacy tab storage',async()=>{
 test('persistent restored session still fails closed when server revokes it',async()=>{
  const local=tabStorage(session()),h=setup(async()=>response({message:'Revoked'},401),true,tabStorage(),local);await h.run('adminSessionReady');assert.equal(h.run('session'),null);assert.equal(local.getItem('jpAdminSessionV1'),null);
 });
+
+test('reload with a valid saved access token does not rotate the refresh token',async()=>{
+ const saved={...session('aal2',[factor]),expires_at:Date.now()/1000+3600},local=tabStorage(saved),a=api({factors:[factor]});const h=setup(a.fetch,true,tabStorage(),local);await h.run('adminSessionReady');assert.equal(h.run('session.user.id'),'owner');assert.ok(!a.calls.some(c=>c.path.includes('grant_type=refresh_token')));assert.ok(a.calls.some(c=>c.path.endsWith('/auth/v1/user')));assert.equal(h.get('login').classList.contains('hidden'),true);
+});
