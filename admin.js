@@ -10,7 +10,19 @@ const ADMIN_SESSION_KEY='jpAdminSessionV1';
 let session=null,items=[],editing=null,photos=[],busy=false;
 let stockRates=null;
 function stockSummary(rows,rates){const stock=rows.filter(p=>p.available&&p.fulfillment_status!=='on_order');let total=0,unpriced=0,unconverted=0;for(const p of stock){if(p.price===null||p.price===undefined||p.price===''||!Number.isFinite(Number(p.price))){unpriced++;continue}const currency=({'€':'EUR','$':'USD','£':'GBP'}[p.currency]||p.currency||'EUR').toUpperCase(),rate=currency==='EUR'?1:rates?.[currency];if(!(rate>0)){unconverted++;continue}total+=Number(p.price)/rate}return {count:stock.length,total,unpriced,unconverted}}
-function updateStockSummary(){const s=stockSummary(items,stockRates?.rates);$('stockTotal').textContent=String(items.length);$('stockCount').textContent=String(s.count);$('stockValue').textContent=(s.unconverted?'от ':'')+new Intl.NumberFormat('ru-RU',{style:'currency',currency:'EUR',maximumFractionDigits:2}).format(s.total);$('stockValueNote').textContent=['По ценам карточек',stockRates?'курс ЕЦБ: '+stockRates.date:'',s.unpriced?'без цены: '+s.unpriced:'',s.unconverted?'не пересчитано: '+s.unconverted+' · курс недоступен':''].filter(Boolean).join(' · ')}
+function setStockNumber(id,value,animate=false){
+ const el=$(id);if(el.dataset.numberValue===value&&el.textContent!=='—'&&animate!=='force')return;el.dataset.numberValue=value;
+ if(!animate||adminPreferences.reducedMotion||window.matchMedia?.('(prefers-reduced-motion: reduce)').matches||typeof document.createElement!=='function'){el.textContent=value;return}
+ el.textContent='';const spoken=document.createElement('span');spoken.className='sr-only';spoken.textContent=value;el.append(spoken);
+ const visual=document.createElement('span');visual.className='stock-number';visual.setAttribute('aria-hidden','true');el.append(visual);
+ let digit=0;for(const char of value){if(!/\d/.test(char)){const text=document.createElement('span');text.textContent=char;visual.append(text);continue}
+  const reel=document.createElement('span'),strip=document.createElement('span');reel.className='stock-digit';strip.className='stock-digit-strip';const steps=20+Number(char);
+  for(let i=0;i<=steps;i++){const n=document.createElement('span');n.textContent=String(i%10);strip.append(n)}reel.append(strip);visual.append(reel);
+  strip.style.transform=`translateY(-${steps*1.25}em)`;
+  strip.animate?.([{transform:'translateY(0)'},{transform:`translateY(-${steps*1.25}em)`}],{duration:900+digit*85,easing:'cubic-bezier(.15,.7,.2,1)'});digit++;
+ }
+}
+function updateStockSummary(animate=!$('workspace').classList.contains('hidden')){const s=stockSummary(items,stockRates?.rates);setStockNumber('stockTotal',String(items.length),animate);setStockNumber('stockCount',String(s.count),animate);setStockNumber('stockValue',(s.unconverted?'от ':'')+new Intl.NumberFormat('ru-RU',{style:'currency',currency:'EUR',maximumFractionDigits:2}).format(s.total),animate);$('stockValueNote').textContent=['По ценам карточек',stockRates?'курс ЕЦБ: '+stockRates.date:'',s.unpriced?'без цены: '+s.unpriced:'',s.unconverted?'не пересчитано: '+s.unconverted+' · курс недоступен':''].filter(Boolean).join(' · ')}
 async function loadStockRates(){const epoch=sessionEpoch;try{const r=await fetch('/api/exchange-rates',{signal:AbortSignal.timeout(10000)});if(!r.ok)throw Error();const data=await r.json();if(!data.date||!(data.rates?.USD>0))throw Error();if(epoch!==sessionEpoch||!session)return;stockRates=data;updateStockSummary()}catch{if(epoch===sessionEpoch&&session)updateStockSummary()}}
 function storedAdminSession(){let value;try{value=localStorage.getItem(ADMIN_SESSION_KEY)}catch{}if(!value)try{value=sessionStorage.getItem(ADMIN_SESSION_KEY)}catch{}return value?JSON.parse(value):null}
 function clearSavedAdminSession(){try{localStorage.removeItem(ADMIN_SESSION_KEY)}catch{}try{sessionStorage.removeItem(ADMIN_SESSION_KEY)}catch{}}
@@ -114,7 +126,7 @@ async function enterWorkspace(){
  $('securityBtn').classList.toggle('hidden',!MFA_ENROLLMENT_ENABLED);
  if(mfaPaused()){$('securityState').textContent='Двухфакторная проверка временно отключена. Подтверди код из приложения, чтобы включить её.';$('securityBtn').textContent='Включить двухфакторную проверку';}
  if(!MFA_ENROLLMENT_ENABLED&&!verified.length)$('securityState').textContent='';
- await load();$('login').reset();$('confirmEmail').reset();$('login').classList.add('hidden');$('confirmEmail').classList.add('hidden');$('workspace').classList.remove('hidden');$('authArea').classList.add('hidden');selectView('home',true);status(saveAdminSession()?'':'Браузер не разрешает сохранять вход. После обновления потребуется войти заново.');refreshOverview();loadProductWishlistCounts();loadStockRates();
+ await load();$('login').reset();$('confirmEmail').reset();$('login').classList.add('hidden');$('confirmEmail').classList.add('hidden');$('workspace').classList.remove('hidden');$('authArea').classList.add('hidden');selectView('home',true);status(saveAdminSession()?'':'Браузер не разрешает сохранять вход. После обновления потребуется войти заново.');refreshOverview();loadProductWishlistCounts();updateStockSummary('force');loadStockRates();
 }
 $('login').onsubmit=async e=>{e.preventDefault();if(busy)return;const b=e.submitter,epoch=sessionEpoch;b.disabled=true;busy=true;try{
  const data=await request('/auth/v1/token?grant_type=password',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:e.target.email.value.trim(),password:e.target.password.value})});
