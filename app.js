@@ -145,8 +145,8 @@ function showMoneyPaw(button){
   if(!paw||!button?.getBoundingClientRect||window.matchMedia?.('(prefers-reduced-motion: reduce)').matches)return;
   const box=button.getBoundingClientRect(),width=110;
   clearTimeout(moneyPawTimer);paw.classList.remove('is-presenting');
-  paw.style.left=`${Math.max(8,Math.min(innerWidth-width-8,box.right-width))}px`;
-  paw.style.top=`${Math.max(8,box.top-115)}px`;
+  paw.style.left=`${Math.max(8,Math.min(innerWidth-width-8,box.left+box.width/2-width/2))}px`;
+  paw.style.top=`${Math.max(8,box.top+box.height/2-width*1.5/2)}px`;
   void paw.offsetWidth;paw.classList.add('is-presenting');
   moneyPawTimer=setTimeout(()=>paw.classList.remove('is-presenting'),1050);
 }
