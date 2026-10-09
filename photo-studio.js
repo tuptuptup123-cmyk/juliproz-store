@@ -72,7 +72,7 @@
  function open(entry,onApply,onOriginal){
   if(!entry.state)return;previousFocus=document.activeElement;
   const s=entry.state,mask=canvas(s.mask.width,s.mask.height);mask.getContext('2d').drawImage(s.mask,0,0);
-  active={state:{...s,mask},onApply,onOriginal,history:[],initialMask:mask.getContext('2d').getImageData(0,0,mask.width,mask.height)};$('studioUndo').disabled=true;$('studioBefore').src=entry.originalSrc;$('studioPadding').value=s.padding;$('studioBrightness').value=s.brightness;$('studioBackground').value=s.background;$('studioError').textContent='';$('studioTools').open=false;
+  active={state:{...s,mask},onApply,onOriginal,history:[],initialMask:mask.getContext('2d').getImageData(0,0,mask.width,mask.height)};$('studioUndo').disabled=true;pickingColor=false;$('studioBrushHint').textContent='';$('studioBefore').src=entry.originalSrc;$('studioPadding').value=s.padding;$('studioBrightness').value=s.brightness;$('studioBackground').value=s.background;$('studioError').textContent='';$('studioTools').open=false;
   $('photoStudio').showModal();draw();$('studioApply').focus();
  }
  for(const [id,field] of [['studioPadding','padding'],['studioBrightness','brightness'],['studioBackground','background']])$(id).oninput=()=>{if(!active)return;active.state[field]=field==='background'?$(id).value:Number($(id).value);draw()};
@@ -81,20 +81,30 @@
  $('studioApply').onclick=async()=>{if(!active)return;const current=active;$('studioApply').disabled=true;try{const result=await exportState(current.state);if(active!==current)return;current.onApply({...result,state:current.state});close()}catch(e){$('studioError').textContent=e.message}finally{$('studioApply').disabled=false}};
  $('studioOriginal').onclick=()=>{active?.onOriginal();close()};
  const surface=$('studioMask');
- let lastPoint=null;
+ let lastPoint=null,strokeColor=null,strokeSource=null,pickingColor=false;
  function rememberMask(){const m=active.state.mask;active.history.push(m.getContext('2d').getImageData(0,0,m.width,m.height));if(active.history.length>6)active.history.shift();$('studioUndo').disabled=false}
  $('studioUndo').onclick=()=>{if(!active||painting||!active.history.length)return;active.state.mask.getContext('2d').putImageData(active.history.pop(),0,0);$('studioUndo').disabled=!active.history.length;draw()};
  $('studioResetMask').onclick=()=>{if(!active||painting)return;rememberMask();active.state.mask.getContext('2d').putImageData(active.initialMask,0,0);draw()};
  function point(e){const box=surface.getBoundingClientRect();return {x:(e.clientX-box.left)*surface.width/box.width,y:(e.clientY-box.top)*surface.height/box.height,scale:surface.width/box.width}}
  function paint(e){if(!painting||!active)return;const {x,y,scale}=point(e),ctx=active.state.mask.getContext('2d'),radius=Number($('studioBrushSize').value)*scale/2,softness=Number($('studioBrushSoftness').value)/100;
+  if($('studioBrush').value==='background'){
+   const mask=ctx.getImageData(0,0,active.state.mask.width,active.state.mask.height),from=lastPoint||{x,y},steps=Math.max(1,Math.ceil(Math.hypot(x-from.x,y-from.y)/Math.max(1,radius*.2))),hex=$('studioProtectColor').value,protect=$('studioProtectEnabled').checked?[1,3,5].map(i=>parseInt(hex.slice(i,i+2),16)):null;
+   for(let i=1;i<=steps;i++)PhotoBackground.eraseBrush(strokeSource,mask,from.x+(x-from.x)*i/steps,from.y+(y-from.y)*i/steps,radius,strokeColor,Number($('studioTolerance').value),softness,protect);
+   ctx.putImageData(mask,0,0);lastPoint={x,y};drawMask();return;
+  }
   ctx.globalCompositeOperation=$('studioBrush').value==='erase'?'destination-out':'source-over';
   const from=lastPoint||{x,y},steps=Math.max(1,Math.ceil(Math.hypot(x-from.x,y-from.y)/Math.max(1,radius*.2)));
   for(let i=1;i<=steps;i++){const px=from.x+(x-from.x)*i/steps,py=from.y+(y-from.y)*i/steps;let fill='#fff';if(softness){fill=ctx.createRadialGradient(px,py,radius*(1-softness),px,py,radius);fill.addColorStop(0,'#fff');fill.addColorStop(1,'rgba(255,255,255,0)')}ctx.fillStyle=fill;ctx.beginPath();ctx.arc(px,py,radius,0,Math.PI*2);ctx.fill()}
   ctx.globalCompositeOperation='source-over';lastPoint={x,y};drawMask();
  }
- surface.onpointerdown=e=>{if(!active||painting||e.button>0)return;e.preventDefault();rememberMask();const {x,y}=point(e);
+ $('studioPickProtect').onclick=()=>{if(!active)return;pickingColor=true;$('studioBrushHint').textContent='Нажмите на цвет вещи, который нужно сохранить.'};
+ surface.onpointerdown=e=>{if(!active||painting||e.button>0)return;e.preventDefault();const {x,y}=point(e);const s=active.state;
+  if(x<0||y<0||x>=s.source.width||y>=s.source.height)return;
+  const sample=s.source.getContext('2d').getImageData(Math.floor(x),Math.floor(y),1,1).data;
+  if(pickingColor){$('studioProtectColor').value='#'+[...sample].slice(0,3).map(v=>v.toString(16).padStart(2,'0')).join('');$('studioProtectEnabled').checked=true;pickingColor=false;$('studioBrushHint').textContent='Цвет вещи защищён.';return}
+  rememberMask();strokeColor=[...sample].slice(0,3);strokeSource=s.source.getContext('2d').getImageData(0,0,s.source.width,s.source.height);
   if($('studioBrush').value==='region'){const s=active.state,ctx=s.mask.getContext('2d'),mask=ctx.getImageData(0,0,s.mask.width,s.mask.height),source=s.source.getContext('2d').getImageData(0,0,s.source.width,s.source.height);PhotoBackground.eraseRegion(source,mask,x,y,Number($('studioTolerance').value));ctx.putImageData(mask,0,0);draw();return}
   painting=true;lastPoint=null;surface.setPointerCapture(e.pointerId);paint(e)
- };surface.onpointermove=paint;surface.onpointerup=surface.onpointercancel=()=>{painting=false;lastPoint=null;if(active)draw()};
+ };surface.onpointermove=paint;surface.onpointerup=surface.onpointercancel=()=>{painting=false;lastPoint=null;strokeSource=null;strokeColor=null;if(active)draw()};
  window.PhotoStudio={process,open,close,cancel:()=>{close();stopWorker('Обработка отменена.')}};
 })();

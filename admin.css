@@ -41,3 +41,5 @@ label{display:block;font-weight:500;font-size:12px}input:not([type=checkbox]),te
 @media(prefers-reduced-motion:reduce){.loading-brand,.loading-track:after{animation:none}.loading-track:after{width:100%}}
 
 .studio-brush-actions{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}.studio-brush-actions button{border-radius:24px}
+
+.studio-protect{display:flex;align-items:center;flex-wrap:wrap;gap:12px;margin:12px 0}.studio-protect label{display:flex;align-items:center;gap:8px}.studio-protect input[type=color]{width:44px;min-height:36px;margin:0;padding:4px}.studio-protect button{border-radius:24px}
