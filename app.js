@@ -4,6 +4,7 @@ const SUPABASE_KEY=window.STORE_CONFIG.key;
 let products=[];
 let selectedProduct=null;
 let selectedSize=null;
+let navigationRevision=0;
 const sizesOf=p=>ProductSizes.parse(p?.size);
 function displayName(p){
   const name=String(p?.name||'').trim();
@@ -24,7 +25,10 @@ const statusLabels={in_stock:'В наличии',on_order:'Под заказ'};
 function productLink(p){return `https://t.me/JuliProzBot/shop?startapp=p_${encodeURIComponent(String(p.id))}`}
 const CATALOG_FIELDS='id,created_at,brand,name,category,size,price,currency,image_url,available,fulfillment_status,gender,description,photos,reserved';
 function photosOf(p){return [...new Set([p.image_url,p.image,...(Array.isArray(p.photos)?p.photos:[])].filter(safeProductImage))]}
-function telegramLink(url){if(window.Telegram?.WebApp?.openTelegramLink) Telegram.WebApp.openTelegramLink(url);else window.open(url,"_blank","noopener")}
+const telegramOpenTimes=new Map();
+function telegramLink(url){
+  if(Date.now()-(telegramOpenTimes.get(url)??-Infinity)<5000)return false;
+  if(window.Telegram?.WebApp?.openTelegramLink) Telegram.WebApp.openTelegramLink(url);else window.open(url,"_blank","noopener");telegramOpenTimes.set(url,Date.now());if(telegramOpenTimes.size>50)telegramOpenTimes.delete(telegramOpenTimes.keys().next().value);return true;}
 
 let state={gender:null,fulfillment_status:null,category:null,brand:null,size:null,search:"",favorites:new Set((()=>{try{return JSON.parse(localStorage.getItem("jpFav")||"[]").map(String)}catch{return []}})()),tab:"catalog"};
 const grid=document.getElementById("grid"),count=document.getElementById("count"),sheet=document.getElementById("sheet"),options=document.getElementById("sheetOptions");
@@ -195,7 +199,7 @@ document.addEventListener('keydown',e=>{
 });
 let catalogLoading=false,firstLoad=true;
 async function loadProducts(quiet=false){
-  if(catalogLoading)return;catalogLoading=true;
+  if(catalogLoading)return;catalogLoading=true;const requestedNavigation=navigationRevision;
   if(!quiet){
   count.textContent="Загружаем наличие…";
   grid.innerHTML='<div class="empty">Загружаем товары…</div>';
@@ -215,7 +219,7 @@ async function loadProducts(quiet=false){
     const params=new URLSearchParams(location.search);
     const start=window.Telegram?.WebApp?.initDataUnsafe?.start_param||params.get("tgWebAppStartParam")||params.get("startapp");
     const id=params.get("product")||(start?.startsWith("p_")?start.slice(2):null);
-    if(id&&firstLoad) await openLinkedProduct(id);firstLoad=false;
+    if(id&&firstLoad&&requestedNavigation===navigationRevision) await openLinkedProduct(id);firstLoad=false;
   }catch(e){
     if(quiet)return;
     count.textContent="Не удалось загрузить наличие";
@@ -254,18 +258,20 @@ grid.onkeydown=e=>{if(e.target.matches("[data-id]")&&(e.key==="Enter"||e.key==="
 function readCart(){
   try{const rows=JSON.parse(localStorage.getItem('jpCart')||'[]');if(!Array.isArray(rows))return [];const clean=[];for(const row of rows.slice(0,50)){if(!row||!/^([0-9]+|[a-f0-9-]{36})$/i.test(String(row.id))||typeof row.size!=='string'||row.size.length>100)continue;const item={id:String(row.id),size:row.size,quantity:Math.min(99,Math.max(1,Math.floor(Number(row.quantity)||1))),product:row.product&&typeof row.product==='object'?row.product:{}};const old=clean.find(x=>x.id===item.id&&x.size===item.size);if(old)old.quantity=Math.min(99,old.quantity+item.quantity);else clean.push(item)}return clean}catch{return []}
 }
-let cart=readCart(),checkoutBusy=false;
+let cart=readCart(),checkoutBusy=false,cartRevision=0;
 function cartLimit(p){return onOrder(p)?99:1}
 function cartCount(){return cart.reduce((n,x)=>n+x.quantity,0)}
 function cartProduct(row){return products.find(p=>String(p.id)===row.id)||row.product}
 function cartSnapshot(p){return Object.fromEntries(['id','brand','name','category','price','currency','image_url','photos','size','fulfillment_status','reserved'].map(k=>[k,p[k]]))}
-function saveCart(){try{localStorage.setItem('jpCart',JSON.stringify(cart))}catch{document.getElementById('cartStatus').textContent='Корзина доступна в этом сеансе. Браузер не разрешил сохранить её.'}}
+function saveCart(){cartRevision++;try{localStorage.setItem('jpCart',JSON.stringify(cart))}catch{document.getElementById('cartStatus').textContent='Корзина доступна в этом сеансе. Браузер не разрешил сохранить её.'}}
 function setTab(tab){
+  navigationRevision++;
   state.tab=tab;selectedProduct=null;selectedSize=null;document.getElementById('productModal').classList.add('hidden');
   document.querySelectorAll('[data-tab]').forEach(b=>{b.classList.toggle('active',b.dataset.tab===tab);b.setAttribute('aria-current',b.dataset.tab===tab?'page':'false')});render();
 }
+const wishlistClicks=new Map();
 function toggleWishlist(id){
-  if(id==null)return;id=String(id);state.favorites.has(id)?state.favorites.delete(id):state.favorites.add(id);
+  if(id==null)return;id=String(id);const now=Date.now();if(now-(wishlistClicks.get(id)??-Infinity)<450)return;wishlistClicks.set(id,now);if(wishlistClicks.size>200)wishlistClicks.delete(wishlistClicks.keys().next().value);state.favorites.has(id)?state.favorites.delete(id):state.favorites.add(id);
   try{localStorage.setItem('jpFav',JSON.stringify([...state.favorites]))}catch{}
   render();
   const heart=[...grid.querySelectorAll?.('[data-heart]')||[]].find(b=>b.dataset.heart===id);
@@ -282,7 +288,7 @@ function addToCart(){
   if((selectedSize&&!sizes.includes(selectedSize))||(!selectedSize&&sizes.length===1)||String(p.price)!==String(selectedProduct.price)||String(p.currency)!==String(selectedProduct.currency)||p.fulfillment_status!==selectedProduct.fulfillment_status){openProduct(p.id);document.getElementById('shareStatus').textContent='Карточка изменилась. Проверьте размер, цену и наличие, затем нажмите «Купить» ещё раз.';return}
   if(sizesOf(p).length>1&&!selectedSize){document.getElementById('sizeHint').textContent='Пожалуйста, выберите размер.';document.querySelector('[data-size]')?.focus();return}
   const size=selectedSize||'',row=cart.find(x=>x.id===String(p.id)&&x.size===size);
-  if(row){if(row.quantity>=cartLimit(p)){document.getElementById('shareStatus').textContent=onOrder(p)?'Достигнуто максимальное количество.':'Товар этого размера уже в корзине — в наличии одна штука.';return}row.quantity=Math.min(cartLimit(p),row.quantity+1);row.product=cartSnapshot(p)}else{if(cart.length>=50){document.getElementById('shareStatus').textContent='В корзине максимум 50 позиций.';return}cart.push({id:String(p.id),size,quantity:1,product:cartSnapshot(p)})}
+  if(row){document.getElementById('shareStatus').textContent=onOrder(p)?'Товар этого размера уже в корзине. Количество можно изменить в корзине.':'Товар этого размера уже в корзине — в наличии одна штука.';return}else{if(cart.length>=50){document.getElementById('shareStatus').textContent='В корзине максимум 50 позиций.';return}cart.push({id:String(p.id),size,quantity:1,product:cartSnapshot(p)})}
   showMoneyPaw(document.querySelector('[data-action="add-cart"]'));saveCart();renderCart();document.querySelector('[data-action="add-cart"]')?.classList.add('motion-pop');document.getElementById('cartBadge').classList.add('motion-pop');document.getElementById('shareStatus').textContent='Товар добавлен в корзину.';
 }
 function cartTotals(rows=cart){
@@ -301,11 +307,13 @@ function renderCart(){
 }
 async function checkoutCart(){
   if(checkoutBusy||!cart.length)return;checkoutBusy=true;renderCart();const status=document.getElementById('cartStatus');status.textContent='Проверяем наличие и цены…';
+  const requestedRevision=cartRevision,requestedNavigation=navigationRevision;
   const requested=JSON.stringify(cart.map(x=>[x.id,x.size,x.quantity]));
   try{
     const ids=[...new Set(cart.map(x=>x.id))];const response=await fetch(`${SUPABASE_URL}/rest/v1/products?select=${CATALOG_FIELDS}&id=in.(${ids.map(encodeURIComponent).join(',')})&available=eq.true`,{headers:{apikey:SUPABASE_KEY},signal:AbortSignal.timeout(20000)});
     if(!response.ok)throw Error();const fresh=await response.json();if(!Array.isArray(fresh))throw Error();
-    if(requested!==JSON.stringify(cart.map(x=>[x.id,x.size,x.quantity]))){status.textContent='Корзина изменилась. Нажмите «Оформить» ещё раз.';return}
+    if(requestedNavigation!==navigationRevision){status.textContent='Оформление отменено. Нажмите «Оформить» в корзине, чтобы продолжить.';return}
+    if(requestedRevision!==cartRevision||requested!==JSON.stringify(cart.map(x=>[x.id,x.size,x.quantity]))){status.textContent='Корзина изменилась. Нажмите «Оформить» ещё раз.';return}
     let changed=false,unavailable=false,reserved=false;
     for(const row of cart){const p=fresh.find(p=>String(p.id)===row.id);const index=products.findIndex(p=>String(p.id)===row.id);if(!p){if(index>=0)products.splice(index,1);unavailable=true;continue}if(index>=0)products[index]=p;else products.push(p);if(p.reserved)reserved=true;if((row.size&&!sizesOf(p).includes(row.size))||(!row.size&&sizesOf(p).length>0))unavailable=true;if(row.quantity>cartLimit(p)){row.quantity=cartLimit(p);changed=true}const old=row.product;changed=changed||String(old.price)!==String(p.price)||String(old.currency)!==String(p.currency)||old.fulfillment_status!==p.fulfillment_status;row.product=cartSnapshot(p)}
     saveCart();
@@ -317,10 +325,13 @@ async function checkoutCart(){
     telegramLink(`https://t.me/juliproz?text=${encodeURIComponent(text)}`);status.textContent='Заказ подготовлен. Отправьте сообщение менеджеру в Telegram.';
   }catch{status.textContent='Не удалось проверить наличие. Корзина сохранена — попробуйте ещё раз.'}finally{checkoutBusy=false;renderCart()}
 }
+const cartMutationTimes=new Map();
+function allowCartMutation(action){const key=action==='remove'?'remove':'quantity',now=Date.now();if(now-(cartMutationTimes.get(key)??-Infinity)<350)return false;cartMutationTimes.set(key,now);return true}
 document.getElementById('cartContent').addEventListener('click',e=>{
-  const button=e.target.closest('[data-cart-action]');if(!button)return;const action=button.dataset.cartAction;
+  const button=e.target.closest('[data-cart-action]');if(!button||button.isConnected===false||button.disabled)return;const action=button.dataset.cartAction;
   if(action==='catalog'){setTab('catalog');return}if(action==='checkout'){showMoneyPaw(button);checkoutCart();return}
   const index=Number(button.dataset.index),row=cart[index];if(!row)return;
+  if(['remove','plus','minus'].includes(action)&&!allowCartMutation(action))return;
   if(action==='product'){openLinkedProduct(row.id);return}
   if(action==='remove')cart.splice(index,1);else if(action==='plus'&&!cartProduct(row).reserved)row.quantity=Math.min(cartLimit(cartProduct(row)),row.quantity+1);else if(action==='minus')row.quantity=Math.max(1,row.quantity-1);
   document.getElementById('cartStatus').textContent='';saveCart();renderCart();
@@ -335,6 +346,7 @@ function relatedMarkup(p){
   return `<section class="related-products" aria-labelledby="relatedTitle"><h2 id="relatedTitle">Похожие товары</h2><div class="related-grid">${similar.map(x=>`<button type="button" class="related-card" data-related="${esc(x.id)}"><span class="related-photo">${imageOf(x)?`<img src="${esc(imageOf(x))}" alt="${esc(x.name)}" loading="lazy">`:'J.P'}</span><span class="related-brand">${esc(x.brand)}</span><span class="related-name">${esc(displayName(x))}</span><span class="related-size">${sizesOf(x).length?`Размер: ${esc(sizesOf(x).join(' · '))}`:'Размер уточняйте'}</span><strong>${esc(money(x)||'Цена по запросу')}</strong></button>`).join('')}</div></section>`;
 }
 function openProduct(id){
+  navigationRevision++;
   const p=products.find(x=>String(x.id)===String(id));if(!p)return;
   selectedProduct=p;
   const sizes=sizesOf(p);
@@ -343,17 +355,21 @@ function openProduct(id){
   document.getElementById("productModal").classList.remove("hidden");
   document.getElementById("productModal").scrollTop=0;
 }
-document.getElementById("backProduct").onclick=()=>{selectedProduct=null;selectedSize=null;document.getElementById("productModal").classList.add("hidden")};
+document.getElementById("backProduct").onclick=()=>{navigationRevision++;selectedProduct=null;selectedSize=null;document.getElementById("productModal").classList.add("hidden")};
 document.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>{setTab(b.dataset.tab);pressNavWithPaw(b)});
 async function openLinkedProduct(id){
+  const requestedNavigation=++navigationRevision;selectedProduct=null;selectedSize=null;
   id=String(id);if(/^\d+$/.test(id))id=id.replace(/^0+(?=\d)/,"");
   if(products.some(p=>String(p.id)===String(id))){openProduct(id);return}
   try{
     const r=await fetch(`${SUPABASE_URL}/rest/v1/products?select=${CATALOG_FIELDS}&id=eq.${encodeURIComponent(id)}&available=eq.true`,{headers:{apikey:SUPABASE_KEY},signal:AbortSignal.timeout(20000)});
     if(!r.ok)throw new Error();
     const rows=await r.json();
+    if(requestedNavigation!==navigationRevision)return;
+    if(!Array.isArray(rows))throw Error();
     if(rows.length){products.push(rows[0]);openProduct(id);return}
   }catch{
+    if(requestedNavigation!==navigationRevision)return;
     document.getElementById("productContent").innerHTML='<div class="empty">Не удалось загрузить товар. Попробуйте обновить страницу.</div>';
     document.getElementById("productModal").classList.remove("hidden");return;
   }
@@ -361,11 +377,17 @@ async function openLinkedProduct(id){
   document.getElementById("productContent").innerHTML='<div class="empty">Товар скрыт из каталога или ссылка недействительна.</div>';
   document.getElementById("productModal").classList.remove("hidden");
 }
+let contactBusy=false;
 async function contact(p){
+  if(contactBusy)return;contactBusy=true;
+  try{await contactUnchecked(p,navigationRevision)}finally{contactBusy=false}
+}
+async function contactUnchecked(p,requestedNavigation){
   const requestedSize=p?selectedSize:null;
   if(p&&sizesOf(p).length>1&&!requestedSize){document.getElementById("sizeHint").textContent="Пожалуйста, выберите размер.";document.querySelector('[data-size]')?.focus();return}
 
-  if(p?.id!=null){try{const r=await fetch(`${SUPABASE_URL}/rest/v1/products?select=${CATALOG_FIELDS}&id=eq.${encodeURIComponent(p.id)}&available=eq.true`,{headers:{apikey:SUPABASE_KEY},signal:AbortSignal.timeout(20000)});if(!r.ok)throw Error();const rows=await r.json();if(!rows.length){document.getElementById("shareStatus").textContent="Товар больше не доступен в каталоге.";return}p=rows[0]}catch{document.getElementById("shareStatus").textContent="Не удалось проверить наличие. Попробуйте ещё раз.";return}}
+  if(p?.id!=null){try{const r=await fetch(`${SUPABASE_URL}/rest/v1/products?select=${CATALOG_FIELDS}&id=eq.${encodeURIComponent(p.id)}&available=eq.true`,{headers:{apikey:SUPABASE_KEY},signal:AbortSignal.timeout(20000)});if(!r.ok)throw Error();const rows=await r.json();if(!Array.isArray(rows))throw Error();if(!rows.length){document.getElementById("shareStatus").textContent="Товар больше не доступен в каталоге.";return}p=rows[0]}catch{document.getElementById("shareStatus").textContent="Не удалось проверить наличие. Попробуйте ещё раз.";return}}
+  if(requestedNavigation!==navigationRevision)return;
   const currentSizes=sizesOf(p);
   if(requestedSize&&!currentSizes.includes(requestedSize)){document.getElementById("shareStatus").textContent="Этот размер больше недоступен. Откройте карточку заново.";loadProducts(true);return}
   if(p&&currentSizes.length>1&&!requestedSize){document.getElementById("shareStatus").textContent="Размеры изменились. Откройте карточку заново и выберите размер.";loadProducts(true);return}
