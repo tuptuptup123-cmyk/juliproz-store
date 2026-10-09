@@ -443,7 +443,7 @@ async function restoreAdminSession(){
  let saved;
  try{saved=storedAdminSession();if(!saved){status('Войдите один раз, чтобы сохранить вход на этом устройстве.');return;}if(!saved?.access_token||!saved?.refresh_token||!saved?.user?.id)throw Error();}
  catch{clearSavedAdminSession();return}
- const epoch=sessionEpoch;busy=true;$('login').querySelector?.('button[type="submit"]')?.setAttribute('disabled','');$('login').classList.add('hidden');status('Восстанавливаем вход…');
+ const epoch=sessionEpoch;busy=true;$('login').querySelector?.('button[type="submit"]')?.setAttribute('disabled','');$('login').classList.add('hidden');status('');const loadingLogo=document.createElement('span');loadingLogo.className='admin-logo';loadingLogo.textContent='J.P';loadingLogo.setAttribute('aria-label','Загрузка');$('status').append(loadingLogo);
  try{
   // Validate a current access token first; request() refreshes only when needed.
   recovering=saved.recovering===true;session={access_token:saved.access_token,refresh_token:saved.refresh_token,user:{id:saved.user.id},expires_at:Number.isFinite(saved.expires_at)?saved.expires_at:0};
