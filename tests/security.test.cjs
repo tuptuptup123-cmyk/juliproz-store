@@ -23,15 +23,16 @@ function setup(fetch,mfaEnrollmentEnabled=true){
  get('mfaVerify').code=node();
  return {get,run:code=>vm.runInContext(code,context),seed:s=>vm.runInContext('keepSession('+JSON.stringify(s)+')',context)};
 }
-function api({factors=[],verification=session('aal2',[factor]),activateError=false}={}){
+function api({factors=[],verification=session('aal2',[factor]),activateError=false,paused=false}={}){
  const calls=[];
  return {calls,fetch:async(path,options={})=>{
   calls.push({path,options});
+  if(path.includes('/rpc/store_admin_security_status'))return response({paused});
   if(path.includes('/store_admins'))return response([{user_id:'owner'}]);
   if(path.endsWith('/auth/v1/user'))return response(user(factors));
   if(path.endsWith('/challenge'))return response({id:'challenge'});
   if(path.endsWith('/verify')){factors=[factor];return response(verification)}
-  if(path.includes('/rpc/enforce_store_mfa'))return response(activateError?{message:'activation unavailable'}:true,activateError?503:200);
+  if(path.includes('/rpc/enforce_store_mfa')){if(!activateError)paused=false;return response(activateError?{message:'activation unavailable'}:true,activateError?503:200);}
   if(path.endsWith('/auth/v1/factors'))return response({id:'new-factor',type:'totp',totp:{secret:'SYNTHETIC-SECRET',qr_code:'<svg xmlns="http://www.w3.org/2000/svg"></svg>'}});
   return response([]);
  }};
@@ -107,10 +108,24 @@ test('disabled enrollment feature flag does not call the activation RPC',async()
 });
 test('temporary MFA pause applies only to the named admin account',async()=>{
  for(const pausedId of ['owner','another-admin']){
-  const a=api({factors:[factor]}),h=setup(a.fetch);h.seed(session('aal1',[factor]));
-  h.run('window.STORE_CONFIG.mfaPausedUserId='+JSON.stringify(pausedId));await h.run('enterWorkspace()');
+  const a=api({factors:[factor],paused:pausedId==='owner'}),h=setup(a.fetch);h.seed(session('aal1',[factor]));
+  await h.run('enterWorkspace()');
   assert.equal(a.calls.some(c=>c.path.includes('/products')),pausedId==='owner');
   assert.equal(a.calls.some(c=>c.path.includes('/rpc/enforce_store_mfa')),false);
-  if(pausedId==='owner'){assert.match(h.get('securityState').textContent,/временно отключена/);assert.equal(h.get('securityBtn').classList.contains('hidden'),true)}
+  if(pausedId==='owner'){assert.match(h.get('securityState').textContent,/временно отключена/);assert.equal(h.get('securityBtn').classList.contains('hidden'),false)}
  }
+});
+
+ test('transient refresh error preserves session, editor and staged photos',async()=>{
+ const h=setup(async()=>{throw TypeError('offline')});h.seed(session());h.run("session.expires_at=0;editing=23;editorDirty=true;photos=['draft'];stagedUploads.set('draft','upload')");
+ await assert.rejects(h.run('request("/rest/v1/products")'),/offline/);assert.notEqual(h.run('session'),null);assert.equal(h.run('editing'),23);assert.equal(h.run('editorDirty'),true);assert.equal(h.run('stagedUploads.size'),1);
+ });
+
+test('new admin without factor must enroll before loading inventory',async()=>{
+ const a=api({factors:[]}),h=setup(a.fetch);h.seed(session());await h.run('enterWorkspace()');assert.equal(h.get('mfaPanel').classList.contains('hidden'),false);assert.equal(h.run('mfaMode'),'enroll');assert.equal(a.calls.some(c=>c.path.includes('/products')),false);
+});
+
+test('paused owner can resume MFA only after verifying a factor',async()=>{
+ const a=api({factors:[factor],paused:true}),h=setup(a.fetch);h.seed(session('aal1',[factor]));await h.run('enterWorkspace()');assert.equal(h.run('mfaPaused()'),true);await h.get('securityBtn').onclick();assert.equal(h.run('mfaMode'),'challenge');assert.equal(a.calls.some(c=>c.path.includes('/rpc/enforce_store_mfa')),false);
+ h.get('mfaVerify').code.value='123456';await h.get('mfaVerify').onsubmit({preventDefault(){},submitter:node(),target:h.get('mfaVerify')});assert.equal(h.run('mfaPaused()'),false);assert.equal(h.get('workspace').classList.contains('hidden'),false);
 });

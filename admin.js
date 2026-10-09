@@ -1,5 +1,6 @@
 const {url,key}=window.STORE_CONFIG;
-const mfaPaused=()=>session?.user?.id===window.STORE_CONFIG.mfaPausedUserId;
+let adminSecurity={paused:false};
+const mfaPaused=()=>adminSecurity.paused===true;
 const MFA_ENROLLMENT_ENABLED=window.STORE_CONFIG.mfaEnrollmentEnabled===true;
 const $=id=>document.getElementById(id);
 let session=null,items=[],editing=null,photos=[],busy=false;
@@ -17,7 +18,7 @@ function clearMfa(){
  $('mfaVerify').reset();$('mfaQr').removeAttribute?.('src');$('mfaSecret').textContent='';$('mfaFactor').innerHTML='';
 }
 function endSession(){
- window.PhotoStudio?.cancel();session=null;sessionEpoch++;previewEpoch++;items=[];photos=[];editing=null;original=null;creationKey=null;recovering=false;
+ window.PhotoStudio?.cancel();adminSecurity={paused:false};session=null;sessionEpoch++;previewEpoch++;items=[];photos=[];editing=null;original=null;creationKey=null;recovering=false;
  stagedUploads.clear();clearMfa();$('authArea').classList.remove('hidden');pendingPreviews=[];editorDirty=false;activeView='all';$('settingsPanel').classList.add('hidden');clearOverview();$('adminHome').classList.add('hidden');$('homePanel').classList.add('hidden');$('cataloguePreview').close?.();$('cataloguePreviewCard').innerHTML='';productWishlistCounts=null;productWishlistLoadedAt=0;$('analyticsPanel').classList.add('hidden');$('analyticsCards').innerHTML='';$('analyticsProducts').innerHTML='';
  for(const id of ['editor','login','confirmEmail','newPassword'])$(id).reset();
  for(const id of ['workspace','editor','confirmEmail','newPassword'])$(id).classList.add('hidden');
@@ -37,7 +38,7 @@ async function request(path,options={}){
  const epoch=sessionEpoch;
  if(!session)throw Error('Сессия завершена. Войди заново.');
  if(session.expires_at<Date.now()/1000+60){
-  if(!refreshPromise){const current=session;refreshPromise=fetchJSON('/auth/v1/token?grant_type=refresh_token',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({refresh_token:current.refresh_token})}).then(data=>{if(epoch!==sessionEpoch)throw Error('Сессия завершена.');keepSession(data)}).catch(err=>{if(epoch===sessionEpoch)endSession();throw err}).finally(()=>{refreshPromise=null});}
+  if(!refreshPromise){const current=session;refreshPromise=fetchJSON('/auth/v1/token?grant_type=refresh_token',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({refresh_token:current.refresh_token})}).then(data=>{if(epoch!==sessionEpoch)throw Error('Сессия завершена.');keepSession(data)}).catch(err=>{if(epoch===sessionEpoch&&[400,401,403].includes(err.httpStatus))endSession();throw err}).finally(()=>{refreshPromise=null});}
   await refreshPromise;
  }
  if(epoch!==sessionEpoch||!session)throw Error('Сессия завершена. Войди заново.');
@@ -61,25 +62,27 @@ function showMfaChallenge(factors){
  $('mfaInfo').textContent='Введи шестизначный код из своего приложения-аутентификатора.';$('mfaPanel').classList.remove('hidden');status('');
 }
 async function enableMfaProtection(){
- if(!MFA_ENROLLMENT_ENABLED||mfaPaused())return;
- await request('/rest/v1/rpc/enforce_store_mfa',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});
+ if(!MFA_ENROLLMENT_ENABLED)return;
+ await request('/rest/v1/rpc/enforce_store_mfa',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});adminSecurity={paused:false};
 }
 async function enterWorkspace(){
  const admins=await request(`/rest/v1/store_admins?select=user_id&user_id=eq.${encodeURIComponent(session.user.id)}`);
  if(!admins.length){endSession();throw Error('У этого аккаунта нет доступа к управлению магазином.')}
+ const security=await request('/rest/v1/rpc/store_admin_security_status',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});adminSecurity={paused:security?.paused===true};
  const user=await currentAuthUser(),verified=(user.factors||[]).filter(f=>f.status==='verified');
  if(verified.length&&sessionAal()!=='aal2'&&!mfaPaused()){
   const totp=verified.filter(f=>f.factor_type==='totp');
   if(!totp.length){endSession();throw Error('Для этого аккаунта нужен поддерживаемый TOTP-фактор. Обратись к владельцу проекта.')}
   $('login').reset();showMfaChallenge(totp);return;
  }
+ if(!verified.length&&!mfaPaused()&&sessionAal()!=='aal2'){if(!MFA_ENROLLMENT_ENABLED)throw Error('Подключение второго фактора недоступно. Обратись к владельцу проекта.');await prepareMfaEnrollment();return}
  if(sessionAal()==='aal2'&&verified.length)await enableMfaProtection();
  clearMfa();
  if(recovering){$('login').classList.add('hidden');$('confirmEmail').classList.add('hidden');$('workspace').classList.add('hidden');$('newPassword').classList.remove('hidden');status('Установи новый пароль.');return}
  $('securityState').textContent=verified.length?'Вход защищён кодом из приложения.':'Подключи код из приложения, чтобы защитить управление магазином.';
  $('securityBtn').textContent=verified.length?'Добавить запасной аутентификатор':'Настроить защиту входа';
- $('securityBtn').classList.toggle('hidden',!MFA_ENROLLMENT_ENABLED||mfaPaused());
- if(mfaPaused())$('securityState').textContent='Двухфакторная проверка временно отключена.';
+ $('securityBtn').classList.toggle('hidden',!MFA_ENROLLMENT_ENABLED);
+ if(mfaPaused()){$('securityState').textContent='Двухфакторная проверка временно отключена. Подтверди код из приложения, чтобы включить её.';$('securityBtn').textContent='Включить двухфакторную проверку';}
  if(!MFA_ENROLLMENT_ENABLED&&!verified.length)$('securityState').textContent='';
  await load();$('login').reset();$('confirmEmail').reset();$('login').classList.add('hidden');$('confirmEmail').classList.add('hidden');$('workspace').classList.remove('hidden');$('authArea').classList.add('hidden');showInventory();selectView('home');status('');refreshOverview();loadProductWishlistCounts();
 }
@@ -98,7 +101,7 @@ $('confirmEmail').onsubmit=async e=>{
  try{
   const link=new URL(e.target.confirmation.value.trim());
   if(link.origin!==url||link.pathname!=='/auth/v1/verify'||!link.searchParams.get('token'))throw Error('Вставь ссылку подтверждения именно из письма Supabase.');
-  const type=link.searchParams.get('type');if(!['signup','email','magiclink','recovery'].includes(type))throw Error('Неподдерживаемая ссылка подтверждения.');
+  const type=link.searchParams.get('type');if(!['recovery'].includes(type))throw Error('Неподдерживаемая ссылка подтверждения.');
   const token=link.searchParams.get('token');e.target.confirmation.value='';
   const data=await request('/auth/v1/verify',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token_hash:token,type})});
   if(epoch!==sessionEpoch)return;keepSession(data);
@@ -228,7 +231,7 @@ $('editor').onsubmit=async e=>{e.preventDefault();if(busy)return;busy=true;const
  if(!['in_stock','on_order'].includes(payload.fulfillment_status))throw Error('Выбери статус товара.');
  if(!payload.brand||!payload.name||!payload.category)throw Error('Заполни бренд, название и категорию.');
  if(payload.price!==null&&(!Number.isFinite(payload.price)||payload.price<0))throw Error('Проверь цену.');
- if(!['EUR','USD','AED','GBP'].includes(payload.currency))throw Error('Проверь валюту.');
+ if(!['EUR','USD','RUB','AED','GBP'].includes(payload.currency))throw Error('Проверь валюту.');
  if(photos.length+files.length>20)throw Error('Максимум 20 фотографий.');
  if(!photos.length&&!files.length)throw Error('Добавь хотя бы одну фотографию.');
  if(pendingPreviews.some(p=>p.state&&!p.reviewed))throw Error('Проверьте каждое обработанное фото: нажмите «Редактировать фото», затем «Применить фото» или «Оставить оригинал».');
@@ -258,12 +261,7 @@ $('mfaCancel').onclick=async()=>{
  if(pending){try{await request(`/auth/v1/factors/${encodeURIComponent(pending)}`,{method:'DELETE'})}catch{}}
  busy=false;await signOut();
 };
-$('securityBtn').onclick=async()=>{
- if(!MFA_ENROLLMENT_ENABLED||mfaPaused())return;
- if(busy)return;if(editorDirty&&!confirm('Перейти к защите входа без сохранения карточки?'))return;editorDirty=false;busy=true;const b=$('securityBtn');b.disabled=true;
- try{
-  const user=await currentAuthUser();
-  if((user.factors||[]).some(f=>f.status==='verified')&&sessionAal()!=='aal2'){await enterWorkspace();return}
+async function prepareMfaEnrollment(){
   const factor=await request('/auth/v1/factors',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({factor_type:'totp',friendly_name:`JULI.PROZ ${crypto.randomUUID().slice(0,8)}`,issuer:'JULI.PROZ'})});
   if(!factor?.id||!factor.totp?.secret||!factor.totp?.qr_code)throw Error('Не удалось подготовить защиту входа.');
   clearMfa();mfaFactorId=factor.id;mfaEnrollment={id:factor.id};mfaMode='enroll';
@@ -273,6 +271,14 @@ $('securityBtn').onclick=async()=>{
   $('mfaSecret').textContent=factor.totp.secret;
   $('mfaInfo').textContent='Добавь этот QR-код в Google Authenticator, 1Password или другое приложение-аутентификатор. Затем введи код из приложения. Сохрани доступ к нему: для отключения защиты понадобится владелец проекта.';
   $('authArea').classList.remove('hidden');$('mfaSetup').classList.remove('hidden');$('mfaPanel').classList.remove('hidden');$('workspace').classList.add('hidden');status('');
+}
+$('securityBtn').onclick=async()=>{
+ if(!MFA_ENROLLMENT_ENABLED)return;
+ if(busy)return;if(editorDirty&&!confirm('Перейти к защите входа без сохранения карточки?'))return;editorDirty=false;busy=true;const b=$('securityBtn');b.disabled=true;
+ try{
+  const user=await currentAuthUser();
+  if((user.factors||[]).some(f=>f.status==='verified')&&sessionAal()!=='aal2'){const factors=user.factors.filter(f=>f.status==='verified'&&f.factor_type==='totp');if(!factors.length)throw Error('Нужен поддерживаемый TOTP-фактор.');showMfaChallenge(factors);return}
+  await prepareMfaEnrollment();
  }catch(err){status(err.message)}finally{busy=false;b.disabled=false}
 };
 $('mfaFactor').onchange=e=>{if(!busy&&mfaMode==='challenge')mfaFactorId=e.target.value};

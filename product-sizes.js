@@ -1,7 +1,7 @@
 (function(root){
-  // Commas between digits are decimal separators; separate options with ; or newlines.
+  // One fractional digit uses a decimal comma; multi-digit alternatives stay separate.
   function parseSizes(value){
-    const raw=String(value??'').replace(/(\d),(?=\d)/g,'$1.');
+    const raw=String(value??'').replace(/(\d),(\d)(?!\d)/g,'$1.$2');
     // A set describes both pieces, rather than alternative sizes.
     if(/^верх\s/i.test(raw.trim()) && /[;\n]\s*низ\s/i.test(raw))return [raw.trim()];
     const isSize=s=>/^(?:\d+(?:\.\d+)?|[2-6]?[XSML]+|OS|One Size)$/i.test(s.trim());
@@ -13,7 +13,8 @@
   }
   function normalize(s){
     if(/^(?:one[ -]?size|os|единый размер|универсальный)$/i.test(s))return 'One Size';
-    const latin=s.replace(/[Хх]/g,'X').replace(/[Мм]/g,'M').replace(/[Сс]/g,'S').toUpperCase();
+    let latin=s.replace(/[Хх]/g,'X').replace(/[Мм]/g,'M').replace(/[Сс]/g,'S').toUpperCase();
+    latin=latin.replace(/^2XL$/,'XXL').replace(/^3XL$/,'XXXL').replace(/^XXXXL$/,'4XL');
     return /^(?:[2-6]?X{1,4}[SL]|[SML])$/.test(latin)?latin:s;
   }
   function compare(a,b){

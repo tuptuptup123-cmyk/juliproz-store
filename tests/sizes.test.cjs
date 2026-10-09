@@ -1,10 +1,11 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm'),path=require('node:path');
 const root=path.resolve(__dirname,'..');
 const sizes=require('../product-sizes.js');
+assert.deepEqual(sizes.parse('38,40'),['38','40']);assert.deepEqual(sizes.parse('16,17,18'),['16','17','18']);assert.deepEqual(sizes.parse('36,5'),['36.5']);assert.deepEqual(sizes.parse('S;2XL;XL;M;XXL;3XL'),['S','M','XL','XXL','XXXL']);
 assert.deepEqual(sizes.parse('18.5 см, регулируемый'),['18.5 см, регулируемый']);
 assert.deepEqual(sizes.parse('Верх L / C80; низ L / 175/74'),['Верх L / C80; низ L / 175/74']);
 assert.deepEqual(sizes.parse('44.5'),['44.5']);assert.deepEqual(sizes.parse('44,5'),['44.5']);assert.deepEqual(sizes.parse('40\n41\n40'),['40','41']);assert.deepEqual(sizes.parse('S, M; L'),['S','M','L']);assert.deepEqual(sizes.parse(null),[]);assert.equal(sizes.serialize('40\n41'),'40; 41');assert.throws(()=>sizes.serialize('X'.repeat(101)));
-const nodes=new Map();function node(id){if(!nodes.has(id))nodes.set(id,{innerHTML:'',textContent:'',value:'',dataset:{},classList:{add(){},remove(){},toggle(){}},addEventListener(){},querySelector(){return null},focus(){}});return nodes.get(id)}
+const nodes=new Map();function node(id){if(!nodes.has(id))nodes.set(id,{innerHTML:'',textContent:'',value:'',dataset:{},classList:{add(){},remove(){},toggle(){},contains(){return false}},addEventListener(){},querySelector(){return null},focus(){}});return nodes.get(id)}
 let rows=[],contactUrl=null;
 const context=vm.createContext({ProductSizes:sizes,safeProductImage:()=>false,window:{STORE_CONFIG:{url:'https://test.invalid',key:'public'},open:u=>contactUrl=u,addEventListener(){}},document:{getElementById:node,querySelectorAll:()=>[],querySelector:()=>null,addEventListener(){}},localStorage:{getItem:()=>null},location:{search:''},URLSearchParams,AbortSignal,setTimeout,fetch:async()=>({ok:true,json:async()=>rows})});
 vm.runInContext(fs.readFileSync(root+'/app.js','utf8'),context);
@@ -20,7 +21,7 @@ run('state.category=null;state.gender=null');
 (async()=>{
  await new Promise(r=>setImmediate(r));
  run(`products=[{id:1,brand:'Gucci',name:'Rhyton',category:'Обувь',size:'40; 41; 44.5',description:'<script>test</script>',photos:[]},{id:2,size:'38',photos:[]}];openProduct(1)`);
- assert.equal((node('productContent').innerHTML.match(/data-size=/g)||[]).length,3);assert.doesNotMatch(node('productContent').innerHTML,/product-reference|Артикул:/);assert.doesNotMatch(node('productContent').innerHTML,/product-description|<script>|test<\/script>/);assert.match(node('productContent').innerHTML,/product-sourcing/);assert.equal(run('esc("<script>")'),'&lt;script&gt;');
+ assert.equal((node('productContent').innerHTML.match(/data-size=/g)||[]).length,3);assert.doesNotMatch(node('productContent').innerHTML,/product-reference|Артикул:/);assert.doesNotMatch(node('productContent').innerHTML,/<script>|test<\/script>/);assert.match(node('productContent').innerHTML,/product-sourcing/);assert.equal(run('esc("<script>")'),'&lt;script&gt;');
  await run('contact(selectedProduct)');assert.equal(contactUrl,null);assert.match(node('sizeHint').textContent,/выберите/);
  run("selectedSize='41'");rows=[{id:1,brand:'Gucci',name:'Rhyton',size:'40; 41'}];await run('contact(selectedProduct)');assert.match(decodeURIComponent(contactUrl),/размер 41/);
  contactUrl=null;rows=[{id:1,size:'40'}];await run('contact(selectedProduct)');assert.equal(contactUrl,null);assert.match(node('shareStatus').textContent,/больше недоступен/);

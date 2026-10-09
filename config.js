@@ -1,1 +1,1 @@
-window.STORE_CONFIG={url:"https://qhgzzhgxwpcctafpzjid.supabase.co",key:"sb_publishable_AD6Hie5z_KycK1unCJ-Khg_5d0gjGq_",mfaEnrollmentEnabled:true,mfaPausedUserId:"f5a3ca3a-d730-451d-9759-7145325f29b7"};
+window.STORE_CONFIG={url:"https://qhgzzhgxwpcctafpzjid.supabase.co",key:"sb_publishable_AD6Hie5z_KycK1unCJ-Khg_5d0gjGq_",mfaEnrollmentEnabled:true};
