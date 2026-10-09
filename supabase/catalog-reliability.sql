@@ -5,8 +5,8 @@ create unique index if not exists products_creation_key_unique on public.product
 create or replace function public.bump_product_revision() returns trigger language plpgsql set search_path='' as $$begin new.revision:=old.revision+1;return new;end$$;
 drop trigger if exists bump_product_revision on public.products;
 create trigger bump_product_revision before update on public.products for each row execute function public.bump_product_revision();
-update public.products set currency=case currency when '€' then 'EUR' when '$' then 'USD' when '₽' then 'RUB' when '£' then 'GBP' else currency end where currency in ('€','$','₽','£');
-do $$ begin if not exists(select 1 from pg_constraint where conrelid='public.products'::regclass and conname='products_price_currency_valid') then alter table public.products add constraint products_price_currency_valid check ((price is null or price>=0) and currency in ('EUR','USD','RUB','AED','GBP')) not valid; end if; end $$;
+update public.products set currency=case currency when '€' then 'EUR' when '$' then 'USD' when '£' then 'GBP' else currency end where currency in ('€','$','£');
+do $$ begin if not exists(select 1 from pg_constraint where conrelid='public.products'::regclass and conname='products_price_currency_valid') then alter table public.products add constraint products_price_currency_valid check ((price is null or price>=0) and currency in ('EUR','USD','AED','GBP')) not valid; end if; end $$;
 alter table public.products validate constraint products_price_currency_valid;
 revoke select,insert,update on public.products from anon,authenticated;
 grant select(id,created_at,brand,name,category,size,price,currency,image_url,available,description,photos) on public.products to anon,authenticated;
