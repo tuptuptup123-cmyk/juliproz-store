@@ -182,3 +182,8 @@ test('stock totals exclude hidden and on-order cards, include reservations and c
  const s=h.run('stockSummary(items,{USD:2,GBP:.8,AED:7.345})');assert.equal(s.count,5);assert.equal(s.total,400);assert.equal(s.unpriced,1);assert.equal(s.unconverted,0);
  assert.equal(h.run('stockSummary(items,null).unconverted'),3);
 });
+
+test('stock overview counts explicit units and multiplies unit prices',()=>{
+ const h=setup(async()=>response([]));
+ h.run("ProductSizes={stockUnits:p=>Object.values(p.stock_quantities||{'':1}).reduce((a,b)=>a+b,0)};items=[{available:true,size:'One Size',price:100,currency:'EUR',stock_quantities:{'One Size':5}},{available:true,size:'S; M',price:200,currency:'USD',stock_quantities:{S:2,M:0}}]");const s=h.run('stockSummary(items,{USD:2})');assert.equal(s.count,7);assert.equal(s.total,700);
+});
