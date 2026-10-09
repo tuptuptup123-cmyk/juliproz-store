@@ -91,7 +91,7 @@ button,input{font:inherit;color:inherit}button{-webkit-appearance:none;appearanc
 .filter-summary{grid-column:1/-1;margin:0 0 20px;color:var(--muted);font-size:13px;line-height:1.6;overflow-wrap:anywhere}
 .catalog-menu{position:fixed;inset:0;z-index:40;display:flex}
 .menu-backdrop{position:absolute;inset:0;width:100%;height:100%;background:#25394f55;backdrop-filter:blur(4px);border:0;cursor:pointer}
-.menu-panel{position:relative;display:flex;flex-direction:column;width:420px;max-width:calc(100% - 24px);height:100%;background:var(--bg);box-shadow:12px 0 60px #25394f20;padding-top:max(env(safe-area-inset-top),var(--tg-safe-area-inset-top,0px),var(--tg-content-safe-area-inset-top,0px));padding-bottom:max(env(safe-area-inset-bottom),var(--tg-safe-area-inset-bottom,0px));animation:menu-arrive .2s ease-out}
+.menu-panel{position:relative;display:flex;flex-direction:column;width:420px;max-width:calc(100% - 24px);height:100%;background:var(--bg);box-shadow:12px 0 60px #25394f20;padding-bottom:max(env(safe-area-inset-bottom),var(--tg-safe-area-inset-bottom,0px));animation:menu-arrive .2s ease-out}
 .menu-header{display:flex;justify-content:space-between;align-items:center;padding:28px 26px 24px;background:var(--brand-blue);color:#fff;flex-shrink:0}
 .menu-eyebrow{font-size:11px;letter-spacing:.2em;color:var(--brand-pink)}.menu-header h2{font-family:"Playfair Display",serif;font-size:32px;font-weight:400;margin:7px 0 0}
 .menu-close{width:44px;height:44px;border:1px solid #ffffff55;border-radius:50%;background:transparent;color:#fff;font-size:30px;cursor:pointer}
@@ -268,11 +268,11 @@ button:not(:disabled):active{transform:scale(.96)}
 @media(max-width:600px){.brand-paw{width:140px;height:142px;right:calc(50% - 134px);top:-26px}}
 @media(prefers-reduced-motion:reduce){.money-paw{display:none}}
 /* Airy selection and empty states follow the approved J.P render. */
-.menu-panel{width:min(520px,100%);background:var(--bg)}
-.menu-header{position:relative;min-height:160px;display:flex;justify-content:center;align-items:center;padding:25px 64px;background:var(--brand-blue);overflow:hidden}
+.menu-panel{--menu-safe-top:max(env(safe-area-inset-top),var(--tg-safe-area-inset-top,0px),var(--tg-content-safe-area-inset-top,0px));width:min(520px,100%);background:var(--bg)}
+.menu-header{position:relative;min-height:calc(140px + var(--menu-safe-top));display:flex;justify-content:center;align-items:center;padding:calc(26px + var(--menu-safe-top)) 64px 26px;background:var(--brand-blue);overflow:hidden}
 .menu-brand{position:relative;min-width:108px;text-align:center}.menu-logo{font-family:"Playfair Display",serif;font-size:76px;font-weight:500;line-height:1.1;color:var(--brand-pink)}
-.menu-paw{position:absolute;top:-44px;left:72px;width:132px;height:96px;object-fit:contain;transform:rotate(-10deg);pointer-events:none}
-.menu-header .menu-close{position:absolute;z-index:2;top:25px;right:24px;width:40px;height:40px;display:grid;place-items:center;border:1px solid #e1c6d780;border-radius:50%;background:transparent;color:#fff;font-size:26px;line-height:1}
+.menu-paw{position:absolute;top:-22px;left:48px;width:116px;height:78px;object-fit:contain;pointer-events:none}
+.menu-header .menu-close{position:absolute;z-index:2;top:calc(20px + var(--menu-safe-top));right:24px;width:40px;height:40px;display:grid;place-items:center;border:1px solid #e1c6d780;border-radius:50%;background:transparent;color:#fff;font-size:26px;line-height:1}
 .menu-scroll{padding:26px 26px 10px}.menu-section-label{font-size:11px;letter-spacing:.13em;font-weight:600;color:var(--muted);margin:0 0 14px}.menu-panel .audience-tabs{margin:0 0 26px;gap:8px}.menu-panel .audience-tabs button{font-size:12px;font-weight:500;min-height:44px}
 .menu-group-toggle{font-size:12px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;padding:22px 0}.menu-group-toggle small{font-size:10px;font-weight:400;letter-spacing:0;text-transform:none;margin-top:5px;color:var(--muted)}.menu-chevron{font-size:20px;font-weight:400}
 .menu-choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 18px;padding:0 0 20px}
@@ -286,8 +286,8 @@ button:not(:disabled):active{transform:scale(.96)}
 .empty-signature{font-family:"Playfair Display",serif;font-size:clamp(110px,27vw,172px);line-height:.95;font-weight:500;letter-spacing:-.04em;color:var(--brand-pink);opacity:.22;pointer-events:none;user-select:none;margin-top:46px;flex-shrink:0}
 .cart-page.is-empty>#cartTitle{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 .cart-page.is-empty #cartContent{display:block}.cart-page.is-empty .cart-empty{max-width:none;min-width:0;padding-top:56px}.cart-page.is-empty #cartStatus:empty{display:none}
-@media(min-width:900px){.menu-header{min-height:180px;padding:32px 68px}.menu-logo{font-size:88px}.menu-paw{width:148px;height:105px;top:-48px;left:82px}.menu-scroll{padding:30px 34px 12px}.menu-footer{padding:22px 34px 26px}.menu-choices{gap:2px 24px}.collection-empty{min-height:max(450px,calc(100svh - 300px));padding-top:52px}.empty-content h2{font-size:36px}.empty-content p{font-size:16px;max-width:390px}.empty-symbol{width:70px;height:70px}.empty-signature{font-size:190px;margin-top:48px}}
-@media(max-width:360px){.menu-header{min-height:144px}.menu-scroll{padding:22px 20px 8px}.menu-footer{padding:18px 20px}.menu-choices{gap:0 12px}.menu-choice{font-size:12px;gap:9px}.collection-empty{padding-left:12px;padding-right:12px}.empty-content h2{font-size:27px}}
+@media(min-width:900px){.menu-header{min-height:calc(144px + var(--menu-safe-top));padding:calc(24px + var(--menu-safe-top)) 68px 24px}.menu-logo{font-size:88px}.menu-paw{width:126px;height:84px;top:-20px;left:56px}.menu-scroll{padding:30px 34px 12px}.menu-footer{padding:22px 34px 26px}.menu-choices{gap:2px 24px}.collection-empty{min-height:max(450px,calc(100svh - 300px));padding-top:52px}.empty-content h2{font-size:36px}.empty-content p{font-size:16px;max-width:390px}.empty-symbol{width:70px;height:70px}.empty-signature{font-size:190px;margin-top:48px}}
+@media(max-width:360px){.menu-header{min-height:calc(140px + var(--menu-safe-top))}.menu-paw{width:100px;height:67px;top:-18px;left:44px}.menu-header .menu-close{right:16px}.menu-scroll{padding:22px 20px 8px}.menu-footer{padding:18px 20px}.menu-choices{gap:0 12px}.menu-choice{font-size:12px;gap:9px}.collection-empty{padding-left:12px;padding-right:12px}.empty-content h2{font-size:27px}}
 
 .product-description{white-space:pre-line;line-height:1.6;overflow-wrap:anywhere;color:var(--muted,#68758a);margin:20px 0}
 
