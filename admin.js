@@ -8,6 +8,10 @@ const MFA_ENROLLMENT_ENABLED=window.STORE_CONFIG.mfaEnrollmentEnabled===true;
 const $=id=>document.getElementById(id);
 const ADMIN_SESSION_KEY='jpAdminSessionV1';
 let session=null,items=[],editing=null,photos=[],busy=false;
+let stockRates=null;
+function stockSummary(rows,rates){const stock=rows.filter(p=>p.available&&p.fulfillment_status!=='on_order');let total=0,unpriced=0,unconverted=0;for(const p of stock){if(p.price===null||p.price===undefined||p.price===''||!Number.isFinite(Number(p.price))){unpriced++;continue}const currency=({'€':'EUR','$':'USD','£':'GBP'}[p.currency]||p.currency||'EUR').toUpperCase(),rate=currency==='EUR'?1:rates?.[currency];if(!(rate>0)){unconverted++;continue}total+=Number(p.price)/rate}return {count:stock.length,total,unpriced,unconverted}}
+function updateStockSummary(){const s=stockSummary(items,stockRates?.rates);$('stockTotal').textContent=String(items.length);$('stockCount').textContent=String(s.count);$('stockValue').textContent=(s.unconverted?'от ':'')+new Intl.NumberFormat('ru-RU',{style:'currency',currency:'EUR',maximumFractionDigits:2}).format(s.total);$('stockValueNote').textContent=['По ценам карточек',stockRates?'курс ЕЦБ: '+stockRates.date:'',s.unpriced?'без цены: '+s.unpriced:'',s.unconverted?'не пересчитано: '+s.unconverted+' · курс недоступен':''].filter(Boolean).join(' · ')}
+async function loadStockRates(){const epoch=sessionEpoch;try{const r=await fetch('/api/exchange-rates',{signal:AbortSignal.timeout(10000)});if(!r.ok)throw Error();const data=await r.json();if(!data.date||!(data.rates?.USD>0))throw Error();if(epoch!==sessionEpoch||!session)return;stockRates=data;updateStockSummary()}catch{if(epoch===sessionEpoch&&session)updateStockSummary()}}
 function storedAdminSession(){let value;try{value=localStorage.getItem(ADMIN_SESSION_KEY)}catch{}if(!value)try{value=sessionStorage.getItem(ADMIN_SESSION_KEY)}catch{}return value?JSON.parse(value):null}
 function clearSavedAdminSession(){try{localStorage.removeItem(ADMIN_SESSION_KEY)}catch{}try{sessionStorage.removeItem(ADMIN_SESSION_KEY)}catch{}}
 function saveAdminSession(){
@@ -34,7 +38,7 @@ function clearMfa(){
 function endSession(){
  clearSavedAdminSession();
  pendingCover=false;window.PhotoStudio?.cancel();adminSecurity={paused:false};session=null;sessionEpoch++;previewEpoch++;items=[];photos=[];editing=null;original=null;creationKey=null;recovering=false;
- stagedUploads.clear();clearMfa();$('authArea').classList.remove('hidden');pendingPreviews=[];editorDirty=false;activeView='all';$('settingsPanel').classList.add('hidden');clearOverview();$('adminHome').classList.add('hidden');$('homePanel').classList.add('hidden');$('cataloguePreview').close?.();$('cataloguePreviewCard').innerHTML='';productWishlistCounts=null;productWishlistLoadedAt=0;$('analyticsPanel').classList.add('hidden');$('analyticsCards').innerHTML='';$('analyticsProducts').innerHTML='';
+ for(const id of ['stockTotal','stockCount','stockValue'])$(id).textContent='—';$('stockValueNote').textContent='';stagedUploads.clear();clearMfa();$('authArea').classList.remove('hidden');pendingPreviews=[];editorDirty=false;activeView='all';$('settingsPanel').classList.add('hidden');clearOverview();$('adminHome').classList.add('hidden');$('homePanel').classList.add('hidden');$('cataloguePreview').close?.();$('cataloguePreviewCard').innerHTML='';productWishlistCounts=null;productWishlistLoadedAt=0;$('analyticsPanel').classList.add('hidden');$('analyticsCards').innerHTML='';$('analyticsProducts').innerHTML='';
  for(const id of ['editor','login','confirmEmail','newPassword'])$(id).reset();
  for(const id of ['workspace','editor','confirmEmail','newPassword'])$(id).classList.add('hidden');
  $('login').classList.remove('hidden');$('inventory').innerHTML='';$('photos').innerHTML='';$('adminSearch').value='';$('photoUrl').value='';$('uploads').value='';
@@ -110,7 +114,7 @@ async function enterWorkspace(){
  $('securityBtn').classList.toggle('hidden',!MFA_ENROLLMENT_ENABLED);
  if(mfaPaused()){$('securityState').textContent='Двухфакторная проверка временно отключена. Подтверди код из приложения, чтобы включить её.';$('securityBtn').textContent='Включить двухфакторную проверку';}
  if(!MFA_ENROLLMENT_ENABLED&&!verified.length)$('securityState').textContent='';
- await load();$('login').reset();$('confirmEmail').reset();$('login').classList.add('hidden');$('confirmEmail').classList.add('hidden');$('workspace').classList.remove('hidden');$('authArea').classList.add('hidden');selectView('home',true);status(saveAdminSession()?'':'Браузер не разрешает сохранять вход. После обновления потребуется войти заново.');refreshOverview();loadProductWishlistCounts();
+ await load();$('login').reset();$('confirmEmail').reset();$('login').classList.add('hidden');$('confirmEmail').classList.add('hidden');$('workspace').classList.remove('hidden');$('authArea').classList.add('hidden');selectView('home',true);status(saveAdminSession()?'':'Браузер не разрешает сохранять вход. После обновления потребуется войти заново.');refreshOverview();loadProductWishlistCounts();loadStockRates();
 }
 $('login').onsubmit=async e=>{e.preventDefault();if(busy)return;const b=e.submitter,epoch=sessionEpoch;b.disabled=true;busy=true;try{
  const data=await request('/auth/v1/token?grant_type=password',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:e.target.email.value.trim(),password:e.target.password.value})});
@@ -141,6 +145,7 @@ const viewNames={pre_owned:'PRE-OWNED',vintage:'VINTAGE',all:'Все товар�
 function matchesView(p,view){return view==='all'||(['pre_owned','vintage'].includes(view)?p.product_condition===view:false)||(view==='reserved'?p.reserved===true:view==='hidden'?!p.available:p.available&&!p.reserved&&(p.fulfillment_status==='on_order'?'on_order':'in_stock')===view)}
 function formatPrice(p){if(p.price===null||p.price===undefined||p.price==='')return 'Цена по запросу';const c={'€':'EUR','$':'USD','£':'GBP'}[p.currency]||p.currency||'EUR';try{return new Intl.NumberFormat('ru-RU',{style:'currency',currency:c,maximumFractionDigits:2}).format(Number(p.price))}catch{return String(p.price)+' '+c}}
 function render(){
+ updateStockSummary();
  window.AdminSelects?.sync();
  $('adminHome').classList.toggle('hidden',!session);$('adminHome').setAttribute('aria-current',activeView==='home'?'page':'false');
  $('productsMenuToggle').classList.toggle('active',!['analytics','settings','home'].includes(activeView));
