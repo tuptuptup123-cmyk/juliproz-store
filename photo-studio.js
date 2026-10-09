@@ -11,7 +11,7 @@
  }
  function canvas(w,h){const c=document.createElement('canvas');c.width=w;c.height=h;return c}
  function read(blob){return new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=()=>reject(Error('Не удалось прочитать фото.'));r.readAsDataURL(blob)})}
- async function encode(c){const blob=await new Promise(r=>c.toBlob(r,'image/webp',.94));if(!blob||blob.type!=='image/webp')throw Error('Браузер не смог сохранить обработанное фото.');return blob}
+ async function encode(c){const blob=await new Promise(r=>c.toBlob(r,'image/webp',.94));if(!blob||!['image/webp','image/png'].includes(blob.type))throw Error('Браузер не смог сохранить обработанное фото.');return blob}
  function fullMask(source){const c=canvas(source.width,source.height),ctx=c.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,c.width,c.height);return c}
  function simpleMask(source){
   const w=source.width,h=source.height,data=source.getContext('2d').getImageData(0,0,w,h),pixels=data.data;
@@ -65,7 +65,7 @@
   ctx.translate(SIZE/2,SIZE/2);ctx.rotate(s.rotation*Math.PI/180);ctx.filter=`brightness(${1+s.brightness/100})`;ctx.drawImage(cutout,x0,y0,w,h,-w*scale/2,-h*scale/2,w*scale,h*scale);
   return out;
  }
- async function exportState(s){const blob=await encode(compose(s)),name=s.originalFile.name.replace(/\.[^.]+$/,'')+'-juli.webp',file=new File([blob],name,{type:'image/webp'});return {file,src:await read(file),originalSrc:s.originalSrc,originalFile:s.originalFile,name:s.originalFile.name}}
+ async function exportState(s){const blob=await encode(compose(s)),name=s.originalFile.name.replace(/\.[^.]+$/,'')+'-juli.'+(blob.type==='image/png'?'png':'webp'),file=new File([blob],name,{type:blob.type});return {file,src:await read(file),originalSrc:s.originalSrc,originalFile:s.originalFile,name:s.originalFile.name}}
  function draw(){if(!active)return;try{const out=compose(active.state),target=$('studioResult'),ctx=target.getContext('2d');target.width=out.width;target.height=out.height;ctx.drawImage(out,0,0);$('studioError').textContent='';drawMask()}catch(e){$('studioError').textContent=e.message}}
  function drawMask(){const s=active.state,target=$('studioMask');target.width=s.source.width;target.height=s.source.height;const ctx=target.getContext('2d');ctx.drawImage(s.source,0,0);ctx.globalCompositeOperation='destination-in';ctx.drawImage(s.mask,0,0);ctx.globalCompositeOperation='source-over'}
  function close(){if(!$('photoStudio').open)return;$('photoStudio').close();active=null;painting=false;previousFocus?.focus?.()}
