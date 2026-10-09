@@ -443,13 +443,13 @@ async function restoreAdminSession(){
  let saved;
  try{saved=storedAdminSession();if(!saved){status('Войдите один раз, чтобы сохранить вход на этом устройстве.');return;}if(!saved?.access_token||!saved?.refresh_token||!saved?.user?.id)throw Error();}
  catch{clearSavedAdminSession();return}
- const epoch=sessionEpoch;busy=true;$('login').querySelector?.('button[type="submit"]')?.setAttribute('disabled','');$('login').classList.add('hidden');status('');$('status').innerHTML='<span class="admin-logo" aria-label="Загрузка">J.P</span>';
+ const epoch=sessionEpoch;busy=true;$('login').querySelector?.('button[type="submit"]')?.setAttribute('disabled','');$('login').classList.add('hidden');status('');$('status').classList.add('admin-loading');$('status').innerHTML='<span class="loading-brand" aria-label="Загрузка J.P"><span class="admin-logo">J.P</span><img class="loading-paw" src="images/brand-paw.webp" alt=""><span class="loading-track" aria-hidden="true"></span></span>';
  try{
   // Validate a current access token first; request() refreshes only when needed.
   recovering=saved.recovering===true;session={access_token:saved.access_token,refresh_token:saved.refresh_token,user:{id:saved.user.id},expires_at:Number.isFinite(saved.expires_at)?saved.expires_at:0};
   await currentAuthUser();if(epoch!==sessionEpoch)return;await enterWorkspace();
  }catch(err){if(epoch===sessionEpoch){if([400,401,403].includes(err.httpStatus))endSession();else session=null;$('login').classList.remove('hidden');status('Не удалось восстановить вход: '+err.message)}}
- finally{busy=false;$('login').querySelector?.('button[type="submit"]')?.removeAttribute('disabled')}
+ finally{$('status').classList.remove('admin-loading');busy=false;$('login').querySelector?.('button[type="submit"]')?.removeAttribute('disabled')}
 }
 const adminSessionReady=restoreAdminSession();
 
