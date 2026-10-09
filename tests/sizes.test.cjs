@@ -9,6 +9,14 @@ let rows=[],contactUrl=null;
 const context=vm.createContext({ProductSizes:sizes,safeProductImage:()=>false,window:{STORE_CONFIG:{url:'https://test.invalid',key:'public'},open:u=>contactUrl=u,addEventListener(){}},document:{getElementById:node,querySelectorAll:()=>[],querySelector:()=>null,addEventListener(){}},localStorage:{getItem:()=>null},location:{search:''},URLSearchParams,AbortSignal,setTimeout,fetch:async()=>({ok:true,json:async()=>rows})});
 vm.runInContext(fs.readFileSync(root+'/app.js','utf8'),context);
 const run=s=>vm.runInContext(s,context);
+assert.deepEqual(sizes.parse('М; xl; OS; One size'),['M','XL','One Size']);
+assert.deepEqual(['XXL','S','XL','M','L'].sort(sizes.compare),['S','M','L','XL','XXL']);
+run(`products=[{id:10,name:'Мяч',category:'Аксессуары',size:'5',gender:'unisex'},{id:11,name:'Ремень',category:'Аксессуары',size:'90',gender:'unisex'},{id:12,name:'Кепка',category:'Аксессуары',size:'XL',gender:'unisex'},{id:13,name:'Худи',category:'Зип-худи',size:'L; XL; XXL',gender:'unisex'}];state.category='Аксессуары';state.gender='women'`);
+assert.equal(run("menuSizeLabel('90')"),'Ремни: 90 см');
+assert.equal(run("menuSizeLabel('5')"),'Мячи: 5');
+assert.equal(run("menuSizeLabel('XL')"),'Головные уборы: XL');
+run("state.category='Зип-худи'");assert.equal(JSON.stringify(run("valuesFor('size')")),JSON.stringify(['Все','L','XL','XXL']));
+run('state.category=null;state.gender=null');
 (async()=>{
  await new Promise(r=>setImmediate(r));
  run(`products=[{id:1,brand:'Gucci',name:'Rhyton',category:'Обувь',size:'40; 41; 44.5',description:'<script>test</script>',photos:[]},{id:2,size:'38',photos:[]}];openProduct(1)`);

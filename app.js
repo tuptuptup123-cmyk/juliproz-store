@@ -48,7 +48,20 @@ function valuesFor(type){
   if(type==='fulfillment_status')return ['Все','in_stock','on_order'];
   // Offer categories within the audience, then brands and sizes within the category.
   const scope=products.filter(p=>matchesGender(p)&&(!state.fulfillment_status||p.fulfillment_status===state.fulfillment_status)&&(type==='category'||!state.category||p.category===state.category)&&(type!=='size'||!state.brand||p.brand===state.brand));
-  return ["Все",...Array.from(new Set(scope.flatMap(p=>type==='size'?sizesOf(p):[p[type]]).filter(Boolean))).sort((a,b)=>String(a).localeCompare(String(b),"ru"))];
+  return ["Все",...Array.from(new Set(scope.flatMap(p=>type==='size'?sizesOf(p):[p[type]]).filter(Boolean))).sort((a,b)=>type==='size'?ProductSizes.compare(a,b):String(a).localeCompare(String(b),"ru"))];
+}
+function menuSizeLabel(value){
+  if(value==='Все'||state.category!=='Аксессуары')return value;
+  const rows=products.filter(p=>matchesGender(p)&&p.category===state.category&&(!state.brand||p.brand===state.brand)&&(!state.fulfillment_status||p.fulfillment_status===state.fulfillment_status)&&sizesOf(p).includes(value));
+  const labels=[...new Set(rows.map(p=>{
+    const name=String(p.name||'').toLowerCase();
+    if(/ремень/.test(name))return `Ремни: ${value} см`;
+    if(/мяч/.test(name))return `Мячи: ${value}`;
+    if(/кепк|шапк|панам/.test(name))return `Головные уборы: ${value}`;
+    if(/косметичк/.test(name))return `Косметички: ${value}`;
+    return value;
+  }))];
+  return labels.join(' / ')||value;
 }
 function reconcileFilters(){
   if(state.category&&!valuesFor('category').includes(state.category))state.category=null;
@@ -91,7 +104,7 @@ function renderCatalogMenu(){
   document.getElementById('menuGroups').innerHTML=Object.entries(menuLabels).map(([type,label])=>{
     const expanded=menuOpenGroup===type;
     const chosen=type==='fulfillment_status'?statusLabels[state[type]]:state[type];
-    const choices=type==='size'&&!state.category?'<p class="menu-hint">Сначала выберите категорию — покажем только подходящие размеры.</p>':valuesFor(type).map(v=>`<button type="button" class="menu-choice" data-menu-type="${type}" data-menu-value="${esc(v)}" aria-pressed="${(state[type]===v||(!state[type]&&v==='Все'))}">${esc(type==='fulfillment_status'?(statusLabels[v]||v):v)}</button>`).join('');
+    const choices=type==='size'&&!state.category?'<p class="menu-hint">Сначала выберите категорию — покажем только подходящие размеры.</p>':valuesFor(type).map(v=>`<button type="button" class="menu-choice" data-menu-type="${type}" data-menu-value="${esc(v)}" aria-pressed="${(state[type]===v||(!state[type]&&v==='Все'))}">${esc(type==='fulfillment_status'?(statusLabels[v]||v):type==='size'?menuSizeLabel(v):v)}</button>`).join('');
     return `<section class="menu-group"><button type="button" class="menu-group-toggle" data-menu-group="${type}" aria-expanded="${expanded}" aria-controls="menuChoices-${type}"><span>${label}<small>${esc(chosen||'Все')}</small></span><span class="menu-chevron" aria-hidden="true">+</span></button><div id="menuChoices-${type}" class="menu-accordion" ${expanded?'':'inert'}><div class="menu-choices">${choices}</div></div></section>`;
   }).join('');
 }
@@ -223,7 +236,7 @@ document.querySelectorAll("[data-filter]").forEach(b=>b.onclick=()=>openFilter(b
 function openFilter(type){
   currentFilter=type;tempValue=state[type];
   document.getElementById("sheetTitle").textContent={fulfillment_status:"Наличие",category:"Категория",brand:"Бренд",size:"Размер"}[type];
-  options.innerHTML=valuesFor(type).map(v=>`<button class="${(tempValue===v||(!tempValue&&v==="Все"))?"selected":""}" data-v="${esc(v)}">${esc(type==='fulfillment_status'?(statusLabels[v]||v):v)}</button>`).join("");
+  options.innerHTML=valuesFor(type).map(v=>`<button class="${(tempValue===v||(!tempValue&&v==="Все"))?"selected":""}" data-v="${esc(v)}">${esc(type==='fulfillment_status'?(statusLabels[v]||v):type==='size'?menuSizeLabel(v):v)}</button>`).join("");
   sheet.classList.remove("hidden");
 }
 options.onclick=e=>{if(!e.target.dataset.v)return;tempValue=e.target.dataset.v==="Все"?null:e.target.dataset.v;[...options.children].forEach(x=>x.classList.toggle("selected",(tempValue===x.dataset.v)||(!tempValue&&x.dataset.v==="Все")))};
