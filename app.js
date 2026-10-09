@@ -1,3 +1,4 @@
+function brandsOf(p){return [...new Set(String(p?.brand||'').split(/\s*×\s*/).map(v=>v.trim()).filter(Boolean))]}
 const SUPABASE_URL=window.STORE_CONFIG.url;
 const SUPABASE_KEY=window.STORE_CONFIG.key;
 
@@ -47,17 +48,17 @@ function imageOf(p){return photosOf(p)[0]||""}
 function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
 function matchesGender(p){return !state.gender||p.gender===state.gender||p.gender==='unisex'||!p.gender}
 function matchesContext(p,except){
-  return matchesGender(p)&&(!state.fulfillment_status||p.fulfillment_status===state.fulfillment_status)&&(except==='category'||!state.category||p.category===state.category)&&(except==='brand'||!state.brand||p.brand===state.brand)&&(except==='size'||!state.size||sizesOf(p).includes(state.size));
+  return matchesGender(p)&&(!state.fulfillment_status||p.fulfillment_status===state.fulfillment_status)&&(except==='category'||!state.category||p.category===state.category)&&(except==='brand'||!state.brand||brandsOf(p).includes(state.brand))&&(except==='size'||!state.size||sizesOf(p).includes(state.size));
 }
 function valuesFor(type){
   if(type==='fulfillment_status')return ['Все','in_stock','on_order'];
   // Offer categories within the audience, then brands and sizes within the category.
-  const scope=products.filter(p=>matchesGender(p)&&(!state.fulfillment_status||p.fulfillment_status===state.fulfillment_status)&&(type==='category'||!state.category||p.category===state.category)&&(type!=='size'||!state.brand||p.brand===state.brand));
-  return ["Все",...Array.from(new Set(scope.flatMap(p=>type==='size'?sizesOf(p):[p[type]]).filter(Boolean))).sort((a,b)=>type==='size'?ProductSizes.compare(a,b):String(a).localeCompare(String(b),"ru"))];
+  const scope=products.filter(p=>matchesGender(p)&&(!state.fulfillment_status||p.fulfillment_status===state.fulfillment_status)&&(type==='category'||!state.category||p.category===state.category)&&(type!=='size'||!state.brand||brandsOf(p).includes(state.brand)));
+  return ["Все",...Array.from(new Set(scope.flatMap(p=>type==='size'?sizesOf(p):type==='brand'?brandsOf(p):[p[type]]).filter(Boolean))).sort((a,b)=>type==='size'?ProductSizes.compare(a,b):String(a).localeCompare(String(b),"ru"))];
 }
 function menuSizeLabel(value){
   if(value==='Все'||state.category!=='Аксессуары')return value;
-  const rows=products.filter(p=>matchesGender(p)&&p.category===state.category&&(!state.brand||p.brand===state.brand)&&(!state.fulfillment_status||p.fulfillment_status===state.fulfillment_status)&&sizesOf(p).includes(value));
+  const rows=products.filter(p=>matchesGender(p)&&p.category===state.category&&(!state.brand||brandsOf(p).includes(state.brand))&&(!state.fulfillment_status||p.fulfillment_status===state.fulfillment_status)&&sizesOf(p).includes(value));
   const labels=[...new Set(rows.map(p=>{
     const name=String(p.name||'').toLowerCase();
     if(/ремень/.test(name))return `Ремни: ${value} см`;
