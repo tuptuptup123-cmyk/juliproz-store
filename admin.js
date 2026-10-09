@@ -231,7 +231,7 @@ $('editor').onsubmit=async e=>{e.preventDefault();if(busy)return;busy=true;const
  if(!['in_stock','on_order'].includes(payload.fulfillment_status))throw Error('Выбери статус товара.');
  if(!payload.brand||!payload.name||!payload.category)throw Error('Заполни бренд, название и категорию.');
  if(payload.price!==null&&(!Number.isFinite(payload.price)||payload.price<0))throw Error('Проверь цену.');
- if(!['EUR','USD','RUB','AED','GBP'].includes(payload.currency))throw Error('Проверь валюту.');
+ if(!['EUR','USD','AED','GBP'].includes(payload.currency))throw Error('Проверь валюту.');
  if(photos.length+files.length>20)throw Error('Максимум 20 фотографий.');
  if(!photos.length&&!files.length)throw Error('Добавь хотя бы одну фотографию.');
  if(pendingPreviews.some(p=>p.state&&!p.reviewed))throw Error('Проверьте каждое обработанное фото: нажмите «Редактировать фото», затем «Применить фото» или «Оставить оригинал».');

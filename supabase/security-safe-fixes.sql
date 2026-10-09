@@ -17,7 +17,7 @@ do $$ begin
  if not exists(select 1 from pg_constraint where conrelid='public.products'::regclass and conname='products_finite_price_valid') then
   alter table public.products add constraint products_finite_price_valid check (
    (price is null or (price>=0 and price::text not in ('NaN','Infinity','-Infinity'))) and
-   currency is not null and currency in ('EUR','USD','RUB','AED','GBP')
+   currency is not null and currency in ('EUR','USD','AED','GBP')
   ) not valid;
  end if;
  if not exists(select 1 from pg_constraint where conrelid='public.products'::regclass and conname='products_photo_limits_valid') then
