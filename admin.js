@@ -8,7 +8,15 @@ const MFA_ENROLLMENT_ENABLED=window.STORE_CONFIG.mfaEnrollmentEnabled===true;
 const $=id=>document.getElementById(id);
 const ADMIN_SESSION_KEY='jpAdminSessionV1';
 let session=null,items=[],editing=null,photos=[],busy=false;
-function saveAdminSession(){try{if(session)sessionStorage.setItem(ADMIN_SESSION_KEY,JSON.stringify({access_token:session.access_token,refresh_token:session.refresh_token,expires_at:session.expires_at,user:{id:session.user.id},recovering}));else sessionStorage.removeItem(ADMIN_SESSION_KEY)}catch{}}
+function storedAdminSession(){let value;try{value=localStorage.getItem(ADMIN_SESSION_KEY)}catch{}if(!value)try{value=sessionStorage.getItem(ADMIN_SESSION_KEY)}catch{}return value?JSON.parse(value):null}
+function clearSavedAdminSession(){try{localStorage.removeItem(ADMIN_SESSION_KEY)}catch{}try{sessionStorage.removeItem(ADMIN_SESSION_KEY)}catch{}}
+function saveAdminSession(){
+ if(!session){clearSavedAdminSession();return}
+ const value=JSON.stringify({access_token:session.access_token,refresh_token:session.refresh_token,expires_at:session.expires_at,user:{id:session.user.id},recovering});
+ try{localStorage.setItem(ADMIN_SESSION_KEY,value);try{sessionStorage.removeItem(ADMIN_SESSION_KEY)}catch{}return}catch{}
+ try{sessionStorage.setItem(ADMIN_SESSION_KEY,value)}catch{}
+}
+
 
 let adminPreferences={autoPhoto:true,reducedMotion:false};
 try{const saved=JSON.parse(localStorage.getItem('jpAdminPreferences')||'{}');adminPreferences={autoPhoto:saved.autoPhoto!==false,reducedMotion:saved.reducedMotion===true}}catch{}
@@ -24,7 +32,7 @@ function clearMfa(){
  $('mfaVerify').reset();$('mfaQr').removeAttribute?.('src');$('mfaSecret').textContent='';$('mfaFactor').innerHTML='';
 }
 function endSession(){
- try{sessionStorage.removeItem(ADMIN_SESSION_KEY)}catch{}
+ clearSavedAdminSession();
  pendingCover=false;window.PhotoStudio?.cancel();adminSecurity={paused:false};session=null;sessionEpoch++;previewEpoch++;items=[];photos=[];editing=null;original=null;creationKey=null;recovering=false;
  stagedUploads.clear();clearMfa();$('authArea').classList.remove('hidden');pendingPreviews=[];editorDirty=false;activeView='all';$('settingsPanel').classList.add('hidden');clearOverview();$('adminHome').classList.add('hidden');$('homePanel').classList.add('hidden');$('cataloguePreview').close?.();$('cataloguePreviewCard').innerHTML='';productWishlistCounts=null;productWishlistLoadedAt=0;$('analyticsPanel').classList.add('hidden');$('analyticsCards').innerHTML='';$('analyticsProducts').innerHTML='';
  for(const id of ['editor','login','confirmEmail','newPassword'])$(id).reset();
@@ -45,7 +53,17 @@ async function request(path,options={}){
  const epoch=sessionEpoch;
  if(!session)throw Error('Сессия завершена. Войди заново.');
  if(session.expires_at<Date.now()/1000+60){
-  if(!refreshPromise){const current=session;refreshPromise=fetchJSON('/auth/v1/token?grant_type=refresh_token',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({refresh_token:current.refresh_token})}).then(data=>{if(epoch!==sessionEpoch)throw Error('Сессия завершена.');keepSession(data)}).catch(err=>{if(epoch===sessionEpoch&&[400,401,403].includes(err.httpStatus))endSession();throw err}).finally(()=>{refreshPromise=null});}
+  if(!refreshPromise){
+   const refresh=async()=>{
+    if(epoch!==sessionEpoch||!session)throw Error('Сессия завершена.');
+    let saved;try{saved=storedAdminSession()}catch{}
+    // Another tab may already have rotated the refresh token while this tab waited.
+    if(saved?.user?.id===session.user.id&&saved.refresh_token!==session.refresh_token&&saved.expires_at>Date.now()/1000+60){keepSession(saved);return}
+    const current=session,data=await fetchJSON('/auth/v1/token?grant_type=refresh_token',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({refresh_token:current.refresh_token})});
+    if(epoch!==sessionEpoch)throw Error('Сессия завершена.');keepSession(data);
+   };
+   refreshPromise=(typeof navigator!=='undefined'&&navigator.locks?.request?navigator.locks.request('jp-admin-auth-refresh',refresh):refresh()).catch(err=>{if(epoch===sessionEpoch&&[400,401,403].includes(err.httpStatus))endSession();throw err}).finally(()=>{refreshPromise=null});
+  }
   await refreshPromise;
  }
  if(epoch!==sessionEpoch||!session)throw Error('Сессия завершена. Войди заново.');
@@ -423,8 +441,8 @@ $('previewCatalogue').onclick=()=>{const f=$('editor').elements;openCataloguePre
 
 async function restoreAdminSession(){
  let saved;
- try{const value=sessionStorage.getItem(ADMIN_SESSION_KEY);if(!value)return;saved=JSON.parse(value);if(!saved?.access_token||!saved?.refresh_token||!saved?.user?.id)throw Error();}
- catch{try{sessionStorage.removeItem(ADMIN_SESSION_KEY)}catch{}return}
+ try{saved=storedAdminSession();if(!saved)return;if(!saved?.access_token||!saved?.refresh_token||!saved?.user?.id)throw Error();}
+ catch{clearSavedAdminSession();return}
  const epoch=sessionEpoch;busy=true;$('login').querySelector?.('button[type="submit"]')?.setAttribute('disabled','');status('Восстанавливаем вход…');
  try{
   // Revalidate the saved session on the server, including revoked refresh tokens.
@@ -434,3 +452,5 @@ async function restoreAdminSession(){
  finally{busy=false;$('login').querySelector?.('button[type="submit"]')?.removeAttribute('disabled')}
 }
 const adminSessionReady=restoreAdminSession();
+
+window.addEventListener('storage',e=>{if(e.key===ADMIN_SESSION_KEY&&e.newValue===null&&session){endSession();status('Вход завершён в другой вкладке.')}});

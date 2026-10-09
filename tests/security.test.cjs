@@ -15,9 +15,9 @@ const jwt=aal=>`synthetic.${Buffer.from(JSON.stringify({aal})).toString('base64u
 const user=factors=>({id:'owner',factors});
 const session=(aal='aal1',factors=[])=>({access_token:jwt(aal),refresh_token:'synthetic-refresh',expires_in:3600,user:user(factors)});
 const response=(body,status=200)=>({ok:status<400,status,json:async()=>body});
-function setup(fetch,mfaEnrollmentEnabled=true,sessionStorage){
+function setup(fetch,mfaEnrollmentEnabled=true,sessionStorage,localStorage){
  const nodes=new Map();const get=id=>{if(!nodes.has(id))nodes.set(id,node());return nodes.get(id)};
- const context=vm.createContext({sessionStorage,document:{getElementById:get,querySelectorAll:()=>[],addEventListener(){}},window:{addEventListener(){},STORE_CONFIG:{url:'https://test.supabase.co',key:'public',mfaEnrollmentEnabled}},fetch,URL,URLSearchParams,atob,AbortController,setTimeout,clearTimeout,structuredClone,crypto,location:{search:''},safeProductImage:()=>true});
+ const context=vm.createContext({sessionStorage,localStorage,document:{getElementById:get,querySelectorAll:()=>[],addEventListener(){}},window:{addEventListener(){},STORE_CONFIG:{url:'https://test.supabase.co',key:'public',mfaEnrollmentEnabled}},fetch,URL,URLSearchParams,atob,AbortController,setTimeout,clearTimeout,structuredClone,crypto,location:{search:''},safeProductImage:()=>true});
  get('editor').elements=Object.fromEntries(['brand','name','size','price','currency','available','fulfillment_status'].map(k=>[k,node()]));
  vm.runInContext(fs.readFileSync(__dirname+'/../admin.js','utf8'),context);
  get('mfaVerify').code=node();
@@ -146,4 +146,13 @@ test('transient restore failure retains saved tokens for retry',async()=>{
 });
 test('restored aal1 session cannot bypass MFA',async()=>{
  const storage=tabStorage(session()),a=api({factors:[factor]});const h=setup(async(path,options)=>path.includes('grant_type=refresh_token')?response(session()):a.fetch(path,options),true,storage);await h.run('adminSessionReady');assert.equal(h.run('mfaMode'),'challenge');assert.ok(!a.calls.some(c=>c.path.includes('/products?')));
+});
+
+test('login persists across new tabs and migrates legacy tab storage',async()=>{
+ const local=tabStorage(),legacy=tabStorage(session('aal2',[factor])),a=api({factors:[factor]});const fetch=async(path,options)=>path.includes('grant_type=refresh_token')?response(session('aal2',[factor])):a.fetch(path,options);
+ const first=setup(fetch,true,legacy,local);await first.run('adminSessionReady');assert.ok(local.getItem('jpAdminSessionV1'));assert.equal(legacy.getItem('jpAdminSessionV1'),null);
+ const second=setup(fetch,true,tabStorage(),local);await second.run('adminSessionReady');assert.equal(second.run('session.user.id'),'owner');second.run('endSession()');assert.equal(local.getItem('jpAdminSessionV1'),null);
+});
+test('persistent restored session still fails closed when server revokes it',async()=>{
+ const local=tabStorage(session()),h=setup(async()=>response({message:'Revoked'},401),true,tabStorage(),local);await h.run('adminSessionReady');assert.equal(h.run('session'),null);assert.equal(local.getItem('jpAdminSessionV1'),null);
 });
