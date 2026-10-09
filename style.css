@@ -294,3 +294,7 @@ button:not(:disabled):active{transform:scale(.96)}
 .analytics-consent{position:fixed;z-index:70;bottom:calc(86px + env(safe-area-inset-bottom));left:16px;right:16px;max-width:540px;margin:auto;background:#f5f7fb;color:#293d54;padding:20px;border:1px solid #d8e1ec;border-radius:20px;box-shadow:0 8px 32px #293d5422;font-size:13px;line-height:1.5}.analytics-consent div{display:flex;gap:12px}.analytics-consent button{flex:1;border:1px solid #6c90b9;border-radius:12px;padding:12px;background:transparent;color:inherit;cursor:pointer}.privacy-links{display:flex;flex-wrap:wrap;gap:12px;margin:24px 0;font-size:12px}.privacy-links button{border:0;background:transparent;color:inherit;text-decoration:underline;cursor:pointer}
 
 .product-open{background:transparent;border:0;padding:0;margin:0;color:inherit;font:inherit;text-align:inherit;cursor:pointer}.product-open:focus-visible{outline:2px solid #6c90b9;outline-offset:4px}
+
+/* A soft silhouette shadow keeps pale products readable without recoloring them. */
+.photo img,.hero img,.related-photo img,.cart-photo img,.photo-picker img{filter:drop-shadow(0 3px 5px #25394f30)}
+.hero img{filter:drop-shadow(0 5px 8px #25394f30)}
