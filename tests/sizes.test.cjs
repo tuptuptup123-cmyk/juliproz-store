@@ -44,3 +44,6 @@ run('state.category=null;state.gender=null');
  const admin=fs.readFileSync(root+'/admin.js','utf8');assert.match(admin,/fulfillment_status:f\.fulfillment_status\.value/);assert.match(admin,/fulfillment_status.value=p\?\.fulfillment_status==='on_order'/);assert.match(admin,/available:!p.available/);
  console.log('Sizes, card, escaping, contact, stale availability, filters, order status and admin field checks passed.');
 })().catch(e=>{console.error(e);process.exitCode=1});
+
+const quantitySizes=require('../product-sizes.js');
+assert.equal(quantitySizes.stockFor({stock_quantities:{'One Size':5}},'One Size'),5);assert.equal(quantitySizes.stockUnits({size:'S; M',stock_quantities:{S:2,M:3}}),5);assert.equal(quantitySizes.stockFor({stock_quantities:{S:0}},'S'),0);assert.equal(quantitySizes.stockUnits({size:'S; M'}),1);assert.equal(quantitySizes.stockFor({stock_quantities:{S:-1}},'S'),0);

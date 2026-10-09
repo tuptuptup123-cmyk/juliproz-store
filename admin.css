@@ -49,3 +49,7 @@ label{display:block;font-weight:500;font-size:12px}input:not([type=checkbox]),te
 .stock-number{display:inline-flex;align-items:baseline;white-space:pre;max-width:100%;flex-wrap:wrap}.stock-digit{display:inline-block;height:1.25em;overflow:hidden;vertical-align:bottom}.stock-digit-strip{display:block;will-change:transform}.stock-digit-strip>span{display:block;height:1.25em;line-height:1.25em}.stock-stat>strong{line-height:1.25}
 
 .stock-number{align-items:center;line-height:1.25}.stock-digit{line-height:1.25em;text-align:center;min-width:.6em;font-variant-numeric:tabular-nums}.stock-number>span:not(.stock-digit){line-height:1.25em}
+
+.size-quantities{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;margin-top:10px}.field-label{font-size:12px;font-weight:500}.inventory-quantity{display:block;color:var(--muted);font-size:11px;margin-top:5px}
+
+.stock-number-finished{display:inline;white-space:normal}
