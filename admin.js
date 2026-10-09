@@ -13,8 +13,8 @@ function clearSavedAdminSession(){try{localStorage.removeItem(ADMIN_SESSION_KEY)
 function saveAdminSession(){
  if(!session){clearSavedAdminSession();return}
  const value=JSON.stringify({access_token:session.access_token,refresh_token:session.refresh_token,expires_at:session.expires_at,user:{id:session.user.id},recovering});
- try{localStorage.setItem(ADMIN_SESSION_KEY,value);try{sessionStorage.removeItem(ADMIN_SESSION_KEY)}catch{}return}catch{}
- try{sessionStorage.setItem(ADMIN_SESSION_KEY,value)}catch{}
+ try{localStorage.setItem(ADMIN_SESSION_KEY,value);try{sessionStorage.removeItem(ADMIN_SESSION_KEY)}catch{}return true}catch{}
+ try{sessionStorage.setItem(ADMIN_SESSION_KEY,value);return true}catch{}return false
 }
 
 
@@ -110,7 +110,7 @@ async function enterWorkspace(){
  $('securityBtn').classList.toggle('hidden',!MFA_ENROLLMENT_ENABLED);
  if(mfaPaused()){$('securityState').textContent='Двухфакторная проверка временно отключена. Подтверди код из приложения, чтобы включить её.';$('securityBtn').textContent='Включить двухфакторную проверку';}
  if(!MFA_ENROLLMENT_ENABLED&&!verified.length)$('securityState').textContent='';
- await load();$('login').reset();$('confirmEmail').reset();$('login').classList.add('hidden');$('confirmEmail').classList.add('hidden');$('workspace').classList.remove('hidden');$('authArea').classList.add('hidden');showInventory();selectView('home');status('');refreshOverview();loadProductWishlistCounts();
+ await load();$('login').reset();$('confirmEmail').reset();$('login').classList.add('hidden');$('confirmEmail').classList.add('hidden');$('workspace').classList.remove('hidden');$('authArea').classList.add('hidden');showInventory();selectView('home');status(saveAdminSession()?'':'Браузер не разрешает сохранять вход. После обновления потребуется войти заново.');refreshOverview();loadProductWishlistCounts();
 }
 $('login').onsubmit=async e=>{e.preventDefault();if(busy)return;const b=e.submitter,epoch=sessionEpoch;b.disabled=true;busy=true;try{
  const data=await request('/auth/v1/token?grant_type=password',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:e.target.email.value.trim(),password:e.target.password.value})});
@@ -441,14 +441,14 @@ $('previewCatalogue').onclick=()=>{const f=$('editor').elements;openCataloguePre
 
 async function restoreAdminSession(){
  let saved;
- try{saved=storedAdminSession();if(!saved)return;if(!saved?.access_token||!saved?.refresh_token||!saved?.user?.id)throw Error();}
+ try{saved=storedAdminSession();if(!saved){status('Войдите один раз, чтобы сохранить вход на этом устройстве.');return;}if(!saved?.access_token||!saved?.refresh_token||!saved?.user?.id)throw Error();}
  catch{clearSavedAdminSession();return}
- const epoch=sessionEpoch;busy=true;$('login').querySelector?.('button[type="submit"]')?.setAttribute('disabled','');status('Восстанавливаем вход…');
+ const epoch=sessionEpoch;busy=true;$('login').querySelector?.('button[type="submit"]')?.setAttribute('disabled','');$('login').classList.add('hidden');status('Восстанавливаем вход…');
  try{
-  // Revalidate the saved session on the server, including revoked refresh tokens.
-  recovering=saved.recovering===true;session={access_token:saved.access_token,refresh_token:saved.refresh_token,user:{id:saved.user.id},expires_at:0};
+  // Validate a current access token first; request() refreshes only when needed.
+  recovering=saved.recovering===true;session={access_token:saved.access_token,refresh_token:saved.refresh_token,user:{id:saved.user.id},expires_at:Number.isFinite(saved.expires_at)?saved.expires_at:0};
   await currentAuthUser();if(epoch!==sessionEpoch)return;await enterWorkspace();
- }catch(err){if(epoch===sessionEpoch){if([400,401,403].includes(err.httpStatus))endSession();else session=null;status(err.message)}}
+ }catch(err){if(epoch===sessionEpoch){if([400,401,403].includes(err.httpStatus))endSession();else session=null;$('login').classList.remove('hidden');status('Не удалось восстановить вход: '+err.message)}}
  finally{busy=false;$('login').querySelector?.('button[type="submit"]')?.removeAttribute('disabled')}
 }
 const adminSessionReady=restoreAdminSession();
