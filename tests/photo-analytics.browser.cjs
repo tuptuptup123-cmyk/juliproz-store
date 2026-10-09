@@ -5,6 +5,7 @@ const server=http.createServer((req,res)=>{let p=new URL(req.url,'http://localho
 for(const width of [390,1280]){
  const page=await browser.newPage({viewport:{width,height:900}}),errors=[],events=[];page.on('pageerror',e=>errors.push(e.message));
  await page.route('**/functions/v1/store-analytics',r=>{events.push(r.request().postDataJSON());return r.fulfill({status:202,json:{accepted:true}})});
+ await page.route('**/rest/v1/rpc/store_product_wishlist_counts',r=>r.fulfill({json:{days:30,counts:{}}}));
  await page.route('**/rest/v1/products?**',r=>r.fulfill({json:[]}));
  await page.goto('http://localhost:8774/');await page.waitForTimeout(150);
  await page.evaluate(()=>{for(let i=0;i<150;i++)StoreAnalytics.track('wishlist_add',42)});await page.waitForTimeout(100);assert.equal(events.filter(x=>x.event==='wishlist_add').length,1);assert.equal(events.filter(x=>x.event==='visit').length,1);assert.ok(events.every(x=>!('telegram_id'in x)&&!('name'in x)));
