@@ -39,3 +39,5 @@ label{display:block;font-weight:500;font-size:12px}input:not([type=checkbox]),te
 @keyframes admin-logo-breathe{50%{opacity:.78;transform:translateY(-4px)}}
 @keyframes admin-loading-slide{from{transform:translateX(-60px)}to{transform:translateX(160px)}}
 @media(prefers-reduced-motion:reduce){.loading-brand,.loading-track:after{animation:none}.loading-track:after{width:100%}}
+
+.studio-brush-actions{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}.studio-brush-actions button{border-radius:24px}
