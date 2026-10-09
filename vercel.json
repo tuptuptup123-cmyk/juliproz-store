@@ -48,6 +48,6 @@
       ]
     }
   ],
-  "buildCommand": "node scripts/prepare-photo-runtime.cjs && node scripts/configure-telegram.cjs",
-  "outputDirectory": "."
+  "buildCommand": "node scripts/prepare-photo-runtime.cjs && node scripts/configure-telegram.cjs && node scripts/build-public.cjs",
+  "outputDirectory": "dist"
 }
