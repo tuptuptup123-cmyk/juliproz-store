@@ -298,3 +298,5 @@ button:not(:disabled):active{transform:scale(.96)}
 /* A soft silhouette shadow keeps pale products readable without recoloring them. */
 .photo img,.hero img,.related-photo img,.cart-photo img,.photo-picker img{filter:drop-shadow(0 3px 5px #25394f30)}
 .hero img{filter:drop-shadow(0 5px 8px #25394f30)}
+
+.condition-badge{display:inline-block;margin:6px 0;padding:4px 8px;border:1px solid currentColor;border-radius:4px;font-size:10px;letter-spacing:.08em;line-height:1.4}
