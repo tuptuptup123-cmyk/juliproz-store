@@ -28,6 +28,11 @@
     if(text.length>100)throw Error('Список размеров слишком длинный (максимум 100 символов).');
     return text||null;
   }
-  root.ProductSizes={parse:parseSizes,serialize:serializeSizes,compare:compare};
+  function stockFor(p,size=''){
+    const q=p?.stock_quantities;if(q==null)return 1;
+    const n=q[size];return typeof n==='number'&&Number.isInteger(n)&&n>=0&&n<=9999?n:0;
+  }
+  function stockUnits(p){if(p?.stock_quantities==null)return 1;const sizes=parseSizes(p.size);return (sizes.length?sizes:['']).reduce((sum,size)=>sum+stockFor(p,size),0)}
+  root.ProductSizes={parse:parseSizes,serialize:serializeSizes,compare:compare,stockFor,stockUnits};
   if(typeof module==='object')module.exports=root.ProductSizes;
 })(typeof window==='object'?window:globalThis);
