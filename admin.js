@@ -123,6 +123,7 @@ const viewNames={pre_owned:'PRE-OWNED',vintage:'VINTAGE',all:'Все товар�
 function matchesView(p,view){return view==='all'||(['pre_owned','vintage'].includes(view)?p.product_condition===view:false)||(view==='reserved'?p.reserved===true:view==='hidden'?!p.available:p.available&&!p.reserved&&(p.fulfillment_status==='on_order'?'on_order':'in_stock')===view)}
 function formatPrice(p){if(p.price===null||p.price===undefined||p.price==='')return 'Цена по запросу';const c={'€':'EUR','$':'USD','£':'GBP'}[p.currency]||p.currency||'EUR';try{return new Intl.NumberFormat('ru-RU',{style:'currency',currency:c,maximumFractionDigits:2}).format(Number(p.price))}catch{return String(p.price)+' '+c}}
 function render(){
+ window.AdminSelects?.sync();
  $('adminHome').classList.toggle('hidden',!session);$('adminHome').setAttribute('aria-current',activeView==='home'?'page':'false');
  $('productsMenuToggle').classList.toggle('active',!['analytics','settings','home'].includes(activeView));
  const q=$('adminSearch').value.trim().toLowerCase(),category=$('categoryFilter').value,gender=$('genderFilter').value;
