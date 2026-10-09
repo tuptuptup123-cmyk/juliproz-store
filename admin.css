@@ -11,3 +11,5 @@
 
 .reserved{color:#946239;background:#fbefdf}.row-actions{flex-wrap:wrap;gap:5px}.row-actions .delete-action{color:#a54a51;border-color:#efd8db}.row-actions .reserve-action{color:#946239;background:#fff8ef;border-color:#ebd6bb}.row-actions button{flex:1 0 auto}
 @media(max-width:1050px){.row-actions{grid-column:1/-1;grid-row:4}.product-status{grid-column:1/-1}}
+
+.analytics-details{padding:24px;margin-top:24px}.analytics-product{display:flex;justify-content:space-between;gap:16px;padding:16px 0;border-bottom:1px solid #e1e8f0}.analytics-product small{opacity:.6}#analyticsCards{margin-top:24px}#styleExistingPhotos{margin-bottom:10px}@media(max-width:600px){.analytics-product{flex-direction:column;gap:6px}}
