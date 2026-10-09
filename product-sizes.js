@@ -9,7 +9,7 @@
       const commaList=part.split(',');
       return commaList.length>1&&commaList.every(isSize)?commaList:[part];
     });
-    return [...new Set(options.map(s=>normalize(s.trim())).filter(Boolean))];
+    return [...new Set(options.map(s=>normalize(s.trim())).filter(Boolean))].sort(compare);
   }
   function normalize(s){
     if(/^(?:one[ -]?size|os|единый размер|универсальный)$/i.test(s))return 'One Size';
