@@ -177,3 +177,8 @@ test('additional photo selections append and invalid batches retain the previous
  h.get('uploads').files=[{name:'invalid.exe',type:'application/octet-stream',size:100}];await h.get('uploads').onchange();
  assert.equal(h.run('pendingPreviews.length'),2);assert.equal(h.get('uploads').files.length,2);assert.equal(h.run('pendingCover'),true);assert.match(h.get('status').textContent,/JPG/);
 });
+test('stock totals exclude hidden and on-order cards, include reservations and convert each currency',()=>{
+ const h=setup(async()=>response([]));h.run("items=[{available:true,price:100,currency:'EUR'},{available:true,reserved:true,price:200,currency:'USD'},{available:true,price:80,currency:'GBP'},{available:true,price:734.5,currency:'AED'},{available:false,price:999,currency:'EUR'},{available:true,fulfillment_status:'on_order',price:999,currency:'EUR'},{available:true,price:null}]");
+ const s=h.run('stockSummary(items,{USD:2,GBP:.8,AED:7.345})');assert.equal(s.count,5);assert.equal(s.total,400);assert.equal(s.unpriced,1);assert.equal(s.unconverted,0);
+ assert.equal(h.run('stockSummary(items,null).unconverted'),3);
+});
