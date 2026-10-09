@@ -259,7 +259,7 @@ button:not(:disabled):active{transform:scale(.96)}
 .nav-paw{width:70px}
 .money-paw{position:absolute;width:110px;height:auto;pointer-events:none;opacity:0;visibility:hidden;filter:drop-shadow(0 7px 10px #25394f33)}
 .money-paw.is-presenting{visibility:visible;animation:jp-money-present 1.05s var(--motion-ease) both}
-@keyframes jp-money-present{0%{opacity:0;transform:translate(18px,35px) rotate(8deg) scale(.85) scaleX(-1)}25%,65%{opacity:1;transform:translate(0,0) rotate(-5deg) scale(1) scaleX(-1)}100%{opacity:0;transform:translate(15px,30px) rotate(8deg) scale(.85) scaleX(-1)}}
+@keyframes jp-money-present{0%{opacity:0;transform:translate(18px,35px) rotate(98deg) scale(.85) scaleX(-1)}25%,65%{opacity:1;transform:translate(0,0) rotate(85deg) scale(1) scaleX(-1)}100%{opacity:0;transform:translate(15px,30px) rotate(98deg) scale(.85) scaleX(-1)}}
 .product-sourcing{position:relative;overflow:hidden;border:1px solid var(--line);border-radius:2px;background:transparent;padding:26px;margin-top:28px}
 .product-sourcing::before{content:"J.P";position:absolute;right:18px;bottom:14px;font-family:"Playfair Display",serif;font-size:46px;color:#849bb01f;pointer-events:none}
 .product-sourcing h2{font-family:"Playfair Display",serif;font-size:22px;font-weight:400;line-height:1.3}
