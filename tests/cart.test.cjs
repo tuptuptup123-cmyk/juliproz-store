@@ -1,5 +1,5 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
-const nodes=new Map(),saved=new Map();const get=id=>{if(!nodes.has(id))nodes.set(id,{innerHTML:'',textContent:'',value:'',classList:{add(){},remove(){},toggle(){}},addEventListener(){},setAttribute(){}});return nodes.get(id)};
+const nodes=new Map(),saved=new Map();const get=id=>{if(!nodes.has(id))nodes.set(id,{innerHTML:'',textContent:'',value:'',classList:{add(){},remove(){},toggle(){},contains(){return false}},addEventListener(){},setAttribute(){}});return nodes.get(id)};
 let rows=[],fail=false,links=[];
 const context=vm.createContext({ProductSizes:require('../product-sizes.js'),safeProductImage:()=>false,window:{STORE_CONFIG:{url:'https://test.invalid',key:'public'},open:u=>links.push(u),addEventListener(){}},document:{getElementById:get,querySelectorAll:()=>[],querySelector:()=>null,addEventListener(){}},localStorage:{getItem:k=>saved.get(k)||null,setItem:(k,v)=>saved.set(k,v)},location:{search:''},URLSearchParams,AbortSignal,setTimeout,fetch:async()=>{if(fail)throw Error();return {ok:true,json:async()=>rows}}});
 vm.runInContext(fs.readFileSync(__dirname+'/../app.js','utf8'),context);const run=s=>vm.runInContext(s,context);
@@ -7,6 +7,7 @@ vm.runInContext(fs.readFileSync(__dirname+'/../app.js','utf8'),context);const ru
 rows=[{id:1,brand:'Gucci',name:'Обувь',size:'40; 41',price:100,currency:'EUR',fulfillment_status:'on_order'},{id:2,brand:'Chanel',name:'Сумка',size:'',price:200,currency:'USD',fulfillment_status:'on_order'}];context.fixture=rows;run('products=fixture;openProduct(1);addToCart()');assert.equal(run('cart.length'),0);
 run("selectedSize='40';addToCart();addToCart();selectedSize='41';addToCart();openProduct(2);addToCart()");assert.equal(run('cart.length'),3);assert.equal(run('cartCount()'),3);assert.equal(run('readCart().length'),3);assert.deepEqual(JSON.parse(run('JSON.stringify(cartTotals().totals)')),[{currency:'EUR',price:200},{currency:'USD',price:200}]);
 await run('checkoutCart()');assert.equal(links.length,1);assert.match(decodeURIComponent(links[0]),/размер 40 — 1 шт/);assert.match(decodeURIComponent(links[0]),/Итого: € 200 \+ \$ 200/);
+await run('checkoutCart()');assert.equal(links.length,1);assert.match(get('cartStatus').textContent,/Подождите/);
 rows[0]={...rows[0],price:120};await run('checkoutCart()');assert.equal(links.length,1);assert.match(get('cartStatus').textContent,/изменились/);assert.equal(run('cartTotals().totals[0].price'),240);await run('checkoutCart()');assert.equal(links.length,2);
 rows[0]={...rows[0],size:'40'};await run('checkoutCart()');assert.equal(links.length,2);assert.match(get('cartStatus').textContent,/недоступны/);
 fail=true;await run('checkoutCart()');assert.equal(links.length,2);assert.equal(run('checkoutBusy'),false);assert.match(get('cartStatus').textContent,/Не удалось/);
@@ -26,5 +27,7 @@ run('cart=[];products=fixture;openProduct(11);addToCart()');assert.equal(run('ca
 rows=[{...rows[0],reserved:false}];context.fixture=rows;run('products=fixture;openProduct(11);addToCart()');assert.equal(run('cart.length'),1);
 rows=[{...rows[0],reserved:true}];const beforeReservation=links.length;await run('checkoutCart()');assert.equal(links.length,beforeReservation);assert.match(get('cartStatus').textContent,/на брони/);assert.equal(run('cart[0].product.reserved'),true);
 rows=[{...rows[0],reserved:false}];await run('checkoutCart()');assert.equal(links.length,beforeReservation+1);
+run("cart=[];products=[]");rows=Array.from({length:30},(_,i)=>({id:1000+i,brand:'Brand',name:'N'.repeat(150),size:'',price:100,currency:'EUR',fulfillment_status:'in_stock'}));context.fixture=rows;run("products=fixture;for(const p of products){openProduct(p.id);addToCart()}");const beforeLarge=links.length;await run('checkoutCart()');assert.equal(links.length,beforeLarge);assert.match(get('cartStatus').textContent,/слишком большой/);
+assert.equal(run("pluralRu(21,'товар','товара','товаров')"),'товар');assert.equal(run("pluralRu(22,'вещь','вещи','вещей')"),'вещи');assert.equal(run("pluralRu(112,'вещь','вещи','вещей')"),'вещей');
 console.log('PASS cart: sizes, quantities, separate currencies, persistence, changed-price confirmation, unavailable sizes, network failures, wishlist independent of filters, corrupt storage');
 })().catch(e=>{console.error(e);process.exitCode=1});

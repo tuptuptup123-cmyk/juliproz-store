@@ -71,3 +71,12 @@ Registration runs during the production build, before its new version is promote
 To disable replies, remove the Production token and redeploy (incoming requests are then rejected). Also remove the webhook through Telegram's `deleteWebhook` with `drop_pending_updates: false` using an authorized secure admin environment. Removing the webhook alone permits a later configured production build to register it again.
 
 Tests: `node --test tests/*.test.cjs`. Bot tests use fabricated credentials and mocked Telegram responses; they send no real messages.
+
+## Audit fixes (2026-10-09)
+Apply `supabase/audit-fixes.sql` after the existing schema. The one-time `retire-empty-upload-staging.sql` removes obsolete staging tables only if empty. It retires automatic enrollment privileges, adds the private MFA status RPC and separates analytics salt from the service key. Existing admin membership and MFA pause are preserved until the owner verifies TOTP in Settings → Security; successful AAL2 activation removes the owner's pause atomically. Do not apply legacy pause/rollback scripts to install this release.
+
+The admin Delete action intentionally deletes a product permanently after confirmation; existing product links then become unavailable. The private change log keeps the audit record. Photo objects are retained. Cart checkout is a manager request, not an atomic stock reservation or paid order.
+
+Analytics starts only after consent; rejection/revocation removes local analytics IDs and stops new events. Totals reflect consenting devices only. Ingest limits: 120 requests/min globally, 10,000/day globally, 30/min per IP fingerprint and visitor, 20 new sessions/min globally and 5/min per fingerprint. Origin and IP headers are not authentication; global limits bound traffic even if IP is forged. The privacy notice describes implemented behavior and should receive legal review for the store's jurisdictions.
+
+Public signup was verified disabled through Auth settings. Dashboard-only actions still needed: set password minimum 12 and enable leaked-password protection if the plan supports it. These settings cannot be changed through the connected database tools.

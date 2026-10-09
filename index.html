@@ -7,7 +7,7 @@
   <title>J.P Store</title>
   <link rel="stylesheet" href="fonts.css" />
   <link rel="stylesheet" href="style.css?v=20261009-action-guards-v6" />
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script defer src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
     <header class="brand">
@@ -54,7 +54,7 @@
       <button type="button" data-gender="women" aria-pressed="false">Женское</button>
       <button type="button" data-gender="men" aria-pressed="false">Мужское</button>
     </section>
-        <div id="menuGroups" class="menu-groups"></div>
+        <div id="menuGroups" class="menu-groups"></div><div class="privacy-links"><a href="privacy.html" target="_blank" rel="noopener">Конфиденциальность ↗</a><button id="analyticsPreferences" type="button">Настройки статистики</button></div>
       </div>
       <footer class="menu-footer"><button id="showMenuProducts" class="primary" type="button">Показать товары</button><button id="resetMenu" class="menu-reset" type="button">Сбросить выбор</button></footer>
     </section>
@@ -74,14 +74,15 @@
     </div>
   </div>
 
-  <div id="productModal" class="product-modal hidden">
+  <div id="productModal" class="product-modal hidden" role="dialog" aria-modal="true" aria-label="Карточка товара" tabindex="-1">
     <button id="backProduct" class="back" aria-label="Вернуться в каталог">‹</button>
     <div id="productContent"></div>
   </div>
 
+  <section id="analyticsConsent" class="analytics-consent hidden" aria-label="Настройки статистики"><p>Разрешить статистику посещений? Это помогает улучшать магазин. Корзина и виш-лист работают при любом выборе. <a href="privacy.html" target="_blank" rel="noopener">Подробнее ↗</a></p><div><button id="analyticsAccept" type="button">Разрешить</button><button id="analyticsDecline" type="button">Без статистики</button></div></section>
   <div class="nav-paw-layer" aria-hidden="true"><img id="moneyPaw" class="money-paw" src="images/money-paw-v1.webp" alt="" width="1024" height="1536" /><img id="navPaw" class="nav-paw" src="images/brand-paw.webp" alt="" aria-hidden="true" width="1536" height="1024" /></div>
-  <script src="config.js"></script>
-  <script src="image-policy.js"></script>
-  <script src="product-sizes.js?v=20261009-action-guards-v6"></script><script src="analytics.js"></script><script src="app.js?v=20261009-action-guards-v6"></script>
+  <script defer src="config.js"></script>
+  <script defer src="image-policy.js"></script>
+  <script defer src="product-sizes.js?v=20261009-action-guards-v6"></script><script defer src="analytics.js"></script><script defer src="app.js?v=20261009-action-guards-v6"></script>
 </body>
 </html>
