@@ -15,9 +15,9 @@ const jwt=aal=>`synthetic.${Buffer.from(JSON.stringify({aal})).toString('base64u
 const user=factors=>({id:'owner',factors});
 const session=(aal='aal1',factors=[])=>({access_token:jwt(aal),refresh_token:'synthetic-refresh',expires_in:3600,user:user(factors)});
 const response=(body,status=200)=>({ok:status<400,status,json:async()=>body});
-function setup(fetch,mfaEnrollmentEnabled=true){
+function setup(fetch,mfaEnrollmentEnabled=true,sessionStorage){
  const nodes=new Map();const get=id=>{if(!nodes.has(id))nodes.set(id,node());return nodes.get(id)};
- const context=vm.createContext({document:{getElementById:get,querySelectorAll:()=>[],addEventListener(){}},window:{addEventListener(){},STORE_CONFIG:{url:'https://test.supabase.co',key:'public',mfaEnrollmentEnabled}},fetch,URL,URLSearchParams,atob,AbortController,setTimeout,clearTimeout,structuredClone,crypto,location:{search:''},safeProductImage:()=>true});
+ const context=vm.createContext({sessionStorage,document:{getElementById:get,querySelectorAll:()=>[],addEventListener(){}},window:{addEventListener(){},STORE_CONFIG:{url:'https://test.supabase.co',key:'public',mfaEnrollmentEnabled}},fetch,URL,URLSearchParams,atob,AbortController,setTimeout,clearTimeout,structuredClone,crypto,location:{search:''},safeProductImage:()=>true});
  get('editor').elements=Object.fromEntries(['brand','name','size','price','currency','available','fulfillment_status'].map(k=>[k,node()]));
  vm.runInContext(fs.readFileSync(__dirname+'/../admin.js','utf8'),context);
  get('mfaVerify').code=node();
@@ -128,4 +128,22 @@ test('new admin without factor must enroll before loading inventory',async()=>{
 test('paused owner can resume MFA only after verifying a factor',async()=>{
  const a=api({factors:[factor],paused:true}),h=setup(a.fetch);h.seed(session('aal1',[factor]));await h.run('enterWorkspace()');assert.equal(h.run('mfaPaused()'),true);await h.get('securityBtn').onclick();assert.equal(h.run('mfaMode'),'challenge');assert.equal(a.calls.some(c=>c.path.includes('/rpc/enforce_store_mfa')),false);
  h.get('mfaVerify').code.value='123456';await h.get('mfaVerify').onsubmit({preventDefault(){},submitter:node(),target:h.get('mfaVerify')});assert.equal(h.run('mfaPaused()'),false);assert.equal(h.get('workspace').classList.contains('hidden'),false);
+});
+
+function tabStorage(saved){const values=new Map(saved?[['jpAdminSessionV1',JSON.stringify(saved)]]:[]);return {getItem:k=>values.get(k)||null,setItem:(k,v)=>values.set(k,v),removeItem:k=>values.delete(k)}}
+test('refresh restores tab session only after server identity and admin checks',async()=>{
+ const saved={...session('aal2',[factor]),recovering:false};const storage=tabStorage(saved),a=api({factors:[factor]});
+ const h=setup(async(path,options)=>path.includes('grant_type=refresh_token')?response(session('aal2',[factor])):a.fetch(path,options),true,storage);
+ await h.run('adminSessionReady');assert.equal(h.run('session.user.id'),'owner');assert.ok(a.calls.some(c=>c.path.includes('/store_admins')));assert.ok(a.calls.some(c=>c.path.endsWith('/auth/v1/user')));assert.ok(a.calls.some(c=>c.path.includes('/products?')));
+ assert.ok(storage.getItem('jpAdminSessionV1'));h.run('endSession()');assert.equal(storage.getItem('jpAdminSessionV1'),null);
+});
+test('revoked saved session is removed and never loads inventory',async()=>{
+ const storage=tabStorage(session()),calls=[];const h=setup(async path=>{calls.push(path);return response({message:'Revoked'},401)},true,storage);
+ await h.run('adminSessionReady');assert.equal(h.run('session'),null);assert.equal(storage.getItem('jpAdminSessionV1'),null);assert.equal(calls.length,1);assert.ok(calls[0].includes('grant_type=refresh_token'));
+});
+test('transient restore failure retains saved tokens for retry',async()=>{
+ const storage=tabStorage(session());const h=setup(async()=>response({message:'Unavailable'},503),true,storage);await h.run('adminSessionReady');assert.equal(h.run('session'),null);assert.ok(storage.getItem('jpAdminSessionV1'));
+});
+test('restored aal1 session cannot bypass MFA',async()=>{
+ const storage=tabStorage(session()),a=api({factors:[factor]});const h=setup(async(path,options)=>path.includes('grant_type=refresh_token')?response(session()):a.fetch(path,options),true,storage);await h.run('adminSessionReady');assert.equal(h.run('mfaMode'),'challenge');assert.ok(!a.calls.some(c=>c.path.includes('/products?')));
 });

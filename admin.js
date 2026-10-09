@@ -5,7 +5,10 @@ let adminSecurity={paused:false};
 const mfaPaused=()=>adminSecurity.paused===true;
 const MFA_ENROLLMENT_ENABLED=window.STORE_CONFIG.mfaEnrollmentEnabled===true;
 const $=id=>document.getElementById(id);
+const ADMIN_SESSION_KEY='jpAdminSessionV1';
 let session=null,items=[],editing=null,photos=[],busy=false;
+function saveAdminSession(){try{if(session)sessionStorage.setItem(ADMIN_SESSION_KEY,JSON.stringify({access_token:session.access_token,refresh_token:session.refresh_token,expires_at:session.expires_at,user:{id:session.user.id},recovering}));else sessionStorage.removeItem(ADMIN_SESSION_KEY)}catch{}}
+
 let adminPreferences={autoPhoto:true,reducedMotion:false};
 try{const saved=JSON.parse(localStorage.getItem('jpAdminPreferences')||'{}');adminPreferences={autoPhoto:saved.autoPhoto!==false,reducedMotion:saved.reducedMotion===true}}catch{}
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -20,6 +23,7 @@ function clearMfa(){
  $('mfaVerify').reset();$('mfaQr').removeAttribute?.('src');$('mfaSecret').textContent='';$('mfaFactor').innerHTML='';
 }
 function endSession(){
+ try{sessionStorage.removeItem(ADMIN_SESSION_KEY)}catch{}
  pendingCover=false;window.PhotoStudio?.cancel();adminSecurity={paused:false};session=null;sessionEpoch++;previewEpoch++;items=[];photos=[];editing=null;original=null;creationKey=null;recovering=false;
  stagedUploads.clear();clearMfa();$('authArea').classList.remove('hidden');pendingPreviews=[];editorDirty=false;activeView='all';$('settingsPanel').classList.add('hidden');clearOverview();$('adminHome').classList.add('hidden');$('homePanel').classList.add('hidden');$('cataloguePreview').close?.();$('cataloguePreviewCard').innerHTML='';productWishlistCounts=null;productWishlistLoadedAt=0;$('analyticsPanel').classList.add('hidden');$('analyticsCards').innerHTML='';$('analyticsProducts').innerHTML='';
  for(const id of ['editor','login','confirmEmail','newPassword'])$(id).reset();
@@ -48,7 +52,7 @@ async function request(path,options={}){
  if(epoch!==sessionEpoch)throw Error('Сессия завершена.');
  return data;
 }
-function keepSession(data){if(!data?.access_token||!data.user)throw Error('Не удалось подтвердить вход.');session={...data,expires_at:data.expires_at||Date.now()/1000+(data.expires_in||3600)}}
+function keepSession(data){if(!data?.access_token||!data.user)throw Error('Не удалось подтвердить вход.');session={...data,expires_at:data.expires_at||Date.now()/1000+(data.expires_in||3600)};saveAdminSession()}
 // This decoded claim controls UI only. Supabase verifies signatures and enforces RLS.
 function sessionAal(){try{return JSON.parse(atob(session.access_token.split('.')[1].replace(/-/g,'+').replace(/_/g,'/'))).aal||'aal1'}catch{return 'aal1'}}
 async function currentAuthUser(){
@@ -68,6 +72,7 @@ async function enableMfaProtection(){
  await request('/rest/v1/rpc/enforce_store_mfa',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});adminSecurity={paused:false};
 }
 async function enterWorkspace(){
+ saveAdminSession();
  const admins=await request(`/rest/v1/store_admins?select=user_id&user_id=eq.${encodeURIComponent(session.user.id)}`);
  if(!admins.length){endSession();throw Error('У этого аккаунта нет доступа к управлению магазином.')}
  const security=await request('/rest/v1/rpc/store_admin_security_status',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});adminSecurity={paused:security?.paused===true};
@@ -412,3 +417,17 @@ function openCataloguePreview(p,source){
 }
 $('closeCataloguePreview').onclick=()=> $('cataloguePreview').close();
 $('previewCatalogue').onclick=()=>{const f=$('editor').elements;openCataloguePreview({brand:editorBrand(f),name:f.name.value,size:f.size.value,price:f.price.value||null,currency:f.currency.value,available:f.available.checked,reserved:f.reserved.checked,fulfillment_status:f.fulfillment_status.value},photos[0]||pendingPreviews[0]?.src)};
+
+async function restoreAdminSession(){
+ let saved;
+ try{const value=sessionStorage.getItem(ADMIN_SESSION_KEY);if(!value)return;saved=JSON.parse(value);if(!saved?.access_token||!saved?.refresh_token||!saved?.user?.id)throw Error();}
+ catch{try{sessionStorage.removeItem(ADMIN_SESSION_KEY)}catch{}return}
+ const epoch=sessionEpoch;busy=true;$('login').querySelector?.('button[type="submit"]')?.setAttribute('disabled','');status('Восстанавливаем вход…');
+ try{
+  // Revalidate the saved session on the server, including revoked refresh tokens.
+  recovering=saved.recovering===true;session={access_token:saved.access_token,refresh_token:saved.refresh_token,user:{id:saved.user.id},expires_at:0};
+  await currentAuthUser();if(epoch!==sessionEpoch)return;await enterWorkspace();
+ }catch(err){if(epoch===sessionEpoch){if([400,401,403].includes(err.httpStatus))endSession();else session=null;status(err.message)}}
+ finally{busy=false;$('login').querySelector?.('button[type="submit"]')?.removeAttribute('disabled')}
+}
+const adminSessionReady=restoreAdminSession();
