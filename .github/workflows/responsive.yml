@@ -1,7 +1,7 @@
 name: Responsive catalogue checks
 on:
   pull_request:
-    paths: ['app.js', 'admin.js', '*.css', '*.html', 'product-sizes.js', 'analytics.js', 'photo-studio.js', 'tests/*.browser.cjs', '.github/workflows/responsive.yml']
+    paths: ['app.js', 'admin.js', '*.css', '*.html', 'product-sizes.js', 'analytics.js', 'photo-studio.js', 'tests/*.browser.cjs', 'tests/admin-action-helper.cjs', '.github/workflows/responsive.yml']
 permissions:
   contents: read
 jobs:

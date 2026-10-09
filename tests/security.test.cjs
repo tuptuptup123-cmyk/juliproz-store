@@ -8,7 +8,7 @@ function node(){
  const classes=new Set();
  return {value:'',textContent:'',innerHTML:'',src:'',dataset:{},files:[],disabled:false,
   classList:{add:x=>classes.add(x),remove:x=>classes.delete(x),toggle(x,v){v?classes.add(x):classes.delete(x)},contains:x=>classes.has(x)},
-  addEventListener(){},focus(){},reset(){this.resetCount=(this.resetCount||0)+1;if(this.code)this.code.value=''},removeAttribute(n){if(n==='src')this.src=''},scrollIntoView(){}};
+  addEventListener(){},setAttribute(){},focus(){},reset(){this.resetCount=(this.resetCount||0)+1;if(this.code)this.code.value=''},removeAttribute(n){if(n==='src')this.src=''},scrollIntoView(){}};
 }
 const factor={id:'synthetic-factor',friendly_name:'My device',factor_type:'totp',status:'verified'};
 const jwt=aal=>`synthetic.${Buffer.from(JSON.stringify({aal})).toString('base64url')}.synthetic`;
