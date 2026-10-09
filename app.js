@@ -325,13 +325,13 @@ async function checkoutCart(){
     telegramLink(`https://t.me/juliproz?text=${encodeURIComponent(text)}`);status.textContent='Заказ подготовлен. Отправьте сообщение менеджеру в Telegram.';
   }catch{status.textContent='Не удалось проверить наличие. Корзина сохранена — попробуйте ещё раз.'}finally{checkoutBusy=false;renderCart()}
 }
-let lastCartMutationAt=-Infinity;
-function allowCartMutation(){const now=Date.now();if(now-lastCartMutationAt<350)return false;lastCartMutationAt=now;return true}
+const cartMutationTimes=new Map();
+function allowCartMutation(action){const key=action==='remove'?'remove':'quantity',now=Date.now();if(now-(cartMutationTimes.get(key)??-Infinity)<350)return false;cartMutationTimes.set(key,now);return true}
 document.getElementById('cartContent').addEventListener('click',e=>{
   const button=e.target.closest('[data-cart-action]');if(!button||button.isConnected===false||button.disabled)return;const action=button.dataset.cartAction;
   if(action==='catalog'){setTab('catalog');return}if(action==='checkout'){showMoneyPaw(button);checkoutCart();return}
   const index=Number(button.dataset.index),row=cart[index];if(!row)return;
-  if(['remove','plus','minus'].includes(action)&&!allowCartMutation())return;
+  if(['remove','plus','minus'].includes(action)&&!allowCartMutation(action))return;
   if(action==='product'){openLinkedProduct(row.id);return}
   if(action==='remove')cart.splice(index,1);else if(action==='plus'&&!cartProduct(row).reserved)row.quantity=Math.min(cartLimit(cartProduct(row)),row.quantity+1);else if(action==='minus')row.quantity=Math.max(1,row.quantity-1);
   document.getElementById('cartStatus').textContent='';saveCart();renderCart();
