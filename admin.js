@@ -19,7 +19,7 @@ function setStockNumber(id,value,animate=false){
   const reel=document.createElement('span'),strip=document.createElement('span');reel.className='stock-digit';strip.className='stock-digit-strip';const steps=20+Number(char);
   for(let i=0;i<=steps;i++){const n=document.createElement('span');n.textContent=String(i%10);strip.append(n)}reel.append(strip);visual.append(reel);
   strip.style.transform=`translateY(-${steps*1.25}em)`;
-  const motion=strip.animate?.([{transform:'translateY(0)'},{transform:`translateY(-${steps*1.25}em)`}],{duration:900+digit*85,easing:'cubic-bezier(.15,.7,.2,1)'});if(motion)motion.onfinish=()=>{reel.textContent=char};else reel.textContent=char;digit++;
+  const motion=strip.animate?.([{transform:'translateY(0)'},{transform:`translateY(-${steps*1.25}em)`}],{duration:900+digit*85,easing:'cubic-bezier(.15,.7,.2,1)'});if(motion)motion.onfinish=()=>{reel.textContent=char;if(!visual.querySelector('.stock-digit-strip')){visual.textContent=value;visual.classList.add('stock-number-finished')}};else reel.textContent=char;digit++;
  }
 }
 function updateStockSummary(animate=!$('workspace').classList.contains('hidden')){const s=stockSummary(items,stockRates?.rates);setStockNumber('stockTotal',String(items.length),animate);setStockNumber('stockCount',String(s.count),animate);setStockNumber('stockValue',(s.unconverted?'от ':'')+new Intl.NumberFormat('ru-RU',{style:'currency',currency:'EUR',maximumFractionDigits:2}).format(s.total),animate);$('stockValueNote').textContent=[s.unpriced?'Без цены: '+s.unpriced:'',s.unconverted?'Не пересчитано: '+s.unconverted+' · курс недоступен':''].filter(Boolean).join(' · ')}
