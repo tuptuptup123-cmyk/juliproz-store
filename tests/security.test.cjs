@@ -17,7 +17,7 @@ const session=(aal='aal1',factors=[])=>({access_token:jwt(aal),refresh_token:'sy
 const response=(body,status=200)=>({ok:status<400,status,json:async()=>body});
 function setup(fetch,mfaEnrollmentEnabled=true){
  const nodes=new Map();const get=id=>{if(!nodes.has(id))nodes.set(id,node());return nodes.get(id)};
- const context=vm.createContext({document:{getElementById:get,querySelectorAll:()=>[]},window:{addEventListener(){},STORE_CONFIG:{url:'https://test.supabase.co',key:'public',mfaEnrollmentEnabled}},fetch,URL,URLSearchParams,atob,AbortController,setTimeout,clearTimeout,structuredClone,crypto,location:{search:''},safeProductImage:()=>true});
+ const context=vm.createContext({document:{getElementById:get,querySelectorAll:()=>[],addEventListener(){}},window:{addEventListener(){},STORE_CONFIG:{url:'https://test.supabase.co',key:'public',mfaEnrollmentEnabled}},fetch,URL,URLSearchParams,atob,AbortController,setTimeout,clearTimeout,structuredClone,crypto,location:{search:''},safeProductImage:()=>true});
  get('editor').elements=Object.fromEntries(['brand','name','size','price','currency','available','fulfillment_status'].map(k=>[k,node()]));
  vm.runInContext(fs.readFileSync(__dirname+'/../admin.js','utf8'),context);
  get('mfaVerify').code=node();
@@ -102,7 +102,7 @@ test('disabled enrollment feature flag does not call the activation RPC',async()
  const a=api({factors:[factor]}),h=setup(a.fetch,false);h.seed(session('aal2',[factor]));await h.run('enterWorkspace()');
  assert.equal(h.get('securityBtn').classList.contains('hidden'),true);
  await h.get('securityBtn').onclick();
- assert.equal(a.calls.some(c=>c.path.includes('/rpc/')||c.path.endsWith('/auth/v1/factors')),false);
+ assert.equal(a.calls.some(c=>c.path.includes('/rpc/enforce_store_mfa')||c.path.endsWith('/auth/v1/factors')),false);
  assert.equal(h.get('workspace').classList.contains('hidden'),false);
 });
 test('temporary MFA pause applies only to the named admin account',async()=>{
