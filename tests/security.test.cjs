@@ -160,3 +160,20 @@ test('persistent restored session still fails closed when server revokes it',asy
 test('reload with a valid saved access token does not rotate the refresh token',async()=>{
  const saved={...session('aal2',[factor]),expires_at:Date.now()/1000+3600},local=tabStorage(saved),a=api({factors:[factor]});const h=setup(a.fetch,true,tabStorage(),local);await h.run('adminSessionReady');assert.equal(h.run('session.user.id'),'owner');assert.ok(!a.calls.some(c=>c.path.includes('grant_type=refresh_token')));assert.ok(a.calls.some(c=>c.path.endsWith('/auth/v1/user')));assert.equal(h.get('login').classList.contains('hidden'),true);
 });
+
+test('successful login initializes home while loading blocks user navigation',async()=>{
+ const a=api({paused:true}),h=setup(a.fetch);h.seed(session());
+ h.run("busy=true;selectView('settings')");assert.equal(h.run('activeView'),'all');
+ await h.run('enterWorkspace()');assert.equal(h.run('activeView'),'home');assert.equal(h.get('homePanel').classList.contains('hidden'),false);assert.equal(h.get('inventoryPanel').classList.contains('hidden'),true);
+});
+test('cancelled card switch preserves the pending cover and photo studio',()=>{
+ const h=setup(async()=>response([]));h.run("editorDirty=true;pendingCover=true;confirm=()=>false;window.PhotoStudio={close(){throw Error('Must stay open')}};edit(null)");assert.equal(h.run('pendingCover'),true);assert.equal(h.run('editorDirty'),true);
+});
+test('additional photo selections append and invalid batches retain the previous cover',async()=>{
+ const h=setup(async()=>response([]));
+ h.run("renderPhotos=()=>{};DataTransfer=class{constructor(){this.files=[];this.items={add:f=>this.files.push(f)}}};FileReader=class{readAsDataURL(f){this.result='data:'+f.name;this.onload()}};pendingPreviews=[{file:{name:'first.png'},src:'first'}];pendingCover=true");
+ h.get('uploads').files=[{name:'second.png',type:'image/png',size:100}];await h.get('uploads').onchange();
+ assert.equal(h.run('pendingPreviews.length'),2);assert.equal(h.get('uploads').files[0].name,'first.png');assert.equal(h.run('pendingCover'),true);
+ h.get('uploads').files=[{name:'invalid.exe',type:'application/octet-stream',size:100}];await h.get('uploads').onchange();
+ assert.equal(h.run('pendingPreviews.length'),2);assert.equal(h.get('uploads').files.length,2);assert.equal(h.run('pendingCover'),true);assert.match(h.get('status').textContent,/JPG/);
+});
