@@ -7,9 +7,10 @@ vm.runInContext(fs.readFileSync(__dirname+'/../product-pricing.js','utf8'),conte
 (async()=>{await new Promise(setImmediate);
 rows=[{id:1,brand:'Gucci',name:'Обувь',size:'40; 41',price:100,original_price:125,currency:'EUR',fulfillment_status:'on_order'},{id:2,brand:'Chanel',name:'Сумка',size:'',price:200,currency:'EUR',fulfillment_status:'on_order'}];context.fixture=rows;run('products=fixture;openProduct(1);addToCart()');assert.equal(run('cart.length'),0);
 run("selectedSize='40';addToCart();addToCart();selectedSize='41';addToCart();openProduct(2);addToCart()");assert.equal(run('cart.length'),3);assert.equal(run('cartCount()'),3);assert.match(get('cartContent').innerHTML,/−20%/);assert.match(get('cartContent').innerHTML,/price-original/);assert.equal(run('readCart().length'),3);assert.deepEqual(JSON.parse(run('JSON.stringify(cartTotals().totals)')),[{currency:'EUR',price:400}]);
-await run('checkoutCart()');assert.equal(links.length,1);assert.match(decodeURIComponent(links[0]),/размер 40 — 1 шт/);assert.match(decodeURIComponent(links[0]),/Итого: € 400/);
+await run('checkoutCart()');assert.equal(links.length,1);
+assert.equal(new URL(links[0]).searchParams.get('text'),'https://t.me/JuliProzBot/shop?startapp=p_1\nhttps://t.me/JuliProzBot/shop?startapp=p_2');
 await run('checkoutCart()');assert.equal(links.length,1);assert.match(get('cartStatus').textContent,/Подождите/);
-rows[0]={...rows[0],price:120};await run('checkoutCart()');assert.equal(links.length,1);assert.match(get('cartStatus').textContent,/изменились/);assert.equal(run('cartTotals().totals[0].price'),440);await run('checkoutCart()');assert.equal(links.length,2);
+rows[0]={...rows[0],price:120};await run('checkoutCart()');assert.equal(links.length,1);assert.match(get('cartStatus').textContent,/изменились/);assert.equal(run('cartTotals().totals[0].price'),440);run('telegramOpenTimes.clear()');await run('checkoutCart()');assert.equal(links.length,2);
 rows[0]={...rows[0],size:'40'};await run('checkoutCart()');assert.equal(links.length,2);assert.match(get('cartStatus').textContent,/недоступны/);
 fail=true;await run('checkoutCart()');assert.equal(links.length,2);assert.equal(run('checkoutBusy'),false);assert.match(get('cartStatus').textContent,/Не удалось/);
 run("toggleWishlist(2);state.tab='favorites';state.category='Обувь';state.search='не найдено'");assert.equal(run('filtered().length'),1);assert.equal(run('filtered()[0].id'),2);assert.equal(JSON.parse(saved.get('jpFav'))[0],'2');
@@ -28,7 +29,7 @@ run('cart=[];products=fixture;openProduct(11);addToCart()');assert.equal(run('ca
 rows=[{...rows[0],reserved:false}];context.fixture=rows;run('products=fixture;openProduct(11);addToCart()');assert.equal(run('cart.length'),1);
 rows=[{...rows[0],reserved:true}];const beforeReservation=links.length;await run('checkoutCart()');assert.equal(links.length,beforeReservation);assert.match(get('cartStatus').textContent,/на брони/);assert.equal(run('cart[0].product.reserved'),true);
 rows=[{...rows[0],reserved:false}];await run('checkoutCart()');assert.equal(links.length,beforeReservation+1);
-run("cart=[];products=[]");rows=Array.from({length:30},(_,i)=>({id:1000+i,brand:'Brand',name:'N'.repeat(150),size:'',price:100,currency:'EUR',fulfillment_status:'in_stock'}));context.fixture=rows;run("products=fixture;for(const p of products){openProduct(p.id);addToCart()}");const beforeLarge=links.length;await run('checkoutCart()');assert.equal(links.length,beforeLarge);assert.match(get('cartStatus').textContent,/слишком большой/);
+run("cart=[];products=[]");rows=Array.from({length:50},(_,i)=>({id:'00000000-0000-4000-8000-'+String(i).padStart(12,'0'),brand:'Brand',name:'Товар',size:'',price:100,currency:'EUR',fulfillment_status:'in_stock'}));context.fixture=rows;run("products=fixture;for(const p of products){openProduct(p.id);addToCart()}");const beforeLarge=links.length;await run('checkoutCart()');assert.equal(links.length,beforeLarge);assert.match(get('cartStatus').textContent,/слишком большой/);
 assert.equal(run("pluralRu(21,'товар','товара','товаров')"),'товар');assert.equal(run("pluralRu(22,'вещь','вещи','вещей')"),'вещи');assert.equal(run("pluralRu(112,'вещь','вещи','вещей')"),'вещей');
 // Per-size stock caps additions and catches a reduced/zero balance before checkout.
 run("cart=[];products=[{id:77,name:'Кепка',size:'One Size',available:true,price:100,currency:'EUR',fulfillment_status:'in_stock',stock_quantities:{'One Size':5}}];openProduct(77);addToCart();cart[0].quantity=9;renderCart()");assert.equal(run('cart[0].quantity'),5);assert.equal(run('cartLimit(products[0],"One Size")'),5);
@@ -53,6 +54,26 @@ fail=true;await run("changeCatalogSort('price_asc')");assert.equal(run('state.so
 assert.equal(run("money({price:100,currency:'USD'})"),'');
 assert.match(run("conditionBadge({product_condition:'pre_owned',wear_condition:'gently_used'})"),/Небольшие следы носки/);
 assert.equal(run("wearLabel({product_condition:'new',wear_condition:'used'})"),'');
+// Fractional legacy prices become whole EUR unit prices in the store; manager drafts omit all amounts.
+rows=[{id:801,brand:'Gucci',name:'Обувь',size:'',price:624.9,original_price:899.7,currency:'EUR',available:true,fulfillment_status:'on_order'},{id:802,name:'Сумка',size:'',price:124.4,currency:'€',available:true,fulfillment_status:'on_order'},{id:803,name:'По запросу',size:'',price:null,currency:'EUR',available:true,fulfillment_status:'on_order'},{id:804,name:'Другая валюта',size:'',price:100.9,currency:'USD',available:true,fulfillment_status:'on_order'}];context.fixture=rows;
+run("cart=[];products=fixture;state.tab='catalog';state.sort='newest';state.favorites=new Set(['801']);render();openProduct(801);addToCart();cart[0].quantity=2;openProduct(802);addToCart();cart[1].quantity=3;openProduct(803);addToCart();openProduct(804);addToCart();saveCart();renderCart()");
+assert.match(get('grid').innerHTML,/€ 625/);assert.match(get('grid').innerHTML,/€ 900/);assert.doesNotMatch(get('grid').innerHTML,/624,9|899,7/);
+run("state.tab='favorites';render();openProduct(801)");assert.match(get('grid').innerHTML,/€ 625/);assert.match(get('productContent').innerHTML,/€ 625/);assert.match(get('productContent').innerHTML,/€ 900/);
+assert.equal(run('cart[0].product.price'),625);assert.equal(run('cart[0].product.original_price'),900);assert.equal(run('cartTotals().totals[0].price'),1622);assert.equal(run('cartTotals().unknown'),true);
+assert.equal(JSON.parse(saved.get('jpCart'))[0].product.price,625);assert.equal(run("money({price:624.5,currency:'EUR'})"),'€ 625');assert.equal(run("money({price:null,currency:'EUR'})"),'');assert.equal(run("money({price:-0.1,currency:'EUR'})"),'');
+const beforeRounded=links.length;await run('checkoutCart()');assert.equal(links.length,beforeRounded+1);
+const roundedDraft=new URL(links.at(-1)).searchParams.get('text');assert.equal(roundedDraft,[801,802,803,804].map(id=>'https://t.me/JuliProzBot/shop?startapp=p_'+id).join('\n'));
+rows[0]={...rows[0],price:624.6};run('telegramOpenTimes.clear()');await run('checkoutCart()');assert.equal(links.length,beforeRounded+2);assert.doesNotMatch(get('cartStatus').textContent,/изменились/);
+rows[0]={...rows[0],price:625.6};await run('checkoutCart()');assert.equal(links.length,beforeRounded+2);assert.match(get('cartStatus').textContent,/изменились/);assert.equal(run('cartTotals().totals[0].price'),1624);assert.equal(run('cart[0].product.price'),626);
+saved.set('jpCart',JSON.stringify([{id:801,size:'',quantity:2,product:{price:624.9,original_price:899.7,currency:'EUR'}}]));run('products=[];cart=readCart()');assert.equal(run('cart[0].product.price'),625);assert.equal(run('cart[0].product.original_price'),900);assert.equal(run('cartTotals().totals[0].price'),1250);
+// Manager messages contain only canonical links, without product details or prices.
+rows=[{id:901,brand:'Bottega Veneta',name:'Bottega Veneta Куртка Oversized Zip Twill, молочная',size:'XL',price:624.9,currency:'EUR',available:true,fulfillment_status:'on_order'}];context.fixture=rows;run('cart=[];products=fixture;openProduct(901);addToCart()');const beforeSingle=links.length;await run('checkoutCart()');assert.equal(links.length,beforeSingle+1);
+assert.equal(new URL(links.at(-1)).searchParams.get('text'),'https://t.me/JuliProzBot/shop?startapp=p_901');
+assert.match(get('cartContent').innerHTML,/€ 625/);assert.equal(run('cartTotals().totals[0].price'),625);
+// Price-on-request products also produce only their canonical link.
+rows=[{id:902,brand:'CHANEL',name:'CHANEL Сумка Classic',size:'',price:null,currency:'EUR',available:true,fulfillment_status:'in_stock'}];context.fixture=rows;run('cart=[];products=fixture;openProduct(902);addToCart()');await run('checkoutCart()');assert.equal(links.length,beforeSingle+2);
+assert.equal(new URL(links.at(-1)).searchParams.get('text'),'https://t.me/JuliProzBot/shop?startapp=p_902');
+assert.match(get('cartContent').innerHTML,/Цена по запросу/);assert.equal(run('cartTotals().unknown'),true);
 // Static Sell and empty Cart must not access hidden catalogue card data.
 run("cart=[];products=[{id:999,get name(){throw Error('Hidden catalogue was rendered')}}];setTab('sell');setTab('services');setTab('cart');state.favorites.clear();setTab('favorites')");assert.equal(run('state.tab'),'favorites');
 console.log('PASS cart: sizes, quantities, euro totals, persistence, changed-price confirmation, unavailable sizes, network failures, wishlist independent of filters, corrupt storage');

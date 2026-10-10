@@ -356,7 +356,7 @@ button:not(:disabled):active{transform:scale(.96)}
 .primary,.secondary,.service-contact,.sell-offer,.sourcing-link{border-radius:13px}
 .services-page .sell-intro{border:1px solid transparent}
 .services-page .sell-intro h1,.services-page .service-card h2{text-align:left}
-.services-page .sell-intro p,.services-page .service-card p{font-size:14px;line-height:1.75;max-width:none;text-align:justify;text-align-last:left;hyphens:auto;overflow-wrap:break-word}
+.services-page .sell-intro p,.services-page .service-card p{font-size:14px;line-height:1.75;max-width:none;text-align:left;text-align-last:auto;hyphens:none;overflow-wrap:normal}
 .services-page .service-list{font-size:14px;line-height:1.75}
 
 .masthead-controls .catalog-menu-button{background:var(--brand-blue);color:#fff;border-color:var(--brand-pink)}
@@ -365,5 +365,115 @@ button:not(:disabled):active{transform:scale(.96)}
 /* Catalogue badges share the same left and right edges. */
 .product > .condition-badge + .condition-badge{margin-left:0}
 
+
+/* Compact catalogue rhythm with one clear price column per card.
+   Shared row tracks align neighbours; condition notes remain fully visible below. */
+.product{min-width:0}
+.product h3{display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin:10px 0 3px}
+.product .card-name-row{display:block;min-height:0}
+.product .card-name-row p{margin:0;line-height:1.5}
+.product h3 .card-sale-badge{align-self:center;margin:0;font-size:9px;padding:2px 5px}
+.product .card-size{margin:3px 0 0;line-height:1.4}
+.product .price{margin:0;padding-top:4px;min-height:0;line-height:1.3;font-size:18px;font-weight:650;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.product .sale-price{display:flex;flex-direction:column;align-items:flex-start;gap:3px}
+.product .price-current{font-weight:650}
+.product .price-original{order:-1;font-size:12px;line-height:1.4}
+.product .discount-badge{align-self:flex-start;font-size:10px;padding:2px 6px}
+.product .card-footer{min-width:0;padding-top:5px}
+.product .card-meta{display:flex;flex-wrap:wrap;gap:4px;min-width:0}
+.product .card-meta .condition-badge{max-width:100%;margin:0;padding:3px 6px;border-color:var(--line);background:#eaf0f7;font-size:9px;letter-spacing:.025em;line-height:1.4;overflow-wrap:anywhere}
+.product .card-meta .commission-badge{background:#e1c6d733}
+.product .catalog-status{margin-top:4px}
+@supports(grid-template-rows:subgrid){
+  .grid{row-gap:0}
+  .product{display:grid;grid-row:span 6;grid-template-rows:subgrid;row-gap:0}
+  .product .price{min-height:0;align-self:start}
+  .product .card-footer{padding-bottom:20px}
+}
+
+/* Quiet navigation: one shared surface, with selection on the icon and label. */
+.bottom-nav button[data-tab]{flex:1 1 0;width:20%;min-width:0;background:transparent;color:var(--muted)}
+.bottom-nav button[data-tab].active{background:transparent;color:#3f638a}
+.bottom-nav button.active small{font-weight:600}
+.bottom-nav button.active>svg{stroke-width:2}
+.bottom-nav [data-tab=favorites] svg{outline:none;border-radius:0}
+.bottom-nav button:focus-visible{outline:2px solid var(--brand-blue);outline-offset:-4px;border-radius:8px}
+
+.product .card-footer:has(.card-meta:empty):not(:has(.catalog-status)){padding-top:0}
 /* Condition labels fit their text instead of stretching across the card. */
 .product > .condition-badge{align-self:flex-start;width:fit-content;max-width:100%;box-sizing:border-box}
+
+
+/* Selected floating navigation, matching the approved 390px mockup. */
+:root{--nav-safe-bottom:max(env(safe-area-inset-bottom,0px),var(--tg-safe-area-inset-bottom,0px))}
+.app{padding-bottom:calc(106px + var(--nav-safe-bottom))}
+.bottom-nav{left:50%;right:auto;bottom:calc(12px + var(--nav-safe-bottom));transform:translateX(-50%);width:calc(100% - 24px);max-width:480px;height:68px;padding:0;border:1px solid #e5e9ed;border-radius:24px;background:#fcfaf9;box-shadow:0 4px 14px #3c587b1a;overflow:visible;align-items:flex-start;font-family:Arial,sans-serif}
+.bottom-nav button[data-tab]{position:relative;flex:1 1 0;width:20%;min-width:0;height:66px;padding:10px 0 0;gap:0;justify-content:flex-start;background:transparent;color:#6684a6}
+.bottom-nav button[data-tab].active{background:transparent;color:#426b9b}
+.bottom-nav button::before{content:"";position:absolute;left:50%;top:7px;transform:translateX(-50%);width:48px;height:29px;border-radius:15px;pointer-events:none}
+.bottom-nav button.active::before{background:#f2dce7}
+.bottom-nav button>svg{position:relative;z-index:1;width:24px;height:24px;stroke-width:1.5}
+.bottom-nav small{position:absolute;top:43px;left:0;right:0;height:14px;margin:0;font-size:10.5px;line-height:14px;font-weight:400}
+.bottom-nav button.active small{font-weight:600}
+.bottom-nav .cart-badge{top:-35px;left:calc(50% + 8px)}
+.bottom-nav button:focus-visible{border-radius:20px}
+.analytics-consent{bottom:calc(92px + var(--nav-safe-bottom))}
+
+/* White storefront surfaces; colour stays in small brand and selection accents. */
+:root{--bg:#fff;--card:#fff;--line:#e5e7eb}
+.brand,.menu-header,.menu-panel,.menu-footer,.bottom-nav,.search-wrap,.photo,.hero,.related-photo,.cart-photo,.sell-intro,.sell-method,.analytics-consent{background:#fff}
+.masthead-controls .catalog-menu-button{background:#fff;color:var(--ink);border-color:var(--line)}
+.masthead-controls .catalog-menu-button .menu-icon{color:var(--brand-blue)}
+.product .heart{background:#fff}
+.product .card-meta .condition-badge,.product .card-meta .commission-badge{background:#f6f6f6}
+.primary,.service-contact,.sell-offer,.sourcing-link{background:#fff;border:1px solid var(--line);color:var(--ink)}
+.primary:hover,.primary:active,.service-contact:hover,.sell-offer:hover{background:#f6f6f6}
+.sale-category,.sale-category[aria-pressed=true]{background:#fff;color:#843e5b;border:1px solid var(--line)}
+.sale-category[aria-pressed=true]{border-color:#c39bb8}
+
+/* A lighter Latin/Cyrillic text rhythm, with readable medium-weight prices. */
+body{font-family:Roboto,"Helvetica Neue",Arial,sans-serif;font-weight:300}
+button,input,select{font-family:inherit}
+.product h3,.detail .brandname,.related-brand,.cart-item h2{font-weight:500;letter-spacing:.06em}
+.product .card-name-row p,.product .card-size,.related-name,.related-size,.cart-name{font-weight:300}
+.product .price,.product .price-current,.detail .detail-price,.detail .price-current,.related-card strong,.cart-summary strong{font-weight:500}
+.detail h1{font-family:inherit;font-weight:300;letter-spacing:0}
+.catalog-head,.catalog-menu-button,.menu-section-label,.menu-group-toggle,.filters button,.audience-tabs button,.primary,.secondary,.product .discount-badge,.product .card-sale-badge{font-weight:400}
+.bottom-nav{font-family:Roboto,"Helvetica Neue",Arial,sans-serif}
+.bottom-nav button.active small{font-weight:500}
+
+/* Hearts retain generous invisible touch targets. */
+.product .heart,.heart,.heart.is-favorite,.detail-wishlist,.detail-wishlist[aria-pressed=true]{color:var(--brand-blue);background:transparent;border:0;box-shadow:none;border-radius:0;min-width:44px;min-height:44px}
+.heart svg,.detail-wishlist svg{stroke:currentColor;stroke-width:1.5;fill:none}
+.heart.is-favorite svg,.detail-wishlist[aria-pressed=true] svg{fill:currentColor}
+
+/* Monochrome interface with one pink accent: wishlist hearts. */
+:root{--ink:#202020;--muted:#626262;--brand-blue:#333;--brand-pink:#ededed;--line:#e5e5e5}
+.brand .logo,.menu-logo{color:var(--ink)}
+.masthead-controls .catalog-menu-button .menu-icon,.sort-chevron{color:var(--ink)}
+.bottom-nav{border-color:var(--line);box-shadow:0 4px 14px #00000012}
+.bottom-nav button[data-tab]{color:#626262}
+.bottom-nav button[data-tab].active{color:#202020}
+.bottom-nav button.active::before{background:#ededed}
+.cart-badge,.detail-cart-count{background:#ededed;color:var(--ink)}
+.discount-badge,.card-sale-badge,.sale-chip,.sale-category,.sale-category[aria-pressed=true],.sort-options button[aria-pressed=true]{background:#f3f3f3;color:var(--ink)}
+.sale-chip[aria-pressed=true]{box-shadow:inset 0 0 0 1px #626262}
+.sale-category,.sale-category[aria-pressed=true],.filters button.selected,.options button.selected,.audience-tabs button[aria-pressed=true],.masthead-controls .search-toggle,.menu-header .menu-close{border-color:var(--line)}
+.sale-category,.sale-category[aria-pressed=true]{background:#fff}
+.sort-options button span,.sell-number{color:var(--ink)}
+.sort-options button:hover,.menu-choice:hover{background:#f6f6f6}
+.menu-choice::before,.menu-choice[aria-pressed=true]::before{border-color:#999}
+.product .heart,.heart,.heart.is-favorite,.detail-wishlist,.detail-wishlist[aria-pressed=true]{color:#c66b95}
+
+.catalog-status.is-reserved,.product-eyebrow span.is-reserved{background:#f3f3f3;color:#484848;border-color:#d8d8d8}
+.purchase-action:disabled{background:#e5e5e5;color:#666}
+
+/* Slight caption tracking follows the clean, light reference typography. */
+.product .card-name-row p,.product .card-size,.related-name,.related-size,.cart-name,.menu-choice,.catalog-menu-button,.sort-toggle,.audience-tabs button{letter-spacing:.015em}
+
+/* Keep the condition descriptor deliberately below PRE-OWNED. */
+.product .condition-label,.product .condition-wear{display:block}
+
+/* Neutral photo panels separate products from the white page. */
+:root{--card:#f5f5f5}
+.product .photo,.hero,.related-photo,.cart-photo{background:var(--card)}

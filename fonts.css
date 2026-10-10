@@ -33,3 +33,8 @@
   font-display: swap;
   src: url(/fonts/playfair-display-600.woff) format('woff');
 }
+
+/* Self-hosted Latin and Cyrillic storefront text, SIL Open Font License. */
+@font-face{font-family:'Roboto';font-style:normal;font-weight:300;font-display:swap;src:url(/fonts/roboto-300.woff) format('woff')}
+@font-face{font-family:'Roboto';font-style:normal;font-weight:400;font-display:swap;src:url(/fonts/roboto-400.woff) format('woff')}
+@font-face{font-family:'Roboto';font-style:normal;font-weight:500;font-display:swap;src:url(/fonts/roboto-500.woff) format('woff')}
