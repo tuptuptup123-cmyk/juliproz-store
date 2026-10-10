@@ -507,3 +507,18 @@ button,input,select{font-family:inherit}
 .primary,.sell-offer{background:#c52b78;color:#fff;border-color:#6c90b9;box-shadow:inset 0 0 0 1px #6c90b9}
 .primary:hover,.primary:active,.sell-offer:hover{background:#af2469}
 .primary:disabled,.purchase-action:disabled{background:#e5e5e5;color:#666;border-color:#d8d8d8;box-shadow:none}
+
+/* Condition and commission notes remain neutral, with stronger text. */
+.condition-badge,.commission-badge,.product .card-meta .condition-badge,.product .card-meta .commission-badge{background:#f6f6f6;color:#202020;border-color:#d8d8d8;font-weight:700}
+
+/* A clearly visible blue frame around pink primary actions. */
+.primary,.sell-offer,.product-sourcing .sourcing-link,.services-page .service-contact{box-shadow:inset 0 0 0 2px #6c90b9}
+.primary:disabled,.purchase-action:disabled{box-shadow:none}
+
+/* Powder pink and muted blue taken from the supplied brand colour reference. */
+.product .card-sale-badge,.discount-badge,.primary,.sell-offer,.product-sourcing .sourcing-link,.services-page .service-contact{background:#e4cadd;color:#25394f;border-color:#7894b6;box-shadow:inset 0 0 0 2px #7894b6}
+.product .card-sale-badge,.discount-badge{box-shadow:inset 0 0 0 1px #7894b6}
+.primary:hover,.primary:active,.sell-offer:hover,.product-sourcing .sourcing-link:hover,.services-page .service-contact:hover{background:#dcc0d4;border-color:#7894b6}
+.primary:disabled,.purchase-action:disabled{background:#e5e5e5;color:#666;border-color:#d8d8d8;box-shadow:none}
+
+.brand-signature{font-weight:400}
