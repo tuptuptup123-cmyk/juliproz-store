@@ -433,7 +433,7 @@ function openProduct(id){
 }
 document.getElementById("backProduct").onclick=closeProductModal;
 document.querySelectorAll('[data-service]').forEach(b=>b.onclick=()=>{
-  const text=b.dataset.service==='authentication'?'Здравствуйте! Хочу передать вещь на аутентификацию. Подскажите условия, стоимость и сроки проверки.':'Здравствуйте! Хочу обратиться в ателье. Пришлю фотографии вещи и описание того, что хочу сделать.';
+  const text=b.dataset.service==='authentication'?'Здравствуйте! Хочу организовать аутентификацию вещи через ваших партнёров. Подскажите онлайн- и офлайн-варианты, стоимость и сроки.':'Здравствуйте! Хочу обратиться в ателье или обсудить спа для сумки, полировку или обслуживание часов через ваших партнёров. Пришлю фотографии и описание запроса.';
   if(telegramLink('https://t.me/juliproz?text='+encodeURIComponent(text)))window.StoreAnalytics?.track('manager_open');
 });
 document.getElementById('offerItem').onclick=()=>{
