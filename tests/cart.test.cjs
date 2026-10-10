@@ -53,6 +53,18 @@ fail=true;await run("changeCatalogSort('price_asc')");assert.equal(run('state.so
 assert.equal(run("money({price:100,currency:'USD'})"),'');
 assert.match(run("conditionBadge({product_condition:'pre_owned',wear_condition:'gently_used'})"),/Небольшие следы носки/);
 assert.equal(run("wearLabel({product_condition:'new',wear_condition:'used'})"),'');
+// Fractional legacy prices become whole EUR unit prices everywhere, including persisted carts and manager drafts.
+rows=[{id:801,brand:'Gucci',name:'Обувь',size:'',price:624.9,original_price:899.7,currency:'EUR',available:true,fulfillment_status:'on_order'},{id:802,name:'Сумка',size:'',price:124.4,currency:'€',available:true,fulfillment_status:'on_order'},{id:803,name:'По запросу',size:'',price:null,currency:'EUR',available:true,fulfillment_status:'on_order'},{id:804,name:'Другая валюта',size:'',price:100.9,currency:'USD',available:true,fulfillment_status:'on_order'}];context.fixture=rows;
+run("cart=[];products=fixture;state.tab='catalog';state.sort='newest';state.favorites=new Set(['801']);render();openProduct(801);addToCart();cart[0].quantity=2;openProduct(802);addToCart();cart[1].quantity=3;openProduct(803);addToCart();openProduct(804);addToCart();saveCart();renderCart()");
+assert.match(get('grid').innerHTML,/€ 625/);assert.match(get('grid').innerHTML,/€ 900/);assert.doesNotMatch(get('grid').innerHTML,/624,9|899,7/);
+run("state.tab='favorites';render();openProduct(801)");assert.match(get('grid').innerHTML,/€ 625/);assert.match(get('productContent').innerHTML,/€ 625/);assert.match(get('productContent').innerHTML,/€ 900/);
+assert.equal(run('cart[0].product.price'),625);assert.equal(run('cart[0].product.original_price'),900);assert.equal(run('cartTotals().totals[0].price'),1622);assert.equal(run('cartTotals().unknown'),true);
+assert.equal(JSON.parse(saved.get('jpCart'))[0].product.price,625);assert.equal(run("money({price:624.5,currency:'EUR'})"),'€ 625');assert.equal(run("money({price:null,currency:'EUR'})"),'');assert.equal(run("money({price:-0.1,currency:'EUR'})"),'');
+const beforeRounded=links.length;await run('checkoutCart()');assert.equal(links.length,beforeRounded+1);
+const roundedDraft=new URL(links.at(-1)).searchParams.get('text');assert.match(roundedDraft,/€ 625 за шт/);assert.match(roundedDraft,/€ 124 за шт/);assert.match(roundedDraft,/Итого: € 1[\s\u00a0\u202f]622/);assert.match(roundedDraft,/есть товары с ценой по запросу/);assert.doesNotMatch(roundedDraft,/624[.,]9|124[.,]4|100[.,]9/);
+rows[0]={...rows[0],price:624.6};run('telegramOpenTimes.clear()');await run('checkoutCart()');assert.equal(links.length,beforeRounded+2);assert.doesNotMatch(get('cartStatus').textContent,/изменились/);
+rows[0]={...rows[0],price:625.6};await run('checkoutCart()');assert.equal(links.length,beforeRounded+2);assert.match(get('cartStatus').textContent,/изменились/);assert.equal(run('cartTotals().totals[0].price'),1624);assert.equal(run('cart[0].product.price'),626);
+saved.set('jpCart',JSON.stringify([{id:801,size:'',quantity:2,product:{price:624.9,original_price:899.7,currency:'EUR'}}]));run('products=[];cart=readCart()');assert.equal(run('cart[0].product.price'),625);assert.equal(run('cart[0].product.original_price'),900);assert.equal(run('cartTotals().totals[0].price'),1250);
 // Static Sell and empty Cart must not access hidden catalogue card data.
 run("cart=[];products=[{id:999,get name(){throw Error('Hidden catalogue was rendered')}}];setTab('sell');setTab('services');setTab('cart');state.favorites.clear();setTab('favorites')");assert.equal(run('state.tab'),'favorites');
 console.log('PASS cart: sizes, quantities, euro totals, persistence, changed-price confirmation, unavailable sizes, network failures, wishlist independent of filters, corrupt storage');
