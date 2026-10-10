@@ -104,18 +104,24 @@ async function changeCatalogSort(value){
     try{
       if(!sortRatesRequest)sortRatesRequest=fetch('/api/exchange-rates',{signal:AbortSignal.timeout(10000)}).then(async r=>{if(!r.ok)throw Error();const data=await r.json();if(!(data.rates?.USD>0)||!Number.isFinite(data.rates.USD))throw Error();return data.rates}).finally(()=>{sortRatesRequest=null});
       const rates=await sortRatesRequest;if(revision!==sortRevision)return;catalogRates={...rates,EUR:1};
-    }catch{if(revision!==sortRevision)return;document.getElementById('catalogSort').value=state.sort;note.textContent='Не удалось отсортировать по цене. Попробуйте ещё раз.';return}
+    }catch{if(revision!==sortRevision)return;syncCatalogSort();note.textContent='Не удалось отсортировать по цене. Попробуйте ещё раз.';return}
   }
   if(revision!==sortRevision)return;state.sort=value;note.textContent='';render();
 }
-document.getElementById('catalogSort').onchange=e=>changeCatalogSort(e.target.value);
+const sortLabels={newest:'Новинки',price_asc:'Дешевле',price_desc:'Дороже',discount:'Больше скидка'};
+function syncCatalogSort(){document.getElementById('catalogSortLabel').textContent=sortLabels[state.sort];document.getElementById('catalogSort').setAttribute('data-value',state.sort);document.querySelectorAll('[data-sort]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.sort===state.sort)))}
+function setSortOpen(open){document.getElementById('catalogSortOptions').classList.toggle('hidden',!open);document.getElementById('catalogSort').setAttribute('aria-expanded',String(open))}
+document.getElementById('catalogSort').onclick=()=>setSortOpen(document.getElementById('catalogSortOptions').classList.contains('hidden'));
+document.querySelectorAll('[data-sort]').forEach(b=>b.onclick=()=>{setSortOpen(false);document.getElementById('catalogSort').focus?.();changeCatalogSort(b.dataset.sort)});
+document.addEventListener('click',e=>{if(!e.target.closest?.('#catalogSortWrap'))setSortOpen(false)});
+document.getElementById('catalogSortWrap').addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();setSortOpen(false);document.getElementById('catalogSort').focus?.()}if(e.key==='ArrowDown'&&e.target.id==='catalogSort'){e.preventDefault();setSortOpen(true);document.querySelector('[data-sort]')?.focus?.()}});
 function emptyCollection(kind){
   const cartEmpty=kind==='cart';
   const symbol=cartEmpty?'<path d="M3 4h5l5 25h24l6-18H10"/><circle cx="16" cy="38" r="2.5"/><circle cx="35" cy="38" r="2.5"/>':'<path d="M40 8a11 11 0 0 0-16 0A11 11 0 0 0 8 24l16 16 16-16a11 11 0 0 0 0-16Z"/>';
   return `<div class="collection-empty ${cartEmpty?'cart-empty':'wishlist-empty'}"><div class="empty-content"><svg class="empty-symbol" width="64" height="64" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${symbol}</svg><h2>${cartEmpty?'Корзина':'Ваш виш-лист пока пуст.'}</h2><p>${cartEmpty?'Ваша корзина пока пуста.':'Нажмите на сердечко у понравившегося товара.'}</p>${cartEmpty?'<button type="button" class="primary" data-cart-action="catalog">Перейти в каталог</button>':''}</div><span class="empty-signature" aria-hidden="true">J.P</span></div>`;
 }
 function render(){
-  document.getElementById("catalogSort").value=state.sort;
+  syncCatalogSort();
   reconcileFilters();
   renderCatalogMenu();
   document.querySelectorAll("[data-gender]").forEach(b=>b.setAttribute("aria-pressed",String((b.dataset.gender||null)===state.gender)));
@@ -290,7 +296,7 @@ function openFilter(type){
 options.onclick=e=>{if(!e.target.dataset.v)return;tempValue=e.target.dataset.v==="Все"?null:e.target.dataset.v;[...options.children].forEach(x=>x.classList.toggle("selected",(tempValue===x.dataset.v)||(!tempValue&&x.dataset.v==="Все")))};
 document.getElementById("applyFilter").onclick=()=>{state[currentFilter]=tempValue;sheet.classList.add("hidden");render()};
 document.getElementById("closeSheet").onclick=()=>sheet.classList.add("hidden");
-document.getElementById("reset").onclick=()=>{sortRevision++;state.sort="newest";document.getElementById("sortStatus").textContent="";state.sale=false;state.product_condition=state.gender=state.fulfillment_status=state.category=state.brand=state.size=null;state.search="";document.getElementById("search").value="";render()};
+document.getElementById("reset").onclick=()=>{setSortOpen(false);sortRevision++;state.sort="newest";document.getElementById("sortStatus").textContent="";state.sale=false;state.product_condition=state.gender=state.fulfillment_status=state.category=state.brand=state.size=null;state.search="";document.getElementById("search").value="";render()};
 grid.onclick=e=>{
   if(e.target.id==="retryProducts"){loadProducts();return}
   const h=e.target.closest("[data-heart]");
@@ -309,6 +315,7 @@ function cartProduct(row){return products.find(p=>String(p.id)===row.id)||row.pr
 function cartSnapshot(p){return Object.fromEntries(['id','brand','name','category','price','currency','image_url','photos','size','fulfillment_status','reserved','stock_quantities','original_price'].map(k=>[k,p[k]]))}
 function saveCart(){cartRevision++;try{localStorage.setItem('jpCart',JSON.stringify(cart))}catch{document.getElementById('cartStatus').textContent='Корзина доступна в этом сеансе. Браузер не разрешил сохранить её.'}}
 function setTab(tab){
+  setSortOpen(false);
   if(state.tab!==tab)window.StoreAnalytics?.track("page_view",null,tab);
   navigationRevision++;
   state.tab=tab;selectedProduct=null;selectedSize=null;document.getElementById('productModal').classList.add('hidden');
