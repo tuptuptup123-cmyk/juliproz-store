@@ -28,9 +28,9 @@ jobs:
             ${{ runner.temp }}/jp-qa/manager-contact-*.png
             ${{ runner.temp }}/jp-qa/light-shadow-comparison-*.png
           retention-days: 7
+      - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" node tests/brioni-group.browser.cjs
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" QA_OUTPUT="$RUNNER_TEMP/jp-qa" node tests/responsive.browser.cjs
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" QA_OUTPUT="$RUNNER_TEMP/jp-qa" node tests/action-guards.browser.cjs
-      - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" node tests/brioni-group.browser.cjs
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" QA_OUTPUT="$RUNNER_TEMP/jp-qa" node tests/photo-analytics.browser.cjs
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" QA_OUTPUT="$RUNNER_TEMP/jp-qa" node tests/admin-design.browser.cjs
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" QA_OUTPUT="$RUNNER_TEMP/jp-qa" node tests/audit-fixes.browser.cjs
