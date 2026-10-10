@@ -356,7 +356,7 @@ button:not(:disabled):active{transform:scale(.96)}
 .primary,.secondary,.service-contact,.sell-offer,.sourcing-link{border-radius:13px}
 .services-page .sell-intro{border:1px solid transparent}
 .services-page .sell-intro h1,.services-page .service-card h2{text-align:left}
-.services-page .sell-intro p,.services-page .service-card p{font-size:14px;line-height:1.75;max-width:none;text-align:justify;text-align-last:left;hyphens:auto;overflow-wrap:break-word}
+.services-page .sell-intro p,.services-page .service-card p{font-size:14px;line-height:1.75;max-width:none;text-align:left;text-align-last:auto;hyphens:none;overflow-wrap:normal}
 .services-page .service-list{font-size:14px;line-height:1.75}
 
 .masthead-controls .catalog-menu-button{background:var(--brand-blue);color:#fff;border-color:var(--brand-pink)}

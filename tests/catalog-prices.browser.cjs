@@ -45,6 +45,11 @@ const fixtures=[
   await page.locator('.product').first().scrollIntoViewIfNeeded();await page.screenshot({path:out+'/catalog-'+width+'.png'});
   await page.locator('[data-heart="900001"]').click();await page.locator('[data-tab="favorites"]').click();assert.equal(await page.locator('.product').count(),1);
   await page.locator('.product-open').click();await page.locator('#backProduct').click();assert.equal(await page.locator('.product').count(),1);
+  await page.locator('[data-tab="services"]').click();
+  const services=await page.locator('.services-page .sell-intro p,.services-page .service-card p').evaluateAll(es=>es.map(e=>({align:getComputedStyle(e).textAlign,hyphens:getComputedStyle(e).hyphens})));
+  assert.ok(services.length>=3&&services.every(s=>s.align==='left'&&s.hyphens==='none'),'Services copy is left-aligned without automatic hyphens');
+  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Services fit narrow screens');
+  if(width===390||width===529)await page.screenshot({path:out+'/services-'+width+'.png',fullPage:true});
   assert.deepEqual(errors,[]);await page.close();console.log(width+' PASS: aligned price stacks, full metadata, no overflow, wishlist and product back');
  }
 
