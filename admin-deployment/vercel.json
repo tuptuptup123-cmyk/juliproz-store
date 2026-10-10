@@ -1,0 +1,21 @@
+{
+  "buildCommand": "node ../scripts/prepare-photo-runtime.cjs && node ../scripts/build-admin.cjs admin-deployment/dist",
+  "outputDirectory": "dist",
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {"key":"Content-Security-Policy","value":"default-src 'self'; script-src 'self'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: https://juliproz-store.vercel.app/images/ https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/; connect-src 'self' https://juliproz-store.vercel.app/images/ https://qhgzzhgxwpcctafpzjid.supabase.co; object-src 'none'; base-uri 'none'; form-action 'self'; upgrade-insecure-requests; frame-ancestors 'none'"},
+        {"key":"X-Frame-Options","value":"DENY"},
+        {"key":"X-Content-Type-Options","value":"nosniff"},
+        {"key":"Referrer-Policy","value":"no-referrer"},
+        {"key":"Cache-Control","value":"no-store"},
+        {"key":"Permissions-Policy","value":"camera=(), microphone=(), geolocation=()"}
+      ]
+    },
+    {
+      "source":"/photo-worker.js",
+      "headers":[{"key":"Content-Security-Policy","value":"default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; connect-src 'self'; object-src 'none'; base-uri 'none'"}]
+    }
+  ]
+}
