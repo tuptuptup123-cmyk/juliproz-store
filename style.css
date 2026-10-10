@@ -322,3 +322,5 @@ button:not(:disabled):active{transform:scale(.96)}
 .sale-chip[aria-pressed=true]{box-shadow:inset 0 0 0 1px #843e5b}.sale-chip:focus-visible{outline:2px solid var(--brand-blue);outline-offset:4px}.sale-menu-chip{margin:0 0 20px;min-height:44px}.sale-menu-chip span{font-size:12px;font-weight:400;letter-spacing:0}
 
 .card-name-row{display:flex;align-items:center;justify-content:space-between;gap:8px}.card-name-row p{min-width:0;margin:0;flex:1}.card-sale-badge{flex-shrink:0;align-self:center}
+
+.sale-category{width:100%;min-height:74px;margin:20px 0 0;padding:16px 18px;justify-content:space-between;text-align:left;border-radius:4px}.sale-category .sale-category-title{font-size:16px;font-weight:600;letter-spacing:.06em}.sale-category-title small{display:block;font-size:11px;font-weight:400;letter-spacing:0;margin-top:5px}.sale-category .sale-category-arrow{font-size:22px}.sale-category[aria-pressed=true]{background:#843e5b;color:#fff}
