@@ -364,3 +364,6 @@ button:not(:disabled):active{transform:scale(.96)}
 
 /* Catalogue badges share the same left and right edges. */
 .product > .condition-badge + .condition-badge{margin-left:0}
+
+/* Condition labels fit their text instead of stretching across the card. */
+.product > .condition-badge:not(.commission-badge){align-self:flex-start;width:fit-content;max-width:100%;box-sizing:border-box}
