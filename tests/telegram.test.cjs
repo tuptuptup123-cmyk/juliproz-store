@@ -27,14 +27,14 @@ function invoke(body, options = {}) {
   return result;
 }
 
-test('start creates a private greeting with a three menu sections and a real Mini App button', () => {
+test('start creates a private greeting with four menu sections and a real Mini App button', () => {
   const result = invoke(update('/start'));
   assert.equal(result.status, 200);
   assert.equal(result.body.method, 'sendMessage');
   assert.equal(result.body.chat_id, 42);
   assert.equal(result.body.text, WELCOME);
   assert.equal(result.body.reply_markup.inline_keyboard[0][0].web_app.url, 'https://juliproz-store.vercel.app/');
-  assert.deepEqual(result.body.reply_markup.inline_keyboard.map(r => r[0].text), ['Магазин', 'Выкуп и комиссия', 'О нас']);
+  assert.deepEqual(result.body.reply_markup.inline_keyboard.map(r => r[0].text), ['Магазин', 'Выкуп и комиссия', 'Услуги', 'О нас']);
   assert.equal(result.body.reply_markup.inline_keyboard[1][0].callback_data, 'jp:sell');
   assert.equal(result.headers['Cache-Control'], 'no-store');
   assert.equal(JSON.stringify(result).includes(TOKEN), false);
@@ -176,7 +176,7 @@ test('info and sales navigation edits the same message and acknowledges taps', a
     await handler(req, res);
     assert.equal(reply.method, 'editMessageText'); assert.equal(reply.chat_id, 42); assert.equal(reply.message_id, 8);
     if (name === 'commission') assert.match(reply.text, /через JULI.PROZ бот/);
-    if (name === 'menu') assert.deepEqual(reply.reply_markup.inline_keyboard.map(r => r[0].text), ['Магазин', 'Выкуп и комиссия', 'О нас']);
+    if (name === 'menu') assert.deepEqual(reply.reply_markup.inline_keyboard.map(r => r[0].text), ['Магазин', 'Выкуп и комиссия', 'Услуги', 'О нас']);
   }
   assert.equal(calls.length, 5);
   const bad = callback('jp:sell'); bad.callback_query.from.id = 43;
@@ -184,4 +184,22 @@ test('info and sales navigation edits the same message and acknowledges taps', a
   assert.deepEqual(invoke(callback('jp:unknown')).body, { ok: true });
   assert.match(invoke(update('/about')).body.text, /персональный байер/);
   assert.match(invoke(update('/sell')).body.text, /Выкуп и комиссия/);
+});
+
+
+test('services routes describe authentication and atelier with safe contact drafts and back navigation', async () => {
+  const reply=async body=>{let result;await createHandler(ENV,undefined,async()=>({ok:true}))({method:'POST',headers:{'content-type':'application/json','x-telegram-bot-api-secret-token':webhookSecret(TOKEN)},body},{setHeader(){},status(){return this},json(value){result=value}});return result};
+  const menu=invoke(update('/start')).body.reply_markup.inline_keyboard;
+  assert.equal(menu[2][0].callback_data,'jp:services');
+  const services=await reply(callback('jp:services'));
+  assert.deepEqual(services.reply_markup.inline_keyboard.map(r=>r[0].callback_data),['jp:authentication','jp:atelier','jp:menu']);
+  for(const [name,label] of [['authentication','аутентификацию'],['atelier','ателье']]){
+    const response=await reply(callback('jp:'+name));
+    assert.equal(response.method,'editMessageText');assert.match(response.text,/стоимость и сроки/);
+    const keyboard=response.reply_markup.inline_keyboard,url=keyboard[0][0].url;
+    assert.ok(url.startsWith('https://t.me/juliproz?text='));assert.ok(decodeURIComponent(url).includes(label));
+    assert.equal(keyboard[1][0].callback_data,'jp:services');assert.equal(keyboard[2][0].callback_data,'jp:menu');
+    assert.equal(invoke(update('/'+name)).body.text,response.text);
+  }
+  assert.match(invoke(update('/services')).body.text,/Аутентификация и ателье/);
 });

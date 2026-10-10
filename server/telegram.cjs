@@ -13,13 +13,19 @@ const ABOUT = 'О нас 🤍\n\nJULI.PROZ — ваш персональный �
 const SELL = 'Выкуп и комиссия\n\nХотите продать вещь? Выберите удобный формат.\n\nВыкуп\nРассмотрим покупку вашей вещи. Отправьте фото, описание состояния и желаемую цену — оценим и предложим условия.\n\nКомиссия\nПоможем продать ваши вещи через JULI.PROZ бот. Стоимость, комиссию и условия согласуем с вами заранее.';
 const BUYOUT = 'Продать нам вещь\n\nПодготовьте фотографии вещи, бренд и модель, описание состояния, информацию о комплекте и желаемую цену.\n\nНажмите «Отправить на оценку» и отправьте эту информацию в открывшемся диалоге. После оценки обсудим возможность выкупа и условия.\n\nФото и сообщения из этого бота автоматически не пересылаются.';
 const COMMISSION = 'Сдать на комиссию\n\nПоможем продать ваши вещи через JULI.PROZ бот.\n\nПодготовьте фотографии вещи, бренд и модель, описание состояния, информацию о комплекте и желаемую цену.\n\nНажмите «Обсудить комиссию» и отправьте эту информацию в открывшемся диалоге. Стоимость, комиссию и условия согласуем с вами заранее.\n\nФото и сообщения из этого бота автоматически не пересылаются.';
-const HELP = 'Выберите раздел ниже. Чтобы предложить вещь на выкуп или комиссию, откройте «Выкуп и комиссия». Сообщения из этого бота автоматически менеджеру не пересылаются.';
+const SERVICES = 'Услуги\n\nАутентификация и ателье для ваших вещей. Выберите нужный раздел — расскажем, что прислать и как обратиться к менеджеру.';
+const AUTHENTICATION = 'Аутентификация\n\nПринимаем вещи на проверку подлинности.\n\nПришлите менеджеру фотографии вещи и деталей, бренд и модель. Порядок проверки, стоимость и сроки согласуем с вами до начала работы.\n\nНажмите «Проверить вещь», чтобы открыть чат с менеджером.';
+const ATELIER = 'Ателье\n\nРаботаем с вашими вещами в ателье.\n\nПришлите фотографии вещи и опишите, что хотите сделать. Оценим запрос и согласуем возможность работы, стоимость и сроки.\n\nНажмите «Обратиться в ателье», чтобы открыть чат с менеджером.';
+const HELP = 'Выберите раздел ниже. Чтобы предложить вещь на выкуп или комиссию, откройте «Выкуп и комиссия». Для проверки подлинности или обращения в ателье откройте «Услуги». Сообщения из этого бота автоматически менеджеру не пересылаются.';
 const back = [{ text: '← Главное меню', callback_data: 'jp:menu' }];
 function screen(name) {
-  const main = [[{ text: 'Магазин', web_app: { url: SHOP_URL } }], [{ text: 'Выкуп и комиссия', callback_data: 'jp:sell' }], [{ text: 'О нас', callback_data: 'jp:about' }]];
+  const main = [[{ text: 'Магазин', web_app: { url: SHOP_URL } }], [{ text: 'Выкуп и комиссия', callback_data: 'jp:sell' }], [{ text: 'Услуги', callback_data: 'jp:services' }], [{ text: 'О нас', callback_data: 'jp:about' }]];
   const screens = {
     menu: { text: WELCOME, keyboard: main },
     about: { text: ABOUT, keyboard: [back] },
+    services: { text: SERVICES, keyboard: [[{ text: 'Аутентификация', callback_data: 'jp:authentication' }], [{ text: 'Ателье', callback_data: 'jp:atelier' }], back] },
+    authentication: { text: AUTHENTICATION, keyboard: [[{ text: 'Проверить вещь ↗', url: MANAGER_URL + '?text=' + encodeURIComponent('Здравствуйте! Хочу передать вещь на аутентификацию. Подскажите условия, стоимость и сроки проверки.') }], [{ text: '← Услуги', callback_data: 'jp:services' }], back] },
+    atelier: { text: ATELIER, keyboard: [[{ text: 'Обратиться в ателье ↗', url: MANAGER_URL + '?text=' + encodeURIComponent('Здравствуйте! Хочу обратиться в ателье. Пришлю фотографии вещи и описание того, что хочу сделать.') }], [{ text: '← Услуги', callback_data: 'jp:services' }], back] },
     sell: { text: SELL, keyboard: [[{ text: 'Продать нам вещь', callback_data: 'jp:buyout' }], [{ text: 'Сдать на комиссию', callback_data: 'jp:commission' }], back] },
     buyout: { text: BUYOUT, keyboard: [[{ text: 'Отправить на оценку ↗', url: MANAGER_URL }], [{ text: '← Выкуп и комиссия', callback_data: 'jp:sell' }], back] },
     commission: { text: COMMISSION, keyboard: [[{ text: 'Обсудить комиссию ↗', url: MANAGER_URL }], [{ text: '← Выкуп и комиссия', callback_data: 'jp:sell' }], back] }
@@ -49,9 +55,9 @@ function messageResponse(update) {
       msg.from.id !== msg.chat.id) return null;
   // Service events, edited messages and non-text uploads do not trigger greetings.
   if (typeof msg.text !== 'string' || msg.text.length > 4096) return null;
-  const command = /^\/(start|shop|help|manager|about|sell|buyout|commission)(?:@([A-Za-z0-9_]+))?(?:\s|$)/i.exec(msg.text);
+  const command = /^\/(start|shop|help|manager|about|sell|buyout|commission|services|authentication|atelier)(?:@([A-Za-z0-9_]+))?(?:\s|$)/i.exec(msg.text);
   if (command?.[2] && command[2].toLowerCase() !== BOT_USERNAME.toLowerCase()) return null;
-  const route = { start: 'menu', about: 'about', sell: 'sell', buyout: 'buyout', commission: 'commission' }[command?.[1].toLowerCase()];
+  const route = { start: 'menu', about: 'about', sell: 'sell', buyout: 'buyout', commission: 'commission', services: 'services', authentication: 'authentication', atelier: 'atelier' }[command?.[1].toLowerCase()];
   const selected = screen(route || 'menu');
   if (command?.[1].toLowerCase() === 'manager') selected.keyboard = [[{ text: 'Связаться с менеджером', url: MANAGER_URL }], back];
   let text = route ? selected.text : HELP;
@@ -94,7 +100,7 @@ function callbackResponse(update) {
   const q = update?.callback_query, msg = q?.message;
   if (!Number.isSafeInteger(update?.update_id) || update.update_id < 0 || typeof q?.id !== 'string' || q.id.length < 1 || q.id.length > 128 ||
       q.from?.is_bot !== false || msg?.chat?.type !== 'private' || !Number.isSafeInteger(msg.chat.id) || msg.chat.id <= 0 || q.from.id !== msg.chat.id ||
-      !Number.isSafeInteger(msg.message_id) || msg.message_id <= 0 || typeof q.data !== 'string' || !/^jp:(menu|about|sell|buyout|commission)$/.test(q.data)) return null;
+      !Number.isSafeInteger(msg.message_id) || msg.message_id <= 0 || typeof q.data !== 'string' || !/^jp:(menu|about|sell|buyout|commission|services|authentication|atelier)$/.test(q.data)) return null;
   const selected = screen(q.data.slice(3));
   return { method: 'editMessageText', chat_id: msg.chat.id, message_id: msg.message_id, text: selected.text,
     link_preview_options: { is_disabled: true }, reply_markup: { inline_keyboard: selected.keyboard } };
