@@ -6,9 +6,9 @@
   <meta name="theme-color" content="#6c90b9" />
   <title>J.P Store</title>
   <link rel="stylesheet" href="fonts.css" />
-  <link rel="stylesheet" href="style.css?v=20261010-sort-design" />
+  <link rel="stylesheet" href="style.css?v=20261010-sell" />
   <link rel="preconnect" href="https://qhgzzhgxwpcctafpzjid.supabase.co" crossorigin>
-  <script async id="telegramSdk" src="https://telegram.org/js/telegram-web-app.js?v=20261010-sort-design"></script>
+  <script async id="telegramSdk" src="https://telegram.org/js/telegram-web-app.js?v=20261010-sell"></script>
 </head>
 <body>
     <header class="brand">
@@ -51,6 +51,12 @@
 
     <section id="grid" class="grid"></section>
     <section id="cartPage" class="cart-page hidden" aria-labelledby="cartTitle"><h1 id="cartTitle">Корзина</h1><div id="cartContent"></div><p id="cartStatus" role="status" aria-live="polite"></p></section>
+    <section id="sellPage" class="sell-page hidden" aria-labelledby="sellTitle">
+      <header class="sell-intro"><span class="sell-eyebrow">JULI.PROZ · ВЫКУП И КОМИССИЯ</span><img class="sell-paw" src="images/brand-paw.webp" width="1536" height="1024" alt="" loading="lazy"><h1 id="sellTitle">Дайте вашей вещи<br>новую историю</h1><p>Хотите продать одежду, обувь, сумку или аксессуар? Предложите их нам — рассмотрим выкуп или продажу через JULI.PROZ бот.</p></header>
+      <div class="sell-methods"><article class="sell-method"><span class="sell-number" aria-hidden="true">01</span><h2>Выкуп</h2><p>Мы покупаем вещь у вас. Стоимость согласуем после оценки фотографий и состояния.</p></article><article class="sell-method"><span class="sell-number" aria-hidden="true">02</span><h2>На комиссию</h2><p>Размещаем вещь в JULI.PROZ боте и помогаем найти покупателя. Комиссию и условия согласуем заранее.</p></article></div>
+      <section class="sell-checklist" aria-labelledby="sellPrepare"><h2 id="sellPrepare">Что прислать</h2><ul><li>Фотографии вещи и деталей</li><li>Бренд, модель и размер</li><li>Описание состояния</li><li>Желаемую цену</li></ul></section>
+      <button id="offerItem" class="sell-offer" type="button">Предложить вещь <span aria-hidden="true">↗</span></button><p class="sell-footnote">Напишите менеджеру — обсудим подходящий вариант.</p>
+    </section>
   </main>
 
 
@@ -76,6 +82,7 @@
     <button class="active" data-tab="catalog">⌂<small>Каталог</small></button>
     <button data-tab="favorites">♡<small>Виш-лист</small></button>
     <button data-tab="cart" aria-label="Корзина"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 3h3l3 12h10l3-9H6"/><path d="M8 15l-1 3h12"/><circle cx="9" cy="21" r="1"/><circle cx="18" cy="21" r="1"/></svg><small>Корзина <span id="cartBadge" class="cart-badge hidden">0</span></small></button>
+    <button data-tab="sell" aria-label="Продать вещь"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3h8l10 10-8 8L3 11Z"/><circle cx="7.5" cy="7.5" r="1"/></svg><small>Продать</small></button>
   </nav>
 
   <div id="sheet" class="sheet hidden">
@@ -95,6 +102,6 @@
   <div class="nav-paw-layer" aria-hidden="true"><img id="moneyPaw" class="money-paw" src="images/money-paw-v1.webp" alt="" width="1024" height="1536" /><img id="navPaw" class="nav-paw" src="images/brand-paw.webp" alt="" aria-hidden="true" width="1536" height="1024" /></div>
   <script defer src="config.js"></script>
   <script defer src="image-policy.js"></script>
-  <script defer src="product-sizes.js?v=20261009-action-guards-v6"></script><script defer src="analytics.js"></script><script defer src="product-pricing.js?v=20261010-discounts"></script><script defer src="app.js?v=20261010-sort-design"></script>
+  <script defer src="product-sizes.js?v=20261009-action-guards-v6"></script><script defer src="analytics.js"></script><script defer src="product-pricing.js?v=20261010-discounts"></script><script defer src="app.js?v=20261010-sell"></script>
 </body>
 </html>
