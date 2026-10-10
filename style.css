@@ -309,3 +309,5 @@ button:not(:disabled):active{transform:scale(.96)}
 /* Align both service paragraphs and the shared contact action. */
 .product-sourcing>div{width:100%;min-width:0}.product-sourcing h2{margin:0 0 18px}.product-sourcing p{max-width:none;text-align:left;text-wrap:pretty}.product-sourcing p strong{display:block;margin-bottom:6px}.product-sourcing p+p{margin-top:20px}.product-sourcing .sourcing-link{align-self:stretch;width:100%;min-height:48px;padding:13px 18px;border:0;font-size:13px;line-height:1.4}.product-sourcing::before{display:none}
 @media(max-width:600px){.product-sourcing{padding:20px}.product-sourcing h2{font-size:20px}.product-sourcing p{font-size:13px;line-height:1.65}}
+
+.catalog-status.is-reserved,.product-eyebrow span.is-reserved{display:inline-block;background:#fff0b7;color:#785618;border:1px solid #edd685;padding:5px 10px;border-radius:5px;font-weight:500;line-height:1.4}.condition-badge+.condition-badge{margin-left:6px}.commission-badge{background:#e1c6d733}
