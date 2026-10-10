@@ -526,3 +526,6 @@ button,input,select{font-family:inherit}
 /* Opt-in contour shadow for the verified transparent white Chrome Hearts cover.
    Match the exact asset, never apply an opaque rectangular shadow to other photos. */
 :is(.photo,.hero,.related-photo,.cart-photo,.photo-picker) img[src*="/chrome-hearts-scroll-usa-white-109.webp"]{filter:drop-shadow(0 0 1.5px rgb(0 0 0 / .18)) drop-shadow(0 4px 6px rgb(0 0 0 / .22))}
+
+/* Normalize this tightly cropped C.P. Company cover only; retain original pixels. */
+.product .photo img[src$="/photo-fix-oct10-368-0.webp"]{transform:scale(.70)}

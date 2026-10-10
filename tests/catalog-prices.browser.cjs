@@ -100,6 +100,7 @@ const fixtures=[
   }
   assert.equal(await page.locator('.services-page .sell-paw').count(),0,'Services keeps only the main J.P paw');
   assert.equal(await page.locator('#brandPaw img').count(),1);
+  assert.equal(await page.locator('.services-page .sell-intro p').innerText(),'Поможем выкупить нужную вещь, проверить её подлинность, подобрать ателье и организовать профессиональный уход. Работаем с вашими вещами по всему миру.');
   const services=await page.locator('.services-page .sell-intro p,.services-page .service-card p').evaluateAll(es=>es.map(e=>({align:getComputedStyle(e).textAlign,hyphens:getComputedStyle(e).hyphens})));
   assert.ok(services.length>=3&&services.every(s=>s.align==='left'&&s.hyphens==='none'),'Services copy is left-aligned without automatic hyphens');
   const serviceButtons=await page.locator('.services-page .service-contact').evaluateAll(es=>es.map(e=>({bg:getComputedStyle(e).backgroundColor,color:getComputedStyle(e).color,size:getComputedStyle(e).fontSize,weight:getComputedStyle(e).fontWeight,height:e.getBoundingClientRect().height,svg:!!e.querySelector('svg')})));
