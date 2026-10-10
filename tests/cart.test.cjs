@@ -33,5 +33,10 @@ assert.equal(run("pluralRu(21,'товар','товара','товаров')"),'�
 run("cart=[];products=[{id:77,name:'Кепка',size:'One Size',available:true,price:100,currency:'EUR',fulfillment_status:'in_stock',stock_quantities:{'One Size':5}}];openProduct(77);addToCart();cart[0].quantity=9;renderCart()");assert.equal(run('cart[0].quantity'),5);assert.equal(run('cartLimit(products[0],"One Size")'),5);
 rows=[{id:77,name:'Кепка',size:'One Size',available:true,price:100,currency:'EUR',fulfillment_status:'in_stock',stock_quantities:{'One Size':2}}];const beforeStockLinks=links.length;await run('checkoutCart()');assert.equal(links.length,beforeStockLinks);assert.equal(run('cart[0].quantity'),2);await run('checkoutCart()');assert.equal(links.length,beforeStockLinks+1);
 rows=[{...rows[0],stock_quantities:{'One Size':0}}];await run('checkoutCart()');assert.equal(links.length,beforeStockLinks+1);assert.match(get('cartStatus').textContent,/недоступны/);
+run("products=[{id:78,name:'Закончился',size:'One Size',available:true,fulfillment_status:'in_stock',stock_quantities:{'One Size':0}}];openProduct(78)");
+assert.equal(run('availabilityLabel(products[0])'),'Нет в наличии');assert.match(get('productContent').innerHTML,/data-action="add-cart"[^>]*disabled/);
+run("state.tab='catalog';state.fulfillment_status='in_stock';state.category=null;state.search='';state.product_condition=null");assert.equal(run('filtered().length'),0);
+run("products[0].stock_quantities={'One Size':1}");assert.equal(run('filtered().length'),1);run('products[0].reserved=true');assert.equal(run('filtered().length'),0);
+run("state.fulfillment_status=null;products[0].reserved=false;products[0].stock_quantities={'One Size':0};products[0].fulfillment_status='on_order';openProduct(78)");assert.equal(run('availabilityLabel(products[0])'),'Под заказ');assert.doesNotMatch(get('productContent').innerHTML,/data-action="add-cart"[^>]*disabled/);
 console.log('PASS cart: sizes, quantities, separate currencies, persistence, changed-price confirmation, unavailable sizes, network failures, wishlist independent of filters, corrupt storage');
 })().catch(e=>{console.error(e);process.exitCode=1});
