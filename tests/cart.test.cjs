@@ -42,5 +42,13 @@ run("state.fulfillment_status=null;products[0].reserved=false;products[0].stock_
 run("products=[{id:1,available:true,price:80,original_price:100,product_condition:'pre_owned',brand:'Gucci',category:'Обувь'},{id:2,available:true,price:100,original_price:null,brand:'Chanel',category:'Сумки'},{id:3,available:true,price:100,original_price:80,brand:'Dior',category:'Сумки'}];state.sale=true;state.tab='catalog';state.fulfillment_status=null;state.product_condition=null;state.gender=null;state.category=null;state.brand=null;state.size=null;state.search=''");
 assert.deepEqual(JSON.parse(run('JSON.stringify(filtered().map(p=>p.id))')),[1]);assert.deepEqual(JSON.parse(run('JSON.stringify(valuesFor("brand"))')),['Все','Gucci']);
 run("state.product_condition='pre_owned'");assert.equal(run('filtered().length'),1);get('reset').onclick();assert.equal(run('state.sale'),false);assert.equal(run('filtered().length'),3);
+// Sorting uses converted current prices, preserves catalogue order, and keeps missing prices last.
+run("products=[{id:1,price:100,currency:'EUR',created_at:'2026-01-01'},{id:2,price:110,currency:'USD',original_price:220,created_at:'2026-03-01'},{id:3,price:null,currency:'EUR',created_at:'2026-02-01'},{id:4,price:0,currency:'EUR',original_price:10}];catalogRates={EUR:1,USD:2};state.sort='price_asc'");
+assert.deepEqual(JSON.parse(run('JSON.stringify(filtered().map(p=>p.id))')),[4,2,1,3]);
+run("state.sort='price_desc'");assert.deepEqual(JSON.parse(run('JSON.stringify(filtered().map(p=>p.id))')),[1,2,4,3]);
+run("state.sort='newest'");assert.deepEqual(JSON.parse(run('JSON.stringify(filtered().map(p=>p.id))')),[2,3,1,4]);
+run("state.sort='discount'");assert.deepEqual(JSON.parse(run('JSON.stringify(filtered().map(p=>p.id))')),[4,2,1,3]);assert.deepEqual(JSON.parse(run('JSON.stringify(products.map(p=>p.id))')),[1,2,3,4]);get('reset').onclick();assert.equal(run('state.sort'),'newest');
+// Network failure keeps the previous sort.
+fail=true;await run("changeCatalogSort('price_asc')");assert.equal(run('state.sort'),'newest');assert.match(get('sortStatus').textContent,/Не удалось/);fail=false;
 console.log('PASS cart: sizes, quantities, separate currencies, persistence, changed-price confirmation, unavailable sizes, network failures, wishlist independent of filters, corrupt storage');
 })().catch(e=>{console.error(e);process.exitCode=1});
