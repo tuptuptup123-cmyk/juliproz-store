@@ -522,3 +522,7 @@ button,input,select{font-family:inherit}
 .primary:disabled,.purchase-action:disabled{background:#e5e5e5;color:#666;border-color:#d8d8d8;box-shadow:none}
 
 .brand-signature{font-weight:400}
+
+/* Opt-in contour shadow for the verified transparent white Chrome Hearts cover.
+   Match the exact asset, never apply an opaque rectangular shadow to other photos. */
+:is(.photo,.hero,.related-photo,.cart-photo,.photo-picker) img[src*="/chrome-hearts-scroll-usa-white-109.webp"]{filter:drop-shadow(0 0 1.5px rgb(0 0 0 / .18)) drop-shadow(0 4px 6px rgb(0 0 0 / .22))}
