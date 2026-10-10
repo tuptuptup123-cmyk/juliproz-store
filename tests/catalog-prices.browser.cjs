@@ -44,6 +44,9 @@ const fixtures=[
   const brandBadges=await page.locator('.product h3:has(.card-sale-badge)').evaluateAll(es=>es.map(e=>({brand:e.querySelector('button').getBoundingClientRect().right,badge:e.querySelector('.card-sale-badge').getBoundingClientRect().x})));
   assert.ok(brandBadges.every(b=>Math.abs(b.badge-b.brand-6)<1),'SALE sits directly after the brand');
   assert.match(await page.locator('[data-id="900001"] .card-meta').innerText(),/Небольшие следы носки/);
+  const conditionLines=await page.locator('[data-id="900001"] .condition-badge').first().evaluate(e=>({label:e.querySelector('.condition-label').getBoundingClientRect().bottom,wear:e.querySelector('.condition-wear').getBoundingClientRect().top,text:e.innerText}));
+  assert.ok(conditionLines.wear>=conditionLines.label,'Wear description starts below PRE-OWNED');
+  assert.match(conditionLines.text,/PRE-OWNED\nНебольшие следы носки/);
   assert.match(await page.locator('[data-id="900001"] .card-meta').innerText(),/Комиссия/);
   const cards=await page.locator('.product').evaluateAll(els=>els.map(el=>{
    const rect=x=>{const b=x.getBoundingClientRect();return {x:b.x,y:b.y,right:b.right,bottom:b.bottom}};
@@ -109,6 +112,7 @@ const fixtures=[
   await page.locator('[data-sale]').click();await page.locator('#showMenuProducts').click();
   await page.locator('.product .sale-price').first().waitFor();
   await page.locator('.product').first().scrollIntoViewIfNeeded();await page.evaluate(()=>document.fonts.ready);
+  await page.locator('.product .photo img').first().evaluate(img=>img.complete?Promise.resolve():new Promise(resolve=>{img.addEventListener('load',resolve,{once:true});img.addEventListener('error',resolve,{once:true});setTimeout(resolve,10000)}));
   await page.screenshot({path:out+'/live-sale-catalog-'+width+'.png'});
   const roundedCard=page.locator('.product').filter({hasText:'Штаны Ball'});
   if(await roundedCard.count()){await roundedCard.first().scrollIntoViewIfNeeded();await page.screenshot({path:out+'/live-sale-catalog-rounding-'+width+'.png'});}

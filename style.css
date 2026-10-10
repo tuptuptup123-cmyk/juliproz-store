@@ -470,3 +470,6 @@ button,input,select{font-family:inherit}
 
 /* Slight caption tracking follows the clean, light reference typography. */
 .product .card-name-row p,.product .card-size,.related-name,.related-size,.cart-name,.menu-choice,.catalog-menu-button,.sort-toggle,.audience-tabs button{letter-spacing:.015em}
+
+/* Keep the condition descriptor deliberately below PRE-OWNED. */
+.product .condition-label,.product .condition-wear{display:block}
