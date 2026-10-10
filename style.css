@@ -556,3 +556,5 @@ button,input,select{font-family:inherit}
  .masthead-inner>.search-wrap{margin-top:54px}
 }
 @media(max-width:360px){.menu-brand{left:-18px}}
+
+#sellPrepare{text-align:center}

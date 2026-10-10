@@ -107,6 +107,7 @@ const fixtures=[
   assert.equal(await page.locator('.services-page .sell-paw').count(),0,'Services keeps only the main J.P paw');
   assert.equal(await page.locator('#brandPaw img').count(),1);
   assert.match(await page.locator('#sellPage').textContent(),/JULIVASYABOT/);
+  assert.equal(await page.locator('#sellPrepare').evaluate(e=>getComputedStyle(e).textAlign),'center');
   assert.doesNotMatch(await page.locator('#sellPage').textContent(),/JULI\.PROZ/);
   assert.equal(await page.locator('.services-page .sell-intro p').innerText(),'Поможем выкупить нужную вещь, проверить её подлинность, подобрать ателье и организовать профессиональный уход. Работаем с вашими вещами по всему миру.');
   const services=await page.locator('.services-page .sell-intro p,.services-page .service-card p').evaluateAll(es=>es.map(e=>({align:getComputedStyle(e).textAlign,hyphens:getComputedStyle(e).hyphens})));
