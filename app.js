@@ -206,6 +206,14 @@ document.addEventListener('keydown',e=>{
     else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first?.focus()}
   }
 });
+const CATALOG_CACHE_KEY='jpCatalogueV2';
+function readCatalogueCache(){
+  try{const raw=sessionStorage.getItem(CATALOG_CACHE_KEY);if(!raw||raw.length>2000000)return null;const saved=JSON.parse(raw),age=Date.now()-saved.savedAt;
+    if(!Number.isFinite(saved.savedAt)||age<0||age>120000||!Array.isArray(saved.products)||saved.products.length>10000||saved.products.some(p=>!p||typeof p!=='object'||p.available!==true||!/^\d+$|^[a-f0-9-]{36}$/i.test(String(p.id))))return null;
+    return saved.products;
+  }catch{return null}
+}
+function saveCatalogueCache(rows){try{const value=JSON.stringify({savedAt:Date.now(),products:rows});if(value.length<=2000000)sessionStorage.setItem(CATALOG_CACHE_KEY,value)}catch{}}
 let catalogLoading=false,firstLoad=true,lastCatalogLoadedAt=0;
 async function loadProducts(quiet=false){
   if(catalogLoading)return;catalogLoading=true;const requestedNavigation=navigationRevision;
@@ -223,7 +231,7 @@ async function loadProducts(quiet=false){
       rows.push(...page);
       if(page.length<500)break;
     }
-    const changed=JSON.stringify(products)!==JSON.stringify(rows);products=rows;lastCatalogLoadedAt=Date.now();
+    const changed=JSON.stringify(products)!==JSON.stringify(rows);products=rows;lastCatalogLoadedAt=Date.now();saveCatalogueCache(rows);
     if(changed||!quiet)render();
     const params=new URLSearchParams(location.search);
     const start=window.Telegram?.WebApp?.initDataUnsafe?.start_param||params.get("tgWebAppStartParam")||params.get("startapp");
@@ -423,8 +431,9 @@ async function contactUnchecked(p,requestedNavigation){
   if(telegramLink(`https://t.me/juliproz${text?`?text=${encodeURIComponent(text)}`:""}`))window.StoreAnalytics?.track("manager_open",p?.id);
 }
 document.getElementById("productContent").addEventListener("click",e=>{const related=e.target.closest("[data-related]");if(related){openProduct(related.dataset.related);return}const sizeButton=e.target.closest('[data-size]');if(sizeButton&&selectedProduct&&sizesOf(selectedProduct).includes(sizeButton.dataset.size)){selectedSize=sizeButton.dataset.size;document.querySelectorAll('[data-size]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.size===selectedSize)));document.getElementById('sizeHint').textContent=`Выбран размер ${selectedSize}`;}const action=e.target.closest("[data-action]")?.dataset.action;if(action==="add-cart")addToCart();if(action==="wishlist")toggleWishlist(selectedProduct?.id);if(action==="open-cart")setTab("cart");if(action==="contact")contact(selectedProduct);if(action==="sourcing")contact();const b=e.target.closest("[data-photo]");if(b){const img=document.querySelector(".hero img");if(img){img.hidden=false;img.src=b.dataset.photo;img.parentElement.querySelector(".image-fallback")?.remove()}}});
-if(window.Telegram?.WebApp){
-  const tg=window.Telegram.WebApp;
+let telegramInitialized=false;
+function initializeTelegram(){
+  const tg=window.Telegram?.WebApp;if(!tg||telegramInitialized)return;telegramInitialized=true;
   tg.ready();tg.expand();
   // Desktop clients can open the catalog across the screen.
   if(['macos','tdesktop'].includes(tg.platform)&&tg.isVersionAtLeast?.('8.0')){
@@ -435,8 +444,15 @@ if(window.Telegram?.WebApp){
       try{tg.requestFullscreen()}catch{/* Older clients keep their regular window. */}
     }
   }
+  // A late SDK must still honour a Telegram-only product deep link.
+  const start=tg.initDataUnsafe?.start_param;
+  if(!firstLoad&&navigationRevision===0&&start?.startsWith('p_'))openLinkedProduct(start.slice(2));
 }
-loadProducts();
+document.addEventListener('load',e=>{if(e.target.id==='telegramSdk')initializeTelegram()},true);
+initializeTelegram();
+const cachedCatalogue=readCatalogueCache();
+if(cachedCatalogue){products=cachedCatalogue;render()}
+loadProducts(Boolean(cachedCatalogue));
 
 // Broken or unsupported images keep the existing J.P placeholder.
 document.addEventListener("error",e=>{if(e.target.tagName==="IMG"&&e.target.closest(".photo,.hero,.related-photo")){const parent=e.target.parentElement;e.target.hidden=true;if(!parent.querySelector('.image-fallback')){const placeholder=document.createElement('span');placeholder.className='image-fallback';placeholder.textContent='J.P';parent.appendChild(placeholder)}}},true);
