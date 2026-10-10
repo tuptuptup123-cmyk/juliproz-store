@@ -24,6 +24,7 @@ jobs:
           path: |
             ${{ runner.temp }}/jp-qa/live-sale-catalog-*.png
             ${{ runner.temp }}/jp-qa/services-*.png
+            ${{ runner.temp }}/jp-qa/manager-contact-*.png
           retention-days: 7
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" QA_OUTPUT="$RUNNER_TEMP/jp-qa" node tests/responsive.browser.cjs
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" QA_OUTPUT="$RUNNER_TEMP/jp-qa" node tests/action-guards.browser.cjs

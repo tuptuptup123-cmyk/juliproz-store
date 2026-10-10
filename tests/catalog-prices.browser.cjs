@@ -30,6 +30,9 @@ const fixtures=[
   assert.ok(hearts.every(h=>h.color==='rgb(198, 107, 149)'&&h.border==='0px'&&h.background==='rgba(0, 0, 0, 0)'&&h.width>=44&&h.height>=44),'Pink-only hearts have no circle and retain touch targets');
   assert.equal(await page.locator('.product .card-name-row p').first().evaluate(e=>getComputedStyle(e).fontWeight),'300');
   assert.equal(await page.locator('.product .price-current').first().evaluate(e=>getComputedStyle(e).fontWeight),'500');
+  assert.equal(await page.locator('.brand-signature').innerText(),'by Vasya');
+  const signature=await page.locator('.brand-signature').evaluate(e=>{const r=e.getBoundingClientRect(),s=document.querySelector('#toggleSearch').getBoundingClientRect(),l=document.querySelector('.brand .logo').getBoundingClientRect();return {right:r.right,left:r.left,top:r.top,bottom:r.bottom,searchLeft:s.left,searchBottom:s.bottom,logoRight:l.right,size:getComputedStyle(e).fontSize}});
+  assert.equal(signature.size,'11px');assert.ok(signature.left>=signature.logoRight,'Signature sits right of J.P');assert.ok(signature.right<=signature.searchLeft||signature.top>=signature.searchBottom,'Signature does not overlap search');
   assert.equal(await page.locator('#catalogSortLabel').innerText(),'Сортировка');
   await page.locator('#catalogSort').click();await page.locator('[data-sort="price_asc"]').click();
   assert.equal(await page.locator('#catalogSortLabel').innerText(),'Сортировка');
@@ -37,6 +40,9 @@ const fixtures=[
   await page.locator('#catalogSort').click();await page.locator('[data-sort="newest"]').click();
   assert.equal(await page.locator('.product h3 .card-sale-badge').count(),5);
   assert.equal(await page.locator('.card-name-row .card-sale-badge').count(),0);
+  const saleColors=await page.locator('.card-sale-badge').evaluateAll(es=>es.map(e=>({background:getComputedStyle(e).backgroundColor,color:getComputedStyle(e).color})));
+  assert.ok(saleColors.every(c=>c.background==='rgb(197, 43, 120)'&&c.color==='rgb(255, 255, 255)'),'SALE is saturated pink with white text');
+  assert.equal(await page.locator('.discount-badge').first().evaluate(e=>getComputedStyle(e).backgroundColor),'rgb(197, 43, 120)','Percentage badge matches SALE pink');
   assert.equal(await page.locator('.product .catalog-status').filter({hasText:'В наличии'}).count(),0);
   assert.equal(await page.locator('.product .catalog-status.is-reserved').count(),1);
   assert.equal(await page.locator('.product .catalog-status.on-order').innerText(),'Под заказ');
@@ -67,7 +73,11 @@ const fixtures=[
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'No horizontal overflow');
   await page.locator('.product').first().scrollIntoViewIfNeeded();await page.screenshot({path:out+'/catalog-'+width+'.png'});
   await page.locator('[data-heart="900001"]').click();await page.locator('[data-tab="favorites"]').click();assert.equal(await page.locator('.product').count(),1);
-  await page.locator('.product-open').click();await page.locator('#backProduct').click();assert.equal(await page.locator('.product').count(),1);
+  await page.locator('.product-open').click();
+  const managerCta=await page.locator('.product-sourcing .sourcing-link').evaluate(e=>({background:getComputedStyle(e).backgroundColor,color:getComputedStyle(e).color,height:e.getBoundingClientRect().height}));
+  assert.equal(managerCta.background,'rgb(197, 43, 120)');assert.equal(managerCta.color,'rgb(255, 255, 255)');assert.ok(managerCta.height>=48);
+  if(width===390){await page.locator('.product-sourcing .sourcing-link').scrollIntoViewIfNeeded();await page.screenshot({path:out+'/manager-contact-390.png'});}
+  await page.locator('#backProduct').click();assert.equal(await page.locator('.product').count(),1);
   await page.locator('[data-tab="services"]').click();
   for(const target of ['catalog','favorites','cart','sell','services']){
    await page.locator('[data-tab="'+target+'"]').click();
