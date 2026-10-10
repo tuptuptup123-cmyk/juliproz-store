@@ -613,3 +613,12 @@ button,input,select{font-family:inherit}
  .brand .masthead-inner .brand-paw{right:calc(50% - 56px);top:-6px;width:84px;height:85px;transform:none;animation:none}
 }
 @media(max-width:600px){.brand .masthead-inner .logo{width:fit-content}}
+
+/* Keep the shared logo anchor; remove only the stacked information-page padding. */
+.brand.is-information-page{margin-bottom:0}
+#sellPage,#servicesPage{padding-top:0}
+#sellPage .sell-intro,#servicesPage .sell-intro{padding-top:8px}
+#sellPage .sell-intro h1,#servicesPage .sell-intro h1{margin-top:0}
+#sellTitle{text-align:center;margin-left:auto;margin-right:auto}
+#sellPage .sell-methods>.sell-method{background:#e4cadd;border-color:#e4cadd;color:#25394f}
+#sellPage .sell-methods>.sell-method h2,#sellPage .sell-methods>.sell-method p{color:#25394f}
