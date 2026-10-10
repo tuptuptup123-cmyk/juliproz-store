@@ -6,9 +6,9 @@
   <meta name="theme-color" content="#6c90b9" />
   <title>J.P Store</title>
   <link rel="stylesheet" href="fonts.css" />
-  <link rel="stylesheet" href="style.css?v=20261010-nav-align" />
+  <link rel="stylesheet" href="style.css?v=20261010-services" />
   <link rel="preconnect" href="https://qhgzzhgxwpcctafpzjid.supabase.co" crossorigin>
-  <script async id="telegramSdk" src="https://telegram.org/js/telegram-web-app.js?v=20261010-nav-align"></script>
+  <script async id="telegramSdk" src="https://telegram.org/js/telegram-web-app.js?v=20261010-services"></script>
 </head>
 <body>
     <header class="brand">
@@ -57,6 +57,11 @@
       <section class="sell-checklist" aria-labelledby="sellPrepare"><h2 id="sellPrepare">Что прислать</h2><ul><li>Фотографии вещи и деталей</li><li>Бренд, модель и размер</li><li>Описание состояния</li><li>Желаемую цену</li></ul></section>
       <button id="offerItem" class="sell-offer" type="button">Предложить вещь <span aria-hidden="true">↗</span></button><p class="sell-footnote">Напишите менеджеру — обсудим подходящий вариант.</p>
     </section>
+    <section id="servicesPage" class="sell-page services-page hidden" aria-labelledby="servicesTitle">
+      <header class="sell-intro"><span class="sell-eyebrow">JULI.PROZ · УСЛУГИ</span><img class="sell-paw" src="images/brand-paw.webp" width="1536" height="1024" alt="" loading="lazy"><h1 id="servicesTitle">Аутентификация<br>и ателье</h1><p>Проверка подлинности и работа с вашими вещами. Напишите нам — обсудим запрос и согласуем условия.</p></header>
+      <div class="sell-methods"><article class="sell-method service-card"><span class="sell-number" aria-hidden="true">01</span><h2>Аутентификация</h2><p>Принимаем вещи на проверку подлинности. Отправьте фотографии, бренд и модель — обсудим порядок проверки, стоимость и сроки.</p><button type="button" class="service-contact" data-service="authentication">Проверить вещь <span aria-hidden="true">↗</span></button></article><article class="sell-method service-card"><span class="sell-number" aria-hidden="true">02</span><h2>Ателье</h2><p>Работаем с вашими вещами в ателье. Пришлите фотографии и опишите, что хотите сделать — оценим запрос и согласуем возможность работы, стоимость и сроки.</p><button type="button" class="service-contact" data-service="atelier">Обратиться в ателье <span aria-hidden="true">↗</span></button></article></div>
+      <p class="sell-footnote">Все условия согласуем с вами до начала работы.</p>
+    </section>
   </main>
 
 
@@ -83,6 +88,7 @@
     <button data-tab="favorites" aria-label="Виш-лист"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"/></svg><small>Виш-лист</small></button>
     <button data-tab="cart" aria-label="Корзина"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 3h3l3 12h10l3-9H6"/><path d="M8 15l-1 3h12"/><circle cx="9" cy="21" r="1"/><circle cx="18" cy="21" r="1"/></svg><small>Корзина <span id="cartBadge" class="cart-badge hidden">0</span></small></button>
     <button data-tab="sell" aria-label="Продать вещь"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3h8l10 10-8 8L3 11Z"/><circle cx="7.5" cy="7.5" r="1"/></svg><small>Продать</small></button>
+    <button data-tab="services" aria-label="Услуги"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 8 3v6c0 5-8 9-8 9s-8-4-8-9V6Z"/><path d="m8 12 3 3 5-6"/></svg><small>Услуги</small></button>
   </nav>
 
   <div id="sheet" class="sheet hidden">
@@ -102,6 +108,6 @@
   <div class="nav-paw-layer" aria-hidden="true"><img id="moneyPaw" class="money-paw" src="images/money-paw-v1.webp" alt="" width="1024" height="1536" /><img id="navPaw" class="nav-paw" src="images/brand-paw.webp" alt="" aria-hidden="true" width="1536" height="1024" /></div>
   <script defer src="config.js"></script>
   <script defer src="image-policy.js"></script>
-  <script defer src="product-sizes.js?v=20261009-action-guards-v6"></script><script defer src="analytics.js"></script><script defer src="product-pricing.js?v=20261010-discounts"></script><script defer src="app.js?v=20261010-nav-align"></script>
+  <script defer src="product-sizes.js?v=20261009-action-guards-v6"></script><script defer src="analytics.js"></script><script defer src="product-pricing.js?v=20261010-discounts"></script><script defer src="app.js?v=20261010-services"></script>
 </body>
 </html>
