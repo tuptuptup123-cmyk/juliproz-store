@@ -188,6 +188,15 @@ test('stock overview counts explicit units and multiplies unit prices',()=>{
  const h=setup(async()=>response([]));
  h.run("ProductSizes={stockUnits:p=>Object.values(p.stock_quantities||{'':1}).reduce((a,b)=>a+b,0)};items=[{available:true,size:'One Size',price:100,currency:'EUR',stock_quantities:{'One Size':5}},{available:true,size:'S; M',price:100,currency:'EUR',stock_quantities:{S:2,M:0}}]");const s=h.run('stockSummary(items,{USD:2})');assert.equal(s.count,7);assert.equal(s.total,700);
 });
+test('admin prices and stock totals use rounded EUR unit prices',()=>{
+ const h=setup(async()=>response([]));
+ assert.equal(h.run("cataloguePrice({price:624.9,currency:'EUR'})"),'€ 625');
+ assert.equal(h.run("cataloguePrice({price:null,currency:'EUR'})"),'');
+ assert.equal(h.run("cataloguePrice({price:624.9,currency:'USD'})"),'');
+ h.run("ProductSizes={stockUnits:p=>p.units||1};items=[{available:true,price:624.9,currency:'EUR',units:2},{available:true,price:124.4,currency:'€',units:3},{available:true,price:null},{available:true,price:624.9,currency:'USD'}]");
+ const summary=h.run('stockSummary(items)');assert.equal(summary.total,1622);assert.equal(summary.unpriced,1);assert.equal(summary.unconverted,1);
+ h.run('updateStockSummary(false)');assert.match(h.get('stockValue').textContent,/1[\s\u00a0\u202f]622/);assert.doesNotMatch(h.get('stockValue').textContent,/[,.]\d/);
+});
 
 test('global logout requires confirmation and never claims other sessions revoked after failure',async()=>{
  const calls=[],h=setup(async(path)=>{calls.push(path);return response(null,204)});h.seed(session());h.run('globalThis.confirm=()=>false');await h.get('logoutAll').onclick();assert.equal(calls.length,0);assert.ok(h.run('session'));h.run('globalThis.confirm=()=>true');await h.get('logoutAll').onclick();assert.ok(calls.some(p=>p.endsWith('scope=global')));assert.equal(h.run('session'),null);assert.match(h.get('status').textContent,/всех устройствах/);
