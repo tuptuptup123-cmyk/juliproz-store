@@ -40,13 +40,12 @@ const fixtures=[
   assert.match(await page.locator('#catalogSort').getAttribute('aria-label'),/Дешевле/);
   await page.locator('#catalogSort').click();await page.locator('[data-sort="newest"]').click();
   assert.equal(await page.locator('.product h3 .card-sale-badge').count(),5);
-  assert.equal(await page.locator('[data-id="900001"] .discount-badge').innerText(),'−35%');
-  assert.equal(await page.locator('[data-id="900002"] .discount-badge').innerText(),'−30%');
+  assert.equal(await page.locator('.product .discount-badge').count(),0,'Public prices retain SALE and former price without percentage badges');
   assert.equal(await page.locator('.card-name-row .card-sale-badge').count(),0);
   const saleColors=await page.locator('.card-sale-badge').evaluateAll(es=>es.map(e=>({background:getComputedStyle(e).backgroundColor,color:getComputedStyle(e).color})));
   assert.match(await page.locator('.card-sale-badge').first().evaluate(e=>getComputedStyle(e).boxShadow),/rgb\(120, 148, 182\)/,'SALE has a brand-blue outline');
   assert.ok(saleColors.every(c=>c.background==='rgb(228, 202, 221)'&&c.color==='rgb(37, 57, 79)'),'SALE is powder pink with dark readable text');
-  assert.equal(await page.locator('.discount-badge').first().evaluate(e=>getComputedStyle(e).backgroundColor),'rgb(228, 202, 221)','Percentage badge matches SALE pink');
+  assert.equal(await page.locator('.product .price-original').count(),5,'Former prices remain visible');
   assert.equal(await page.locator('.product .catalog-status').filter({hasText:'В наличии'}).count(),0);
   assert.equal(await page.locator('.product .catalog-status.is-reserved').count(),1);
   assert.equal(await page.locator('.product .catalog-status.on-order').innerText(),'Под заказ');
@@ -80,6 +79,9 @@ const fixtures=[
   await page.locator('.product').first().scrollIntoViewIfNeeded();await page.screenshot({path:out+'/catalog-'+width+'.png'});
   await page.locator('[data-heart="900001"]').click();await page.locator('[data-tab="favorites"]').click();assert.equal(await page.locator('.product').count(),1);
   await page.locator('.product-open').click();
+  assert.equal(await page.locator('.detail .product-eyebrow span').count(),0,'Do not repeat positive in-stock status in detail');
+  assert.equal(await page.locator('.detail .discount-badge').count(),0,'Detail hides percentage badges too');
+  assert.equal(await page.locator('.detail .price-original').count(),1,'Detail retains former price');
   const detailBadge=await page.locator('.detail .condition-badge').first().evaluate(e=>({bg:getComputedStyle(e).backgroundColor,weight:getComputedStyle(e).fontWeight}));assert.deepEqual(detailBadge,{bg:'rgb(246, 246, 246)',weight:'700'});
   assert.equal(await page.locator('.purchase-action').evaluate(e=>getComputedStyle(e).backgroundColor),'rgb(228, 202, 221)');
   const managerCta=await page.locator('.product-sourcing .sourcing-link').evaluate(e=>({background:getComputedStyle(e).backgroundColor,color:getComputedStyle(e).color,height:e.getBoundingClientRect().height}));
@@ -97,11 +99,11 @@ const fixtures=[
    }
    if(width<=600){const b=await page.locator('.brand-lockup,.brand-signature,.brand-paw').evaluateAll(es=>es.map(e=>e.getBoundingClientRect().toJSON()));assert.ok(Math.abs((Math.min(...b.map(x=>x.left))+Math.max(...b.map(x=>x.right)))/2-width/2)<16,'Every public tab keeps the complete logo centered');}
    if(width<=600)assert.ok(Math.abs(await page.locator('.brand .logo').evaluate(e=>e.getBoundingClientRect().bottom+window.scrollY)-headerBaseline)<1,'Logo baseline stays consistent between public sections');
-   if((target==='sell'||target==='services')&&width<=600){const gap=await page.evaluate(()=>document.querySelector('.sell-page:not(.hidden) h1').getBoundingClientRect().top-document.querySelector('.brand-lockup').getBoundingClientRect().bottom);assert.ok(gap>=32&&gap<=96,'Information intro keeps a compact, readable logo gap');}
+   if(target==='sell'||target==='services'){const gap=await page.evaluate(()=>document.querySelector('.sell-page:not(.hidden) h1').getBoundingClientRect().top-document.querySelector('.brand-lockup').getBoundingClientRect().bottom);assert.ok(gap>=48&&gap<=(width<=600?80:104),'Information intro removes stacked padding while preserving breathing room: '+gap+'px');}
    if(target==='sell'){
     assert.ok((await page.locator('#sellPage .sell-checklist li').evaluateAll(es=>es.map(e=>getComputedStyle(e).textAlign))).every(a=>a==='center'));
-    if(width<=600){const gap=await page.evaluate(()=>document.querySelector('#sellTitle').getBoundingClientRect().top-document.querySelector('.brand-lockup').getBoundingClientRect().bottom);assert.ok(gap>=32&&gap<=96,'Sell intro keeps a compact, readable logo gap');}
-    if(width===390||width===529)await page.screenshot({path:out+'/services-sell-'+width+'.png',fullPage:true});
+    if(width<=600){const gap=await page.evaluate(()=>document.querySelector('#sellTitle').getBoundingClientRect().top-document.querySelector('.brand-lockup').getBoundingClientRect().bottom);assert.ok(gap>=48&&gap<=80,'Sell intro keeps a compact, readable logo gap');}
+    if(width===390||width===529||width===1280)await page.screenshot({path:out+'/services-sell-'+width+'.png',fullPage:true});
    }
    const nav=await page.locator('.bottom-nav button').evaluateAll(es=>es.map(e=>({width:e.getBoundingClientRect().width,background:getComputedStyle(e).backgroundColor,iconWidth:e.querySelector('svg').getBoundingClientRect().width,outline:getComputedStyle(e.querySelector('svg')).outlineStyle})));
    assert.ok(nav.every(n=>n.background==='rgba(0, 0, 0, 0)'&&n.iconWidth===24&&n.outline==='none'),'Navigation has no tile fills or icon borders');
@@ -116,6 +118,9 @@ const fixtures=[
   assert.equal(await page.locator('#brandPaw img').count(),1);
   assert.match(await page.locator('#sellPage').textContent(),/JULIVASYABOT/);
   assert.equal(await page.locator('#sellPrepare').evaluate(e=>getComputedStyle(e).textAlign),'center');
+  assert.equal(await page.locator('#sellTitle').evaluate(e=>getComputedStyle(e).textAlign),'center');
+  const sellModes=await page.locator('#sellPage .sell-method').evaluateAll(es=>es.map(e=>({bg:getComputedStyle(e).backgroundColor,color:getComputedStyle(e.querySelector('p')).color})));
+  assert.equal(sellModes.length,2);assert.ok(sellModes.every(e=>e.bg==='rgb(228, 202, 221)'&&e.color==='rgb(37, 57, 79)'),'Both Sell methods use powder pink with dark text');
   assert.doesNotMatch(await page.locator('#sellPage').textContent(),/JULI\.PROZ/);
   assert.equal(await page.locator('.services-page .sell-intro p').innerText(),'Поможем выкупить нужную вещь, проверить её подлинность, подобрать ателье и организовать профессиональный уход. Работаем с вашими вещами по всему миру.');
   assert.equal(await page.locator('.services-page .sell-intro p').evaluate(e=>getComputedStyle(e).textAlign),'center');
@@ -124,7 +129,7 @@ const fixtures=[
   const serviceButtons=await page.locator('.services-page .service-contact').evaluateAll(es=>es.map(e=>({bg:getComputedStyle(e).backgroundColor,color:getComputedStyle(e).color,size:getComputedStyle(e).fontSize,weight:getComputedStyle(e).fontWeight,height:e.getBoundingClientRect().height,svg:!!e.querySelector('svg')})));
   assert.equal(serviceButtons.length,2);assert.ok(serviceButtons.every(b=>b.bg==='rgb(228, 202, 221)'&&b.color==='rgb(37, 57, 79)'&&b.size==='16px'&&b.weight==='500'&&b.height>=48&&b.svg),'Services buttons use gentle brand colours and vector arrows');
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Services fit narrow screens');
-  if(width===390||width===529)await page.screenshot({path:out+'/services-'+width+'.png',fullPage:true});
+  if(width===390||width===529||width===1280)await page.screenshot({path:out+'/services-'+width+'.png',fullPage:true});
   if(width===320||width===390){
    await page.locator('[data-tab="catalog"]').click();
    await page.evaluate(()=>document.documentElement.style.setProperty('--tg-safe-area-inset-bottom','34px'));
