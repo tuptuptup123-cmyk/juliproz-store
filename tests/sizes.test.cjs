@@ -5,7 +5,7 @@ assert.deepEqual(sizes.parse('38,40'),['38','40']);assert.deepEqual(sizes.parse(
 assert.deepEqual(sizes.parse('18.5 см, регулируемый'),['18.5 см, регулируемый']);
 assert.deepEqual(sizes.parse('Верх L / C80; низ L / 175/74'),['Верх L / C80; низ L / 175/74']);
 assert.deepEqual(sizes.parse('44.5'),['44.5']);assert.deepEqual(sizes.parse('44,5'),['44.5']);assert.deepEqual(sizes.parse('40\n41\n40'),['40','41']);assert.deepEqual(sizes.parse('S, M; L'),['S','M','L']);assert.deepEqual(sizes.parse(null),[]);assert.equal(sizes.serialize('40\n41'),'40; 41');assert.throws(()=>sizes.serialize('X'.repeat(101)));
-const nodes=new Map();function node(id){if(!nodes.has(id))nodes.set(id,{innerHTML:'',textContent:'',value:'',dataset:{},classList:{add(){},remove(){},toggle(){},contains(){return false}},addEventListener(){},querySelector(){return null},focus(){}});return nodes.get(id)}
+const nodes=new Map();function node(id){if(!nodes.has(id))nodes.set(id,{innerHTML:'',textContent:'',value:'',dataset:{},classList:{add(){},remove(){},toggle(){},contains(){return false}},addEventListener(){},setAttribute(){},querySelector(){return null},focus(){}});return nodes.get(id)}
 let rows=[],contactUrl=null;
 const context=vm.createContext({ProductSizes:sizes,safeProductImage:()=>false,window:{STORE_CONFIG:{url:'https://test.invalid',key:'public'},open:u=>contactUrl=u,addEventListener(){}},document:{getElementById:node,querySelectorAll:()=>[],querySelector:()=>null,addEventListener(){}},localStorage:{getItem:()=>null},location:{search:''},URLSearchParams,AbortSignal,setTimeout,fetch:async()=>({ok:true,json:async()=>rows})});
 vm.runInContext(fs.readFileSync(__dirname+'/../product-pricing.js','utf8'),context);
