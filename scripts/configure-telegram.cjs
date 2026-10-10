@@ -48,7 +48,7 @@ async function configureTelegram(env = process.env, request = fetch, log = conso
   await call('setWebhook', {
     url: WEBHOOK_URL,
     secret_token: webhookSecret(token),
-    allowed_updates: ['message'],
+    allowed_updates: ['message', 'callback_query'],
     max_connections: 10,
     drop_pending_updates: false
   });
