@@ -13,6 +13,24 @@ let selectedProduct=null;
 let selectedSize=null;
 let navigationRevision=0;
 const sizesOf=p=>ProductSizes.parse(p?.size).filter(size=>onOrder(p)||ProductSizes.stockFor(p,size)>0);
+// A presentation-only group approved for these two physical Brioni sizes.
+// Never replace the raw catalogue rows: cart, stock and order links use their IDs.
+function brioniSizeGroup(rows=products){
+  const xl=rows.find(p=>String(p.id)==='302'),xxl=rows.find(p=>String(p.id)==='301');
+  if(!xl||!xxl||[xl,xxl].some(p=>p.available===false||p.reserved)||xl.brand!=='Brioni'||xxl.brand!=='Brioni'||xl.size!=='XL'||xxl.size!=='XXL')return null;
+  const same=['brand','name','category','price','currency','original_price','product_condition','wear_condition','gender','fulfillment_status','on_commission'];
+  if(same.some(key=>String(xl[key]??'')!==String(xxl[key]??'')))return null;
+  return {...xl,size:'XL; XXL',stock_quantities:{XL:ProductSizes.stockFor(xl,'XL'),XXL:ProductSizes.stockFor(xxl,'XXL')},variant_ids:{XL:'302',XXL:'301'}};
+}
+function catalogueProducts(){
+  const group=brioniSizeGroup();
+  return group?products.filter(p=>String(p.id)!=='301').map(p=>String(p.id)==='302'?group:p):products;
+}
+function presentationProduct(id){
+  const raw=products.find(p=>String(p.id)===String(id));
+  return ['301','302'].includes(String(id))?(brioniSizeGroup()||raw):raw;
+}
+function isWishlisted(p){return state.favorites.has(String(p.id))||Boolean(p.variant_ids&&Object.values(p.variant_ids).some(id=>state.favorites.has(id)))}
 function displayName(p){
   const name=String(p?.name||'').trim();
   const brand=String(p?.brand||'').trim();
@@ -59,7 +77,7 @@ function valuesFor(type){
   if(type==='product_condition')return ['Все','new','pre_owned','vintage','commission'];
   if(type==='fulfillment_status')return ['Все','in_stock','on_order'];
   // Offer categories within the audience, then brands and sizes within the category.
-  const scope=products.filter(p=>matchesSale(p)&&matchesGender(p)&&matchesCondition(p)&&matchesAvailability(p)&&(type==='category'||!state.category||p.category===state.category)&&(type!=='size'||!state.brand||brandsOf(p).includes(state.brand)));
+  const scope=catalogueProducts().filter(p=>matchesSale(p)&&matchesGender(p)&&matchesCondition(p)&&matchesAvailability(p)&&(type==='category'||!state.category||p.category===state.category)&&(type!=='size'||!state.brand||brandsOf(p).includes(state.brand)));
   return ["Все",...Array.from(new Set(scope.flatMap(p=>type==='size'?sizesOf(p):type==='brand'?brandsOf(p):[p[type]]).filter(Boolean))).sort((a,b)=>type==='size'?ProductSizes.compare(a,b):String(a).localeCompare(String(b),"ru"))];
 }
 function menuSizeLabel(value){
@@ -90,8 +108,8 @@ function sortProducts(rows){
   });
 }
 function filtered(){
-  if(state.tab==="favorites")return sortProducts(products.filter(p=>state.favorites.has(String(p.id))));
-  return sortProducts(products.filter(p=>matchesContext(p)&&(`${p.brand||""} ${p.name||""} ${p.id} ${p.size||""}`.toLowerCase().includes(state.search.toLowerCase()))));
+  if(state.tab==="favorites")return sortProducts(catalogueProducts().filter(p=>isWishlisted(p)));
+  return sortProducts(catalogueProducts().filter(p=>matchesContext(p)&&(`${p.brand||""} ${p.name||""} ${p.id} ${p.variant_ids?Object.values(p.variant_ids).join(" "):""} ${p.size||""}`.toLowerCase().includes(state.search.toLowerCase()))));
 }
 function changeCatalogSort(value){if(!['newest','price_asc','price_desc','discount'].includes(value))return;sortRevision++;state.sort=value;document.getElementById('sortStatus').textContent='';render()}
 const sortLabels={newest:'Сначала новые',price_asc:'Дешевле',price_desc:'Дороже',discount:'Больше скидка'};
@@ -129,7 +147,7 @@ function render(){
   }
   const list=filtered();
   count.textContent=state.tab==="favorites"?`Виш-лист · ${list.length}`:`В каталоге ${list.length} ${pluralRu(list.length,'товар','товара','товаров')}`;
-  grid.innerHTML=list.length?list.map(p=>`<article class="product" data-id="${esc(p.id)}"><div class="photo">${imageOf(p)?`<img src="${esc(imageOf(p))}" alt="${esc(p.name)}" loading="lazy">`:"JP"}<button class="heart ${state.favorites.has(String(p.id))?"is-favorite":""}" aria-label="Виш-лист" aria-pressed="${state.favorites.has(String(p.id))}" data-heart="${esc(p.id)}"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"/></svg></button></div><h3><button type="button" class="product-open" aria-label="Открыть ${esc(p.brand)} ${esc(displayName(p))}">${esc(p.brand)}</button>${window.ProductPricing.discount(p)?'<span class="card-sale-badge">SALE</span>':''}</h3><div class="card-name-row"><p>${esc(displayName(p))}</p></div><div class="card-size">${sizesOf(p).length?`${sizesOf(p).length>1?"Размеры":"Размер"}: ${esc(sizesOf(p).join(" · "))}`:"Размер уточняйте"}</div><div class="price">${priceMarkup(p)}</div><div class="card-footer"><div class="card-meta">${conditionBadge(p,true)}</div>${availabilityLabel(p)!=='В наличии'?'<div class="catalog-status '+(p.reserved?'is-reserved':onOrder(p)?'on-order':'')+'">'+availabilityLabel(p)+'</div>':''}<div class="card-delivery">Доставка ${deliveryLabel(p)}</div></div></article>`).join(""):(state.tab==="favorites"?emptyCollection('favorites'):'<div class="empty">Здесь пока ничего нет</div>');
+  grid.innerHTML=list.length?list.map(p=>`<article class="product" data-id="${esc(p.id)}"><div class="photo">${imageOf(p)?`<img src="${esc(imageOf(p))}" alt="${esc(p.name)}" loading="lazy">`:"JP"}<button class="heart ${isWishlisted(p)?"is-favorite":""}" aria-label="Виш-лист" aria-pressed="${isWishlisted(p)}" data-heart="${esc(p.id)}"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"/></svg></button></div><h3><button type="button" class="product-open" aria-label="Открыть ${esc(p.brand)} ${esc(displayName(p))}">${esc(p.brand)}</button>${window.ProductPricing.discount(p)?'<span class="card-sale-badge">SALE</span>':''}</h3><div class="card-name-row"><p>${esc(displayName(p))}</p></div><div class="card-size">${sizesOf(p).length?`${sizesOf(p).length>1?"Размеры":"Размер"}: ${esc(sizesOf(p).join(" · "))}`:"Размер уточняйте"}</div><div class="price">${priceMarkup(p)}</div><div class="card-footer"><div class="card-meta">${conditionBadge(p,true)}</div>${availabilityLabel(p)!=='В наличии'?'<div class="catalog-status '+(p.reserved?'is-reserved':onOrder(p)?'on-order':'')+'">'+availabilityLabel(p)+'</div>':''}<div class="card-delivery">Доставка ${deliveryLabel(p)}</div></div></article>`).join(""):(state.tab==="favorites"?emptyCollection('favorites'):'<div class="empty">Здесь пока ничего нет</div>');
 }
 let menuOpenGroup='category';
 let menuCloseTimer=null;
@@ -318,18 +336,21 @@ function setTab(tab){
 }
 const wishlistClicks=new Map();
 function toggleWishlist(id){
-  if(id==null)return;id=String(id);const now=Date.now();if(now-(wishlistClicks.get(id)??-Infinity)<450)return;wishlistClicks.set(id,now);if(wishlistClicks.size>200)wishlistClicks.delete(wishlistClicks.keys().next().value);state.favorites.has(id)?state.favorites.delete(id):state.favorites.add(id);
+  if(id==null)return;id=String(id);const now=Date.now();if(now-(wishlistClicks.get(id)??-Infinity)<450)return;wishlistClicks.set(id,now);if(wishlistClicks.size>200)wishlistClicks.delete(wishlistClicks.keys().next().value);const display=presentationProduct(id),ids=display?.variant_ids?Object.values(display.variant_ids):[id];if(ids.some(key=>state.favorites.has(key)))ids.forEach(key=>state.favorites.delete(key));else state.favorites.add(id);
   window.StoreAnalytics?.track(state.favorites.has(id)?'wishlist_add':'wishlist_remove',id);
   try{localStorage.setItem('jpFav',JSON.stringify([...state.favorites]))}catch{}
   render();
   const heart=[...grid.querySelectorAll?.('[data-heart]')||[]].find(b=>b.dataset.heart===id);
   heart?.classList.add('motion-pop');
   document.querySelector('.detail-wishlist')?.classList.add('motion-pop');
-  const button=document.querySelector('.detail-wishlist');if(button&&selectedProduct){const saved=state.favorites.has(String(selectedProduct.id));button.setAttribute('aria-pressed',String(saved));button.classList.toggle('is-saved',saved)}
+  const button=document.querySelector('.detail-wishlist');if(button&&selectedProduct){const saved=isWishlisted(selectedProduct);button.setAttribute('aria-pressed',String(saved));button.classList.toggle('is-saved',saved)}
 }
 function addToCart(){
   if(!selectedProduct)return;
-  const p=products.find(x=>String(x.id)===String(selectedProduct.id));
+  if(selectedProduct.variant_ids&&!selectedSize){document.getElementById('sizeHint').textContent='Пожалуйста, выберите размер.';document.querySelector('[data-size]')?.focus();return}
+  const variantId=selectedProduct.variant_ids?.[selectedSize]||selectedProduct.id;
+  if(selectedProduct.variant_ids&&!brioniSizeGroup()){openProduct(variantId,true);document.getElementById('shareStatus').textContent='Карточка изменилась. Проверьте размер, цену и наличие, затем нажмите «Купить» ещё раз.';return}
+  const p=products.find(x=>String(x.id)===String(variantId));
   if(p?.reserved){document.getElementById('shareStatus').textContent='Товар на брони. Покупка станет доступна после снятия брони.';return}
   if(!p||p.available===false){document.getElementById('shareStatus').textContent='Товар больше недоступен в каталоге.';return}
   const sizes=sizesOf(p);
@@ -387,7 +408,7 @@ document.getElementById('cartContent').addEventListener('click',e=>{
 function relatedProducts(p){
   if(!p.category)return [];
   const compatible=x=>!p.gender||!x.gender||p.gender==='unisex'||x.gender==='unisex'||p.gender===x.gender;
-  return products.filter(x=>String(x.id)!==String(p.id)&&x.available!==false&&x.category===p.category&&compatible(x)).sort((a,b)=>Number(b.brand===p.brand)-Number(a.brand===p.brand)).slice(0,4);
+  return catalogueProducts().filter(x=>String(x.id)!==String(p.id)&&x.available!==false&&x.category===p.category&&compatible(x)).sort((a,b)=>Number(b.brand===p.brand)-Number(a.brand===p.brand)).slice(0,4);
 }
 function relatedMarkup(p){
   const similar=relatedProducts(p);if(!similar.length)return '';
@@ -409,14 +430,17 @@ document.addEventListener('keydown',e=>{
  }
 });
 function variantLabel(p){return String(p?.id)==='257'?'цвет':'размер'}
-function openProduct(id){
+function openProduct(id,linked=false){
   navigationRevision++;
-  const p=products.find(x=>String(x.id)===String(id));if(!p)return;
+  const raw=products.find(x=>String(x.id)===String(id));if(!raw)return;
+  let p=presentationProduct(id);
+  // An old variant link must show its own unavailable state, never another size.
+  if(linked&&p.variant_ids&&!sizesOf(p).includes(raw.size))p=raw;
   window.StoreAnalytics?.track("product_view",p.id);
   selectedProduct=p;
   const sizes=sizesOf(p),soldOut=!onOrder(p)&&ProductSizes.stockUnits(p)===0,purchaseLabel=p.reserved?'На брони':soldOut?'Нет в наличии':'Купить';
-  selectedSize=sizes.length===1?sizes[0]:(sizes.includes(state.size)?state.size:null);
-  document.getElementById("productContent").innerHTML=`<div class="product-layout"><div class="product-gallery"><div class="hero">${imageOf(p)?`<img src="${esc(imageOf(p))}" alt="${esc(p.name)}">`:"JP"}</div>${photosOf(p).length>1?`<div class="photo-picker" aria-label="Фотографии товара">${photosOf(p).map((url,i)=>`<button type="button" data-photo="${esc(url)}" aria-label="Фото ${i+1}"><img src="${esc(url)}" alt=""></button>`).join("")}</div>`:""}</div><div class="detail"><div class="product-eyebrow">${esc(p.category||"")} <span class="${p.reserved?"is-reserved":onOrder(p)?"on-order":""}">${availabilityLabel(p)}</span></div>${conditionBadge(p)}<div class="brandname">${esc(p.brand)}</div><h1>${esc(displayName(p))}</h1><div class="detail-price">${priceMarkup(p)}</div>${sizes.length>1?`<fieldset class="size-selector"><legend>Выберите ${variantLabel(p)}</legend><div class="size-options">${sizes.map(size=>`<button type="button" data-size="${esc(size)}" aria-pressed="${selectedSize===size}">${esc(size)}</button>`).join("")}</div><p class="size-hint" id="sizeHint" role="status">${selectedSize?`Выбран ${variantLabel(p)} ${esc(selectedSize)}`:`Выберите ${variantLabel(p)} перед покупкой`}</p></fieldset>`:sizes.length===1?`<p class="detail-size">Размер: <strong>${esc(sizes[0])}</strong></p>`:""}${p.description?`<p class="product-description">${esc(p.description)}</p>`:""}<div class="detail-actions"><button type="button" class="primary cart-add purchase-action" data-action="add-cart" aria-label="${purchaseLabel}" title="${purchaseLabel}" ${p.reserved||soldOut?'disabled':''}><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 3h3l3 12h10l3-9H6"/><path d="M8 15l-1 3h12"/><circle cx="9" cy="21" r="1"/><circle cx="18" cy="21" r="1"/></svg><span>${purchaseLabel}</span><span class="detail-cart-count" aria-hidden="true">${cartCount()}</span></button><button type="button" class="secondary detail-wishlist icon-action" data-action="wishlist" aria-label="Виш-лист" title="Виш-лист" aria-pressed="${state.favorites.has(String(p.id))}"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"/></svg></button></div><p class="purchase-note">Срок доставки: ${deliveryLabel(p)}</p><p id="shareStatus" role="status"></p><aside class="sourcing-note product-sourcing" aria-label="Поиск, выкуп и комиссия"><div><h2>Поиск и продажа вещей</h2><p><strong>Не нашли нужный размер или ищете другую вещь?</strong> Отправьте нам фото или название — поможем найти нужную модель и организовать выкуп.</p><p><strong>Хотите продать свою вещь?</strong> Рассмотрим её выкуп или поможем продать через JULIVASYABOT на комиссии. Отправьте фото, описание состояния и желаемую цену — условия согласуем заранее.</p></div><button type="button" class="sourcing-link" data-action="sourcing">Написать менеджеру <span aria-hidden="true">↗</span></button></aside></div>${relatedMarkup(p)}</div>`;
+  selectedSize=linked&&p.variant_ids?raw.size:sizes.length===1?sizes[0]:(sizes.includes(state.size)?state.size:null);
+  document.getElementById("productContent").innerHTML=`<div class="product-layout"><div class="product-gallery"><div class="hero">${imageOf(p)?`<img src="${esc(imageOf(p))}" alt="${esc(p.name)}">`:"JP"}</div>${photosOf(p).length>1?`<div class="photo-picker" aria-label="Фотографии товара">${photosOf(p).map((url,i)=>`<button type="button" data-photo="${esc(url)}" aria-label="Фото ${i+1}"><img src="${esc(url)}" alt=""></button>`).join("")}</div>`:""}</div><div class="detail"><div class="product-eyebrow">${esc(p.category||"")} <span class="${p.reserved?"is-reserved":onOrder(p)?"on-order":""}">${availabilityLabel(p)}</span></div>${conditionBadge(p)}<div class="brandname">${esc(p.brand)}</div><h1>${esc(displayName(p))}</h1><div class="detail-price">${priceMarkup(p)}</div>${sizes.length>1?`<fieldset class="size-selector"><legend>Выберите ${variantLabel(p)}</legend><div class="size-options">${sizes.map(size=>`<button type="button" data-size="${esc(size)}" aria-pressed="${selectedSize===size}">${esc(size)}</button>`).join("")}</div><p class="size-hint" id="sizeHint" role="status">${selectedSize?`Выбран ${variantLabel(p)} ${esc(selectedSize)}`:`Выберите ${variantLabel(p)} перед покупкой`}</p></fieldset>`:sizes.length===1?`<p class="detail-size">Размер: <strong>${esc(sizes[0])}</strong></p>`:""}${p.description?`<p class="product-description">${esc(p.description)}</p>`:""}<div class="detail-actions"><button type="button" class="primary cart-add purchase-action" data-action="add-cart" aria-label="${purchaseLabel}" title="${purchaseLabel}" ${p.reserved||soldOut?'disabled':''}><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 3h3l3 12h10l3-9H6"/><path d="M8 15l-1 3h12"/><circle cx="9" cy="21" r="1"/><circle cx="18" cy="21" r="1"/></svg><span>${purchaseLabel}</span><span class="detail-cart-count" aria-hidden="true">${cartCount()}</span></button><button type="button" class="secondary detail-wishlist icon-action" data-action="wishlist" aria-label="Виш-лист" title="Виш-лист" aria-pressed="${isWishlisted(p)}"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"/></svg></button></div><p class="purchase-note">Срок доставки: ${deliveryLabel(p)}</p><p id="shareStatus" role="status"></p><aside class="sourcing-note product-sourcing" aria-label="Поиск, выкуп и комиссия"><div><h2>Поиск и продажа вещей</h2><p><strong>Не нашли нужный размер или ищете другую вещь?</strong> Отправьте нам фото или название — поможем найти нужную модель и организовать выкуп.</p><p><strong>Хотите продать свою вещь?</strong> Рассмотрим её выкуп или поможем продать через JULIVASYABOT на комиссии. Отправьте фото, описание состояния и желаемую цену — условия согласуем заранее.</p></div><button type="button" class="sourcing-link" data-action="sourcing">Написать менеджеру <span aria-hidden="true">↗</span></button></aside></div>${relatedMarkup(p)}</div>`;
   showProductModal();
   document.getElementById("productModal").scrollTop=0;
 }
@@ -433,14 +457,14 @@ document.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>{setTab(b.datas
 async function openLinkedProduct(id){
   const requestedNavigation=++navigationRevision;selectedProduct=null;selectedSize=null;
   id=String(id);if(/^\d+$/.test(id))id=id.replace(/^0+(?=\d)/,"");
-  if(products.some(p=>String(p.id)===String(id))){openProduct(id);return}
+  if(products.some(p=>String(p.id)===String(id))){openProduct(id,true);return}
   try{
     const r=await fetch(`${SUPABASE_URL}/rest/v1/products?select=${CATALOG_FIELDS}&id=eq.${encodeURIComponent(id)}&available=eq.true`,{headers:{apikey:SUPABASE_KEY},signal:AbortSignal.timeout(20000)});
     if(!r.ok)throw new Error();
     const rows=await r.json();
     if(requestedNavigation!==navigationRevision)return;
     if(!Array.isArray(rows))throw Error();
-    if(rows.length){products.push(rows[0]);openProduct(id);return}
+    if(rows.length){products.push(rows[0]);openProduct(id,true);return}
   }catch{
     if(requestedNavigation!==navigationRevision)return;
     document.getElementById("productContent").innerHTML='<div class="empty">Не удалось загрузить товар. Попробуйте обновить страницу.</div>';
