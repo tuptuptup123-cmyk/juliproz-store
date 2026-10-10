@@ -8,8 +8,24 @@ const MANAGER_URL = 'https://t.me/juliproz';
 const WEBHOOK_URL = `${SHOP_URL}api/telegram`;
 const MAX_BODY_BYTES = 128 * 1024;
 
-const WELCOME = 'Добро пожаловать в JULI.PROZ 🤍\n\nЗдесь собраны вещи в наличии: сумки, обувь, одежда и аксессуары.\n\nОткройте магазин, выберите понравившуюся вещь и нажмите «Купить» в её карточке — вещь добавится в корзину. Затем откройте корзину и нажмите «Оформить через менеджера». Проверьте сообщение и отправьте его менеджеру.\n\nЕсли нужна помощь с выбором, напишите нам по кнопке ниже.';
-const HELP = 'Выбирайте вещи по кнопке «Открыть магазин».\n\nЧтобы уточнить наличие, размер, стоимость или доставку, нажмите «Связаться с менеджером». Сообщения из этого бота автоматически менеджеру не пересылаются.';
+const WELCOME = 'JULI.PROZ 🤍\n\nВаш доступ к миру люкса.\n\nВещи в наличии, поиск и выкуп под ваш запрос.';
+const ABOUT = 'О нас 🤍\n\nJULI.PROZ — ваш персональный байер.\n\nНаходим и выкупаем люксовые вещи в бутиках, аутлетах и на приватных сейлах.\n\nПомогаем подобрать модель, цвет и размер. Ищем редкие вещи и винтаж.\n\nОрганизуем доставку по миру.\n\nВ нашем боте можно купить вещи в наличии, предложить свою вещь на выкуп или сдать её на комиссию.';
+const SELL = 'Выкуп и комиссия\n\nХотите продать вещь? Выберите удобный формат.\n\nВыкуп\nРассмотрим покупку вашей вещи. Отправьте фото, описание состояния и желаемую цену — оценим и предложим условия.\n\nКомиссия\nПоможем продать ваши вещи через JULI.PROZ бот. Стоимость, комиссию и условия согласуем с вами заранее.';
+const BUYOUT = 'Продать нам вещь\n\nПодготовьте фотографии вещи, бренд и модель, описание состояния, информацию о комплекте и желаемую цену.\n\nНажмите «Отправить на оценку» и отправьте эту информацию в открывшемся диалоге. После оценки обсудим возможность выкупа и условия.\n\nФото и сообщения из этого бота автоматически не пересылаются.';
+const COMMISSION = 'Сдать на комиссию\n\nПоможем продать ваши вещи через JULI.PROZ бот.\n\nПодготовьте фотографии вещи, бренд и модель, описание состояния, информацию о комплекте и желаемую цену.\n\nНажмите «Обсудить комиссию» и отправьте эту информацию в открывшемся диалоге. Стоимость, комиссию и условия согласуем с вами заранее.\n\nФото и сообщения из этого бота автоматически не пересылаются.';
+const HELP = 'Выберите раздел ниже. Чтобы предложить вещь на выкуп или комиссию, откройте «Выкуп и комиссия». Сообщения из этого бота автоматически менеджеру не пересылаются.';
+const back = [{ text: '← Главное меню', callback_data: 'jp:menu' }];
+function screen(name) {
+  const main = [[{ text: 'Магазин', web_app: { url: SHOP_URL } }], [{ text: 'Выкуп и комиссия', callback_data: 'jp:sell' }], [{ text: 'О нас', callback_data: 'jp:about' }]];
+  const screens = {
+    menu: { text: WELCOME, keyboard: main },
+    about: { text: ABOUT, keyboard: [back] },
+    sell: { text: SELL, keyboard: [[{ text: 'Продать нам вещь', callback_data: 'jp:buyout' }], [{ text: 'Сдать на комиссию', callback_data: 'jp:commission' }], back] },
+    buyout: { text: BUYOUT, keyboard: [[{ text: 'Отправить на оценку ↗', url: MANAGER_URL }], [{ text: '← Выкуп и комиссия', callback_data: 'jp:sell' }], back] },
+    commission: { text: COMMISSION, keyboard: [[{ text: 'Обсудить комиссию ↗', url: MANAGER_URL }], [{ text: '← Выкуп и комиссия', callback_data: 'jp:sell' }], back] }
+  };
+  return screens[name];
+}
 
 function readToken(env) {
   const token = typeof env.TELEGRAM_BOT_TOKEN === 'string' ? env.TELEGRAM_BOT_TOKEN.trim() : '';
@@ -33,9 +49,12 @@ function messageResponse(update) {
       msg.from.id !== msg.chat.id) return null;
   // Service events, edited messages and non-text uploads do not trigger greetings.
   if (typeof msg.text !== 'string' || msg.text.length > 4096) return null;
-  const command = /^\/(start|shop|help|manager)(?:@([A-Za-z0-9_]+))?(?:\s|$)/i.exec(msg.text);
+  const command = /^\/(start|shop|help|manager|about|sell|buyout|commission)(?:@([A-Za-z0-9_]+))?(?:\s|$)/i.exec(msg.text);
   if (command?.[2] && command[2].toLowerCase() !== BOT_USERNAME.toLowerCase()) return null;
-  let text = HELP;
+  const route = { start: 'menu', about: 'about', sell: 'sell', buyout: 'buyout', commission: 'commission' }[command?.[1].toLowerCase()];
+  const selected = screen(route || 'menu');
+  if (command?.[1].toLowerCase() === 'manager') selected.keyboard = [[{ text: 'Связаться с менеджером', url: MANAGER_URL }], back];
+  let text = route ? selected.text : HELP;
   if (command?.[1].toLowerCase() === 'start') text = WELCOME;
   if (command?.[1].toLowerCase() === 'shop') text = 'Наш каталог вещей в наличии — по кнопке ниже 🤍';
   if (command?.[1].toLowerCase() === 'manager') text = 'Нажмите «Связаться с менеджером», чтобы задать вопрос или обсудить заказ.';
@@ -45,17 +64,14 @@ function messageResponse(update) {
     text,
     link_preview_options: { is_disabled: true },
     reply_markup: {
-      inline_keyboard: [
-        [{ text: 'Открыть магазин', web_app: { url: SHOP_URL } }],
-        [{ text: 'Связаться с менеджером', url: MANAGER_URL }]
-      ]
+      inline_keyboard: selected.keyboard
     }
   };
 }
 
 // Best-effort warm-instance guard, NOT a distributed limiter or cost protection.
 // Bounded memory; no message text retained. Saturation fails closed for new chats.
-function createReplyGuard(now = () => performance.now()) {
+function createReplyGuard(now = () => performance.now(), maxReplies = 5) {
   const chats = new Map();
   const seen = new Map();
   const windowMs = 60_000;
@@ -66,7 +82,7 @@ function createReplyGuard(now = () => performance.now()) {
     for (const [id, state] of chats) if (state.reset <= time) chats.delete(id);
     if (seen.has(updateId)) return false;
     const state = chats.get(chatId);
-    if ((!state && chats.size >= 2000) || seen.size >= 10000 || (state && state.count >= 5)) return false;
+    if ((!state && chats.size >= 2000) || seen.size >= 10000 || (state && state.count >= maxReplies)) return false;
     seen.set(updateId, time + duplicateMs);
     if (state) state.count++;
     else chats.set(chatId, { count: 1, reset: time + windowMs });
@@ -74,7 +90,17 @@ function createReplyGuard(now = () => performance.now()) {
   };
 }
 
-function createHandler(env = process.env, allowReply = createReplyGuard()) {
+function callbackResponse(update) {
+  const q = update?.callback_query, msg = q?.message;
+  if (!Number.isSafeInteger(update?.update_id) || update.update_id < 0 || typeof q?.id !== 'string' || q.id.length < 1 || q.id.length > 128 ||
+      q.from?.is_bot !== false || msg?.chat?.type !== 'private' || !Number.isSafeInteger(msg.chat.id) || msg.chat.id <= 0 || q.from.id !== msg.chat.id ||
+      !Number.isSafeInteger(msg.message_id) || msg.message_id <= 0 || typeof q.data !== 'string' || !/^jp:(menu|about|sell|buyout|commission)$/.test(q.data)) return null;
+  const selected = screen(q.data.slice(3));
+  return { method: 'editMessageText', chat_id: msg.chat.id, message_id: msg.message_id, text: selected.text,
+    link_preview_options: { is_disabled: true }, reply_markup: { inline_keyboard: selected.keyboard } };
+}
+
+function createHandler(env = process.env, allowReply = createReplyGuard(), apiRequest = fetch, allowCallback = createReplyGuard(() => performance.now(), 30)) {
   return function telegram(req, res) {
     res.setHeader('Cache-Control', 'no-store');
     res.setHeader('X-Content-Type-Options', 'nosniff');
@@ -109,6 +135,14 @@ function createHandler(env = process.env, allowReply = createReplyGuard()) {
       return res.status(400).json({ error: 'Invalid JSON' });
     }
     // Telegram executes this response as a Bot API method; no chat data or token is logged.
+    const callback = callbackResponse(update);
+    if (callback) {
+      // Acknowledge the tap to stop Telegram's spinner; never log token-bearing fetch errors.
+      return apiRequest(`https://api.telegram.org/bot${token}/answerCallbackQuery`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ callback_query_id: update.callback_query.id }), redirect: 'error', signal: AbortSignal.timeout(3000)
+      }).catch(() => {}).then(() => res.status(200).json(allowCallback(callback.chat_id, update.update_id) ? callback : { ok: true }));
+    }
     const reply = messageResponse(update);
     // Acknowledge suppressed updates to avoid Telegram retry storms.
     return res.status(200).json(reply && allowReply(reply.chat_id, update.update_id) ? reply : { ok: true });
