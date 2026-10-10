@@ -400,3 +400,5 @@ button:not(:disabled):active{transform:scale(.96)}
 .bottom-nav button:focus-visible{outline:2px solid var(--brand-blue);outline-offset:-4px;border-radius:8px}
 
 .product .card-footer:has(.card-meta:empty):not(:has(.catalog-status)){padding-top:0}
+/* Condition labels fit their text instead of stretching across the card. */
+.product > .condition-badge{align-self:flex-start;width:fit-content;max-width:100%;box-sizing:border-box}
