@@ -11,7 +11,7 @@
  }
  function canvas(w,h){const c=document.createElement('canvas');c.width=w;c.height=h;return c}
  function read(blob){return new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=()=>reject(Error('Не удалось прочитать фото.'));r.readAsDataURL(blob)})}
- async function encode(c){const blob=await new Promise(r=>c.toBlob(r,'image/webp',.94));if(!blob||!['image/webp','image/png'].includes(blob.type))throw Error('Браузер не смог сохранить обработанное фото.');return blob}
+ async function encode(c){return PhotoCodec.encode(c,.94)}
  function fullMask(source){const c=canvas(source.width,source.height),ctx=c.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,c.width,c.height);return c}
  function simpleMask(source){
   const w=source.width,h=source.height,data=source.getContext('2d').getImageData(0,0,w,h),pixels=data.data;
@@ -33,7 +33,7 @@
  }
  async function process(file,remove=true){
   if(!['image/jpeg','image/png','image/webp'].includes(file.type)||file.size>6*1024*1024)throw Error('Фото должно быть JPG, PNG или WebP, до 6 МБ.');
-  let bitmap;try{bitmap=await createImageBitmap(file)}catch{throw Error('Не удалось открыть фото.')}
+  let bitmap;try{bitmap=await PhotoCodec.decode(file)}catch{throw Error('Не удалось открыть фото.')}
   if(bitmap.width*bitmap.height>40000000){bitmap.close();throw Error('Фото слишком большое: максимум 40 мегапикселей.')}
   const scale=Math.min(1,1400/Math.max(bitmap.width,bitmap.height)),source=canvas(Math.max(1,Math.round(bitmap.width*scale)),Math.max(1,Math.round(bitmap.height*scale)));
   source.getContext('2d').drawImage(bitmap,0,0,source.width,source.height);bitmap.close();
