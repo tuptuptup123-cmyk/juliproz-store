@@ -56,6 +56,8 @@ const fixtures=[
   assert.ok(conditionLines.wear>=conditionLines.label,'Wear description starts below PRE-OWNED');
   assert.match(conditionLines.text,/PRE-OWNED\nНебольшие следы носки/);
   assert.match(await page.locator('[data-id="900001"] .card-meta').innerText(),/Комиссия/);
+  const infoBadges=await page.locator('.product .condition-badge').evaluateAll(es=>es.map(e=>({bg:getComputedStyle(e).backgroundColor,border:getComputedStyle(e).borderColor})));
+  assert.ok(infoBadges.every(b=>b.bg==='rgb(249, 234, 242)'&&b.border==='rgb(166, 189, 214)'),'Informational badges share the soft pink and blue style');
   const cards=await page.locator('.product').evaluateAll(els=>els.map(el=>{
    const rect=x=>{const b=x.getBoundingClientRect();return {x:b.x,y:b.y,right:b.right,bottom:b.bottom}};
    return {photo:rect(el.querySelector('.photo')),price:rect(el.querySelector('.price')),size:rect(el.querySelector('.card-size')),card:rect(el),parts:[...el.querySelectorAll('.sale-price>*')].map(rect).sort((a,b)=>a.y-b.y)};
@@ -75,6 +77,7 @@ const fixtures=[
   await page.locator('.product').first().scrollIntoViewIfNeeded();await page.screenshot({path:out+'/catalog-'+width+'.png'});
   await page.locator('[data-heart="900001"]').click();await page.locator('[data-tab="favorites"]').click();assert.equal(await page.locator('.product').count(),1);
   await page.locator('.product-open').click();
+  assert.equal(await page.locator('.purchase-action').evaluate(e=>getComputedStyle(e).backgroundColor),'rgb(197, 43, 120)');
   const managerCta=await page.locator('.product-sourcing .sourcing-link').evaluate(e=>({background:getComputedStyle(e).backgroundColor,color:getComputedStyle(e).color,height:e.getBoundingClientRect().height}));
   assert.equal(managerCta.background,'rgb(197, 43, 120)');assert.equal(managerCta.color,'rgb(255, 255, 255)');assert.ok(managerCta.height>=48);
   if(width===390){await page.locator('.product-sourcing .sourcing-link').scrollIntoViewIfNeeded();await page.screenshot({path:out+'/manager-contact-390.png'});}

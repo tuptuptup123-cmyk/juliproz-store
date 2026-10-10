@@ -500,3 +500,10 @@ button,input,select{font-family:inherit}
 
 /* A light-blue brand outline distinguishes SALE, without changing its size. */
 .product .card-sale-badge{box-shadow:inset 0 0 0 1px #6c90b9}
+
+/* A consistent pink-and-blue treatment for emphasis and information badges. */
+.discount-badge,.product-sourcing .sourcing-link,.services-page .service-contact{box-shadow:inset 0 0 0 1px #6c90b9}
+.condition-badge,.commission-badge,.product .card-meta .condition-badge,.product .card-meta .commission-badge{background:#f9eaf2;color:#3d4350;border-color:#a6bdd6}
+.primary,.sell-offer{background:#c52b78;color:#fff;border-color:#6c90b9;box-shadow:inset 0 0 0 1px #6c90b9}
+.primary:hover,.primary:active,.sell-offer:hover{background:#af2469}
+.primary:disabled,.purchase-action:disabled{background:#e5e5e5;color:#666;border-color:#d8d8d8;box-shadow:none}
