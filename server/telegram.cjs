@@ -143,11 +143,13 @@ function createHandler(env = process.env, allowReply = createReplyGuard(), apiRe
     // Telegram executes this response as a Bot API method; no chat data or token is logged.
     const callback = callbackResponse(update);
     if (callback) {
+      // Suppress retries and excess taps before making an outbound API request.
+      if (!allowCallback(callback.chat_id, update.update_id)) return res.status(200).json({ ok: true });
       // Acknowledge the tap to stop Telegram's spinner; never log token-bearing fetch errors.
       return apiRequest(`https://api.telegram.org/bot${token}/answerCallbackQuery`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ callback_query_id: update.callback_query.id }), redirect: 'error', signal: AbortSignal.timeout(3000)
-      }).catch(() => {}).then(() => res.status(200).json(allowCallback(callback.chat_id, update.update_id) ? callback : { ok: true }));
+      }).catch(() => {}).then(() => res.status(200).json(callback));
     }
     const reply = messageResponse(update);
     // Acknowledge suppressed updates to avoid Telegram retry storms.
