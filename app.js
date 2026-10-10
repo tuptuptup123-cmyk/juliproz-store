@@ -121,12 +121,6 @@ function emptyCollection(kind){
   return `<div class="collection-empty ${cartEmpty?'cart-empty':'wishlist-empty'}"><div class="empty-content"><svg class="empty-symbol" width="64" height="64" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${symbol}</svg><h2>${cartEmpty?'Корзина':'Ваш виш-лист пока пуст.'}</h2><p>${cartEmpty?'Ваша корзина пока пуста.':'Нажмите на сердечко у понравившегося товара.'}</p>${cartEmpty?'<button type="button" class="primary" data-cart-action="catalog">Перейти в каталог</button>':''}</div><span class="empty-signature" aria-hidden="true">J.P</span></div>`;
 }
 function render(){
-  syncCatalogSort();
-  reconcileFilters();
-  renderCatalogMenu();
-  document.querySelectorAll("[data-gender]").forEach(b=>b.setAttribute("aria-pressed",String((b.dataset.gender||null)===state.gender)));
-  document.querySelectorAll("[data-filter]").forEach(b=>{const type=b.dataset.filter;b.textContent=(type==='fulfillment_status'?statusLabels[state[type]]:state[type])||{fulfillment_status:"Наличие",category:"Категория",brand:"Бренд",size:"Размер"}[type];b.classList.toggle("selected",!!state[type])});
-  renderCart();
   const inCart=state.tab==="cart",inSell=state.tab==="sell";
   document.getElementById("sellPage").classList.toggle("hidden",!inSell);
   document.getElementById("cartPage").classList.toggle("hidden",!inCart);
@@ -134,6 +128,16 @@ function render(){
   document.querySelector(".catalog-toolbar")?.classList.toggle("hidden",state.tab!=="catalog");
   document.querySelector(".catalog-head")?.classList.toggle("hidden",inCart||inSell);
   document.getElementById("filterSummary").classList.toggle("hidden",state.tab!=="catalog"||!document.getElementById("filterSummary").textContent);
+  if(inSell)return;
+  renderCart();
+  if(inCart)return;
+  syncCatalogSort();
+  if(state.tab==='catalog'){
+    reconcileFilters();renderCatalogMenu();
+    document.querySelectorAll("[data-gender]").forEach(b=>b.setAttribute("aria-pressed",String((b.dataset.gender||null)===state.gender)));
+    document.querySelectorAll("[data-filter]").forEach(b=>{const type=b.dataset.filter;b.textContent=(type==='fulfillment_status'?statusLabels[state[type]]:state[type])||{fulfillment_status:"Наличие",category:"Категория",brand:"Бренд",size:"Размер"}[type];b.classList.toggle("selected",!!state[type])});
+    document.getElementById("filterSummary").classList.toggle("hidden",!document.getElementById("filterSummary").textContent);
+  }
   const list=filtered();
   count.textContent=state.tab==="favorites"?`Виш-лист · ${list.length}`:`В каталоге ${list.length} ${pluralRu(list.length,'товар','товара','товаров')}`;
   grid.innerHTML=list.length?list.map(p=>`<article class="product" data-id="${esc(p.id)}"><div class="photo">${imageOf(p)?`<img src="${esc(imageOf(p))}" alt="${esc(p.name)}" loading="lazy">`:"JP"}<button class="heart ${state.favorites.has(String(p.id))?"is-favorite":""}" aria-label="Виш-лист" aria-pressed="${state.favorites.has(String(p.id))}" data-heart="${esc(p.id)}"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"/></svg></button></div><h3><button type="button" class="product-open" aria-label="Открыть ${esc(p.brand)} ${esc(displayName(p))}">${esc(p.brand)}</button></h3><div class="card-name-row"><p>${esc(displayName(p))}</p>${window.ProductPricing.discount(p)?'<span class="card-sale-badge">SALE</span>':''}</div>${conditionBadge(p)}<div class="card-size">${sizesOf(p).length?`${sizesOf(p).length>1?"Размеры":"Размер"}: ${esc(sizesOf(p).join(" · "))}`:"Размер уточняйте"}</div><div class="price">${priceMarkup(p)}</div><div class="catalog-status ${p.reserved?'is-reserved':onOrder(p)?"on-order":""}">${availabilityLabel(p)}</div><div class="card-delivery">Доставка ${deliveryLabel(p)}</div></article>`).join(""):(state.tab==="favorites"?emptyCollection('favorites'):'<div class="empty">Здесь пока ничего нет</div>');
@@ -146,6 +150,7 @@ function renderCatalogMenu(){
   const labels=[state.sale?'SALE':null,state.product_condition?conditionLabels[state.product_condition]:null,state.gender?({men:'Мужское',women:'Женское'}[state.gender]):null,state.category,state.brand,state.size,state.fulfillment_status?statusLabels[state.fulfillment_status]:null].filter(Boolean);
   const badge=document.getElementById('menuBadge');badge.textContent=String(labels.length);badge.classList.toggle('hidden',!labels.length);
   const summary=document.getElementById('filterSummary');summary.textContent=labels.join(' · ');summary.classList.toggle('hidden',!labels.length);
+  if(document.getElementById('catalogMenu').classList.contains('hidden'))return;
   document.getElementById('showMenuProducts').textContent=`Показать товары · ${filtered().length}`;
   document.getElementById('menuGroups').innerHTML=Object.entries(menuLabels).map(([type,label])=>{
     const expanded=menuOpenGroup===type;
