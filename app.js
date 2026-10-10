@@ -36,7 +36,7 @@ function telegramLink(url){
   if(window.Telegram?.WebApp?.openTelegramLink) Telegram.WebApp.openTelegramLink(url);else window.open(url,"_blank","noopener");telegramOpenTimes.set(url,Date.now());if(telegramOpenTimes.size>50)telegramOpenTimes.delete(telegramOpenTimes.keys().next().value);return true;}
 
 function pluralRu(n,one,few,many){const k=Math.abs(n)%100;return k>=11&&k<=14?many:k%10===1?one:k%10>=2&&k%10<=4?few:many}
-let state={sale:false,product_condition:null,gender:null,fulfillment_status:null,category:null,brand:null,size:null,search:"",favorites:new Set((()=>{try{return JSON.parse(localStorage.getItem("jpFav")||"[]").map(String)}catch{return []}})()),tab:"catalog"};
+let state={sort:"newest",sale:false,product_condition:null,gender:null,fulfillment_status:null,category:null,brand:null,size:null,search:"",favorites:new Set((()=>{try{return JSON.parse(localStorage.getItem("jpFav")||"[]").map(String)}catch{return []}})()),tab:"catalog"};
 const grid=document.getElementById("grid"),count=document.getElementById("count"),sheet=document.getElementById("sheet"),options=document.getElementById("sheetOptions");
 let currentFilter=null,tempValue=null;
 
@@ -82,16 +82,40 @@ function reconcileFilters(){
   if(state.brand&&!valuesFor('brand').includes(state.brand))state.brand=null;
   if(state.size&&!valuesFor('size').includes(state.size))state.size=null;
 }
-function filtered(){
-  if(state.tab==="favorites")return products.filter(p=>state.favorites.has(String(p.id)));
-  return products.filter(p=>matchesContext(p)&&(`${p.brand||""} ${p.name||""} ${p.id} ${p.size||""}`.toLowerCase().includes(state.search.toLowerCase())))
+let catalogRates={EUR:1},sortRevision=0,sortRatesRequest=null;
+function priceCurrency(p){return ({'€':'EUR','$':'USD','£':'GBP'}[p.currency]||String(p.currency||'EUR')).toUpperCase()}
+function priceForSort(p){const rate=catalogRates[priceCurrency(p)],price=Number(p.price);return p.price==null||p.price===''||!Number.isFinite(price)||price<0||!Number.isFinite(rate)||rate<=0?null:price/rate}
+function sortProducts(rows){
+  return rows.slice().sort((a,b)=>{
+    if(state.sort==='price_asc'||state.sort==='price_desc'){const x=priceForSort(a),y=priceForSort(b);if(x===null||y===null)return x===y?0:x===null?1:-1;return state.sort==='price_asc'?x-y:y-x}
+    if(state.sort==='discount'){const x=window.ProductPricing.discount(a),y=window.ProductPricing.discount(b);return (y?(y.original-y.current)/y.original:0)-(x?(x.original-x.current)/x.original:0)}
+    return (Date.parse(b.created_at)||0)-(Date.parse(a.created_at)||0);
+  });
 }
+function filtered(){
+  if(state.tab==="favorites")return sortProducts(products.filter(p=>state.favorites.has(String(p.id))));
+  return sortProducts(products.filter(p=>matchesContext(p)&&(`${p.brand||""} ${p.name||""} ${p.id} ${p.size||""}`.toLowerCase().includes(state.search.toLowerCase()))));
+}
+async function changeCatalogSort(value){
+  if(!['newest','price_asc','price_desc','discount'].includes(value))return;
+  const revision=++sortRevision,note=document.getElementById('sortStatus');note.textContent='';
+  if(value.startsWith('price_')&&products.some(p=>priceCurrency(p)!=='EUR')){
+    note.textContent='Настраиваем сортировку…';
+    try{
+      if(!sortRatesRequest)sortRatesRequest=fetch('/api/exchange-rates',{signal:AbortSignal.timeout(10000)}).then(async r=>{if(!r.ok)throw Error();const data=await r.json();if(!(data.rates?.USD>0)||!Number.isFinite(data.rates.USD))throw Error();return data.rates}).finally(()=>{sortRatesRequest=null});
+      const rates=await sortRatesRequest;if(revision!==sortRevision)return;catalogRates={...rates,EUR:1};
+    }catch{if(revision!==sortRevision)return;document.getElementById('catalogSort').value=state.sort;note.textContent='Не удалось отсортировать по цене. Попробуйте ещё раз.';return}
+  }
+  if(revision!==sortRevision)return;state.sort=value;note.textContent='';render();
+}
+document.getElementById('catalogSort').onchange=e=>changeCatalogSort(e.target.value);
 function emptyCollection(kind){
   const cartEmpty=kind==='cart';
   const symbol=cartEmpty?'<path d="M3 4h5l5 25h24l6-18H10"/><circle cx="16" cy="38" r="2.5"/><circle cx="35" cy="38" r="2.5"/>':'<path d="M40 8a11 11 0 0 0-16 0A11 11 0 0 0 8 24l16 16 16-16a11 11 0 0 0 0-16Z"/>';
   return `<div class="collection-empty ${cartEmpty?'cart-empty':'wishlist-empty'}"><div class="empty-content"><svg class="empty-symbol" width="64" height="64" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${symbol}</svg><h2>${cartEmpty?'Корзина':'Ваш виш-лист пока пуст.'}</h2><p>${cartEmpty?'Ваша корзина пока пуста.':'Нажмите на сердечко у понравившегося товара.'}</p>${cartEmpty?'<button type="button" class="primary" data-cart-action="catalog">Перейти в каталог</button>':''}</div><span class="empty-signature" aria-hidden="true">J.P</span></div>`;
 }
 function render(){
+  document.getElementById("catalogSort").value=state.sort;
   reconcileFilters();
   renderCatalogMenu();
   document.querySelectorAll("[data-gender]").forEach(b=>b.setAttribute("aria-pressed",String((b.dataset.gender||null)===state.gender)));
@@ -266,7 +290,7 @@ function openFilter(type){
 options.onclick=e=>{if(!e.target.dataset.v)return;tempValue=e.target.dataset.v==="Все"?null:e.target.dataset.v;[...options.children].forEach(x=>x.classList.toggle("selected",(tempValue===x.dataset.v)||(!tempValue&&x.dataset.v==="Все")))};
 document.getElementById("applyFilter").onclick=()=>{state[currentFilter]=tempValue;sheet.classList.add("hidden");render()};
 document.getElementById("closeSheet").onclick=()=>sheet.classList.add("hidden");
-document.getElementById("reset").onclick=()=>{state.sale=false;state.product_condition=state.gender=state.fulfillment_status=state.category=state.brand=state.size=null;state.search="";document.getElementById("search").value="";render()};
+document.getElementById("reset").onclick=()=>{sortRevision++;state.sort="newest";document.getElementById("sortStatus").textContent="";state.sale=false;state.product_condition=state.gender=state.fulfillment_status=state.category=state.brand=state.size=null;state.search="";document.getElementById("search").value="";render()};
 grid.onclick=e=>{
   if(e.target.id==="retryProducts"){loadProducts();return}
   const h=e.target.closest("[data-heart]");
