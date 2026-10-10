@@ -18,6 +18,13 @@ jobs:
       - run: npm install --prefix "$RUNNER_TEMP/jp-browser" --no-audit --no-fund --ignore-scripts playwright@1.56.1
       - run: node "$RUNNER_TEMP/jp-browser/node_modules/playwright/cli.js" install --with-deps chromium
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" QA_OUTPUT="$RUNNER_TEMP/jp-qa" node tests/catalog-prices.browser.cjs
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: catalog-preview
+          path: |
+            ${{ runner.temp }}/jp-qa/live-sale-catalog-*.png
+            ${{ runner.temp }}/jp-qa/services-*.png
+          retention-days: 7
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" QA_OUTPUT="$RUNNER_TEMP/jp-qa" node tests/responsive.browser.cjs
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" QA_OUTPUT="$RUNNER_TEMP/jp-qa" node tests/action-guards.browser.cjs
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" QA_OUTPUT="$RUNNER_TEMP/jp-qa" node tests/photo-analytics.browser.cjs
