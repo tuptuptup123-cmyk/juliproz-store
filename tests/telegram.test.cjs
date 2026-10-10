@@ -195,7 +195,7 @@ test('services routes describe authentication and atelier with safe contact draf
   assert.deepEqual(services.reply_markup.inline_keyboard.map(r=>r[0].callback_data),['jp:authentication','jp:atelier','jp:menu']);
   for(const [name,label] of [['authentication','аутентификацию'],['atelier','ателье']]){
     const response=await reply(callback('jp:'+name));
-    assert.equal(response.method,'editMessageText');assert.match(response.text,/стоимость и сроки/i);assert.match(response.text,/партнёр/);if(name==='authentication')assert.match(response.text,/онлайн- и офлайн/);else assert.match(response.text,/Спа и уход для сумок[\s\S]*Полировку часов[\s\S]*Обслуживание часов/);
+    assert.equal(response.method,'editMessageText');assert.match(response.text,/стоимость и сроки/i);assert.match(response.text,/партнёр/);if(name==='authentication')assert.match(response.text,/онлайн- и офлайн/);else assert.match(response.text,/Спа и уход для сумок[\s\S]*Полировка и обслуживание часов/);
     const keyboard=response.reply_markup.inline_keyboard,url=keyboard[0][0].url;
     assert.ok(url.startsWith('https://t.me/juliproz?text='));assert.ok(decodeURIComponent(url).includes(label));
     assert.equal(keyboard[1][0].callback_data,'jp:services');assert.equal(keyboard[2][0].callback_data,'jp:menu');
