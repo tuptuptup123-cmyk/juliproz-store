@@ -526,3 +526,35 @@ button,input,select{font-family:inherit}
 /* Opt-in contour shadow for the verified transparent white Chrome Hearts cover.
    Match the exact asset, never apply an opaque rectangular shadow to other photos. */
 :is(.photo,.hero,.related-photo,.cart-photo,.photo-picker) img[src*="/chrome-hearts-scroll-usa-white-109.webp"]{filter:drop-shadow(0 0 1.5px rgb(0 0 0 / .18)) drop-shadow(0 4px 6px rgb(0 0 0 / .22))}
+
+/* Normalize this tightly cropped C.P. Company cover only; retain original pixels. */
+.product .photo img[src$="/photo-fix-oct10-368-0.webp"]{transform:scale(.70)}
+
+/* Balance the complete signature/paw grouping on the two informational pages. */
+@media(max-width:600px){
+ .brand.is-information-page{margin-bottom:16px}
+ .brand.is-information-page .masthead-inner{min-height:152px}
+ .brand.is-information-page .brand-lockup{left:-56px}
+ .brand.is-information-page .brand-paw{right:calc(50% - 78px)}
+ .sell-page{padding-top:14px}
+}
+
+/* Optical centering includes the paw and signature, not only the J.P letters. */
+.brand-lockup{left:-98px}
+.brand-paw{right:calc(50% - 122px)}
+.menu-brand{left:-28px}
+@media(min-width:900px){.menu-brand{left:-37px}}
+@media(max-width:600px){
+ .brand-lockup{left:-56px}
+ .brand-paw{right:calc(50% - 78px)}
+}
+@media(max-width:420px){
+ .brand:not(.is-information-page) .masthead-inner{min-height:174px}
+ .masthead-controls .catalog-menu-button,.masthead-controls .search-toggle{position:absolute;top:128px}
+ .masthead-controls .catalog-menu-button{left:0}
+ .masthead-controls .search-toggle{right:0}
+ .masthead-inner>.search-wrap{margin-top:54px}
+}
+@media(max-width:360px){.menu-brand{left:-18px}}
+
+#sellPrepare{text-align:center}
