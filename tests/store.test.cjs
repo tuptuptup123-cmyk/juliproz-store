@@ -8,6 +8,7 @@ function setup(file,fetch,query=''){
  const document={getElementById:get,querySelectorAll:()=>[],querySelector:()=>element(),addEventListener(){}};
  const links=[];const window={addEventListener(){},STORE_CONFIG:{url:'https://test.supabase.co',key:'publishable'},Telegram:{WebApp:{ready(){},expand(){},openTelegramLink:u=>links.push(u),initDataUnsafe:{}}}};
  const context=vm.createContext({document,window,Telegram:window.Telegram,fetch,console:{...console,error(){}},URL,URLSearchParams,atob,AbortSignal,AbortController,setTimeout,clearTimeout,structuredClone,Intl,Set,Number,String,Array,JSON,Date,crypto:{randomUUID:crypto.randomUUID},location:{search:query},navigator:{clipboard:{writeText:async u=>links.push(u)}},localStorage:{getItem:()=>'{broken',setItem(){throw Error('storage denied')}}});
+ vm.runInContext(fs.readFileSync(__dirname+'/../product-pricing.js','utf8'),context);
  vm.runInContext(fs.readFileSync(`${__dirname}/../product-sizes.js`,'utf8'),context);
  context.ProductSizes=context.window.ProductSizes;
  vm.runInContext(fs.readFileSync(`${__dirname}/../image-policy.js`,'utf8'),context);

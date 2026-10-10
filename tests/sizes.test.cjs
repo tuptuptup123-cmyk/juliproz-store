@@ -8,7 +8,8 @@ assert.deepEqual(sizes.parse('44.5'),['44.5']);assert.deepEqual(sizes.parse('44,
 const nodes=new Map();function node(id){if(!nodes.has(id))nodes.set(id,{innerHTML:'',textContent:'',value:'',dataset:{},classList:{add(){},remove(){},toggle(){},contains(){return false}},addEventListener(){},querySelector(){return null},focus(){}});return nodes.get(id)}
 let rows=[],contactUrl=null;
 const context=vm.createContext({ProductSizes:sizes,safeProductImage:()=>false,window:{STORE_CONFIG:{url:'https://test.invalid',key:'public'},open:u=>contactUrl=u,addEventListener(){}},document:{getElementById:node,querySelectorAll:()=>[],querySelector:()=>null,addEventListener(){}},localStorage:{getItem:()=>null},location:{search:''},URLSearchParams,AbortSignal,setTimeout,fetch:async()=>({ok:true,json:async()=>rows})});
-vm.runInContext(fs.readFileSync(root+'/app.js','utf8'),context);
+vm.runInContext(fs.readFileSync(__dirname+'/../product-pricing.js','utf8'),context);
+ vm.runInContext(fs.readFileSync(root+'/app.js','utf8'),context);
 const run=s=>vm.runInContext(s,context);
 assert.deepEqual(sizes.parse('М; xl; OS; One size'),['M','XL','One Size']);
 assert.deepEqual(['XXL','S','XL','M','L'].sort(sizes.compare),['S','M','L','XL','XXL']);

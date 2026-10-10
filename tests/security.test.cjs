@@ -19,6 +19,7 @@ function setup(fetch,mfaEnrollmentEnabled=true,sessionStorage,localStorage){
  const nodes=new Map();const get=id=>{if(!nodes.has(id))nodes.set(id,node());return nodes.get(id)};
  const context=vm.createContext({sessionStorage,localStorage,document:{getElementById:get,querySelectorAll:()=>[],addEventListener(){}},window:{addEventListener(){},STORE_CONFIG:{url:'https://test.supabase.co',key:'public',mfaEnrollmentEnabled}},fetch,URL,URLSearchParams,atob,AbortController,setTimeout,clearTimeout,structuredClone,crypto,location:{search:''},safeProductImage:()=>true});
  get('editor').elements=Object.fromEntries(['brand','name','size','price','currency','available','fulfillment_status'].map(k=>[k,node()]));
+ vm.runInContext(fs.readFileSync(__dirname+'/../product-pricing.js','utf8'),context);
  vm.runInContext(fs.readFileSync(__dirname+'/../admin.js','utf8'),context);
  get('mfaVerify').code=node();
  return {get,run:code=>vm.runInContext(code,context),seed:s=>vm.runInContext('keepSession('+JSON.stringify(s)+')',context)};

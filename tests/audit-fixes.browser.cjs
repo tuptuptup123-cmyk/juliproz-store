@@ -1,6 +1,18 @@
 const {chromium}=require('playwright'),assert=require('node:assert/strict'),fs=require('node:fs'),http=require('node:http'),path=require('node:path');
 const root=path.resolve(__dirname,'..');const server=http.createServer((req,res)=>{const p=new URL(req.url,'http://localhost').pathname;const file=path.resolve(root,'.'+(p==='/'?'/index.html':p));if(!file.startsWith(root+path.sep))return res.writeHead(403).end();fs.readFile(file,(err,data)=>{res.writeHead(err?404:200,{'Content-Type':({'.html':'text/html','.js':'text/javascript','.css':'text/css'})[path.extname(file)]||'application/octet-stream'});res.end(err?'Missing':data)})});
 (async()=>{await new Promise(r=>server.listen(8778,r));const browser=await chromium.launch({executablePath:process.env.QA_BROWSER_BINARY||undefined,args:['--no-sandbox']});
+// External Telegram loading must never block the catalogue; reload can paint cache before data arrives.
+const startupPage=await browser.newPage({viewport:{width:390,height:844}});
+let releaseSdk,releaseCatalog,holdCatalog=false;
+const sdkGate=new Promise(r=>releaseSdk=r),catalogGate=new Promise(r=>releaseCatalog=r);
+await startupPage.route('https://telegram.org/**',async route=>{await sdkGate;return route.fulfill({contentType:'text/javascript',body:"window.Telegram={WebApp:{initDataUnsafe:{},ready(){window.__sdkReady=(window.__sdkReady||0)+1},expand(){}}}"})});
+await startupPage.route('**/rest/v1/products?**',async route=>{if(holdCatalog)await catalogGate;return route.fulfill({json:holdCatalog?[]:[{id:100,brand:'Brand',name:'Fast catalogue',available:true,price:80,currency:'EUR'}]})});
+await startupPage.goto('http://localhost:8778/',{waitUntil:'domcontentloaded'});
+await startupPage.locator('[data-id="100"]').waitFor({timeout:3000});assert.equal(await startupPage.evaluate(()=>window.__sdkReady||0),0);
+releaseSdk();await startupPage.waitForFunction(()=>window.__sdkReady===1);
+holdCatalog=true;await startupPage.reload({waitUntil:'domcontentloaded'});await startupPage.locator('[data-id="100"]').waitFor({timeout:3000});
+assert.equal(await startupPage.evaluate(()=>catalogLoading),true);releaseCatalog();await startupPage.waitForFunction(()=>products.length===0&&!catalogLoading);await startupPage.close();
+console.log('PASS catalogue before Telegram SDK and cached reload before fresh inventory');
 for(const width of [390,1280]){
  const page=await browser.newPage({viewport:{width,height:900}}),events=[],errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.route('https://telegram.org/**',r=>r.fulfill({contentType:'text/javascript',body:''}));
