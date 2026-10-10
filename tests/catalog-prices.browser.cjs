@@ -86,7 +86,7 @@ const fixtures=[
   assert.equal(managerCta.background,'rgb(228, 202, 221)');assert.equal(managerCta.color,'rgb(37, 57, 79)');assert.ok(managerCta.height>=48);
   if(width===390){await page.locator('.product-sourcing .sourcing-link').scrollIntoViewIfNeeded();await page.screenshot({path:out+'/manager-contact-390.png'});}
   await page.locator('#backProduct').click();assert.equal(await page.locator('.product').count(),1);
-  const headerBaseline=await page.locator('.brand .logo').evaluate(e=>e.getBoundingClientRect().bottom);
+  const headerBaseline=await page.locator('.brand .logo').evaluate(e=>e.getBoundingClientRect().bottom+window.scrollY);
   await page.locator('[data-tab="services"]').click();
   for(const target of ['catalog','favorites','cart','sell','services']){
    await page.locator('[data-tab="'+target+'"]').click();
@@ -96,7 +96,7 @@ const fixtures=[
     if(width<=600){const bounds=await page.locator('.brand-lockup,.brand-signature,.brand-paw').evaluateAll(es=>es.map(e=>e.getBoundingClientRect().toJSON()));const left=Math.min(...bounds.map(b=>b.left)),right=Math.max(...bounds.map(b=>b.right));assert.ok(Math.abs((left+right)/2-width/2)<16,'Complete logo grouping is visually centered');assert.ok(left>=0&&right<=width,'Header fits phone width');}
    }
    if(width<=600){const b=await page.locator('.brand-lockup,.brand-signature,.brand-paw').evaluateAll(es=>es.map(e=>e.getBoundingClientRect().toJSON()));assert.ok(Math.abs((Math.min(...b.map(x=>x.left))+Math.max(...b.map(x=>x.right)))/2-width/2)<16,'Every public tab keeps the complete logo centered');}
-   if(width<=600)assert.ok(Math.abs(await page.locator('.brand .logo').evaluate(e=>e.getBoundingClientRect().bottom)-headerBaseline)<1,'Logo baseline stays consistent between public sections');
+   if(width<=600)assert.ok(Math.abs(await page.locator('.brand .logo').evaluate(e=>e.getBoundingClientRect().bottom+window.scrollY)-headerBaseline)<1,'Logo baseline stays consistent between public sections');
    if((target==='sell'||target==='services')&&width<=600){const gap=await page.evaluate(()=>document.querySelector('.sell-page:not(.hidden) h1').getBoundingClientRect().top-document.querySelector('.brand-lockup').getBoundingClientRect().bottom);assert.ok(gap>=32&&gap<=96,'Information intro keeps a compact, readable logo gap');}
    if(target==='sell'){
     assert.ok((await page.locator('#sellPage .sell-checklist li').evaluateAll(es=>es.map(e=>getComputedStyle(e).textAlign))).every(a=>a==='center'));

@@ -612,3 +612,4 @@ button,input,select{font-family:inherit}
  .brand .masthead-inner .brand-signature{left:64px;bottom:4px;font-size:10px}
  .brand .masthead-inner .brand-paw{right:calc(50% - 56px);top:-6px;width:84px;height:85px;transform:none;animation:none}
 }
+@media(max-width:600px){.brand .masthead-inner .logo{width:fit-content}}
