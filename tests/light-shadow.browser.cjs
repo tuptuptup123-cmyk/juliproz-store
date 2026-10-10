@@ -1,0 +1,17 @@
+const {chromium}=require('playwright');
+const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),http=require('node:http');
+const root=path.resolve(__dirname,'..'),out=process.env.QA_OUTPUT||'/tmp/light-shadow-qa';fs.mkdirSync(out,{recursive:true});
+const server=http.createServer((req,res)=>{const file=path.join(root,new URL(req.url,'http://localhost').pathname);fs.readFile(file,(err,data)=>{res.writeHead(err?404:200,{'Content-Type':file.endsWith('.css')?'text/css':file.endsWith('.webp')?'image/webp':'text/plain'});res.end(err?'Missing':data)})});
+(async()=>{await new Promise(r=>server.listen(0,'127.0.0.1',r));const origin='http://127.0.0.1:'+server.address().port;
+const browser=await chromium.launch();try{
+for(const width of [320,390,529]){
+const page=await browser.newPage({viewport:{width,height:490},reducedMotion:'reduce'});
+await page.goto(origin+'/style.css');
+await page.setContent(`<link rel="stylesheet" href="${origin}/style.css"><style>body{padding:24px 16px;background:white}h1{font:400 18px Arial;margin:0 0 18px}main{display:grid;grid-template-columns:1fr 1fr;gap:12px}.product{display:block}.photo{aspect-ratio:4/5}.photo img{padding:6%}.label{font:400 14px Arial;margin:12px 0 5px;color:#202020}.note{font:400 12px/1.5 Arial;color:#626262;margin:24px 0}#before{filter:drop-shadow(0 3px 5px #25394f30)}</style><h1>Контур белой вещи</h1><main><article class="product"><div class="photo"><img id="before" src="${origin}/images/chrome-hearts-scroll-usa-white-109.webp"></div><div class="label">Сейчас</div></article><article class="product"><div class="photo"><img id="after" src="${origin}/images/chrome-hearts-scroll-usa-white-109.webp"></div><div class="label">Мягкая тень</div></article></main><p class="note">Одно и то же фото. Изменена только тень по контуру, пиксели вещи не менялись.</p><div class="photo" style="display:none"><img id="other" src="${origin}/images/brand-paw.webp"></div>`);
+await page.locator('#after').evaluate(img=>img.decode());await page.locator('#before').evaluate(img=>img.decode());
+const filters=await page.locator('img').evaluateAll(es=>Object.fromEntries(es.map(e=>[e.id,getComputedStyle(e).filter])));
+assert.match(filters.after,/drop-shadow/);assert.notEqual(filters.after,filters.before);assert.equal(filters.other,filters.before,'Unselected image retains existing shadow');
+assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+await page.screenshot({path:out+'/light-shadow-comparison-'+width+'.png'});await page.close();console.log(width+' shadow preview and opt-in isolation PASS');
+}
+}finally{await browser.close();server.close()}})().catch(e=>{console.error(e);server.close();process.exitCode=1});
