@@ -6,7 +6,7 @@ vm.runInContext(fs.readFileSync(__dirname+'/../product-pricing.js','utf8'),conte
  vm.runInContext(fs.readFileSync(__dirname+'/../app.js','utf8'),context);const run=s=>vm.runInContext(s,context);
 (async()=>{await new Promise(setImmediate);
 rows=[{id:1,brand:'Gucci',name:'Обувь',size:'40; 41',price:100,original_price:125,currency:'EUR',fulfillment_status:'on_order'},{id:2,brand:'Chanel',name:'Сумка',size:'',price:200,currency:'EUR',fulfillment_status:'on_order'}];context.fixture=rows;run('products=fixture;openProduct(1);addToCart()');assert.equal(run('cart.length'),0);
-run("selectedSize='40';addToCart();addToCart();selectedSize='41';addToCart();openProduct(2);addToCart()");assert.equal(run('cart.length'),3);assert.equal(run('cartCount()'),3);assert.match(get('cartContent').innerHTML,/−20%/);assert.match(get('cartContent').innerHTML,/price-original/);assert.equal(run('readCart().length'),3);assert.deepEqual(JSON.parse(run('JSON.stringify(cartTotals().totals)')),[{currency:'EUR',price:400}]);
+run("selectedSize='40';addToCart();addToCart();selectedSize='41';addToCart();openProduct(2);addToCart()");assert.equal(run('cart.length'),3);assert.equal(run('cartCount()'),3);assert.doesNotMatch(get('cartContent').innerHTML,/discount-badge/);assert.match(get('cartContent').innerHTML,/price-original/);assert.equal(run('readCart().length'),3);assert.deepEqual(JSON.parse(run('JSON.stringify(cartTotals().totals)')),[{currency:'EUR',price:400}]);
 await run('checkoutCart()');assert.equal(links.length,1);
 assert.equal(new URL(links[0]).searchParams.get('text'),'Привет! Хочу заказать:\n\nhttps://t.me/JuliProzBot/shop?startapp=p_1\nhttps://t.me/JuliProzBot/shop?startapp=p_2');
 await run('checkoutCart()');assert.equal(links.length,1);assert.match(get('cartStatus').textContent,/Подождите/);
@@ -76,7 +76,7 @@ assert.equal(new URL(links.at(-1)).searchParams.get('text'),'Привет! Хо�
 assert.match(get('cartContent').innerHTML,/Цена по запросу/);assert.equal(run('cartTotals().unknown'),true);
 // Offline cart snapshots preserve the canonical percentage basis but charge whole euros.
 rows=[{id:903,brand:'Loro Piana',name:'Кепка',size:'L',price:400,original_price:571.43,currency:'EUR',available:true,fulfillment_status:'on_order'}];context.fixture=rows;run('cart=[];products=fixture;openProduct(903);addToCart();saveCart();products=[];cart=readCart();renderCart()');
-assert.match(get('cartContent').innerHTML,/−30%/);assert.equal(run('cart[0].product.price'),400);assert.equal(run('cart[0].product.original_price'),571);assert.equal(run('cartTotals().totals[0].price'),400);
+assert.doesNotMatch(get('cartContent').innerHTML,/discount-badge/);assert.equal(run('window.ProductPricing.discount(cart[0].product).percent'),30);assert.equal(run('cart[0].product.price'),400);assert.equal(run('cart[0].product.original_price'),571);assert.equal(run('cartTotals().totals[0].price'),400);
 // Static Sell and empty Cart must not access hidden catalogue card data.
 run("cart=[];products=[{id:999,get name(){throw Error('Hidden catalogue was rendered')}}];setTab('sell');setTab('services');setTab('cart');state.favorites.clear();setTab('favorites')");assert.equal(run('state.tab'),'favorites');
 console.log('PASS cart: sizes, quantities, euro totals, persistence, changed-price confirmation, unavailable sizes, network failures, wishlist independent of filters, corrupt storage');

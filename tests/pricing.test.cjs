@@ -45,3 +45,12 @@ test('rounded cart snapshots retain an explicit canonical percentage basis',()=>
  assert.equal(pricing.discount({price:625,original_price:1250,price_basis:{price:624.9,original_price:1249.8}}).percent,50);
  assert.equal(pricing.discount({price:400,original_price:570,price_basis:{price:350,original_price:538.46}}).percent,29,'Stale basis cannot override changed prices');
 });
+
+test('public markup can omit percentages without losing sale prices or discount math',()=>{
+ const p={price:625,original_price:1249.8,currency:'EUR'},format=p=>'€ '+p.price,escape=s=>s;
+ const html=pricing.markup(p,format,escape,{showPercentage:false});
+ assert.match(html,/price-original/);assert.match(html,/€ 1250/);assert.match(html,/€ 625/);
+ assert.doesNotMatch(html,/discount-badge|−49%/);
+ assert.equal(pricing.discount(p).percent,49);
+ assert.match(pricing.markup(p,format,escape),/discount-badge/,'Admin markup keeps its existing percentage information');
+});

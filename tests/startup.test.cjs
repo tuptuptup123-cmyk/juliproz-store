@@ -12,7 +12,7 @@ function setup(cache){
 const product={id:10,name:'Cached product',brand:'Brand',available:true,price:80,original_price:100,category:'Обувь'};
 test('warm catalogue paints before network and a fresh response removes hidden products',async()=>{
  const app=setup(JSON.stringify({savedAt:Date.now(),products:[product]}));
- assert.match(app.get('grid').innerHTML,/Cached product/);assert.match(app.get('grid').innerHTML,/−20%/);
+ assert.match(app.get('grid').innerHTML,/Cached product/);assert.match(app.get('grid').innerHTML,/card-sale-badge/);assert.match(app.get('grid').innerHTML,/price-original/);assert.doesNotMatch(app.get('grid').innerHTML,/discount-badge/);
  assert.equal(app.run('catalogLoading'),true);
  app.finish([]);await new Promise(setImmediate);
  assert.equal(app.run('products.length'),0);assert.doesNotMatch(app.get('grid').innerHTML,/Cached product/);

@@ -21,10 +21,10 @@
     const percent=centRoundedInteger?nearest:Math.floor(exact+1e-8);
     return {original,current,percent,label:percent>0?'−'+percent+'%':'Скидка'};
   }
-  function markup(p,format,escape){
+  function markup(p,format,escape,{showPercentage=true}={}){
     const sale=discount(p),current=escape(format({...p,price:amount(p.price,p.currency)}));
     if(!sale)return current;
-    return `<span class="sale-price"><span class="price-current">${current}</span><del class="price-original" aria-label="Цена до скидки">${escape(format({...p,price:sale.original}))}</del><span class="discount-badge">${sale.label}</span></span>`;
+    return `<span class="sale-price"><span class="price-current">${current}</span><del class="price-original" aria-label="Цена до скидки">${escape(format({...p,price:sale.original}))}</del>${showPercentage?`<span class="discount-badge">${sale.label}</span>`:''}</span>`;
   }
   function validate(original,current,currency='EUR'){
     if(original==null)return;
