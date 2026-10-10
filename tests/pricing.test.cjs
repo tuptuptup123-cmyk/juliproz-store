@@ -32,3 +32,16 @@ test('former price is marked semantically and all formatted prices are escaped',
  assert.match(rounded,/&lt;EUR:625&gt;/);assert.match(rounded,/&lt;EUR:900&gt;/);assert.match(rounded,/−30%/);
  assert.doesNotMatch(pricing.markup({price:99.99,original_price:100,currency:'EUR'},format,escape),/price-original|discount-badge/);
 });
+
+test('canonical prices preserve intended whole discounts within reference-price cent tolerance',()=>{
+ for(const [price,original,percent] of [[400,571.43,30],[350,538.46,35],[220,338.46,35],[300,461.54,35],[580.27,1160.54,50],[1071.26,2142.52,50],[624.9,1249.8,50]]){
+  const result=pricing.discount({price,original_price:original});assert.equal(result.percent,percent);assert.equal(result.current,Math.round(price));assert.equal(result.original,Math.round(original));
+ }
+ // No whole-percent inflation when a true fractional markdown is outside cent uncertainty.
+ for(const [price,original,percent] of [[624.9,899.7,30],[400,570,29],[350,538,34],[800,1100,27]])assert.equal(pricing.discount({price,original_price:original}).percent,percent);
+});
+test('rounded cart snapshots retain an explicit canonical percentage basis',()=>{
+ assert.equal(pricing.discount({price:350,original_price:538,price_basis:{price:350,original_price:538.46}}).percent,35);
+ assert.equal(pricing.discount({price:625,original_price:1250,price_basis:{price:624.9,original_price:1249.8}}).percent,50);
+ assert.equal(pricing.discount({price:400,original_price:570,price_basis:{price:350,original_price:538.46}}).percent,29,'Stale basis cannot override changed prices');
+});

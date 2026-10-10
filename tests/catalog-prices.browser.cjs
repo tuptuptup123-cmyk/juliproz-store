@@ -5,8 +5,8 @@ const types={'.html':'text/html','.js':'text/javascript','.css':'text/css','.web
 const server=http.createServer((req,res)=>{let file=path.join(root,new URL(req.url,'http://localhost').pathname);if(file===root+'/')file+='index.html';fs.readFile(file,(err,data)=>{res.writeHead(err?404:200,{'Content-Type':types[path.extname(file)]||'application/octet-stream'});res.end(err?'Missing':data)})});
 const base={available:true,currency:'EUR',category:'Одежда',gender:'men',fulfillment_status:'in_stock',product_condition:'new',size:'L',photos:[],image_url:null};
 const fixtures=[
- {...base,id:900001,brand:'Gucci',name:'Рубашка GG cotton poplin bowling',price:350,original_price:1380,product_condition:'pre_owned',wear_condition:'gently_used',on_commission:true,size:'50'},
- {...base,id:900002,brand:'Zilli',name:'Кофта',price:400,original_price:1300},
+ {...base,id:900001,brand:'Gucci',name:'Рубашка GG cotton poplin bowling',price:350,original_price:538.46,product_condition:'pre_owned',wear_condition:'gently_used',on_commission:true,size:'50'},
+ {...base,id:900002,brand:'Zilli',name:'Кофта',price:400,original_price:571.43},
  {...base,id:900003,brand:'Amiri',name:'Штаны Ball',price:624.9,original_price:892.72,size:'XL'},
  {...base,id:900004,brand:'Dior',name:'Кроссовки B27 Low Grey CD Diamond',price:700,original_price:990,size:'43'},
  {...base,id:900005,brand:'Hermès',name:'Сумка',price:12345.67,original_price:19876.54},
@@ -39,6 +39,8 @@ const fixtures=[
   assert.match(await page.locator('#catalogSort').getAttribute('aria-label'),/Дешевле/);
   await page.locator('#catalogSort').click();await page.locator('[data-sort="newest"]').click();
   assert.equal(await page.locator('.product h3 .card-sale-badge').count(),5);
+  assert.equal(await page.locator('[data-id="900001"] .discount-badge').innerText(),'−35%');
+  assert.equal(await page.locator('[data-id="900002"] .discount-badge').innerText(),'−30%');
   assert.equal(await page.locator('.card-name-row .card-sale-badge').count(),0);
   const saleColors=await page.locator('.card-sale-badge').evaluateAll(es=>es.map(e=>({background:getComputedStyle(e).backgroundColor,color:getComputedStyle(e).color})));
   assert.match(await page.locator('.card-sale-badge').first().evaluate(e=>getComputedStyle(e).boxShadow),/rgb\(120, 148, 182\)/,'SALE has a brand-blue outline');
