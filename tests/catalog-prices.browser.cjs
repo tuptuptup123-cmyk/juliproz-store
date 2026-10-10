@@ -64,12 +64,29 @@ const fixtures=[
    assert.equal(await page.locator('.bottom-nav [aria-current="page"]').getAttribute('data-tab'),target);
    const nav=await page.locator('.bottom-nav button').evaluateAll(es=>es.map(e=>({width:e.getBoundingClientRect().width,background:getComputedStyle(e).backgroundColor,iconWidth:e.querySelector('svg').getBoundingClientRect().width,outline:getComputedStyle(e.querySelector('svg')).outlineStyle})));
    assert.ok(nav.every(n=>n.background==='rgba(0, 0, 0, 0)'&&n.iconWidth===24&&n.outline==='none'),'Navigation has no tile fills or icon borders');
+   const floating=await page.locator('.bottom-nav').evaluate(e=>({height:e.getBoundingClientRect().height,left:e.getBoundingClientRect().left,right:e.getBoundingClientRect().right,bottom:e.getBoundingClientRect().bottom,radius:getComputedStyle(e).borderRadius,background:getComputedStyle(e).backgroundColor}));
+   assert.equal(floating.height,68);assert.equal(floating.radius,'24px');assert.equal(floating.background,'rgb(252, 250, 249)');
+   assert.ok(floating.left>=12&&floating.right<=width-12,'Floating panel keeps side insets');
+   const oval=await page.locator('.bottom-nav button.active').evaluate(e=>({width:getComputedStyle(e,'::before').width,height:getComputedStyle(e,'::before').height,background:getComputedStyle(e,'::before').backgroundColor}));
+   assert.deepEqual(oval,{width:'48px',height:'29px',background:'rgb(242, 220, 231)'});
    assert.ok(nav.every(n=>Math.abs(n.width-nav[0].width)<1),'Navigation columns are equal');
   }
   const services=await page.locator('.services-page .sell-intro p,.services-page .service-card p').evaluateAll(es=>es.map(e=>({align:getComputedStyle(e).textAlign,hyphens:getComputedStyle(e).hyphens})));
   assert.ok(services.length>=3&&services.every(s=>s.align==='left'&&s.hyphens==='none'),'Services copy is left-aligned without automatic hyphens');
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Services fit narrow screens');
   if(width===390||width===529)await page.screenshot({path:out+'/services-'+width+'.png',fullPage:true});
+  if(width===320||width===390){
+   await page.locator('[data-tab="catalog"]').click();
+   await page.evaluate(()=>document.documentElement.style.setProperty('--tg-safe-area-inset-bottom','34px'));
+   await page.evaluate(()=>scrollTo(0,document.documentElement.scrollHeight));
+   const safe=await page.evaluate(()=>({bottom:innerHeight-document.querySelector('.bottom-nav').getBoundingClientRect().bottom,navTop:document.querySelector('.bottom-nav').getBoundingClientRect().top,lastBottom:[...document.querySelectorAll('.product')].at(-1).getBoundingClientRect().bottom}));
+   assert.equal(safe.bottom,46);assert.ok(safe.lastBottom<=safe.navTop,'Last card can scroll clear of floating navigation');
+   await page.evaluate(()=>{document.documentElement.style.removeProperty('--tg-safe-area-inset-bottom');scrollTo(0,0)});
+   await page.setViewportSize({width,height:360});
+   await page.locator('#toggleSearch').click();await page.locator('#search').focus();
+   const keyboard=await page.evaluate(()=>({inputBottom:document.querySelector('#search').getBoundingClientRect().bottom,navTop:document.querySelector('.bottom-nav').getBoundingClientRect().top,overflow:document.documentElement.scrollWidth>innerWidth}));
+   assert.ok(!keyboard.overflow&&keyboard.inputBottom<=keyboard.navTop,'Search remains clear in reduced keyboard-height viewport');
+  }
   assert.deepEqual(errors,[]);await page.close();console.log(width+' PASS: aligned price stacks, full metadata, no overflow, wishlist and product back');
  }
 
