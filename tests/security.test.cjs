@@ -193,3 +193,16 @@ test('global logout requires confirmation and never claims other sessions revoke
  const calls=[],h=setup(async(path)=>{calls.push(path);return response(null,204)});h.seed(session());h.run('globalThis.confirm=()=>false');await h.get('logoutAll').onclick();assert.equal(calls.length,0);assert.ok(h.run('session'));h.run('globalThis.confirm=()=>true');await h.get('logoutAll').onclick();assert.ok(calls.some(p=>p.endsWith('scope=global')));assert.equal(h.run('session'),null);assert.match(h.get('status').textContent,/всех устройствах/);
  const failed=setup(async()=>{throw Error('offline')});failed.seed(session());failed.run('globalThis.confirm=()=>true');await failed.get('logoutAll').onclick();assert.match(failed.get('status').textContent,/не подтвердил выход на остальных/);
 });
+
+test('internal notes are separate from product payloads, use revisions and retain text on conflicts',async()=>{
+ let saved={product_id:42,note:'Private <script> text',revision:3},conflict=false;const calls=[];
+ const h=setup(async(path,o={})=>{calls.push({path,o});if(o.method==='PATCH'){if(conflict)return response([]);saved={...saved,...JSON.parse(o.body),revision:saved.revision+1};return response([saved])}return response([saved])});h.seed(session());
+ h.run("$('editor').elements.internal_note={value:'',disabled:false};$('editor').elements.on_commission={checked:true};resetInternalNote({id:42})");await h.run('internalNoteState.promise');assert.equal(h.run("$('editor').elements.internal_note.value"),saved.note);assert.equal(h.get('previewName').textContent,'');
+ h.run("$('editor').elements.internal_note.value='Owner and commission terms'");await h.run('saveInternalNote(42)');assert.match(calls.at(-1).path,/product_admin_notes.*revision=eq.3/);assert.equal(saved.revision,4);assert.equal(h.run('internalNoteState.saved'),saved.note);
+ conflict=true;h.run("$('editor').elements.internal_note.value='Keep my draft'");await assert.rejects(h.run('saveInternalNote(42)'),/другом устройстве/);assert.equal(h.run("$('editor').elements.internal_note.value"),'Keep my draft');assert.ok(calls.every(c=>!c.path.includes('/rest/v1/products?')));
+ h.run('endSession()');assert.equal(h.run('internalNoteState'),null);assert.equal(h.run("$('editor').elements.internal_note.value"),'');
+});
+test('note load failure cannot be treated as an empty note, and unavailable DataTransfer preserves pending files',async()=>{
+ const h=setup(async()=>response({message:'offline'},503));h.seed(session());h.run("$('editor').elements.internal_note={value:'',disabled:false};$('editor').elements.on_commission={checked:true};resetInternalNote({id:42})");await h.run('internalNoteState.promise');assert.ok(h.run('internalNoteState.error'));await assert.rejects(h.run('saveInternalNote(42)'),/не загружена/);
+ h.run("pendingPreviews=[{file:{name:'first.png'}},{file:{name:'second.png'}}];DataTransfer=class{constructor(){throw Error('unsupported')}};syncPendingFiles()");assert.equal(h.run('selectedPhotoFiles().length'),2);assert.equal(h.run('selectedPhotoFiles()[0].name'),'first.png');
+});
