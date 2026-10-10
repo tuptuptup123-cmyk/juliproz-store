@@ -343,3 +343,18 @@ button:not(:disabled):active{transform:scale(.96)}
 .service-list{padding-left:17px;margin:0 0 20px;font-size:12px;line-height:1.8;color:var(--muted)}.service-list li+li{margin-top:5px}.sell-intro h1{margin-top:10px}
 
 .image-fallback{display:block;padding:8px;color:var(--muted);font-size:12px;line-height:1.4;text-align:center;overflow-wrap:anywhere}
+
+/* Soft storefront surfaces and a masthead continuous with the page. */
+.brand,.menu-header{background:var(--bg);color:var(--ink)}
+.brand .logo,.menu-logo{color:var(--brand-pink)}
+.masthead-controls .catalog-menu-button,.masthead-controls .search-toggle,.menu-header .menu-close{color:var(--ink);border-color:var(--brand-pink)}
+.masthead-controls .menu-icon{color:var(--ink)}
+.heart,.heart.is-favorite,.detail-wishlist,.detail-wishlist[aria-pressed=true]{color:var(--brand-blue);border:1px solid var(--brand-pink);background:var(--bg)}
+.bottom-nav [data-tab=favorites]{color:var(--brand-blue)}
+.bottom-nav [data-tab=favorites] svg{border:1px solid var(--brand-pink);border-radius:10px;box-sizing:content-box;padding:3px}
+.product .photo,.related-photo,.sell-intro,.sell-method{border-radius:18px}
+.primary,.secondary,.service-contact,.sell-offer,.sourcing-link{border-radius:13px}
+.services-page .sell-intro{border:1px solid transparent}
+.services-page .sell-intro h1,.services-page .service-card h2{text-align:left}
+.services-page .sell-intro p,.services-page .service-card p{font-size:14px;line-height:1.75;max-width:none;text-align:justify;text-align-last:left;hyphens:auto;overflow-wrap:break-word}
+.services-page .service-list{font-size:14px;line-height:1.75}
