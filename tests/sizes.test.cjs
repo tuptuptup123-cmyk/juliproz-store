@@ -18,6 +18,8 @@ assert.equal(run("menuSizeLabel('5')"),'Мячи: 5');
 assert.equal(run("menuSizeLabel('XL')"),'Головные уборы: XL');
 run("state.category='Зип-худи'");assert.equal(JSON.stringify(run("valuesFor('size')")),JSON.stringify(['Все','L','XL','XXL']));
 run('state.category=null;state.gender=null');
+run("products=[{id:51,product_condition:'pre_owned',on_commission:true,photos:[]},{id:52,product_condition:'pre_owned',on_commission:false,photos:[]}];state.product_condition='commission'");assert.equal(run('filtered().length'),1);assert.equal(run('filtered()[0].id'),51);assert.match(run('conditionBadge(products[0])'),/PRE-OWNED/);assert.match(run('conditionBadge(products[0])'),/Комиссия/);run("state.product_condition='pre_owned'");assert.equal(run('filtered().length'),2);run('state.product_condition=null');
+
 (async()=>{
  await new Promise(r=>setImmediate(r));
  run(`products=[{id:1,brand:'Gucci',name:'Rhyton',category:'Обувь',size:'40; 41; 44.5',description:'<script>test</script>',photos:[]},{id:2,size:'38',photos:[]}];openProduct(1)`);
