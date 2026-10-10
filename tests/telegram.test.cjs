@@ -27,14 +27,15 @@ function invoke(body, options = {}) {
   return result;
 }
 
-test('start creates a private greeting with a real Mini App button and manager link', () => {
+test('start creates a private greeting with a three menu sections and a real Mini App button', () => {
   const result = invoke(update('/start'));
   assert.equal(result.status, 200);
   assert.equal(result.body.method, 'sendMessage');
   assert.equal(result.body.chat_id, 42);
   assert.equal(result.body.text, WELCOME);
   assert.equal(result.body.reply_markup.inline_keyboard[0][0].web_app.url, 'https://juliproz-store.vercel.app/');
-  assert.equal(result.body.reply_markup.inline_keyboard[1][0].url, 'https://t.me/juliproz');
+  assert.deepEqual(result.body.reply_markup.inline_keyboard.map(r => r[0].text), ['Магазин', 'Выкуп и комиссия', 'О нас']);
+  assert.equal(result.body.reply_markup.inline_keyboard[1][0].callback_data, 'jp:sell');
   assert.equal(result.headers['Cache-Control'], 'no-store');
   assert.equal(JSON.stringify(result).includes(TOKEN), false);
   assert.equal(invoke(update('/start@JuliProzBot campaign')).body.text, WELCOME);
@@ -140,7 +141,7 @@ test('registration checks identity, preserves pending updates and verifies the w
   const logs = [];
   assert.deepEqual(await configureTelegram(ENV, mock.request, line => logs.push(line)), { configured: true });
   assert.deepEqual(mock.calls.map(x => x.method), ['getMe', 'getWebhookInfo', 'setWebhook', 'getWebhookInfo']);
-  assert.deepEqual(mock.calls[2].body, { url: WEBHOOK_URL, secret_token: webhookSecret(TOKEN), allowed_updates: ['message'], max_connections: 10, drop_pending_updates: false });
+  assert.deepEqual(mock.calls[2].body, { url: WEBHOOK_URL, secret_token: webhookSecret(TOKEN), allowed_updates: ['message', 'callback_query'], max_connections: 10, drop_pending_updates: false });
   assert.equal(mock.calls[2].options.redirect, 'error');
   assert.equal(logs.join('\n').includes(TOKEN), false);
   assert.equal(logs.join('\n').includes(webhookSecret(TOKEN)), false);
@@ -163,4 +164,24 @@ test('setup errors cannot expose tokens and inert builds never call Telegram', a
     assert.deepEqual(await configureTelegram(env, async () => { called = true; }, () => {}), { configured: false });
   }
   assert.equal(called, false);
+});
+
+const callback = data => ({ update_id: 101, callback_query: { id: 'synthetic-callback', from: { id: 42, is_bot: false }, message: { message_id: 8, chat: { id: 42, type: 'private' } }, data } });
+test('info and sales navigation edits the same message and acknowledges taps', async () => {
+  const calls = [];
+  const handler = createHandler(ENV, undefined, async (url, options) => { calls.push(JSON.parse(options.body)); return { ok: true }; });
+  for (const [index, name] of ['about', 'sell', 'buyout', 'commission', 'menu'].entries()) {
+    const req = { method: 'POST', headers: { 'content-type': 'application/json', 'x-telegram-bot-api-secret-token': webhookSecret(TOKEN) }, body: { ...callback('jp:' + name), update_id: 101 + index } };
+    let reply; const res = { setHeader() {}, status(code) { assert.equal(code, 200); return this; }, json(body) { reply = body; } };
+    await handler(req, res);
+    assert.equal(reply.method, 'editMessageText'); assert.equal(reply.chat_id, 42); assert.equal(reply.message_id, 8);
+    if (name === 'commission') assert.match(reply.text, /через JULI.PROZ бот/);
+    if (name === 'menu') assert.deepEqual(reply.reply_markup.inline_keyboard.map(r => r[0].text), ['Магазин', 'Выкуп и комиссия', 'О нас']);
+  }
+  assert.equal(calls.length, 5);
+  const bad = callback('jp:sell'); bad.callback_query.from.id = 43;
+  assert.deepEqual(invoke(bad).body, { ok: true });
+  assert.deepEqual(invoke(callback('jp:unknown')).body, { ok: true });
+  assert.match(invoke(update('/about')).body.text, /персональный байер/);
+  assert.match(invoke(update('/sell')).body.text, /Выкуп и комиссия/);
 });
