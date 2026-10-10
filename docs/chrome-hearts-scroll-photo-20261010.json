@@ -1,0 +1,17 @@
+{
+  "product_id": 109,
+  "product_name": "Chrome Hearts Scroll Logo USA",
+  "source_page": "https://commonhype.com/products/chrome-hearts-shoulder-usa-script-logo-pocket-t-shirt-white",
+  "source_image": "https://cdn.shopify.com/s/files/1/0366/7253/6715/files/chromeusawhite_0000_Layer41.jpg?v=1788813287",
+  "match": "White pocket tee without sleeve lettering; front scroll logo and reverse CHROME HEARTS / U.S.A. floral crosses and hem scroll verified against original product photos.",
+  "processing": "User-approved deterministic exterior white-background alpha mask; all original RGB retained before uniform resize and WebP encoding. No generative output used.",
+  "cover": "https://juliproz-store.vercel.app/images/chrome-hearts-scroll-usa-white-109.webp",
+  "previous_cover": "https://juliproz-store.vercel.app/images/covers-20261010/109.webp",
+  "original_photos_preserved": [
+    "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/4c79e289-84e2-41dd-bbb8-4b216c1f33cd.webp",
+    "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/02cb766b-24b6-4711-8290-5138499156de.webp"
+  ],
+  "duplicate_processed_front_removed": true,
+  "sha256": "f270ef3b6ab02326093e441c9d63cdcf35736ad0f0ab0565aec42d37e4fab63c",
+  "bytes": 39790
+}
