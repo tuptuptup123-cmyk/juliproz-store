@@ -12,7 +12,7 @@ const fixtures=[
  {...base,id:900005,brand:'Hermès',name:'Сумка',price:12345.67,original_price:19876.54},
  {...base,id:900006,brand:'Prada',name:'Жакет с очень длинным названием без скрытой информации',price:800,original_price:null,reserved:true},
  {...base,id:900007,brand:'Chanel',name:'Сумка',price:null,original_price:null},
- {...base,id:900008,brand:'Loro Piana',name:'Шарф',price:300,original_price:null}
+ {...base,id:900008,brand:'Loro Piana',name:'Шарф',price:300,original_price:null,fulfillment_status:'on_order'}
 ];
 (async()=>{
  await new Promise(r=>server.listen(0,'127.0.0.1',r));
@@ -25,13 +25,18 @@ const fixtures=[
   await page.locator('.product').nth(7).waitFor();await page.evaluate(()=>document.fonts.ready);
   assert.equal(await page.locator('.product h3 .card-sale-badge').count(),5);
   assert.equal(await page.locator('.card-name-row .card-sale-badge').count(),0);
+  assert.equal(await page.locator('.product .catalog-status').filter({hasText:'В наличии'}).count(),0);
+  assert.equal(await page.locator('.product .catalog-status.is-reserved').count(),1);
+  assert.equal(await page.locator('.product .catalog-status.on-order').innerText(),'Под заказ');
+  const saleOrder=await page.locator('.sale-price').evaluateAll(es=>es.map(e=>e.querySelector('.price-original').getBoundingClientRect().bottom<=e.querySelector('.price-current').getBoundingClientRect().y));
+  assert.ok(saleOrder.every(Boolean),'Small former price precedes large current price');
   const brandBadges=await page.locator('.product h3:has(.card-sale-badge)').evaluateAll(es=>es.map(e=>({brand:e.querySelector('button').getBoundingClientRect().right,badge:e.querySelector('.card-sale-badge').getBoundingClientRect().x})));
   assert.ok(brandBadges.every(b=>Math.abs(b.badge-b.brand-6)<1),'SALE sits directly after the brand');
   assert.match(await page.locator('[data-id="900001"] .card-meta').innerText(),/Небольшие следы носки/);
   assert.match(await page.locator('[data-id="900001"] .card-meta').innerText(),/Комиссия/);
   const cards=await page.locator('.product').evaluateAll(els=>els.map(el=>{
    const rect=x=>{const b=x.getBoundingClientRect();return {x:b.x,y:b.y,right:b.right,bottom:b.bottom}};
-   return {photo:rect(el.querySelector('.photo')),price:rect(el.querySelector('.price')),size:rect(el.querySelector('.card-size')),card:rect(el),parts:[...el.querySelectorAll('.sale-price>*')].map(rect)};
+   return {photo:rect(el.querySelector('.photo')),price:rect(el.querySelector('.price')),size:rect(el.querySelector('.card-size')),card:rect(el),parts:[...el.querySelectorAll('.sale-price>*')].map(rect).sort((a,b)=>a.y-b.y)};
   }));
   for(const card of cards){
    assert.ok(card.price.right<=card.card.right+1,'Price fits card');
