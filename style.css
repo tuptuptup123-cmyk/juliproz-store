@@ -364,3 +364,22 @@ button:not(:disabled):active{transform:scale(.96)}
 
 /* Catalogue badges share the same left and right edges. */
 .product > .condition-badge + .condition-badge{margin-left:0}
+
+
+/* A single, left-aligned price column. Row-sized tracks keep neighbouring
+   cards aligned without clipping long names or hiding condition details. */
+.product{min-width:0}
+.product .card-name-row{display:block;min-height:3em}
+.product .card-name-row p{margin:0}
+.product .card-meta{min-width:0;flex:1}
+.product .card-meta .condition-badge{max-width:100%;overflow-wrap:anywhere}
+.product .card-meta .condition-badge+.condition-badge{margin-left:0}
+.product .price{margin:0;padding-top:8px;min-height:82px;line-height:1.35;overflow-wrap:anywhere}
+.product .sale-price{display:flex;flex-direction:column;align-items:flex-start;gap:4px}
+.product .discount-badge{align-self:flex-start}
+.product .card-footer{min-width:0}
+@supports(grid-template-rows:subgrid){
+  .product{display:grid;grid-row:span 6;grid-template-rows:subgrid;row-gap:0}
+  .product .price{min-height:0;padding-bottom:0;align-self:start}
+  .product .card-footer{padding-bottom:0}
+}
