@@ -48,7 +48,7 @@ function money(p){
   const amount=Number.isFinite(n)?new Intl.NumberFormat("ru-RU",{maximumFractionDigits:2}).format(n):p.price;
   return symbols[cur]?`${symbols[cur]} ${amount}`:`${amount}${cur?` ${cur}`:""}`;
 }
-function priceMarkup(p){return window.ProductPricing.markup(p,money,esc)}
+function priceMarkup(p){return window.ProductPricing.markup(p,money,esc)||'Цена по запросу'}
 function imageOf(p){return photosOf(p)[0]||""}
 function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
 function matchesAvailability(p){return !state.fulfillment_status||(state.fulfillment_status==='on_order'?onOrder(p):!onOrder(p)&&!p.reserved&&ProductSizes.stockUnits(p)>0)}

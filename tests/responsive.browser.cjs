@@ -56,7 +56,7 @@ const server=http.createServer((req,res)=>{let file=path.join(root,decodeURIComp
   await page.locator('[data-tab="favorites"]').click();assert.equal(await page.locator('.product').count(),1);await page.screenshot({path:out+'/'+name+'-wishlist.png',fullPage:true});
   fresh={...fresh,fulfillment_status:'in_stock'};await page.reload({waitUntil:'domcontentloaded'});await page.locator('[data-id="900001"]').click();await page.locator('[data-size="40"]').click();await page.locator('.cart-add').click();await page.locator('.cart-add').click();assert.match(await page.locator('#shareStatus').innerText(),/уже в корзине/);assert.equal(await page.locator('#cartBadge').innerText(),'2');await page.locator('#backProduct').click();await page.locator('[data-tab="cart"]').click();assert.equal(await page.locator('[data-cart-action="plus"]:enabled').count(),0);
   await page.route('**/rest/v1/rpc/store_product_wishlist_counts',r=>r.fulfill({json:{days:30,counts:{}}}));
-  await page.route('**/rest/v1/rpc/store_analytics_summary',r=>r.fulfill({json:{active:0,visitors:0}}));
+  await page.route('**/rest/v1/rpc/store_analytics_health',r=>r.fulfill({json:false}));await page.route('**/rest/v1/rpc/store_analytics_summary',r=>r.fulfill({json:{active:0,visitors:0}}));
   await page.goto('http://127.0.0.1:8765/admin.html',{waitUntil:'domcontentloaded'});await page.screenshot({path:out+'/'+name+'-admin-login.png',fullPage:true});await assertFits();
   // Render and exercise the real editor with a synthetic session/API response.
   let inventory=[{...live.find(p=>p.id===60),id:900002,size:'40; 41; 44.5',fulfillment_status:'on_order',gender:'men',revision:1}];

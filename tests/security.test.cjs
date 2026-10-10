@@ -188,3 +188,8 @@ test('stock overview counts explicit units and multiplies unit prices',()=>{
  const h=setup(async()=>response([]));
  h.run("ProductSizes={stockUnits:p=>Object.values(p.stock_quantities||{'':1}).reduce((a,b)=>a+b,0)};items=[{available:true,size:'One Size',price:100,currency:'EUR',stock_quantities:{'One Size':5}},{available:true,size:'S; M',price:200,currency:'USD',stock_quantities:{S:2,M:0}}]");const s=h.run('stockSummary(items,{USD:2})');assert.equal(s.count,7);assert.equal(s.total,700);
 });
+
+test('global logout requires confirmation and never claims other sessions revoked after failure',async()=>{
+ const calls=[],h=setup(async(path)=>{calls.push(path);return response(null,204)});h.seed(session());h.run('globalThis.confirm=()=>false');await h.get('logoutAll').onclick();assert.equal(calls.length,0);assert.ok(h.run('session'));h.run('globalThis.confirm=()=>true');await h.get('logoutAll').onclick();assert.ok(calls.some(p=>p.endsWith('scope=global')));assert.equal(h.run('session'),null);assert.match(h.get('status').textContent,/всех устройствах/);
+ const failed=setup(async()=>{throw Error('offline')});failed.seed(session());failed.run('globalThis.confirm=()=>true');await failed.get('logoutAll').onclick();assert.match(failed.get('status').textContent,/не подтвердил выход на остальных/);
+});
