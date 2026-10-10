@@ -22,4 +22,20 @@ assert.equal(await page.locator('#future-cover').evaluate(e=>getComputedStyle(e)
 assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
 await page.screenshot({path:out+'/cover-scale-368-'+width+'.png'});await page.close();console.log(width+' shadow preview and opt-in isolation PASS');
 }
+
+const covers=require('./light-cover-fixtures.json');
+assert.equal(covers.length,15);assert.ok(!covers.some(c=>c.id===420));
+for(const width of [320,390,529]){
+ const page=await browser.newPage({viewport:{width,height:1300},reducedMotion:'reduce'});
+ await page.route('https://juliproz-store.vercel.app/images/**',r=>{const f=path.join(root,new URL(r.request().url()).pathname);return r.fulfill({body:fs.readFileSync(f),contentType:'image/webp'})});
+ await page.goto(origin+'/style.css');
+ const examples=covers.filter(c=>[41,363,421].includes(c.id));
+ await page.setContent(`<link rel="stylesheet" href="${origin}/style.css"><style>body{padding:16px;background:white}h1{font:400 18px Arial;margin:0 0 18px}main{display:grid;grid-template-columns:1fr 1fr;gap:18px 12px}.product{display:block}.before{filter:drop-shadow(0 3px 5px #25394f30)!important}.label{font:400 12px Arial;margin-top:8px}</style><h1>Белые вещи · тень по контуру</h1><main>${examples.map(c=>['before','after'].map(kind=>`<article class="product"><div class="photo"><img class="${kind}" src="${c.url}"></div><div class="label">#${c.id} · ${kind==='before'?'До':'После'}</div></article>`).join('')).join('')}</main><div class="photo" style="display:none">${covers.map(c=>`<img data-audited="${c.id}" src="${c.url}">`).join('')}<img id="replacement" src="${origin}/images/future-white-cover.webp"></div>`);
+ await page.locator('main img').evaluateAll(es=>Promise.all(es.map(e=>e.decode())));
+ const filters=await page.locator('[data-audited]').evaluateAll(es=>es.map(e=>getComputedStyle(e).filter));
+ assert.ok(filters.every(f=>(f.match(/drop-shadow/g)||[]).length===2),'All exact audited covers opt in');
+ assert.equal((await page.locator('#replacement').evaluate(e=>getComputedStyle(e).filter)).match(/drop-shadow/g).length,1,'Replacement covers do not inherit the opt-in');
+ assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+ await page.screenshot({path:out+'/light-cover-rollout-'+width+'.png',fullPage:true});await page.close();console.log(width+' PASS: 15 exact-source shadow opt-ins and replacement isolation');
+}
 }finally{await browser.close();server.close()}})().catch(e=>{console.error(e);server.close();process.exitCode=1});

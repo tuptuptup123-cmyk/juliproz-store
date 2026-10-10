@@ -95,6 +95,12 @@ const fixtures=[
     if(width<=600){const bounds=await page.locator('.brand-lockup,.brand-signature,.brand-paw').evaluateAll(es=>es.map(e=>e.getBoundingClientRect().toJSON()));const left=Math.min(...bounds.map(b=>b.left)),right=Math.max(...bounds.map(b=>b.right));assert.ok(Math.abs((left+right)/2-width/2)<16,'Complete logo grouping is visually centered');assert.ok(left>=0&&right<=width,'Header fits phone width');}
    }
    if(width<=600){const b=await page.locator('.brand-lockup,.brand-signature,.brand-paw').evaluateAll(es=>es.map(e=>e.getBoundingClientRect().toJSON()));assert.ok(Math.abs((Math.min(...b.map(x=>x.left))+Math.max(...b.map(x=>x.right)))/2-width/2)<16,'Every public tab keeps the complete logo centered');}
+   if((target==='sell'||target==='services')&&width<=600){const gap=await page.evaluate(()=>document.querySelector('.sell-page:not(.hidden) h1').getBoundingClientRect().top-document.querySelector('.brand-lockup').getBoundingClientRect().bottom);assert.ok(gap>=32&&gap<=96,'Information intro keeps a compact, readable logo gap');}
+   if(target==='sell'){
+    assert.ok((await page.locator('#sellPage .sell-checklist li').evaluateAll(es=>es.map(e=>getComputedStyle(e).textAlign))).every(a=>a==='center'));
+    if(width<=600){const gap=await page.evaluate(()=>document.querySelector('#sellTitle').getBoundingClientRect().top-document.querySelector('.brand-lockup').getBoundingClientRect().bottom);assert.ok(gap>=32&&gap<=96,'Sell intro keeps a compact, readable logo gap');}
+    if(width===390||width===529)await page.screenshot({path:out+'/services-sell-'+width+'.png',fullPage:true});
+   }
    const nav=await page.locator('.bottom-nav button').evaluateAll(es=>es.map(e=>({width:e.getBoundingClientRect().width,background:getComputedStyle(e).backgroundColor,iconWidth:e.querySelector('svg').getBoundingClientRect().width,outline:getComputedStyle(e.querySelector('svg')).outlineStyle})));
    assert.ok(nav.every(n=>n.background==='rgba(0, 0, 0, 0)'&&n.iconWidth===24&&n.outline==='none'),'Navigation has no tile fills or icon borders');
    const floating=await page.locator('.bottom-nav').evaluate(e=>({height:e.getBoundingClientRect().height,left:e.getBoundingClientRect().left,right:e.getBoundingClientRect().right,bottom:e.getBoundingClientRect().bottom,radius:getComputedStyle(e).borderRadius,background:getComputedStyle(e).backgroundColor}));
