@@ -50,5 +50,7 @@ run("state.sort='newest'");assert.deepEqual(JSON.parse(run('JSON.stringify(filte
 run("state.sort='discount'");assert.deepEqual(JSON.parse(run('JSON.stringify(filtered().map(p=>p.id))')),[4,2,1,3]);assert.deepEqual(JSON.parse(run('JSON.stringify(products.map(p=>p.id))')),[1,2,3,4]);get('reset').onclick();assert.equal(run('state.sort'),'newest');
 // Network failure keeps the previous sort.
 fail=true;await run("changeCatalogSort('price_asc')");assert.equal(run('state.sort'),'newest');assert.match(get('sortStatus').textContent,/Не удалось/);fail=false;
+// Static Sell and empty Cart must not access hidden catalogue card data.
+run("cart=[];products=[{id:999,get name(){throw Error('Hidden catalogue was rendered')}}];setTab('sell');setTab('cart');state.favorites.clear();setTab('favorites')");assert.equal(run('state.tab'),'favorites');
 console.log('PASS cart: sizes, quantities, separate currencies, persistence, changed-price confirmation, unavailable sizes, network failures, wishlist independent of filters, corrupt storage');
 })().catch(e=>{console.error(e);process.exitCode=1});
