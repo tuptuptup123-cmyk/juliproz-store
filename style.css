@@ -324,3 +324,7 @@ button:not(:disabled):active{transform:scale(.96)}
 .card-name-row{display:flex;align-items:center;justify-content:space-between;gap:8px}.card-name-row p{min-width:0;margin:0;flex:1}.card-sale-badge{flex-shrink:0;align-self:center}
 
 .sale-category{width:100%;min-height:74px;margin:20px 0 0;padding:16px 18px;justify-content:space-between;text-align:left;border-radius:4px}.sale-category .sale-category-title{font-size:16px;font-weight:600;letter-spacing:.06em}.sale-category-title small{display:block;font-size:11px;font-weight:400;letter-spacing:0;margin-top:5px}.sale-category .sale-category-arrow{font-size:22px}.sale-category[aria-pressed=true]{background:#843e5b;color:#fff}
+
+.catalog-head{flex-wrap:wrap;gap:10px}.catalog-sort{margin-left:auto;min-width:0;max-width:100%}.catalog-sort select{max-width:100%;background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:4px;padding:9px 28px 9px 10px;font:inherit;font-size:11px;cursor:pointer}.sort-status{flex-basis:100%;margin:0;color:var(--muted);font-size:11px}.sort-status:empty{display:none}@media(max-width:380px){.catalog-head>#count{flex-basis:100%}.catalog-sort{margin-left:0}}
+
+.catalog-sort .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
