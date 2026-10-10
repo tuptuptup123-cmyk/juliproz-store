@@ -187,6 +187,20 @@ test('info and sales navigation edits the same message and acknowledges taps', a
 });
 
 
+test('callback retries and excess taps are suppressed before outbound Telegram calls', async () => {
+  let time=0,calls=0;
+  const handler=createHandler(ENV,undefined,async()=>{calls++;return {ok:true}},createReplyGuard(()=>time,2));
+  const tap=async id=>{let result;await handler({method:'POST',headers:{'content-type':'application/json','x-telegram-bot-api-secret-token':webhookSecret(TOKEN)},body:{...callback('jp:services'),update_id:id}},{setHeader(){},status(code){assert.equal(code,200);return this},json(value){result=value}});return result};
+  assert.equal((await tap(1)).method,'editMessageText');
+  assert.deepEqual(await tap(1),{ok:true});
+  assert.equal((await tap(2)).method,'editMessageText');
+  assert.deepEqual(await tap(3),{ok:true});
+  assert.equal(calls,2);
+  time=60000;
+  assert.equal((await tap(4)).method,'editMessageText');
+  assert.equal(calls,3);
+});
+
 test('services routes describe authentication and atelier with safe contact drafts and back navigation', async () => {
   const reply=async body=>{let result;await createHandler(ENV,undefined,async()=>({ok:true}))({method:'POST',headers:{'content-type':'application/json','x-telegram-bot-api-secret-token':webhookSecret(TOKEN)},body},{setHeader(){},status(){return this},json(value){result=value}});return result};
   const menu=invoke(update('/start')).body.reply_markup.inline_keyboard;
