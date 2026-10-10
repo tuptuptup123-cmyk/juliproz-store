@@ -53,3 +53,9 @@ label{display:block;font-weight:500;font-size:12px}input:not([type=checkbox]),te
 .size-quantities{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;margin-top:10px}.field-label{font-size:12px;font-weight:500}.inventory-quantity{display:block;color:var(--muted);font-size:11px;margin-top:5px}
 
 .stock-number-finished{display:inline;white-space:normal}
+
+/* Current price stays primary; the former price and savings are secondary. */
+.sale-price{display:inline-flex;flex-wrap:wrap;align-items:baseline;gap:6px 9px;max-width:100%;vertical-align:middle}
+.price-current{font-weight:600}.price-original{font-size:.78em;font-weight:400;color:var(--muted,#68758a);text-decoration-thickness:1px}
+.discount-badge{align-self:center;display:inline-block;white-space:nowrap;border-radius:4px;background:#f0dce5;color:#843e5b;font-size:10px;font-weight:600;line-height:1.4;padding:3px 6px;letter-spacing:.02em}
+.detail-price .discount-badge{font-size:12px;padding:4px 8px}.cart-item-info .sale-price{margin-top:0}.related-card .sale-price{margin:0}
