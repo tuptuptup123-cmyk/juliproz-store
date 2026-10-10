@@ -109,6 +109,7 @@ function emptyCollection(kind){
 function render(){
   const inCart=state.tab==="cart",inSell=state.tab==="sell",inServices=state.tab==="services";
   document.querySelector(".brand")?.classList.toggle("is-information-page",inSell||inServices);
+  document.querySelector(".brand")?.classList.toggle("is-catalog-page",state.tab==="catalog");
   document.getElementById("servicesPage").classList.toggle("hidden",!inServices);
   document.getElementById("sellPage").classList.toggle("hidden",!inSell);
   document.getElementById("cartPage").classList.toggle("hidden",!inCart);
