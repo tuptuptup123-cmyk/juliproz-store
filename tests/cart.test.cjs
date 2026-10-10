@@ -8,7 +8,7 @@ vm.runInContext(fs.readFileSync(__dirname+'/../product-pricing.js','utf8'),conte
 rows=[{id:1,brand:'Gucci',name:'Обувь',size:'40; 41',price:100,original_price:125,currency:'EUR',fulfillment_status:'on_order'},{id:2,brand:'Chanel',name:'Сумка',size:'',price:200,currency:'EUR',fulfillment_status:'on_order'}];context.fixture=rows;run('products=fixture;openProduct(1);addToCart()');assert.equal(run('cart.length'),0);
 run("selectedSize='40';addToCart();addToCart();selectedSize='41';addToCart();openProduct(2);addToCart()");assert.equal(run('cart.length'),3);assert.equal(run('cartCount()'),3);assert.match(get('cartContent').innerHTML,/−20%/);assert.match(get('cartContent').innerHTML,/price-original/);assert.equal(run('readCart().length'),3);assert.deepEqual(JSON.parse(run('JSON.stringify(cartTotals().totals)')),[{currency:'EUR',price:400}]);
 await run('checkoutCart()');assert.equal(links.length,1);
-assert.equal(new URL(links[0]).searchParams.get('text'),'https://t.me/JuliProzBot/shop?startapp=p_1\nhttps://t.me/JuliProzBot/shop?startapp=p_2');
+assert.equal(new URL(links[0]).searchParams.get('text'),'Привет! Хочу заказать:\n\nhttps://t.me/JuliProzBot/shop?startapp=p_1\nhttps://t.me/JuliProzBot/shop?startapp=p_2');
 await run('checkoutCart()');assert.equal(links.length,1);assert.match(get('cartStatus').textContent,/Подождите/);
 rows[0]={...rows[0],price:120};await run('checkoutCart()');assert.equal(links.length,1);assert.match(get('cartStatus').textContent,/изменились/);assert.equal(run('cartTotals().totals[0].price'),440);run('telegramOpenTimes.clear()');await run('checkoutCart()');assert.equal(links.length,2);
 rows[0]={...rows[0],size:'40'};await run('checkoutCart()');assert.equal(links.length,2);assert.match(get('cartStatus').textContent,/недоступны/);
@@ -62,17 +62,17 @@ run("state.tab='favorites';render();openProduct(801)");assert.match(get('grid').
 assert.equal(run('cart[0].product.price'),625);assert.equal(run('cart[0].product.original_price'),900);assert.equal(run('cartTotals().totals[0].price'),1622);assert.equal(run('cartTotals().unknown'),true);
 assert.equal(JSON.parse(saved.get('jpCart'))[0].product.price,625);assert.equal(run("money({price:624.5,currency:'EUR'})"),'€ 625');assert.equal(run("money({price:null,currency:'EUR'})"),'');assert.equal(run("money({price:-0.1,currency:'EUR'})"),'');
 const beforeRounded=links.length;await run('checkoutCart()');assert.equal(links.length,beforeRounded+1);
-const roundedDraft=new URL(links.at(-1)).searchParams.get('text');assert.equal(roundedDraft,[801,802,803,804].map(id=>'https://t.me/JuliProzBot/shop?startapp=p_'+id).join('\n'));
+const roundedDraft=new URL(links.at(-1)).searchParams.get('text');assert.equal(roundedDraft,'Привет! Хочу заказать:\n\n'+[801,802,803,804].map(id=>'https://t.me/JuliProzBot/shop?startapp=p_'+id).join('\n'));
 rows[0]={...rows[0],price:624.6};run('telegramOpenTimes.clear()');await run('checkoutCart()');assert.equal(links.length,beforeRounded+2);assert.doesNotMatch(get('cartStatus').textContent,/изменились/);
 rows[0]={...rows[0],price:625.6};await run('checkoutCart()');assert.equal(links.length,beforeRounded+2);assert.match(get('cartStatus').textContent,/изменились/);assert.equal(run('cartTotals().totals[0].price'),1624);assert.equal(run('cart[0].product.price'),626);
 saved.set('jpCart',JSON.stringify([{id:801,size:'',quantity:2,product:{price:624.9,original_price:899.7,currency:'EUR'}}]));run('products=[];cart=readCart()');assert.equal(run('cart[0].product.price'),625);assert.equal(run('cart[0].product.original_price'),900);assert.equal(run('cartTotals().totals[0].price'),1250);
-// Manager messages contain only canonical links, without product details or prices.
+// Manager messages greet the seller, then list canonical links without product details or prices.
 rows=[{id:901,brand:'Bottega Veneta',name:'Bottega Veneta Куртка Oversized Zip Twill, молочная',size:'XL',price:624.9,currency:'EUR',available:true,fulfillment_status:'on_order'}];context.fixture=rows;run('cart=[];products=fixture;openProduct(901);addToCart()');const beforeSingle=links.length;await run('checkoutCart()');assert.equal(links.length,beforeSingle+1);
-assert.equal(new URL(links.at(-1)).searchParams.get('text'),'https://t.me/JuliProzBot/shop?startapp=p_901');
+assert.equal(new URL(links.at(-1)).searchParams.get('text'),'Привет! Хочу заказать:\n\nhttps://t.me/JuliProzBot/shop?startapp=p_901');
 assert.match(get('cartContent').innerHTML,/€ 625/);assert.equal(run('cartTotals().totals[0].price'),625);
 // Price-on-request products also produce only their canonical link.
 rows=[{id:902,brand:'CHANEL',name:'CHANEL Сумка Classic',size:'',price:null,currency:'EUR',available:true,fulfillment_status:'in_stock'}];context.fixture=rows;run('cart=[];products=fixture;openProduct(902);addToCart()');await run('checkoutCart()');assert.equal(links.length,beforeSingle+2);
-assert.equal(new URL(links.at(-1)).searchParams.get('text'),'https://t.me/JuliProzBot/shop?startapp=p_902');
+assert.equal(new URL(links.at(-1)).searchParams.get('text'),'Привет! Хочу заказать:\n\nhttps://t.me/JuliProzBot/shop?startapp=p_902');
 assert.match(get('cartContent').innerHTML,/Цена по запросу/);assert.equal(run('cartTotals().unknown'),true);
 // Static Sell and empty Cart must not access hidden catalogue card data.
 run("cart=[];products=[{id:999,get name(){throw Error('Hidden catalogue was rendered')}}];setTab('sell');setTab('services');setTab('cart');state.favorites.clear();setTab('favorites')");assert.equal(run('state.tab'),'favorites');
