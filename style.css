@@ -467,3 +467,6 @@ button,input,select{font-family:inherit}
 
 .catalog-status.is-reserved,.product-eyebrow span.is-reserved{background:#f3f3f3;color:#484848;border-color:#d8d8d8}
 .purchase-action:disabled{background:#e5e5e5;color:#666}
+
+/* Slight caption tracking follows the clean, light reference typography. */
+.product .card-name-row p,.product .card-size,.related-name,.related-size,.cart-name,.menu-choice,.catalog-menu-button,.sort-toggle,.audience-tabs button{letter-spacing:.015em}
