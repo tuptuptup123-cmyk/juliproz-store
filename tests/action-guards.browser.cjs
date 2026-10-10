@@ -23,6 +23,25 @@ for(const width of [390,1280]){
  await page.evaluate(()=>{for(let n=0;n<150;n++){const b=document.querySelector('[data-cart-action=remove]');if(b)b.click()}});assert.equal(await page.locator('.cart-item').count(),1);await page.waitForTimeout(370);await page.locator('[data-cart-action=remove]').click();assert.equal(await page.locator('.cart-empty').count(),1);
  delayLinked=250;await page.evaluate(()=>{openLinkedProduct(999);setTab('favorites')});await page.waitForTimeout(300);assert.equal(await page.locator('#productModal').isHidden(),true);assert.equal(await page.evaluate(()=>state.tab),'favorites');
  await page.locator('[data-tab=catalog]').click();await page.locator('[data-id="3"]').click();assert.equal(await page.locator('[data-action=add-cart]').isDisabled(),true);assert.equal(await page.evaluate(()=>cart.length),0);
+ // Live catalogue edits must also update an already-open gallery.
+ const cover='https://juliproz-store.vercel.app/images/covers-20261010/153.webp',legacy='https://juliproz-store.vercel.app/images/legacy-source.webp';
+ rows[0]={...rows[0],image_url:cover,photos:[cover,legacy]};
+ await page.evaluate(async()=>{await loadProducts(true);openProduct(1)});
+ await page.locator('[data-size="40"]').click();
+ assert.equal(await page.locator('.photo-picker button').count(),2);
+ const savedCart=await page.evaluate(()=>JSON.stringify(cart));
+ await page.evaluate(()=>{document.getElementById('productModal').scrollTop=100});
+ const scrollBefore=await page.locator('#productModal').evaluate(e=>e.scrollTop);
+ rows[0]={...rows[0],photos:[cover]};
+ await page.evaluate(()=>loadProducts(true));
+ assert.equal(await page.locator('.photo-picker').count(),0);
+ assert.equal(await page.locator('.hero img').getAttribute('src'),cover);
+ assert.equal(await page.evaluate(()=>selectedProduct.photos.length),1);
+ assert.equal(await page.evaluate(()=>selectedSize),'40');
+ assert.equal(await page.evaluate(()=>JSON.stringify(cart)),savedCart);
+ const scrollAfter=await page.locator('#productModal').evaluate(e=>({top:e.scrollTop,max:Math.max(0,e.scrollHeight-e.clientHeight)}));
+ assert.equal(scrollAfter.top,Math.min(scrollBefore,scrollAfter.max));
+ assert.equal(await page.locator('#productModal').isVisible(),true);
  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));assert.deepEqual(errors,[]);await page.screenshot({path:out+'/audit-'+width+'.png'});await page.close();console.log(width+' PASS 150-click buy/wishlist/manager/checkout/quantity/delete, price-safe cart edits, stale navigation, reserved One Size, ordered sizes');
 }
 await browser.close();server.close()})().catch(e=>{console.error(e);server.close();process.exit(1)});
