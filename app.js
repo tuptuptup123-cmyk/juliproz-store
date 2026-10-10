@@ -127,11 +127,12 @@ function render(){
   document.querySelectorAll("[data-gender]").forEach(b=>b.setAttribute("aria-pressed",String((b.dataset.gender||null)===state.gender)));
   document.querySelectorAll("[data-filter]").forEach(b=>{const type=b.dataset.filter;b.textContent=(type==='fulfillment_status'?statusLabels[state[type]]:state[type])||{fulfillment_status:"Наличие",category:"Категория",brand:"Бренд",size:"Размер"}[type];b.classList.toggle("selected",!!state[type])});
   renderCart();
-  const inCart=state.tab==="cart";
+  const inCart=state.tab==="cart",inSell=state.tab==="sell";
+  document.getElementById("sellPage").classList.toggle("hidden",!inSell);
   document.getElementById("cartPage").classList.toggle("hidden",!inCart);
-  grid.classList.toggle("hidden",inCart);
+  grid.classList.toggle("hidden",inCart||inSell);
   document.querySelector(".catalog-toolbar")?.classList.toggle("hidden",state.tab!=="catalog");
-  document.querySelector(".catalog-head")?.classList.toggle("hidden",inCart);
+  document.querySelector(".catalog-head")?.classList.toggle("hidden",inCart||inSell);
   document.getElementById("filterSummary").classList.toggle("hidden",state.tab!=="catalog"||!document.getElementById("filterSummary").textContent);
   const list=filtered();
   count.textContent=state.tab==="favorites"?`Виш-лист · ${list.length}`:`В каталоге ${list.length} ${pluralRu(list.length,'товар','товара','товаров')}`;
@@ -316,7 +317,7 @@ function cartSnapshot(p){return Object.fromEntries(['id','brand','name','categor
 function saveCart(){cartRevision++;try{localStorage.setItem('jpCart',JSON.stringify(cart))}catch{document.getElementById('cartStatus').textContent='Корзина доступна в этом сеансе. Браузер не разрешил сохранить её.'}}
 function setTab(tab){
   setSortOpen(false);
-  if(state.tab!==tab)window.StoreAnalytics?.track("page_view",null,tab);
+  if(state.tab!==tab)window.StoreAnalytics?.track("page_view",null,tab==='sell'?null:tab);
   navigationRevision++;
   state.tab=tab;selectedProduct=null;selectedSize=null;document.getElementById('productModal').classList.add('hidden');
   document.querySelectorAll('[data-tab]').forEach(b=>{b.classList.toggle('active',b.dataset.tab===tab);b.setAttribute('aria-current',b.dataset.tab===tab?'page':'false')});render();
@@ -425,6 +426,10 @@ function openProduct(id){
   document.getElementById("productModal").scrollTop=0;
 }
 document.getElementById("backProduct").onclick=closeProductModal;
+document.getElementById('offerItem').onclick=()=>{
+  const text='Здравствуйте! Хочу предложить вещь для выкупа или продажи на комиссии через JULI.PROZ бот.';
+  if(telegramLink('https://t.me/juliproz?text='+encodeURIComponent(text)))window.StoreAnalytics?.track('manager_open');
+};
 document.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>{setTab(b.dataset.tab);pressNavWithPaw(b)});
 async function openLinkedProduct(id){
   const requestedNavigation=++navigationRevision;selectedProduct=null;selectedSize=null;
