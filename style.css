@@ -351,10 +351,13 @@ button:not(:disabled):active{transform:scale(.96)}
 .masthead-controls .menu-icon{color:var(--ink)}
 .heart,.heart.is-favorite,.detail-wishlist,.detail-wishlist[aria-pressed=true]{color:var(--brand-blue);border:1px solid var(--brand-pink);background:var(--bg)}
 .bottom-nav [data-tab=favorites]{color:var(--brand-blue)}
-.bottom-nav [data-tab=favorites] svg{border:1px solid var(--brand-pink);border-radius:10px;box-sizing:content-box;padding:3px}
+.bottom-nav [data-tab=favorites] svg{outline:1px solid var(--brand-pink);outline-offset:3px;border-radius:7px}
 .product .photo,.related-photo,.sell-intro,.sell-method{border-radius:18px}
 .primary,.secondary,.service-contact,.sell-offer,.sourcing-link{border-radius:13px}
 .services-page .sell-intro{border:1px solid transparent}
 .services-page .sell-intro h1,.services-page .service-card h2{text-align:left}
 .services-page .sell-intro p,.services-page .service-card p{font-size:14px;line-height:1.75;max-width:none;text-align:justify;text-align-last:left;hyphens:auto;overflow-wrap:break-word}
 .services-page .service-list{font-size:14px;line-height:1.75}
+
+.masthead-controls .catalog-menu-button{background:var(--brand-blue);color:#fff;border-color:var(--brand-pink)}
+.masthead-controls .catalog-menu-button .menu-icon{color:#fff}
