@@ -23,6 +23,11 @@ const fixtures=[
   await page.addInitScript(()=>localStorage.setItem('jpAnalyticsConsent','declined'));
   await page.goto('http://127.0.0.1:'+server.address().port,{waitUntil:'domcontentloaded'});
   await page.locator('.product').nth(7).waitFor();await page.evaluate(()=>document.fonts.ready);
+  assert.equal(await page.locator('#catalogSortLabel').innerText(),'Сортировка');
+  await page.locator('#catalogSort').click();await page.locator('[data-sort="price_asc"]').click();
+  assert.equal(await page.locator('#catalogSortLabel').innerText(),'Сортировка');
+  assert.match(await page.locator('#catalogSort').getAttribute('aria-label'),/Дешевле/);
+  await page.locator('#catalogSort').click();await page.locator('[data-sort="newest"]').click();
   assert.equal(await page.locator('.product h3 .card-sale-badge').count(),5);
   assert.equal(await page.locator('.card-name-row .card-sale-badge').count(),0);
   assert.equal(await page.locator('.product .catalog-status').filter({hasText:'В наличии'}).count(),0);

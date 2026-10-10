@@ -94,8 +94,8 @@ function filtered(){
   return sortProducts(products.filter(p=>matchesContext(p)&&(`${p.brand||""} ${p.name||""} ${p.id} ${p.size||""}`.toLowerCase().includes(state.search.toLowerCase()))));
 }
 function changeCatalogSort(value){if(!['newest','price_asc','price_desc','discount'].includes(value))return;sortRevision++;state.sort=value;document.getElementById('sortStatus').textContent='';render()}
-const sortLabels={newest:'Новинки',price_asc:'Дешевле',price_desc:'Дороже',discount:'Больше скидка'};
-function syncCatalogSort(){document.getElementById('catalogSortLabel').textContent=sortLabels[state.sort];document.getElementById('catalogSort').setAttribute('data-value',state.sort);document.querySelectorAll('[data-sort]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.sort===state.sort)))}
+const sortLabels={newest:'Сначала новые',price_asc:'Дешевле',price_desc:'Дороже',discount:'Больше скидка'};
+function syncCatalogSort(){document.getElementById('catalogSortLabel').textContent='Сортировка';document.getElementById('catalogSort').setAttribute('aria-label','Сортировка товаров: '+sortLabels[state.sort]);document.getElementById('catalogSort').setAttribute('data-value',state.sort);document.querySelectorAll('[data-sort]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.sort===state.sort)))}
 function setSortOpen(open){document.getElementById('catalogSortOptions').classList.toggle('hidden',!open);document.getElementById('catalogSort').setAttribute('aria-expanded',String(open))}
 document.getElementById('catalogSort').onclick=()=>setSortOpen(document.getElementById('catalogSortOptions').classList.contains('hidden'));
 document.querySelectorAll('[data-sort]').forEach(b=>b.onclick=()=>{setSortOpen(false);document.getElementById('catalogSort').focus?.();changeCatalogSort(b.dataset.sort)});
