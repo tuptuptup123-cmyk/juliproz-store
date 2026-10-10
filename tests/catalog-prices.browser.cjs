@@ -57,7 +57,7 @@ const fixtures=[
   const conditionLines=await page.locator('[data-id="900001"] .condition-badge').first().evaluate(e=>({label:e.querySelector('.condition-label').getBoundingClientRect().bottom,wear:e.querySelector('.condition-wear').getBoundingClientRect().top,text:e.innerText}));
   assert.ok(conditionLines.wear>=conditionLines.label,'Wear description starts below PRE-OWNED');
   assert.match(conditionLines.text,/PRE-OWNED\nНебольшие следы носки/);
-  assert.match(await page.locator('[data-id="900001"] .card-meta').innerText(),/Комиссия/);
+  assert.match(await page.locator('[data-id="900001"] .card-meta').innerText(),/Вещи клиентов/);
   const infoBadges=await page.locator('.product .condition-badge').evaluateAll(es=>es.map(e=>({bg:getComputedStyle(e).backgroundColor,border:getComputedStyle(e).borderColor,weight:getComputedStyle(e).fontWeight})));
   assert.ok(infoBadges.every(b=>b.bg==='rgb(246, 246, 246)'&&b.border==='rgb(216, 216, 216)'&&b.weight==='700'),'Informational badges are neutral with bold text');
   const cards=await page.locator('.product').evaluateAll(els=>els.map(el=>{
@@ -89,6 +89,10 @@ const fixtures=[
   for(const target of ['catalog','favorites','cart','sell','services']){
    await page.locator('[data-tab="'+target+'"]').click();
    assert.equal(await page.locator('.bottom-nav [aria-current="page"]').getAttribute('data-tab'),target);
+   if(target==='sell'||target==='services'){
+    assert.equal(await page.locator('#sellPage .sell-paw,#servicesPage .sell-paw').count(),0,'Only the main header paw remains');
+    if(width<=600){const bounds=await page.locator('.brand-lockup,.brand-signature,.brand-paw').evaluateAll(es=>es.map(e=>e.getBoundingClientRect().toJSON()));const left=Math.min(...bounds.map(b=>b.left)),right=Math.max(...bounds.map(b=>b.right));assert.ok(Math.abs((left+right)/2-width/2)<16,'Complete logo grouping is visually centered');assert.ok(left>=0&&right<=width,'Header fits phone width');}
+   }
    const nav=await page.locator('.bottom-nav button').evaluateAll(es=>es.map(e=>({width:e.getBoundingClientRect().width,background:getComputedStyle(e).backgroundColor,iconWidth:e.querySelector('svg').getBoundingClientRect().width,outline:getComputedStyle(e.querySelector('svg')).outlineStyle})));
    assert.ok(nav.every(n=>n.background==='rgba(0, 0, 0, 0)'&&n.iconWidth===24&&n.outline==='none'),'Navigation has no tile fills or icon borders');
    const floating=await page.locator('.bottom-nav').evaluate(e=>({height:e.getBoundingClientRect().height,left:e.getBoundingClientRect().left,right:e.getBoundingClientRect().right,bottom:e.getBoundingClientRect().bottom,radius:getComputedStyle(e).borderRadius,background:getComputedStyle(e).backgroundColor}));

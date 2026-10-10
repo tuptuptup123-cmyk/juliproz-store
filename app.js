@@ -1,8 +1,8 @@
 const wearLabels={like_new:'Как новая',gently_used:'Небольшие следы носки',used:'Следы носки',very_used:'Сильный износ'};
 const wearLabel=p=>p?.product_condition==='pre_owned'?(wearLabels[p.wear_condition]||''):'';
-const conditionLabels={new:'Новые вещи',pre_owned:'PRE-OWNED',vintage:'VINTAGE',commission:'Комиссия'};
+const conditionLabels={new:'Новые вещи',pre_owned:'PRE-OWNED',vintage:'VINTAGE',commission:'Вещи клиентов'};
 const conditionOf=p=>p?.product_condition||'new';
-const conditionBadge=(p,stacked=false)=>(conditionOf(p)==='new'?'':`<span class="condition-badge">${stacked?`<span class="condition-label">${esc(conditionLabels[conditionOf(p)])}</span>${wearLabel(p)?`<span class="condition-wear">${esc(wearLabel(p))}</span>`:''}`:esc([conditionLabels[conditionOf(p)],wearLabel(p)].filter(Boolean).join(' · '))}</span>`)+(p.on_commission?'<span class="condition-badge commission-badge">Комиссия</span>':'');
+const conditionBadge=(p,stacked=false)=>(conditionOf(p)==='new'?'':`<span class="condition-badge">${stacked?`<span class="condition-label">${esc(conditionLabels[conditionOf(p)])}</span>${wearLabel(p)?`<span class="condition-wear">${esc(wearLabel(p))}</span>`:''}`:esc([conditionLabels[conditionOf(p)],wearLabel(p)].filter(Boolean).join(' · '))}</span>`)+(p.on_commission?'<span class="condition-badge commission-badge">Вещи клиентов</span>':'');
 const matchesCondition=p=>!state.product_condition||(state.product_condition==='commission'?p.on_commission===true:conditionOf(p)===state.product_condition);
 function brandsOf(p){return [...new Set(String(p?.brand||'').split(/\s*×\s*/).map(v=>v.trim()).filter(Boolean))]}
 const SUPABASE_URL=window.STORE_CONFIG.url;
@@ -108,6 +108,7 @@ function emptyCollection(kind){
 }
 function render(){
   const inCart=state.tab==="cart",inSell=state.tab==="sell",inServices=state.tab==="services";
+  document.querySelector(".brand")?.classList.toggle("is-information-page",inSell||inServices);
   document.getElementById("servicesPage").classList.toggle("hidden",!inServices);
   document.getElementById("sellPage").classList.toggle("hidden",!inSell);
   document.getElementById("cartPage").classList.toggle("hidden",!inCart);

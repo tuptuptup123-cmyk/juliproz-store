@@ -529,3 +529,12 @@ button,input,select{font-family:inherit}
 
 /* Normalize this tightly cropped C.P. Company cover only; retain original pixels. */
 .product .photo img[src$="/photo-fix-oct10-368-0.webp"]{transform:scale(.70)}
+
+/* Balance the complete signature/paw grouping on the two informational pages. */
+@media(max-width:600px){
+ .brand.is-information-page{margin-bottom:16px}
+ .brand.is-information-page .masthead-inner{min-height:152px}
+ .brand.is-information-page .brand-lockup{left:-56px}
+ .brand.is-information-page .brand-paw{right:calc(50% - 78px)}
+ .sell-page{padding-top:14px}
+}
