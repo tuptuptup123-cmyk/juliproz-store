@@ -279,6 +279,7 @@ async function loadProducts(quiet=false){
     }
     const changed=JSON.stringify(products)!==JSON.stringify(rows);products=rows;lastCatalogLoadedAt=Date.now();saveCatalogueCache(rows);
     if(changed||!quiet)render();
+    if(changed)syncOpenProductGallery();
     const params=new URLSearchParams(location.search);
     const start=window.Telegram?.WebApp?.initDataUnsafe?.start_param||params.get("tgWebAppStartParam")||params.get("startapp");
     const id=params.get("product")||(start?.startsWith("p_")?start.slice(2):null);
@@ -430,7 +431,18 @@ document.addEventListener('keydown',e=>{
  }
 });
 function variantLabel(p){return String(p?.id)==='257'?'цвет':'размер'}
+// Refresh only photos in an open detail view; keep size, cart, focus and scroll.
+function syncOpenProductGallery(){
+  if(!selectedProduct||document.getElementById('productModal').classList.contains('hidden'))return;
+  const fresh=products.find(p=>String(p.id)===String(selectedProduct.id));if(!fresh)return;
+  const previous=photosOf(selectedProduct),photos=photosOf(fresh);selectedProduct={...selectedProduct,image_url:fresh.image_url,image:fresh.image,photos:fresh.photos};
+  if(JSON.stringify(previous)===JSON.stringify(photos))return;
+  const gallery=document.querySelector('#productContent .product-gallery');if(!gallery)return;
+  const shown=gallery.querySelector('.hero img')?.getAttribute('src'),active=photos.includes(shown)?shown:photos[0];
+  gallery.innerHTML=`<div class="hero">${active?`<img src="${esc(active)}" alt="${esc(fresh.name)}">`:"JP"}</div>${photos.length>1?`<div class="photo-picker" aria-label="Фотографии товара">${photos.map((url,i)=>`<button type="button" data-photo="${esc(url)}" aria-label="Фото ${i+1}"><img src="${esc(url)}" alt=""></button>`).join("")}</div>`:""}`;
+}
 function openProduct(id,linked=false){
+
   navigationRevision++;
   const raw=products.find(x=>String(x.id)===String(id));if(!raw)return;
   let p=presentationProduct(id);
@@ -537,6 +549,8 @@ document.addEventListener('load',handleProductImageLoad,true);
 function refreshCatalogOnReturn(){if(Date.now()-lastCatalogLoadedAt>=60000)loadProducts(true)}
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')refreshCatalogOnReturn()});
 window.addEventListener?.('focus',refreshCatalogOnReturn);
+// Long-lived Telegram views also receive edits without closing or reloading.
+window.setInterval?.(()=>{if(document.visibilityState==='visible')refreshCatalogOnReturn()},60000);
 
 // Horizontal photo swipes leave vertical page scrolling to the browser.
 function enablePhotoSwipes(root, selector, productFor){
