@@ -300,3 +300,5 @@ button:not(:disabled):active{transform:scale(.96)}
 .hero img{filter:drop-shadow(0 5px 8px #25394f30)}
 
 .condition-badge{display:inline-block;margin:6px 0;padding:4px 8px;border:1px solid currentColor;border-radius:4px;font-size:10px;letter-spacing:.08em;line-height:1.4}
+
+.product-sourcing p+p{margin-top:16px}.product-sourcing p strong{font-weight:500;color:var(--ink)}.product-sourcing .sourcing-link{min-height:44px}
