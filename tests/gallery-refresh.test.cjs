@@ -3,7 +3,7 @@ const source=fs.readFileSync(__dirname+'/../app.js','utf8');
 function setup({old=['cover','source'],fresh=['cover'],shown='source',hidden=false}={}){
  const gallery={innerHTML:'old markup',querySelector:()=>({getAttribute:()=>shown})},modal={scrollTop:237,classList:{contains:()=>hidden}};
  const context=vm.createContext({selectedProduct:{id:153,name:'Bomber',image_url:old[0],photos:old},products:[{id:153,name:'Bomber',image_url:fresh[0],photos:fresh}],selectedSize:'XL',cart:[{id:153,quantity:2}],document:{getElementById:()=>modal,querySelector:()=>gallery},photosOf:p=>[...new Set([p.image_url,...p.photos])],esc:s=>s});
- vm.runInContext(source.slice(source.indexOf('function syncOpenProductGallery'),source.indexOf('function openProduct(id)')),context);
+ vm.runInContext(source.slice(source.indexOf('function syncOpenProductGallery'),source.indexOf('function openProduct(')),context);
  return {context,gallery,modal,run:()=>vm.runInContext('syncOpenProductGallery()',context)};
 }
 test('open modal updates old two-shot gallery to one without reload, preserving size/cart/scroll',()=>{
