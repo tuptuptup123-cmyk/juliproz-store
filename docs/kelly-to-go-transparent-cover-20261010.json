@@ -1,0 +1,8 @@
+{
+  "product_id": 352,
+  "request": "First product image must be background-free for consistent catalog style; keep subsequent official photos.",
+  "source": "https://assets.hermes.com/is/image/hermesproduct/kelly-classique-to-go-wallet--080253CC89-worn-1-0-0-800-800_g.jpg",
+  "cover": "https://juliproz-store.vercel.app/images/hermes-kelly-to-go-black-gold-352.webp",
+  "processing": "Built-in imagegen background extraction, actual alpha, WebP encoding. Inspected black Epsom bag, gold hardware, complete shoulder strap.",
+  "official_gallery_and_originals_preserved": true
+}
