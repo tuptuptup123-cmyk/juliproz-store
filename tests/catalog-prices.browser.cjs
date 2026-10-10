@@ -32,8 +32,8 @@ const fixtures=[
   assert.equal(await page.locator('.product .price-current').first().evaluate(e=>getComputedStyle(e).fontWeight),'500');
   assert.equal(await page.locator('.brand-signature').innerText(),'BY VASYA');
   const signature=await page.locator('.brand-signature').evaluate(e=>{const r=e.getBoundingClientRect(),s=document.querySelector('#toggleSearch').getBoundingClientRect(),l=document.querySelector('.brand .logo').getBoundingClientRect();return {right:r.right,left:r.left,top:r.top,bottom:r.bottom,searchLeft:s.left,searchBottom:s.bottom,logoRight:l.right,size:getComputedStyle(e).fontSize}});
-  assert.equal(signature.size,'13px');assert.ok(signature.left>=signature.logoRight,'Signature sits right of J.P');assert.ok(signature.right<=signature.searchLeft||signature.top>=signature.searchBottom,'Signature does not overlap search');
-  if(width<=420){const clear=await page.evaluate(()=>{const logo=document.querySelector('.brand-lockup').getBoundingClientRect();return [...document.querySelectorAll('.masthead-controls button')].every(e=>e.getBoundingClientRect().top>=logo.bottom)});assert.ok(clear,'Menu and search remain below the logo without overlap');}
+  assert.equal(signature.size,width<=600?'10px':'13px');assert.ok(signature.left>=signature.logoRight,'Signature sits right of J.P');assert.ok(signature.right<=signature.searchLeft||signature.top>=signature.searchBottom,'Signature does not overlap search');
+  if(width<=600){const b=await page.evaluate(()=>{const r=s=>document.querySelector(s).getBoundingClientRect().toJSON();return {logo:r('.brand-lockup'),menu:r('#openCatalogMenu'),search:r('#toggleSearch')}});assert.ok(b.logo.left>=b.menu.right&&b.logo.right<=b.search.left,'Logo is between controls without overlap');assert.ok(Math.abs((b.logo.left+b.logo.right)/2-((b.menu.left+b.menu.right)/2+(b.search.left+b.search.right)/2)/2)<2,'Logo midpoint matches menu/search midpoint');assert.ok(Math.abs((b.logo.top+b.logo.bottom)/2-(b.menu.top+b.menu.bottom)/2)<2,'Logo and menu share the same row');}
   assert.equal(await page.locator('#catalogSortLabel').innerText(),'Сортировка');
   await page.locator('#catalogSort').click();await page.locator('[data-sort="price_asc"]').click();
   assert.equal(await page.locator('#catalogSortLabel').innerText(),'Сортировка');
@@ -86,6 +86,7 @@ const fixtures=[
   assert.equal(managerCta.background,'rgb(228, 202, 221)');assert.equal(managerCta.color,'rgb(37, 57, 79)');assert.ok(managerCta.height>=48);
   if(width===390){await page.locator('.product-sourcing .sourcing-link').scrollIntoViewIfNeeded();await page.screenshot({path:out+'/manager-contact-390.png'});}
   await page.locator('#backProduct').click();assert.equal(await page.locator('.product').count(),1);
+  const headerBaseline=await page.locator('.brand .logo').evaluate(e=>e.getBoundingClientRect().bottom);
   await page.locator('[data-tab="services"]').click();
   for(const target of ['catalog','favorites','cart','sell','services']){
    await page.locator('[data-tab="'+target+'"]').click();
@@ -95,6 +96,7 @@ const fixtures=[
     if(width<=600){const bounds=await page.locator('.brand-lockup,.brand-signature,.brand-paw').evaluateAll(es=>es.map(e=>e.getBoundingClientRect().toJSON()));const left=Math.min(...bounds.map(b=>b.left)),right=Math.max(...bounds.map(b=>b.right));assert.ok(Math.abs((left+right)/2-width/2)<16,'Complete logo grouping is visually centered');assert.ok(left>=0&&right<=width,'Header fits phone width');}
    }
    if(width<=600){const b=await page.locator('.brand-lockup,.brand-signature,.brand-paw').evaluateAll(es=>es.map(e=>e.getBoundingClientRect().toJSON()));assert.ok(Math.abs((Math.min(...b.map(x=>x.left))+Math.max(...b.map(x=>x.right)))/2-width/2)<16,'Every public tab keeps the complete logo centered');}
+   if(width<=600)assert.ok(Math.abs(await page.locator('.brand .logo').evaluate(e=>e.getBoundingClientRect().bottom)-headerBaseline)<1,'Logo baseline stays consistent between public sections');
    if((target==='sell'||target==='services')&&width<=600){const gap=await page.evaluate(()=>document.querySelector('.sell-page:not(.hidden) h1').getBoundingClientRect().top-document.querySelector('.brand-lockup').getBoundingClientRect().bottom);assert.ok(gap>=32&&gap<=96,'Information intro keeps a compact, readable logo gap');}
    if(target==='sell'){
     assert.ok((await page.locator('#sellPage .sell-checklist li').evaluateAll(es=>es.map(e=>getComputedStyle(e).textAlign))).every(a=>a==='center'));
@@ -116,8 +118,9 @@ const fixtures=[
   assert.equal(await page.locator('#sellPrepare').evaluate(e=>getComputedStyle(e).textAlign),'center');
   assert.doesNotMatch(await page.locator('#sellPage').textContent(),/JULI\.PROZ/);
   assert.equal(await page.locator('.services-page .sell-intro p').innerText(),'Поможем выкупить нужную вещь, проверить её подлинность, подобрать ателье и организовать профессиональный уход. Работаем с вашими вещами по всему миру.');
-  const services=await page.locator('.services-page .sell-intro p,.services-page .service-card p').evaluateAll(es=>es.map(e=>({align:getComputedStyle(e).textAlign,hyphens:getComputedStyle(e).hyphens})));
-  assert.ok(services.length>=3&&services.every(s=>s.align==='left'&&s.hyphens==='none'),'Services copy is left-aligned without automatic hyphens');
+  assert.equal(await page.locator('.services-page .sell-intro p').evaluate(e=>getComputedStyle(e).textAlign),'center');
+  const services=await page.locator('.services-page .service-card p').evaluateAll(es=>es.map(e=>({align:getComputedStyle(e).textAlign,hyphens:getComputedStyle(e).hyphens})));
+  assert.ok(services.length>=2&&services.every(s=>s.align==='left'&&s.hyphens==='none'),'Service details stay left-aligned without automatic hyphens');
   const serviceButtons=await page.locator('.services-page .service-contact').evaluateAll(es=>es.map(e=>({bg:getComputedStyle(e).backgroundColor,color:getComputedStyle(e).color,size:getComputedStyle(e).fontSize,weight:getComputedStyle(e).fontWeight,height:e.getBoundingClientRect().height,svg:!!e.querySelector('svg')})));
   assert.equal(serviceButtons.length,2);assert.ok(serviceButtons.every(b=>b.bg==='rgb(228, 202, 221)'&&b.color==='rgb(37, 57, 79)'&&b.size==='16px'&&b.weight==='500'&&b.height>=48&&b.svg),'Services buttons use gentle brand colours and vector arrows');
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Services fit narrow screens');

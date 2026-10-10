@@ -589,3 +589,26 @@ button,input,select{font-family:inherit}
 #sellPage .sell-checklist ul{grid-template-columns:1fr;gap:10px}
 #sellPage .sell-checklist li{text-align:center;padding-left:0}
 #sellPage .sell-checklist li::before{position:static;display:inline-block;margin-right:7px;vertical-align:middle}
+
+/* Catalogue logo sits between equal side slots; informational headers stay independent. */
+@media(max-width:600px){
+ .brand.is-catalog-page .masthead-inner{grid-template-columns:80px minmax(120px,1fr) 80px;gap:0;min-height:140px;padding:28px 0}
+ .brand.is-catalog-page .brand-lockup{left:0;width:120px;justify-self:center}
+ .brand.is-catalog-page .logo{font-size:50px;text-align:left}
+ .brand.is-catalog-page .brand-signature{left:64px;bottom:4px;font-size:10px}
+ .brand.is-catalog-page .brand-paw{right:calc(50% - 56px);top:-6px;width:84px;height:85px;transform:none;animation:none}
+ .brand.is-catalog-page .masthead-controls .catalog-menu-button{position:static;width:80px;padding:0 8px;gap:6px;justify-self:center}
+ .brand.is-catalog-page .masthead-controls .search-toggle{position:static;justify-self:center}
+ .brand.is-catalog-page .masthead-inner>.search-wrap{margin-top:24px}
+}
+.services-page .sell-intro h1,.services-page .sell-intro p{text-align:center;text-align-last:auto}
+.services-page .sell-intro h1,.services-page .sell-intro p{margin-left:auto;margin-right:auto;max-width:340px}
+
+/* One mobile logo anchor and baseline across every public section. */
+@media(max-width:600px){
+ .brand .masthead-inner,.brand.is-information-page .masthead-inner,.brand:not(.is-information-page) .masthead-inner{min-height:140px;padding:28px 0}
+ .brand .masthead-inner .brand-lockup{left:0;width:120px;justify-self:center}
+ .brand .masthead-inner .logo{font-size:50px;text-align:left}
+ .brand .masthead-inner .brand-signature{left:64px;bottom:4px;font-size:10px}
+ .brand .masthead-inner .brand-paw{right:calc(50% - 56px);top:-6px;width:84px;height:85px;transform:none;animation:none}
+}
