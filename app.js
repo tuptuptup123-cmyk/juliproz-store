@@ -121,14 +121,15 @@ function emptyCollection(kind){
   return `<div class="collection-empty ${cartEmpty?'cart-empty':'wishlist-empty'}"><div class="empty-content"><svg class="empty-symbol" width="64" height="64" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${symbol}</svg><h2>${cartEmpty?'Корзина':'Ваш виш-лист пока пуст.'}</h2><p>${cartEmpty?'Ваша корзина пока пуста.':'Нажмите на сердечко у понравившегося товара.'}</p>${cartEmpty?'<button type="button" class="primary" data-cart-action="catalog">Перейти в каталог</button>':''}</div><span class="empty-signature" aria-hidden="true">J.P</span></div>`;
 }
 function render(){
-  const inCart=state.tab==="cart",inSell=state.tab==="sell";
+  const inCart=state.tab==="cart",inSell=state.tab==="sell",inServices=state.tab==="services";
+  document.getElementById("servicesPage").classList.toggle("hidden",!inServices);
   document.getElementById("sellPage").classList.toggle("hidden",!inSell);
   document.getElementById("cartPage").classList.toggle("hidden",!inCart);
-  grid.classList.toggle("hidden",inCart||inSell);
+  grid.classList.toggle("hidden",inCart||inSell||inServices);
   document.querySelector(".catalog-toolbar")?.classList.toggle("hidden",state.tab!=="catalog");
-  document.querySelector(".catalog-head")?.classList.toggle("hidden",inCart||inSell);
+  document.querySelector(".catalog-head")?.classList.toggle("hidden",inCart||inSell||inServices);
   document.getElementById("filterSummary").classList.toggle("hidden",state.tab!=="catalog"||!document.getElementById("filterSummary").textContent);
-  if(inSell)return;
+  if(inSell||inServices)return;
   renderCart();
   if(inCart)return;
   syncCatalogSort();
@@ -322,7 +323,7 @@ function cartSnapshot(p){return Object.fromEntries(['id','brand','name','categor
 function saveCart(){cartRevision++;try{localStorage.setItem('jpCart',JSON.stringify(cart))}catch{document.getElementById('cartStatus').textContent='Корзина доступна в этом сеансе. Браузер не разрешил сохранить её.'}}
 function setTab(tab){
   setSortOpen(false);
-  if(state.tab!==tab)window.StoreAnalytics?.track("page_view",null,tab==='sell'?null:tab);
+  if(state.tab!==tab)window.StoreAnalytics?.track("page_view",null,['sell','services'].includes(tab)?null:tab);
   navigationRevision++;
   state.tab=tab;selectedProduct=null;selectedSize=null;document.getElementById('productModal').classList.add('hidden');
   document.querySelectorAll('[data-tab]').forEach(b=>{b.classList.toggle('active',b.dataset.tab===tab);b.setAttribute('aria-current',b.dataset.tab===tab?'page':'false')});render();
@@ -431,6 +432,10 @@ function openProduct(id){
   document.getElementById("productModal").scrollTop=0;
 }
 document.getElementById("backProduct").onclick=closeProductModal;
+document.querySelectorAll('[data-service]').forEach(b=>b.onclick=()=>{
+  const text=b.dataset.service==='authentication'?'Здравствуйте! Хочу передать вещь на аутентификацию. Подскажите условия, стоимость и сроки проверки.':'Здравствуйте! Хочу обратиться в ателье. Пришлю фотографии вещи и описание того, что хочу сделать.';
+  if(telegramLink('https://t.me/juliproz?text='+encodeURIComponent(text)))window.StoreAnalytics?.track('manager_open');
+});
 document.getElementById('offerItem').onclick=()=>{
   const text='Здравствуйте! Хочу предложить вещь для выкупа или продажи на комиссии через JULI.PROZ бот.';
   if(telegramLink('https://t.me/juliproz?text='+encodeURIComponent(text)))window.StoreAnalytics?.track('manager_open');
