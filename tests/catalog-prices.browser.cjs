@@ -23,8 +23,9 @@ const fixtures=[
   await page.addInitScript(()=>localStorage.setItem('jpAnalyticsConsent','declined'));
   await page.goto('http://127.0.0.1:'+server.address().port,{waitUntil:'domcontentloaded'});
   await page.locator('.product').nth(7).waitFor();await page.evaluate(()=>document.fonts.ready);
-  const surfaces=await page.locator('body,.brand,.product .photo,.menu-panel,.menu-header,.bottom-nav').evaluateAll(es=>es.map(e=>getComputedStyle(e).backgroundColor));
+  const surfaces=await page.locator('body,.brand,.menu-panel,.menu-header,.bottom-nav').evaluateAll(es=>es.map(e=>getComputedStyle(e).backgroundColor));
   assert.ok(surfaces.every(c=>c==='rgb(255, 255, 255)'),'Storefront surfaces are white');
+  assert.ok((await page.locator('.product .photo').evaluateAll(es=>es.map(e=>getComputedStyle(e).backgroundColor))).every(c=>c==='rgb(245, 245, 245)'),'Photo panels are neutral pale gray');
   const hearts=await page.locator('.product .heart').evaluateAll(es=>es.map(e=>({color:getComputedStyle(e).color,border:getComputedStyle(e).borderWidth,background:getComputedStyle(e).backgroundColor,width:e.getBoundingClientRect().width,height:e.getBoundingClientRect().height})));
   assert.ok(hearts.every(h=>h.color==='rgb(198, 107, 149)'&&h.border==='0px'&&h.background==='rgba(0, 0, 0, 0)'&&h.width>=44&&h.height>=44),'Pink-only hearts have no circle and retain touch targets');
   assert.equal(await page.locator('.product .card-name-row p').first().evaluate(e=>getComputedStyle(e).fontWeight),'300');

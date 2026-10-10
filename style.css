@@ -473,3 +473,7 @@ button,input,select{font-family:inherit}
 
 /* Keep the condition descriptor deliberately below PRE-OWNED. */
 .product .condition-label,.product .condition-wear{display:block}
+
+/* Neutral photo panels separate products from the white page. */
+:root{--card:#f5f5f5}
+.product .photo,.hero,.related-photo,.cart-photo{background:var(--card)}
