@@ -32,7 +32,7 @@ const fixtures=[
   assert.equal(await page.locator('.product .price-current').first().evaluate(e=>getComputedStyle(e).fontWeight),'500');
   assert.equal(await page.locator('.brand-signature').innerText(),'by Vasya');
   const signature=await page.locator('.brand-signature').evaluate(e=>{const r=e.getBoundingClientRect(),s=document.querySelector('#toggleSearch').getBoundingClientRect(),l=document.querySelector('.brand .logo').getBoundingClientRect();return {right:r.right,left:r.left,top:r.top,bottom:r.bottom,searchLeft:s.left,searchBottom:s.bottom,logoRight:l.right,size:getComputedStyle(e).fontSize}});
-  assert.equal(signature.size,'11px');assert.ok(signature.left>=signature.logoRight,'Signature sits right of J.P');assert.ok(signature.right<=signature.searchLeft||signature.top>=signature.searchBottom,'Signature does not overlap search');
+  assert.equal(signature.size,'13px');assert.ok(signature.left>=signature.logoRight,'Signature sits right of J.P');assert.ok(signature.right<=signature.searchLeft||signature.top>=signature.searchBottom,'Signature does not overlap search');
   assert.equal(await page.locator('#catalogSortLabel').innerText(),'Сортировка');
   await page.locator('#catalogSort').click();await page.locator('[data-sort="price_asc"]').click();
   assert.equal(await page.locator('#catalogSortLabel').innerText(),'Сортировка');
@@ -41,6 +41,7 @@ const fixtures=[
   assert.equal(await page.locator('.product h3 .card-sale-badge').count(),5);
   assert.equal(await page.locator('.card-name-row .card-sale-badge').count(),0);
   const saleColors=await page.locator('.card-sale-badge').evaluateAll(es=>es.map(e=>({background:getComputedStyle(e).backgroundColor,color:getComputedStyle(e).color})));
+  assert.match(await page.locator('.card-sale-badge').first().evaluate(e=>getComputedStyle(e).boxShadow),/rgb\(108, 144, 185\)/,'SALE has a brand-blue outline');
   assert.ok(saleColors.every(c=>c.background==='rgb(197, 43, 120)'&&c.color==='rgb(255, 255, 255)'),'SALE is saturated pink with white text');
   assert.equal(await page.locator('.discount-badge').first().evaluate(e=>getComputedStyle(e).backgroundColor),'rgb(197, 43, 120)','Percentage badge matches SALE pink');
   assert.equal(await page.locator('.product .catalog-status').filter({hasText:'В наличии'}).count(),0);
@@ -91,8 +92,12 @@ const fixtures=[
    assert.deepEqual(oval,{width:'48px',height:'29px',background:'rgb(237, 237, 237)'});
    assert.ok(nav.every(n=>Math.abs(n.width-nav[0].width)<1),'Navigation columns are equal');
   }
+  assert.equal(await page.locator('.services-page .sell-paw').count(),0,'Services keeps only the main J.P paw');
+  assert.equal(await page.locator('#brandPaw img').count(),1);
   const services=await page.locator('.services-page .sell-intro p,.services-page .service-card p').evaluateAll(es=>es.map(e=>({align:getComputedStyle(e).textAlign,hyphens:getComputedStyle(e).hyphens})));
   assert.ok(services.length>=3&&services.every(s=>s.align==='left'&&s.hyphens==='none'),'Services copy is left-aligned without automatic hyphens');
+  const serviceButtons=await page.locator('.services-page .service-contact').evaluateAll(es=>es.map(e=>({bg:getComputedStyle(e).backgroundColor,color:getComputedStyle(e).color,size:getComputedStyle(e).fontSize,weight:getComputedStyle(e).fontWeight,height:e.getBoundingClientRect().height,svg:!!e.querySelector('svg')})));
+  assert.equal(serviceButtons.length,2);assert.ok(serviceButtons.every(b=>b.bg==='rgb(197, 43, 120)'&&b.color==='rgb(255, 255, 255)'&&b.size==='16px'&&b.weight==='500'&&b.height>=48&&b.svg),'Services buttons are prominent pink with white text and vector arrows');
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Services fit narrow screens');
   if(width===390||width===529)await page.screenshot({path:out+'/services-'+width+'.png',fullPage:true});
   if(width===320||width===390){
