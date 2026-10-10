@@ -6,9 +6,9 @@
   <meta name="theme-color" content="#6c90b9" />
   <title>J.P Store</title>
   <link rel="stylesheet" href="fonts.css" />
-  <link rel="stylesheet" href="style.css?v=20261010-fast-tabs" />
+  <link rel="stylesheet" href="style.css?v=20261010-nav-align" />
   <link rel="preconnect" href="https://qhgzzhgxwpcctafpzjid.supabase.co" crossorigin>
-  <script async id="telegramSdk" src="https://telegram.org/js/telegram-web-app.js?v=20261010-fast-tabs"></script>
+  <script async id="telegramSdk" src="https://telegram.org/js/telegram-web-app.js?v=20261010-nav-align"></script>
 </head>
 <body>
     <header class="brand">
@@ -79,8 +79,8 @@
   </div>
 
   <nav class="bottom-nav">
-    <button class="active" data-tab="catalog">⌂<small>Каталог</small></button>
-    <button data-tab="favorites">♡<small>Виш-лист</small></button>
+    <button class="active" data-tab="catalog" aria-label="Каталог"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7M5 9v12h14V9"/></svg><small>Каталог</small></button>
+    <button data-tab="favorites" aria-label="Виш-лист"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"/></svg><small>Виш-лист</small></button>
     <button data-tab="cart" aria-label="Корзина"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 3h3l3 12h10l3-9H6"/><path d="M8 15l-1 3h12"/><circle cx="9" cy="21" r="1"/><circle cx="18" cy="21" r="1"/></svg><small>Корзина <span id="cartBadge" class="cart-badge hidden">0</span></small></button>
     <button data-tab="sell" aria-label="Продать вещь"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3h8l10 10-8 8L3 11Z"/><circle cx="7.5" cy="7.5" r="1"/></svg><small>Продать</small></button>
   </nav>
@@ -102,6 +102,6 @@
   <div class="nav-paw-layer" aria-hidden="true"><img id="moneyPaw" class="money-paw" src="images/money-paw-v1.webp" alt="" width="1024" height="1536" /><img id="navPaw" class="nav-paw" src="images/brand-paw.webp" alt="" aria-hidden="true" width="1536" height="1024" /></div>
   <script defer src="config.js"></script>
   <script defer src="image-policy.js"></script>
-  <script defer src="product-sizes.js?v=20261009-action-guards-v6"></script><script defer src="analytics.js"></script><script defer src="product-pricing.js?v=20261010-discounts"></script><script defer src="app.js?v=20261010-fast-tabs"></script>
+  <script defer src="product-sizes.js?v=20261009-action-guards-v6"></script><script defer src="analytics.js"></script><script defer src="product-pricing.js?v=20261010-discounts"></script><script defer src="app.js?v=20261010-nav-align"></script>
 </body>
 </html>
