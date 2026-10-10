@@ -52,6 +52,25 @@ const response=(body,status=200)=>({ok:status<400,status,json:async()=>body});
  conflict.run("session={access_token:'admin',expires_at:Date.now()/1000+3600,user:{id:'owner'}};items=[{id:10,revision:1,available:true}]");
  await conflict.get('inventory').onclick({target:{dataset:{toggle:'10'},disabled:false}});
  assert.equal(writes,1);assert.match(conflict.get('status').textContent,/Карточка изменилась/);
+ // A confirmed write must survive a subsequent inventory refresh failure.
+ for(const action of ['toggle','reserve','delete']){
+  let current={id:10,revision:1,available:true,reserved:false};
+  const offline=setup('admin.js',async(path,options)=>{
+   if(['PATCH','DELETE'].includes(options.method)){
+    const row={...current,...(options.body?JSON.parse(options.body):{}),revision:2};
+    current=options.method==='DELETE'?null:row;return response([row]);
+   }
+   return response({message:'Temporary outage'},503);
+  });
+  offline.context.confirm=()=>true;
+  offline.run("session={access_token:'admin',expires_at:Date.now()/1000+3600,user:{id:'owner'}};items=[{id:10,revision:1,available:true,reserved:false}]");
+  await offline.get('inventory').onclick({target:{dataset:{[action]:'10'},disabled:false}});
+  assert.match(offline.get('status').textContent,/Не удалось обновить список/);
+  assert.doesNotMatch(offline.get('status').textContent,/Temporary outage/);
+  assert.equal(offline.run('busy'),false);
+  if(action==='delete')assert.equal(offline.run('items.length'),0);
+  else {assert.equal(offline.run('items[0].revision'),2);assert.equal(offline.run(action==='toggle'?'items[0].available':'items[0].reserved'),action==='reserve');}
+ }
  let refreshes=0;
  const refresh=setup('admin.js',async(path)=>{if(path.includes('refresh_token')){refreshes++;await new Promise(setImmediate);return response({access_token:'fresh',expires_in:3600,user:{id:'owner'}})}return response([])});
  refresh.run("session={access_token:'expired',refresh_token:'refresh',expires_at:0,user:{id:'owner'}}");

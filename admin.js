@@ -256,7 +256,11 @@ $('inventory').onclick=async e=>{if(busy)return;const button=e.target.closest?.(
   const change=reserving?{reserved:!p.reserved}:{available:!p.available};
   const row=verifiedRow(await request(`/rest/v1/products?id=eq.${encodeURIComponent(id)}&revision=eq.${p.revision}&select=${ADMIN_FIELDS}`,{method:deleting?'DELETE':'PATCH',headers:writeHeaders,...(deleting?{}:{body:JSON.stringify(change)})}),id);
   if(!deleting&&Object.entries(change).some(([k,v])=>row[k]!==v))throw Error('Не удалось подтвердить изменение. Обновите список.');
-  await load();status(deleting?'Товар удалён':reserving?(change.reserved?'Товар на брони — покупка заблокирована':p.available?'Бронь снята — товар снова можно купить':'Бронь снята. Товар остаётся скрытым'):(change.available?'Товар возвращён в каталог':'Товар скрыт из каталога'));
+  const index=items.findIndex(item=>String(item.id)===String(id));
+  if(deleting){if(index>=0)items.splice(index,1)}else if(index>=0)items[index]=row;
+  render();
+  const message=deleting?'Товар удалён':reserving?(change.reserved?'Товар на брони — покупка заблокирована':p.available?'Бронь снята — товар снова можно купить':'Бронь снята. Товар остаётся скрытым'):(change.available?'Товар возвращён в каталог':'Товар скрыт из каталога');
+  status(message);try{await load()}catch{if(session)status(message+'. Не удалось обновить список с сервера — обновите его позже.')}
  }catch(err){status(err.message)}finally{busy=false;button.disabled=false}
 };
 async function preparePhoto(file){
