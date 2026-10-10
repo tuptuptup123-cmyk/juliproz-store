@@ -1,0 +1,80 @@
+{
+  "products": [
+    273,
+    294,
+    295,
+    296,
+    301
+  ],
+  "processing": {
+    "273": "Imagegen edit of original source: remove background and hangtag; preserve shoe model and camera angle",
+    "294": "Imagegen edit of original cutout: remove hangtag; restore matching fabric beneath it",
+    "295,296,301": "PNG copies; decoded RGBA pixels identical to original WebP; original rear views retained"
+  },
+  "files": [
+    {
+      "path": "images/brioni-fix-20261010/273-cover.png",
+      "bytes": 1664300,
+      "sha256": "cb0fdca9066cb3d8e46be85c617d0424809a6685675318beaca7c5d71abd100f",
+      "size": [
+        1254,
+        1254
+      ]
+    },
+    {
+      "path": "images/brioni-fix-20261010/294-cover.png",
+      "bytes": 2096260,
+      "sha256": "34d6bd00a273db5f2e167652039872689c9158e229f47e0f806447910450644f",
+      "size": [
+        1254,
+        1254
+      ]
+    },
+    {
+      "path": "images/brioni-fix-20261010/295-front.png",
+      "bytes": 1052289,
+      "sha256": "af5c4f960375fe38b24a890043f87f0bc30f8b675be22f1d3bf1c9703aa7df08",
+      "size": [
+        1200,
+        1200
+      ]
+    },
+    {
+      "path": "images/brioni-fix-20261010/296-back.png",
+      "bytes": 1577018,
+      "sha256": "8da0530a0d0b4731cb98010e0e2220aca6200a0fcd20a638fb810c8f83caa6cf",
+      "size": [
+        1400,
+        1400
+      ]
+    },
+    {
+      "path": "images/brioni-fix-20261010/296-front.png",
+      "bytes": 1009372,
+      "sha256": "6194216fc7bad1ec79e02b0c50e93dbe4437b83320423925b860b0173ca8e6e9",
+      "size": [
+        1200,
+        1200
+      ]
+    },
+    {
+      "path": "images/brioni-fix-20261010/301-back.png",
+      "bytes": 1583901,
+      "sha256": "2404a55688ea9608563f2d57adc7bc54f15b8773de0e53c72bcbcf41824ac8c2",
+      "size": [
+        1400,
+        1400
+      ]
+    },
+    {
+      "path": "images/brioni-fix-20261010/301-front.png",
+      "bytes": 1037130,
+      "sha256": "5b4154caae2c8de3de32fa1f6916830fb99a309a6d708cafed45cf2d03d46b1c",
+      "size": [
+        1200,
+        1200
+      ]
+    }
+  ],
+  "verification": "All PNGs decoded and have transparency. Frontend image recovery, catalogue and security tests passed. Native iOS Telegram rendering not verified."
+}
