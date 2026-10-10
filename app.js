@@ -489,9 +489,23 @@ const cachedCatalogue=readCatalogueCache();
 if(cachedCatalogue){products=cachedCatalogue;render()}
 loadProducts(Boolean(cachedCatalogue));
 
-// Broken or unsupported images keep the existing J.P placeholder.
-document.addEventListener("error",e=>{if(e.target.tagName==="IMG"&&e.target.closest(".photo,.hero,.related-photo")){const parent=e.target.parentElement;e.target.hidden=true;if(!parent.querySelector('.image-fallback')){const placeholder=document.createElement('span');placeholder.className='image-fallback';placeholder.textContent='J.P';parent.appendChild(placeholder)}}},true);
-document.addEventListener('load',e=>{if(e.target.tagName==='IMG'&&e.target.closest('.photo,.hero')){e.target.hidden=false;e.target.parentElement.querySelector('.image-fallback')?.remove()}},true);
+// Retry transient image failures once per URL, then show an explicit status.
+const productImageAttempts=new WeakMap();
+const productImageAreas='.photo,.hero,.related-photo,.photo-picker,.cart-photo';
+function handleProductImageError(e){
+ const img=e.target;if(img.tagName!=='IMG'||!img.closest(productImageAreas))return;
+ const parent=img.parentElement,src=img.getAttribute('src'),previous=productImageAttempts.get(img);
+ const base=previous?.retry===src?previous.original:src;
+ if(safeProductImage(base)&&previous?.retry!==src){
+  const url=new URL(base,location.href||'https://juliproz-store.vercel.app');url.searchParams.set('jp_retry',Date.now().toString());
+  productImageAttempts.set(img,{original:base,retry:url.href});img.src=url.href;return;
+ }
+ img.hidden=true;
+ if(!parent.querySelector('.image-fallback')){const placeholder=document.createElement('span');placeholder.className='image-fallback';placeholder.textContent='Фото не загрузилось';placeholder.setAttribute('role','status');parent.appendChild(placeholder)}
+}
+function handleProductImageLoad(e){const img=e.target;if(img.tagName==='IMG'&&img.closest(productImageAreas)){img.hidden=false;img.parentElement.querySelector('.image-fallback')?.remove()}}
+document.addEventListener('error',handleProductImageError,true);
+document.addEventListener('load',handleProductImageLoad,true);
 function refreshCatalogOnReturn(){if(Date.now()-lastCatalogLoadedAt>=60000)loadProducts(true)}
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')refreshCatalogOnReturn()});
 window.addEventListener?.('focus',refreshCatalogOnReturn);

@@ -341,3 +341,5 @@ button:not(:disabled):active{transform:scale(.96)}
 .bottom-nav button{width:20%}.service-card{display:flex;flex-direction:column}.service-card h2{overflow-wrap:anywhere}.service-card p{margin-bottom:24px}.service-contact{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-height:48px;margin-top:auto;padding:13px 16px;border:0;border-radius:4px;background:var(--brand-pink);color:var(--ink);font:inherit;font-size:12px;font-weight:500;text-align:left;cursor:pointer}.service-contact:focus-visible{outline:2px solid var(--brand-blue);outline-offset:4px}.services-page:not(.hidden){animation:none}@media(max-width:380px){.bottom-nav small{font-size:10px}.services-page .sell-intro h1{font-size:28px}}
 
 .service-list{padding-left:17px;margin:0 0 20px;font-size:12px;line-height:1.8;color:var(--muted)}.service-list li+li{margin-top:5px}.sell-intro h1{margin-top:10px}
+
+.image-fallback{display:block;padding:8px;color:var(--muted);font-size:12px;line-height:1.4;text-align:center;overflow-wrap:anywhere}
