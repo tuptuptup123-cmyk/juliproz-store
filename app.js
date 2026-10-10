@@ -36,7 +36,7 @@ function telegramLink(url){
   if(window.Telegram?.WebApp?.openTelegramLink) Telegram.WebApp.openTelegramLink(url);else window.open(url,"_blank","noopener");telegramOpenTimes.set(url,Date.now());if(telegramOpenTimes.size>50)telegramOpenTimes.delete(telegramOpenTimes.keys().next().value);return true;}
 
 function pluralRu(n,one,few,many){const k=Math.abs(n)%100;return k>=11&&k<=14?many:k%10===1?one:k%10>=2&&k%10<=4?few:many}
-let state={product_condition:null,gender:null,fulfillment_status:null,category:null,brand:null,size:null,search:"",favorites:new Set((()=>{try{return JSON.parse(localStorage.getItem("jpFav")||"[]").map(String)}catch{return []}})()),tab:"catalog"};
+let state={sale:false,product_condition:null,gender:null,fulfillment_status:null,category:null,brand:null,size:null,search:"",favorites:new Set((()=>{try{return JSON.parse(localStorage.getItem("jpFav")||"[]").map(String)}catch{return []}})()),tab:"catalog"};
 const grid=document.getElementById("grid"),count=document.getElementById("count"),sheet=document.getElementById("sheet"),options=document.getElementById("sheetOptions");
 let currentFilter=null,tempValue=null;
 
@@ -52,20 +52,21 @@ function priceMarkup(p){return window.ProductPricing.markup(p,money,esc)}
 function imageOf(p){return photosOf(p)[0]||""}
 function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
 function matchesAvailability(p){return !state.fulfillment_status||(state.fulfillment_status==='on_order'?onOrder(p):!onOrder(p)&&!p.reserved&&ProductSizes.stockUnits(p)>0)}
+function matchesSale(p){return !state.sale||Boolean(window.ProductPricing.discount(p))}
 function matchesGender(p){return !state.gender||p.gender===state.gender||p.gender==='unisex'||!p.gender}
 function matchesContext(p,except){
-  return matchesGender(p)&&matchesCondition(p)&&matchesAvailability(p)&&(except==='category'||!state.category||p.category===state.category)&&(except==='brand'||!state.brand||brandsOf(p).includes(state.brand))&&(except==='size'||!state.size||sizesOf(p).includes(state.size));
+  return matchesSale(p)&&matchesGender(p)&&matchesCondition(p)&&matchesAvailability(p)&&(except==='category'||!state.category||p.category===state.category)&&(except==='brand'||!state.brand||brandsOf(p).includes(state.brand))&&(except==='size'||!state.size||sizesOf(p).includes(state.size));
 }
 function valuesFor(type){
   if(type==='product_condition')return ['Все','new','pre_owned','vintage','commission'];
   if(type==='fulfillment_status')return ['Все','in_stock','on_order'];
   // Offer categories within the audience, then brands and sizes within the category.
-  const scope=products.filter(p=>matchesGender(p)&&matchesCondition(p)&&matchesAvailability(p)&&(type==='category'||!state.category||p.category===state.category)&&(type!=='size'||!state.brand||brandsOf(p).includes(state.brand)));
+  const scope=products.filter(p=>matchesSale(p)&&matchesGender(p)&&matchesCondition(p)&&matchesAvailability(p)&&(type==='category'||!state.category||p.category===state.category)&&(type!=='size'||!state.brand||brandsOf(p).includes(state.brand)));
   return ["Все",...Array.from(new Set(scope.flatMap(p=>type==='size'?sizesOf(p):type==='brand'?brandsOf(p):[p[type]]).filter(Boolean))).sort((a,b)=>type==='size'?ProductSizes.compare(a,b):String(a).localeCompare(String(b),"ru"))];
 }
 function menuSizeLabel(value){
   if(value==='Все'||state.category!=='Аксессуары')return value;
-  const rows=products.filter(p=>matchesGender(p)&&matchesCondition(p)&&p.category===state.category&&(!state.brand||brandsOf(p).includes(state.brand))&&matchesAvailability(p)&&sizesOf(p).includes(value));
+  const rows=products.filter(p=>matchesSale(p)&&matchesGender(p)&&matchesCondition(p)&&p.category===state.category&&(!state.brand||brandsOf(p).includes(state.brand))&&matchesAvailability(p)&&sizesOf(p).includes(value));
   const labels=[...new Set(rows.map(p=>{
     const name=String(p.name||'').toLowerCase();
     if(/ремень/.test(name))return `Ремни: ${value} см`;
@@ -110,7 +111,8 @@ let menuOpenGroup='category';
 let menuCloseTimer=null;
 const menuLabels={product_condition:'Раздел',category:'Категория',size:'Размер',brand:'Бренд',fulfillment_status:'Наличие'};
 function renderCatalogMenu(){
-  const labels=[state.product_condition?conditionLabels[state.product_condition]:null,state.gender?({men:'Мужское',women:'Женское'}[state.gender]):null,state.category,state.brand,state.size,state.fulfillment_status?statusLabels[state.fulfillment_status]:null].filter(Boolean);
+  document.querySelectorAll('[data-sale]').forEach(b=>b.setAttribute('aria-pressed',String(state.sale)));
+  const labels=[state.sale?'SALE':null,state.product_condition?conditionLabels[state.product_condition]:null,state.gender?({men:'Мужское',women:'Женское'}[state.gender]):null,state.category,state.brand,state.size,state.fulfillment_status?statusLabels[state.fulfillment_status]:null].filter(Boolean);
   const badge=document.getElementById('menuBadge');badge.textContent=String(labels.length);badge.classList.toggle('hidden',!labels.length);
   const summary=document.getElementById('filterSummary');summary.textContent=labels.join(' · ');summary.classList.toggle('hidden',!labels.length);
   document.getElementById('showMenuProducts').textContent=`Показать товары · ${filtered().length}`;
@@ -177,6 +179,7 @@ function showMoneyPaw(button){
   moneyPawTimer=setTimeout(()=>paw.classList.remove('is-presenting'),1050);
 }
 ['closeCatalogMenu','menuBackdrop','showMenuProducts'].forEach(id=>document.getElementById(id).onclick=()=>setCatalogMenu(false));
+document.querySelectorAll('[data-sale]').forEach(b=>b.onclick=()=>{state.sale=!state.sale;reconcileFilters();if(state.tab!=='catalog')setTab('catalog');else render()});
 document.getElementById('resetMenu').onclick=()=>{document.getElementById('reset').onclick();menuOpenGroup='category';renderCatalogMenu()};
 document.getElementById('menuGroups').onclick=e=>{
   const group=e.target.closest('[data-menu-group]');
@@ -263,7 +266,7 @@ function openFilter(type){
 options.onclick=e=>{if(!e.target.dataset.v)return;tempValue=e.target.dataset.v==="Все"?null:e.target.dataset.v;[...options.children].forEach(x=>x.classList.toggle("selected",(tempValue===x.dataset.v)||(!tempValue&&x.dataset.v==="Все")))};
 document.getElementById("applyFilter").onclick=()=>{state[currentFilter]=tempValue;sheet.classList.add("hidden");render()};
 document.getElementById("closeSheet").onclick=()=>sheet.classList.add("hidden");
-document.getElementById("reset").onclick=()=>{state.product_condition=state.gender=state.fulfillment_status=state.category=state.brand=state.size=null;state.search="";document.getElementById("search").value="";render()};
+document.getElementById("reset").onclick=()=>{state.sale=false;state.product_condition=state.gender=state.fulfillment_status=state.category=state.brand=state.size=null;state.search="";document.getElementById("search").value="";render()};
 grid.onclick=e=>{
   if(e.target.id==="retryProducts"){loadProducts();return}
   const h=e.target.closest("[data-heart]");

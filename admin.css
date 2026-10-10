@@ -59,3 +59,5 @@ label{display:block;font-weight:500;font-size:12px}input:not([type=checkbox]),te
 .price-current{font-weight:600}.price-original{font-size:.78em;font-weight:400;color:var(--muted,#68758a);text-decoration-thickness:1px}
 .discount-badge{align-self:center;display:inline-block;white-space:nowrap;border-radius:4px;background:#f0dce5;color:#843e5b;font-size:10px;font-weight:600;line-height:1.4;padding:3px 6px;letter-spacing:.02em}
 .detail-price .discount-badge{font-size:12px;padding:4px 8px}.cart-item-info .sale-price{margin-top:0}.related-card .sale-price{margin:0}
+
+.sale-nav-label{background:#f0dce5;color:#843e5b;border-radius:4px;padding:3px 7px;font-size:10px;font-weight:600;letter-spacing:.02em}
