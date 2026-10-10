@@ -477,3 +477,6 @@ button,input,select{font-family:inherit}
 /* Neutral photo panels separate products from the white page. */
 :root{--card:#f5f5f5}
 .product .photo,.hero,.related-photo,.cart-photo{background:var(--card)}
+
+/* Bright pink sale accents preserve existing badge dimensions and placement. */
+.product .card-sale-badge,.discount-badge{background:#c52b78;color:#fff}

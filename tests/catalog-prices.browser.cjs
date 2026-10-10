@@ -37,6 +37,9 @@ const fixtures=[
   await page.locator('#catalogSort').click();await page.locator('[data-sort="newest"]').click();
   assert.equal(await page.locator('.product h3 .card-sale-badge').count(),5);
   assert.equal(await page.locator('.card-name-row .card-sale-badge').count(),0);
+  const saleColors=await page.locator('.card-sale-badge').evaluateAll(es=>es.map(e=>({background:getComputedStyle(e).backgroundColor,color:getComputedStyle(e).color})));
+  assert.ok(saleColors.every(c=>c.background==='rgb(197, 43, 120)'&&c.color==='rgb(255, 255, 255)'),'SALE is saturated pink with white text');
+  assert.equal(await page.locator('.discount-badge').first().evaluate(e=>getComputedStyle(e).backgroundColor),'rgb(197, 43, 120)','Percentage badge matches SALE pink');
   assert.equal(await page.locator('.product .catalog-status').filter({hasText:'В наличии'}).count(),0);
   assert.equal(await page.locator('.product .catalog-status.is-reserved').count(),1);
   assert.equal(await page.locator('.product .catalog-status.on-order').innerText(),'Под заказ');
