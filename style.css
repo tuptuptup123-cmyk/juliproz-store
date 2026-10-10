@@ -538,3 +538,21 @@ button,input,select{font-family:inherit}
  .brand.is-information-page .brand-paw{right:calc(50% - 78px)}
  .sell-page{padding-top:14px}
 }
+
+/* Optical centering includes the paw and signature, not only the J.P letters. */
+.brand-lockup{left:-98px}
+.brand-paw{right:calc(50% - 122px)}
+.menu-brand{left:-28px}
+@media(min-width:900px){.menu-brand{left:-37px}}
+@media(max-width:600px){
+ .brand-lockup{left:-56px}
+ .brand-paw{right:calc(50% - 78px)}
+}
+@media(max-width:420px){
+ .brand:not(.is-information-page) .masthead-inner{min-height:174px}
+ .masthead-controls .catalog-menu-button,.masthead-controls .search-toggle{position:absolute;top:128px}
+ .masthead-controls .catalog-menu-button{left:0}
+ .masthead-controls .search-toggle{right:0}
+ .masthead-inner>.search-wrap{margin-top:54px}
+}
+@media(max-width:360px){.menu-brand{left:-18px}}

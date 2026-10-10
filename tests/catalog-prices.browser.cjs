@@ -33,6 +33,7 @@ const fixtures=[
   assert.equal(await page.locator('.brand-signature').innerText(),'BY VASYA');
   const signature=await page.locator('.brand-signature').evaluate(e=>{const r=e.getBoundingClientRect(),s=document.querySelector('#toggleSearch').getBoundingClientRect(),l=document.querySelector('.brand .logo').getBoundingClientRect();return {right:r.right,left:r.left,top:r.top,bottom:r.bottom,searchLeft:s.left,searchBottom:s.bottom,logoRight:l.right,size:getComputedStyle(e).fontSize}});
   assert.equal(signature.size,'13px');assert.ok(signature.left>=signature.logoRight,'Signature sits right of J.P');assert.ok(signature.right<=signature.searchLeft||signature.top>=signature.searchBottom,'Signature does not overlap search');
+  if(width<=420){const clear=await page.evaluate(()=>{const logo=document.querySelector('.brand-lockup').getBoundingClientRect();return [...document.querySelectorAll('.masthead-controls button')].every(e=>e.getBoundingClientRect().top>=logo.bottom)});assert.ok(clear,'Menu and search remain below the logo without overlap');}
   assert.equal(await page.locator('#catalogSortLabel').innerText(),'Сортировка');
   await page.locator('#catalogSort').click();await page.locator('[data-sort="price_asc"]').click();
   assert.equal(await page.locator('#catalogSortLabel').innerText(),'Сортировка');
@@ -93,6 +94,7 @@ const fixtures=[
     assert.equal(await page.locator('#sellPage .sell-paw,#servicesPage .sell-paw').count(),0,'Only the main header paw remains');
     if(width<=600){const bounds=await page.locator('.brand-lockup,.brand-signature,.brand-paw').evaluateAll(es=>es.map(e=>e.getBoundingClientRect().toJSON()));const left=Math.min(...bounds.map(b=>b.left)),right=Math.max(...bounds.map(b=>b.right));assert.ok(Math.abs((left+right)/2-width/2)<16,'Complete logo grouping is visually centered');assert.ok(left>=0&&right<=width,'Header fits phone width');}
    }
+   if(width<=600){const b=await page.locator('.brand-lockup,.brand-signature,.brand-paw').evaluateAll(es=>es.map(e=>e.getBoundingClientRect().toJSON()));assert.ok(Math.abs((Math.min(...b.map(x=>x.left))+Math.max(...b.map(x=>x.right)))/2-width/2)<16,'Every public tab keeps the complete logo centered');}
    const nav=await page.locator('.bottom-nav button').evaluateAll(es=>es.map(e=>({width:e.getBoundingClientRect().width,background:getComputedStyle(e).backgroundColor,iconWidth:e.querySelector('svg').getBoundingClientRect().width,outline:getComputedStyle(e.querySelector('svg')).outlineStyle})));
    assert.ok(nav.every(n=>n.background==='rgba(0, 0, 0, 0)'&&n.iconWidth===24&&n.outline==='none'),'Navigation has no tile fills or icon borders');
    const floating=await page.locator('.bottom-nav').evaluate(e=>({height:e.getBoundingClientRect().height,left:e.getBoundingClientRect().left,right:e.getBoundingClientRect().right,bottom:e.getBoundingClientRect().bottom,radius:getComputedStyle(e).borderRadius,background:getComputedStyle(e).backgroundColor}));
@@ -104,6 +106,8 @@ const fixtures=[
   }
   assert.equal(await page.locator('.services-page .sell-paw').count(),0,'Services keeps only the main J.P paw');
   assert.equal(await page.locator('#brandPaw img').count(),1);
+  assert.match(await page.locator('#sellPage').textContent(),/JULIVASYABOT/);
+  assert.doesNotMatch(await page.locator('#sellPage').textContent(),/JULI\.PROZ/);
   assert.equal(await page.locator('.services-page .sell-intro p').innerText(),'Поможем выкупить нужную вещь, проверить её подлинность, подобрать ателье и организовать профессиональный уход. Работаем с вашими вещами по всему миру.');
   const services=await page.locator('.services-page .sell-intro p,.services-page .service-card p').evaluateAll(es=>es.map(e=>({align:getComputedStyle(e).textAlign,hyphens:getComputedStyle(e).hyphens})));
   assert.ok(services.length>=3&&services.every(s=>s.align==='left'&&s.hyphens==='none'),'Services copy is left-aligned without automatic hyphens');
