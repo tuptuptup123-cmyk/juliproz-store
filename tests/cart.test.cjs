@@ -74,6 +74,9 @@ assert.match(get('cartContent').innerHTML,/€ 625/);assert.equal(run('cartTotal
 rows=[{id:902,brand:'CHANEL',name:'CHANEL Сумка Classic',size:'',price:null,currency:'EUR',available:true,fulfillment_status:'in_stock'}];context.fixture=rows;run('cart=[];products=fixture;openProduct(902);addToCart()');await run('checkoutCart()');assert.equal(links.length,beforeSingle+2);
 assert.equal(new URL(links.at(-1)).searchParams.get('text'),'Привет! Хочу заказать:\n\nhttps://t.me/JuliProzBot/shop?startapp=p_902');
 assert.match(get('cartContent').innerHTML,/Цена по запросу/);assert.equal(run('cartTotals().unknown'),true);
+// Offline cart snapshots preserve the canonical percentage basis but charge whole euros.
+rows=[{id:903,brand:'Loro Piana',name:'Кепка',size:'L',price:400,original_price:571.43,currency:'EUR',available:true,fulfillment_status:'on_order'}];context.fixture=rows;run('cart=[];products=fixture;openProduct(903);addToCart();saveCart();products=[];cart=readCart();renderCart()');
+assert.match(get('cartContent').innerHTML,/−30%/);assert.equal(run('cart[0].product.price'),400);assert.equal(run('cart[0].product.original_price'),571);assert.equal(run('cartTotals().totals[0].price'),400);
 // Static Sell and empty Cart must not access hidden catalogue card data.
 run("cart=[];products=[{id:999,get name(){throw Error('Hidden catalogue was rendered')}}];setTab('sell');setTab('services');setTab('cart');state.favorites.clear();setTab('favorites')");assert.equal(run('state.tab'),'favorites');
 console.log('PASS cart: sizes, quantities, euro totals, persistence, changed-price confirmation, unavailable sizes, network failures, wishlist independent of filters, corrupt storage');

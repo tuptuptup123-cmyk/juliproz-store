@@ -305,7 +305,7 @@ let cart=readCart(),checkoutBusy=false,cartRevision=0;
 function cartLimit(p,size=''){return onOrder(p)?99:Math.min(99,ProductSizes.stockFor(p,size))}
 function cartCount(){return cart.reduce((n,x)=>n+x.quantity,0)}
 function cartProduct(row){return products.find(p=>String(p.id)===row.id)||row.product}
-function cartSnapshot(p){return Object.fromEntries(['id','brand','name','category','price','currency','image_url','photos','size','fulfillment_status','reserved','stock_quantities','original_price'].map(k=>[k,['price','original_price'].includes(k)?window.ProductPricing.amount(p[k],p.currency):p[k]]))}
+function cartSnapshot(p){const snapshot=Object.fromEntries(['id','brand','name','category','price','currency','image_url','photos','size','fulfillment_status','reserved','stock_quantities','original_price'].map(k=>[k,['price','original_price'].includes(k)?window.ProductPricing.amount(p[k],p.currency):p[k]]));snapshot.price_basis=p.price_basis||{price:p.price,original_price:p.original_price};return snapshot}
 function saveCart(){cartRevision++;try{localStorage.setItem('jpCart',JSON.stringify(cart))}catch{document.getElementById('cartStatus').textContent='Корзина доступна в этом сеансе. Браузер не разрешил сохранить её.'}}
 function setTab(tab){
   setSortOpen(false);

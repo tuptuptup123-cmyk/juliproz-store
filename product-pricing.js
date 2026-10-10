@@ -1,5 +1,5 @@
 (function(root){
-  // Round each EUR unit price before multiplying quantities or calculating discounts.
+  // Round EUR unit amounts for display and totals; retain raw prices for percentage math.
   function amount(value,currency='EUR'){
     if(value==null||value==='')return null;
     const number=Number(value);
@@ -9,7 +9,16 @@
   function discount(p){
     const original=amount(p?.original_price,p?.currency),current=amount(p?.price,p?.currency);
     if(original==null||current==null||original<=current)return null;
-    const percent=Math.floor((original-current)/original*100+1e-8);
+    const basis=p?.price_basis;
+    const matchesBasis=basis&&amount(basis.price,p.currency)===current&&amount(basis.original_price,p.currency)===original;
+    const rawOriginal=amount(matchesBasis?basis.original_price:p.original_price,'RAW');
+    const rawCurrent=amount(matchesBasis?basis.price:p.price,'RAW');
+    const exact=(rawOriginal-rawCurrent)/rawOriginal*100;
+    const nearest=Math.round(exact);
+    // An owner-entered whole percent may require a reference price rounded to cents.
+    // Snap only that half-cent uncertainty; real fractional markdowns still round down.
+    const centRoundedInteger=nearest>0&&nearest<100&&Math.abs(rawOriginal-rawCurrent/(1-nearest/100))<=0.005+1e-8;
+    const percent=centRoundedInteger?nearest:Math.floor(exact+1e-8);
     return {original,current,percent,label:percent>0?'−'+percent+'%':'Скидка'};
   }
   function markup(p,format,escape){
