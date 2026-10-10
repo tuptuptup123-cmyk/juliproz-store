@@ -418,3 +418,52 @@ button:not(:disabled):active{transform:scale(.96)}
 .bottom-nav .cart-badge{top:-35px;left:calc(50% + 8px)}
 .bottom-nav button:focus-visible{border-radius:20px}
 .analytics-consent{bottom:calc(92px + var(--nav-safe-bottom))}
+
+/* White storefront surfaces; colour stays in small brand and selection accents. */
+:root{--bg:#fff;--card:#fff;--line:#e5e7eb}
+.brand,.menu-header,.menu-panel,.menu-footer,.bottom-nav,.search-wrap,.photo,.hero,.related-photo,.cart-photo,.sell-intro,.sell-method,.analytics-consent{background:#fff}
+.masthead-controls .catalog-menu-button{background:#fff;color:var(--ink);border-color:var(--line)}
+.masthead-controls .catalog-menu-button .menu-icon{color:var(--brand-blue)}
+.product .heart{background:#fff}
+.product .card-meta .condition-badge,.product .card-meta .commission-badge{background:#f6f6f6}
+.primary,.service-contact,.sell-offer,.sourcing-link{background:#fff;border:1px solid var(--line);color:var(--ink)}
+.primary:hover,.primary:active,.service-contact:hover,.sell-offer:hover{background:#f6f6f6}
+.sale-category,.sale-category[aria-pressed=true]{background:#fff;color:#843e5b;border:1px solid var(--line)}
+.sale-category[aria-pressed=true]{border-color:#c39bb8}
+
+/* A lighter Latin/Cyrillic text rhythm, with readable medium-weight prices. */
+body{font-family:Roboto,"Helvetica Neue",Arial,sans-serif;font-weight:300}
+button,input,select{font-family:inherit}
+.product h3,.detail .brandname,.related-brand,.cart-item h2{font-weight:500;letter-spacing:.06em}
+.product .card-name-row p,.product .card-size,.related-name,.related-size,.cart-name{font-weight:300}
+.product .price,.product .price-current,.detail .detail-price,.detail .price-current,.related-card strong,.cart-summary strong{font-weight:500}
+.detail h1{font-family:inherit;font-weight:300;letter-spacing:0}
+.catalog-head,.catalog-menu-button,.menu-section-label,.menu-group-toggle,.filters button,.audience-tabs button,.primary,.secondary,.product .discount-badge,.product .card-sale-badge{font-weight:400}
+.bottom-nav{font-family:Roboto,"Helvetica Neue",Arial,sans-serif}
+.bottom-nav button.active small{font-weight:500}
+
+/* Hearts retain generous invisible touch targets. */
+.product .heart,.heart,.heart.is-favorite,.detail-wishlist,.detail-wishlist[aria-pressed=true]{color:var(--brand-blue);background:transparent;border:0;box-shadow:none;border-radius:0;min-width:44px;min-height:44px}
+.heart svg,.detail-wishlist svg{stroke:currentColor;stroke-width:1.5;fill:none}
+.heart.is-favorite svg,.detail-wishlist[aria-pressed=true] svg{fill:currentColor}
+
+/* Monochrome interface with one pink accent: wishlist hearts. */
+:root{--ink:#202020;--muted:#626262;--brand-blue:#333;--brand-pink:#ededed;--line:#e5e5e5}
+.brand .logo,.menu-logo{color:var(--ink)}
+.masthead-controls .catalog-menu-button .menu-icon,.sort-chevron{color:var(--ink)}
+.bottom-nav{border-color:var(--line);box-shadow:0 4px 14px #00000012}
+.bottom-nav button[data-tab]{color:#626262}
+.bottom-nav button[data-tab].active{color:#202020}
+.bottom-nav button.active::before{background:#ededed}
+.cart-badge,.detail-cart-count{background:#ededed;color:var(--ink)}
+.discount-badge,.card-sale-badge,.sale-chip,.sale-category,.sale-category[aria-pressed=true],.sort-options button[aria-pressed=true]{background:#f3f3f3;color:var(--ink)}
+.sale-chip[aria-pressed=true]{box-shadow:inset 0 0 0 1px #626262}
+.sale-category,.sale-category[aria-pressed=true],.filters button.selected,.options button.selected,.audience-tabs button[aria-pressed=true],.masthead-controls .search-toggle,.menu-header .menu-close{border-color:var(--line)}
+.sale-category,.sale-category[aria-pressed=true]{background:#fff}
+.sort-options button span,.sell-number{color:var(--ink)}
+.sort-options button:hover,.menu-choice:hover{background:#f6f6f6}
+.menu-choice::before,.menu-choice[aria-pressed=true]::before{border-color:#999}
+.product .heart,.heart,.heart.is-favorite,.detail-wishlist,.detail-wishlist[aria-pressed=true]{color:#c66b95}
+
+.catalog-status.is-reserved,.product-eyebrow span.is-reserved{background:#f3f3f3;color:#484848;border-color:#d8d8d8}
+.purchase-action:disabled{background:#e5e5e5;color:#666}

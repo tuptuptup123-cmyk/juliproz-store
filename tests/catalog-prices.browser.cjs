@@ -23,6 +23,12 @@ const fixtures=[
   await page.addInitScript(()=>localStorage.setItem('jpAnalyticsConsent','declined'));
   await page.goto('http://127.0.0.1:'+server.address().port,{waitUntil:'domcontentloaded'});
   await page.locator('.product').nth(7).waitFor();await page.evaluate(()=>document.fonts.ready);
+  const surfaces=await page.locator('body,.brand,.product .photo,.menu-panel,.menu-header,.bottom-nav').evaluateAll(es=>es.map(e=>getComputedStyle(e).backgroundColor));
+  assert.ok(surfaces.every(c=>c==='rgb(255, 255, 255)'),'Storefront surfaces are white');
+  const hearts=await page.locator('.product .heart').evaluateAll(es=>es.map(e=>({color:getComputedStyle(e).color,border:getComputedStyle(e).borderWidth,background:getComputedStyle(e).backgroundColor,width:e.getBoundingClientRect().width,height:e.getBoundingClientRect().height})));
+  assert.ok(hearts.every(h=>h.color==='rgb(198, 107, 149)'&&h.border==='0px'&&h.background==='rgba(0, 0, 0, 0)'&&h.width>=44&&h.height>=44),'Pink-only hearts have no circle and retain touch targets');
+  assert.equal(await page.locator('.product .card-name-row p').first().evaluate(e=>getComputedStyle(e).fontWeight),'300');
+  assert.equal(await page.locator('.product .price-current').first().evaluate(e=>getComputedStyle(e).fontWeight),'500');
   assert.equal(await page.locator('#catalogSortLabel').innerText(),'Сортировка');
   await page.locator('#catalogSort').click();await page.locator('[data-sort="price_asc"]').click();
   assert.equal(await page.locator('#catalogSortLabel').innerText(),'Сортировка');
@@ -65,10 +71,10 @@ const fixtures=[
    const nav=await page.locator('.bottom-nav button').evaluateAll(es=>es.map(e=>({width:e.getBoundingClientRect().width,background:getComputedStyle(e).backgroundColor,iconWidth:e.querySelector('svg').getBoundingClientRect().width,outline:getComputedStyle(e.querySelector('svg')).outlineStyle})));
    assert.ok(nav.every(n=>n.background==='rgba(0, 0, 0, 0)'&&n.iconWidth===24&&n.outline==='none'),'Navigation has no tile fills or icon borders');
    const floating=await page.locator('.bottom-nav').evaluate(e=>({height:e.getBoundingClientRect().height,left:e.getBoundingClientRect().left,right:e.getBoundingClientRect().right,bottom:e.getBoundingClientRect().bottom,radius:getComputedStyle(e).borderRadius,background:getComputedStyle(e).backgroundColor}));
-   assert.equal(floating.height,68);assert.equal(floating.radius,'24px');assert.equal(floating.background,'rgb(252, 250, 249)');
+   assert.equal(floating.height,68);assert.equal(floating.radius,'24px');assert.equal(floating.background,'rgb(255, 255, 255)');
    assert.ok(floating.left>=12&&floating.right<=width-12,'Floating panel keeps side insets');
    const oval=await page.locator('.bottom-nav button.active').evaluate(e=>({width:getComputedStyle(e,'::before').width,height:getComputedStyle(e,'::before').height,background:getComputedStyle(e,'::before').backgroundColor}));
-   assert.deepEqual(oval,{width:'48px',height:'29px',background:'rgb(242, 220, 231)'});
+   assert.deepEqual(oval,{width:'48px',height:'29px',background:'rgb(237, 237, 237)'});
    assert.ok(nav.every(n=>Math.abs(n.width-nav[0].width)<1),'Navigation columns are equal');
   }
   const services=await page.locator('.services-page .sell-intro p,.services-page .service-card p').evaluateAll(es=>es.map(e=>({align:getComputedStyle(e).textAlign,hyphens:getComputedStyle(e).hyphens})));
