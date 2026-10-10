@@ -46,6 +46,13 @@ const fixtures=[
   await page.locator('[data-heart="900001"]').click();await page.locator('[data-tab="favorites"]').click();assert.equal(await page.locator('.product').count(),1);
   await page.locator('.product-open').click();await page.locator('#backProduct').click();assert.equal(await page.locator('.product').count(),1);
   await page.locator('[data-tab="services"]').click();
+  for(const target of ['catalog','favorites','cart','sell','services']){
+   await page.locator('[data-tab="'+target+'"]').click();
+   assert.equal(await page.locator('.bottom-nav [aria-current="page"]').getAttribute('data-tab'),target);
+   const nav=await page.locator('.bottom-nav button').evaluateAll(es=>es.map(e=>({width:e.getBoundingClientRect().width,background:getComputedStyle(e).backgroundColor,iconWidth:e.querySelector('svg').getBoundingClientRect().width,outline:getComputedStyle(e.querySelector('svg')).outlineStyle})));
+   assert.ok(nav.every(n=>n.background==='rgba(0, 0, 0, 0)'&&n.iconWidth===24&&n.outline==='none'),'Navigation has no tile fills or icon borders');
+   assert.ok(nav.every(n=>Math.abs(n.width-nav[0].width)<1),'Navigation columns are equal');
+  }
   const services=await page.locator('.services-page .sell-intro p,.services-page .service-card p').evaluateAll(es=>es.map(e=>({align:getComputedStyle(e).textAlign,hyphens:getComputedStyle(e).hyphens})));
   assert.ok(services.length>=3&&services.every(s=>s.align==='left'&&s.hyphens==='none'),'Services copy is left-aligned without automatic hyphens');
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Services fit narrow screens');
