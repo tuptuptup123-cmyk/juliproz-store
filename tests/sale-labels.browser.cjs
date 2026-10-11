@@ -20,7 +20,7 @@ for(const width of [320,390,768,1280]){
  assert.equal(await page.locator('.discount-badge').count(),0);
  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
  await page.screenshot({path:path.join(out,'sale-detail-'+width+'.png'),fullPage:true});
- await page.goBack();await badge.waitFor();await page.locator('[data-id="900002"] .product-open').click();await page.locator('.detail').waitFor();assert.equal(await page.locator('.detail-sale-badge').count(),0);
+ await page.locator('#backProduct').click();await badge.waitFor();await page.locator('[data-id="900002"] .product-open').click();await page.locator('.detail').waitFor();assert.equal(await page.locator('.detail-sale-badge').count(),0);
  await page.close();
 }console.log('SALE catalogue/detail responsive checks passed at 320, 390, 768, 1280px');
 }finally{await browser.close();server.close();}})().catch(e=>{console.error(e);server.close();process.exitCode=1});
