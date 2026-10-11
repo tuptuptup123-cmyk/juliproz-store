@@ -57,10 +57,10 @@ const fixtures=[
   assert.ok(saleOrder.every(Boolean),'Small former price precedes large current price');
   const brandBadges=await page.locator('.product h3:has(.card-sale-badge)').evaluateAll(es=>es.map(e=>({brand:e.querySelector('button').getBoundingClientRect().right,badge:e.querySelector('.card-sale-badge').getBoundingClientRect().x})));
   assert.ok(brandBadges.every(b=>Math.abs(b.badge-b.brand-6)<1),'SALE sits directly after the brand');
-  assert.match(await page.locator('[data-id="900001"] .card-meta').innerText(),/Небольшие следы носки/);
-  const conditionLines=await page.locator('[data-id="900001"] .condition-badge').first().evaluate(e=>({label:e.querySelector('.condition-label').getBoundingClientRect().bottom,wear:e.querySelector('.condition-wear').getBoundingClientRect().top,text:e.innerText}));
-  assert.ok(conditionLines.wear>=conditionLines.label,'Wear description starts below PRE-OWNED');
-  assert.match(conditionLines.text,/PRE-OWNED\nНебольшие следы носки/);
+  assert.equal(await page.locator('[data-id="900001"] .condition-badge').first().innerText(),'PRE-OWNED');
+  assert.equal(await page.locator('[data-id="900001"] .commission-badge').innerText(),'Комиссия');
+  assert.equal(await page.locator('[data-id="900001"] .condition-wear').count(),0);
+
   assert.match(await page.locator('[data-id="900001"] .card-meta').innerText(),/Вещи клиентов/);
   const infoBadges=await page.locator('.product .condition-badge').evaluateAll(es=>es.map(e=>({bg:getComputedStyle(e).backgroundColor,border:getComputedStyle(e).borderColor,weight:getComputedStyle(e).fontWeight})));
   assert.ok(infoBadges.every(b=>b.bg==='rgb(246, 246, 246)'&&b.border==='rgb(216, 216, 216)'&&b.weight==='700'),'Informational badges are neutral with bold text');
