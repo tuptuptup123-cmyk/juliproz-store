@@ -729,9 +729,9 @@ img.product-framed{padding:0;object-fit:contain;transform-origin:center;box-sizi
  left:20px;right:20px;width:auto;max-width:640px;margin:0 auto;background:#fff;box-shadow:0 4px 18px #20202014;
 }
 .hot-brand-options button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:17px 8px;min-height:108px;cursor:pointer;transition:background .18s,border-color .18s}
-.hot-brand-icon{display:block;width:38px;height:38px;flex:none}
-.birkin-icon{color:#90613e}
-.chrome-cross-icon{color:#262626;width:35px;height:35px}
+.hot-brand-icon{display:block;width:48px;height:48px;flex:none;object-fit:contain;mix-blend-mode:multiply}
+.birkin-icon{width:44px}
+.chrome-horseshoe-icon{width:54px}
 .hot-brand-options button:hover{background:#faf7f5}
 .hot-brand-options button[aria-pressed=true]{background:#f4eeeb;border-color:#9c8174}
 @media(max-width:600px){
