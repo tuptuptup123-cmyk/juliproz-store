@@ -640,3 +640,12 @@ enablePhotoSwipes(document.getElementById('productContent'),'.hero',()=>selected
 
 // Clear finite feedback effects so subsequent taps animate again.
 document.addEventListener('animationend',e=>{if(e.animationName==='jp-pop')e.target.classList.remove('motion-pop')});
+
+// Keep the original controls (and their focus/handlers) reachable after the masthead scrolls away.
+if(typeof IntersectionObserver==='function'){
+  const masthead=document.querySelector('.brand');
+  if(masthead)new IntersectionObserver(entries=>{
+    const entry=entries[0];
+    masthead.classList.toggle('menu-floating',!entry.isIntersecting&&entry.boundingClientRect.top<0);
+  },{threshold:0}).observe(masthead);
+}
