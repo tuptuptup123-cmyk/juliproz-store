@@ -1,0 +1,120 @@
+{
+  "method": "Non-generative segmentation of original photographs, connected-component selection and proportional framing. Original product pixels preserved.",
+  "changes": [
+    {
+      "id": 251,
+      "before": {
+        "image_url": "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/873a873d-e931-43e2-ab9a-117eb14e28cf.webp",
+        "photos": [
+          "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/873a873d-e931-43e2-ab9a-117eb14e28cf.webp"
+        ]
+      },
+      "after": {
+        "image_url": "https://juliproz-store.vercel.app/images/photo-standard-20261011b/251-cover.webp",
+        "photos": [
+          "https://juliproz-store.vercel.app/images/photo-standard-20261011b/251-cover.webp"
+        ]
+      },
+      "source": "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/873a873d-e931-43e2-ab9a-117eb14e28cf.webp"
+    },
+    {
+      "id": 252,
+      "before": {
+        "image_url": "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/4af302a9-5dcb-41f0-9135-a7b97f6ee929.webp",
+        "photos": [
+          "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/4af302a9-5dcb-41f0-9135-a7b97f6ee929.webp"
+        ]
+      },
+      "after": {
+        "image_url": "https://juliproz-store.vercel.app/images/photo-standard-20261011b/252-cover.webp",
+        "photos": [
+          "https://juliproz-store.vercel.app/images/photo-standard-20261011b/252-cover.webp"
+        ]
+      },
+      "source": "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/4af302a9-5dcb-41f0-9135-a7b97f6ee929.webp"
+    },
+    {
+      "id": 253,
+      "before": {
+        "image_url": "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/0085d236-16d1-438a-8547-f94ed22f0657.webp",
+        "photos": [
+          "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/0085d236-16d1-438a-8547-f94ed22f0657.webp"
+        ]
+      },
+      "after": {
+        "image_url": "https://juliproz-store.vercel.app/images/photo-standard-20261011b/253-cover.webp",
+        "photos": [
+          "https://juliproz-store.vercel.app/images/photo-standard-20261011b/253-cover.webp"
+        ]
+      },
+      "source": "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/0085d236-16d1-438a-8547-f94ed22f0657.webp"
+    },
+    {
+      "id": 254,
+      "before": {
+        "image_url": "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/58834c67-e174-4978-b277-431bc17ea389.webp",
+        "photos": [
+          "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/58834c67-e174-4978-b277-431bc17ea389.webp"
+        ]
+      },
+      "after": {
+        "image_url": "https://juliproz-store.vercel.app/images/photo-standard-20261011b/254-cover.webp",
+        "photos": [
+          "https://juliproz-store.vercel.app/images/photo-standard-20261011b/254-cover.webp"
+        ]
+      },
+      "source": "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/58834c67-e174-4978-b277-431bc17ea389.webp"
+    },
+    {
+      "id": 437,
+      "before": {
+        "image_url": "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/a37bed31-2d04-4092-8903-cd083598886f.webp",
+        "photos": [
+          "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/a37bed31-2d04-4092-8903-cd083598886f.webp"
+        ]
+      },
+      "after": {
+        "image_url": "https://juliproz-store.vercel.app/images/photo-standard-20261011b/437-cover.webp",
+        "photos": [
+          "https://juliproz-store.vercel.app/images/photo-standard-20261011b/437-cover.webp"
+        ]
+      },
+      "source": "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/a37bed31-2d04-4092-8903-cd083598886f.webp"
+    },
+    {
+      "id": 446,
+      "before": {
+        "image_url": "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/5d58b04f-c9ec-4e1b-b197-e786c8cf6d2b.webp",
+        "photos": [
+          "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/5d58b04f-c9ec-4e1b-b197-e786c8cf6d2b.webp"
+        ]
+      },
+      "after": {
+        "image_url": "https://juliproz-store.vercel.app/images/photo-standard-20261011b/446-cover.webp",
+        "photos": [
+          "https://juliproz-store.vercel.app/images/photo-standard-20261011b/446-cover.webp"
+        ]
+      },
+      "source": "https://assets.hermes.com/is/image/hermesproduct/bouncing-sneaker--221898ZHGN-side-wm-4-0-0-1000-1000_g.jpg"
+    },
+    {
+      "id": 453,
+      "before": {
+        "image_url": "https://juliproz-store.vercel.app/images/photo-manual-20261011/453-0.webp",
+        "photos": [
+          "https://juliproz-store.vercel.app/images/photo-manual-20261011/453-0.webp",
+          "https://juliproz-store.vercel.app/images/photo-manual-20261011/453-1.webp"
+        ]
+      },
+      "after": {
+        "image_url": "https://juliproz-store.vercel.app/images/photo-standard-20261011b/453-cover.webp",
+        "photos": [
+          "https://juliproz-store.vercel.app/images/photo-standard-20261011b/453-cover.webp",
+          "https://juliproz-store.vercel.app/images/photo-manual-20261011/453-0.webp",
+          "https://juliproz-store.vercel.app/images/photo-manual-20261011/453-1.webp"
+        ]
+      },
+      "source": "https://juliproz-store.vercel.app/images/photo-manual-20261011/453-0.webp"
+    }
+  ]
+}
