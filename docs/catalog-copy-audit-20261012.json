@@ -1,0 +1,205 @@
+{
+  "reviewed": 414,
+  "changes": [
+    {
+      "id": 49,
+      "revision": 4,
+      "before": {
+        "description": "Серебряное кольцо Hermès Chaîne d’ancre Enchaînée в два ряда. Размер 53. В наличии. Цена — бутик."
+      },
+      "after": {
+        "description": "Серебряное кольцо Hermès Chaîne d’ancre Enchaînée в два ряда. Размер 53. Цена по запросу."
+      }
+    },
+    {
+      "id": 58,
+      "revision": 9,
+      "before": {
+        "description": "Варшава"
+      },
+      "after": {
+        "description": "Местонахождение: Варшава."
+      }
+    },
+    {
+      "id": 61,
+      "revision": 8,
+      "before": {
+        "description": "Размер 44.5 \n43"
+      },
+      "after": {
+        "description": "Размеры: 43 и 44,5."
+      }
+    },
+    {
+      "id": 207,
+      "revision": 3,
+      "before": {
+        "description": "Состояние как новая, минимальные следы носки"
+      },
+      "after": {
+        "description": "Минимальные следы носки."
+      }
+    },
+    {
+      "id": 361,
+      "revision": 6,
+      "before": {
+        "description": "Есть не значительные следы носки"
+      },
+      "after": {
+        "description": "Есть незначительные следы носки."
+      }
+    },
+    {
+      "id": 363,
+      "revision": 5,
+      "before": {
+        "description": "Нет магазинной бирки"
+      },
+      "after": {
+        "description": "Нет магазинной бирки."
+      }
+    },
+    {
+      "id": 367,
+      "revision": 6,
+      "before": {
+        "description": "Следы носки",
+        "product_condition": "new",
+        "wear_condition": null
+      },
+      "after": {
+        "description": "Следы носки.",
+        "product_condition": "pre_owned",
+        "wear_condition": "used"
+      }
+    },
+    {
+      "id": 368,
+      "revision": 4,
+      "before": {
+        "description": "Легкая белая куртка на молнии из хлопка и льна"
+      },
+      "after": {
+        "description": "Лёгкая белая куртка на молнии из хлопка и льна."
+      }
+    },
+    {
+      "id": 431,
+      "revision": 2,
+      "before": {
+        "description": "Small Fit\n45-18-145"
+      },
+      "after": {
+        "description": "Оправа Small Fit. Маркировка размера: 45–18–145."
+      }
+    },
+    {
+      "id": 8,
+      "revision": 4,
+      "before": {
+        "description": "Цвет Beige Esquisse. Фотография модели с официального сайта Hermès, фон удалён."
+      },
+      "after": {
+        "description": "Цвет Beige Esquisse."
+      }
+    },
+    {
+      "id": 9,
+      "revision": 7,
+      "before": {
+        "description": "Цвет Noir (чёрный). Фотография модели с официального сайта Hermès, фон удалён."
+      },
+      "after": {
+        "description": "Цвет Noir (чёрный)."
+      }
+    },
+    {
+      "id": 10,
+      "revision": 8,
+      "before": {
+        "description": "Леопардовый принт. Фото товара обработано: удалены фон и упаковочная бумага."
+      },
+      "after": {
+        "description": "Леопардовый принт."
+      }
+    },
+    {
+      "id": 11,
+      "revision": 4,
+      "before": {
+        "description": "Цвет Beige Galet. Артикул H221176Z BG385. Фото модели с официального сайта Hermès, фон удалён."
+      },
+      "after": {
+        "description": "Цвет Beige Galet. Артикул H221176Z BG385."
+      }
+    },
+    {
+      "id": 12,
+      "revision": 7,
+      "before": {
+        "description": "Джинсовая рубашка с короткими рукавами, двумя нагрудными карманами и нашивкой с логотипом на спине. Артикул J47DL0168 J45291 420. В галерее: вид спереди, сзади, логотип и бирка с размером. Фон удалён на общих видах."
+      },
+      "after": {
+        "description": "Джинсовая рубашка с короткими рукавами, двумя нагрудными карманами и нашивкой с логотипом на спине. Артикул J47DL0168 J45291 420. В галерее: вид спереди, сзади, логотип и бирка с размером."
+      }
+    },
+    {
+      "id": 13,
+      "revision": 6,
+      "before": {
+        "description": "Куртка с отложным воротником, двумя нагрудными карманами и эластичным низом. Артикул J22SW0004 J46192 049. Фото спереди и сзади, фон и подвесной ярлык удалены."
+      },
+      "after": {
+        "description": "Куртка с отложным воротником, двумя нагрудными карманами и эластичным низом. Артикул J22SW0004 J46192 049."
+      }
+    },
+    {
+      "id": 14,
+      "revision": 4,
+      "before": {
+        "description": "В наличии 2 штуки. Цена 220 € за одну штуку. Чёрный чехол для телефона с плечевым ремешком и отделениями для карт. Артикул 640536 1IZI3 1090. Фото обработано: фон удалён."
+      },
+      "after": {
+        "description": "В наличии 2 штуки. Цена 220 € за одну штуку. Чёрный чехол для телефона с плечевым ремешком и отделениями для карт. Артикул 640536 1IZI3 1090."
+      }
+    },
+    {
+      "id": 15,
+      "revision": 4,
+      "before": {
+        "description": "Розовый принт, светлая подошва и сиреневые шнурки. Фото обработано: фон удалён."
+      },
+      "after": {
+        "description": "Розовый принт, светлая подошва и сиреневые шнурки."
+      }
+    },
+    {
+      "id": 16,
+      "revision": 7,
+      "before": {
+        "description": "Чёрный кожаный верх, текстильный корпус с чёрно-белым рисунком и фурнитура золотистого цвета. Фото обработано: удалены фон и упаковка."
+      },
+      "after": {
+        "description": "Чёрный кожаный верх, текстильный корпус с чёрно-белым рисунком и фурнитура золотистого цвета."
+      }
+    },
+    {
+      "id": 17,
+      "revision": 4,
+      "before": {
+        "description": "Цвет Noir (чёрный). Фотография модели с официального сайта Hermès, фон удалён."
+      },
+      "after": {
+        "description": "Цвет Noir (чёрный)."
+      }
+    }
+  ],
+  "notes": [
+    "Removed photo processing notes from public descriptions.",
+    "Preserved factual product, material, stock and pricing information.",
+    "Product367 changed to pre_owned based on existing explicit wear description.",
+    "Fixed storefront model-name stripping for Santos de Cartier and collaborations."
+  ]
+}
