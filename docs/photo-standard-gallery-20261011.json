@@ -1,0 +1,171 @@
+{
+  "method": "Non-generative background removal preserving original product and model pixels, proportional framing. Close-up labels and material photographs left intact.",
+  "changes": [
+    {
+      "id": 236,
+      "before": {
+        "image_url": "https://juliproz-store.vercel.app/images/covers-20261010/236.webp",
+        "photos": [
+          "https://juliproz-store.vercel.app/images/covers-20261010/236.webp",
+          "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/76af9297-7b20-49c4-b313-7bb6f994e0bb.webp"
+        ]
+      },
+      "after": {
+        "image_url": "https://juliproz-store.vercel.app/images/covers-20261010/236.webp",
+        "photos": [
+          "https://juliproz-store.vercel.app/images/covers-20261010/236.webp",
+          "https://juliproz-store.vercel.app/images/photo-standard-gallery-20261011/236-1.webp"
+        ]
+      },
+      "sources": [
+        "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/76af9297-7b20-49c4-b313-7bb6f994e0bb.webp"
+      ]
+    },
+    {
+      "id": 267,
+      "before": {
+        "image_url": "https://juliproz-store.vercel.app/images/symphony-267-cover-v2.webp",
+        "photos": [
+          "https://juliproz-store.vercel.app/images/symphony-267-cover-v2.webp",
+          "https://juliproz-store.vercel.app/images/symphony-267-lifestyle-v2.webp"
+        ]
+      },
+      "after": {
+        "image_url": "https://juliproz-store.vercel.app/images/symphony-267-cover-v2.webp",
+        "photos": [
+          "https://juliproz-store.vercel.app/images/symphony-267-cover-v2.webp",
+          "https://juliproz-store.vercel.app/images/photo-standard-gallery-20261011/267-1.webp"
+        ]
+      },
+      "sources": [
+        "https://juliproz-store.vercel.app/images/symphony-267-lifestyle-v2.webp"
+      ]
+    },
+    {
+      "id": 144,
+      "before": {
+        "image_url": "https://juliproz-store.vercel.app/images/covers-20261010/144.webp",
+        "photos": [
+          "https://juliproz-store.vercel.app/images/covers-20261010/144.webp",
+          "https://juliproz-store.vercel.app/images/product-144-detail-isolated-v1.webp",
+          "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/5f737aa6-139b-4c33-b73c-4b280551d61b.webp",
+          "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/c974fa02-b5d5-4db3-9c30-42ef2e41966e.webp",
+          "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/71860882-13e7-451e-a9f9-81bc62dcebf1.webp",
+          "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/39993d03-3303-4fbb-af07-3eb5574e8b99.webp",
+          "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/449109d5-c5c3-4b9c-ae0d-f25b2ddeac7c.webp",
+          "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/96c380d9-af15-4936-b537-02100831f478.webp"
+        ]
+      },
+      "after": {
+        "image_url": "https://juliproz-store.vercel.app/images/covers-20261010/144.webp",
+        "photos": [
+          "https://juliproz-store.vercel.app/images/covers-20261010/144.webp",
+          "https://juliproz-store.vercel.app/images/product-144-detail-isolated-v1.webp",
+          "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/5f737aa6-139b-4c33-b73c-4b280551d61b.webp",
+          "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/c974fa02-b5d5-4db3-9c30-42ef2e41966e.webp",
+          "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/71860882-13e7-451e-a9f9-81bc62dcebf1.webp",
+          "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/39993d03-3303-4fbb-af07-3eb5574e8b99.webp",
+          "https://juliproz-store.vercel.app/images/photo-standard-gallery-20261011/144-6.webp",
+          "https://juliproz-store.vercel.app/images/photo-standard-gallery-20261011/144-7.webp"
+        ]
+      },
+      "sources": [
+        "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/449109d5-c5c3-4b9c-ae0d-f25b2ddeac7c.webp",
+        "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/96c380d9-af15-4936-b537-02100831f478.webp"
+      ]
+    },
+    {
+      "id": 413,
+      "before": {
+        "image_url": "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/f0e70778-e0d2-43d0-8433-219614d21dbe.png",
+        "photos": [
+          "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/f0e70778-e0d2-43d0-8433-219614d21dbe.png",
+          "https://juliproz-store.vercel.app/images/cp-company-413-model-front-v2.webp",
+          "https://juliproz-store.vercel.app/images/cp-company-413-model-back-v2.webp"
+        ]
+      },
+      "after": {
+        "image_url": "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/f0e70778-e0d2-43d0-8433-219614d21dbe.png",
+        "photos": [
+          "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/f0e70778-e0d2-43d0-8433-219614d21dbe.png",
+          "https://juliproz-store.vercel.app/images/photo-standard-gallery-20261011/413-1.webp",
+          "https://juliproz-store.vercel.app/images/photo-standard-gallery-20261011/413-2.webp"
+        ]
+      },
+      "sources": [
+        "https://juliproz-store.vercel.app/images/cp-company-413-model-front-v2.webp",
+        "https://juliproz-store.vercel.app/images/cp-company-413-model-back-v2.webp"
+      ]
+    },
+    {
+      "id": 384,
+      "before": {
+        "image_url": "https://juliproz-store.vercel.app/images/palm-angels-384-cover-v2.webp",
+        "photos": [
+          "https://juliproz-store.vercel.app/images/palm-angels-384-cover-v2.webp",
+          "https://juliproz-store.vercel.app/images/palm-angels-384-model-v2.webp"
+        ]
+      },
+      "after": {
+        "image_url": "https://juliproz-store.vercel.app/images/palm-angels-384-cover-v2.webp",
+        "photos": [
+          "https://juliproz-store.vercel.app/images/palm-angels-384-cover-v2.webp",
+          "https://juliproz-store.vercel.app/images/photo-standard-gallery-20261011/384-1.webp"
+        ]
+      },
+      "sources": [
+        "https://juliproz-store.vercel.app/images/palm-angels-384-model-v2.webp"
+      ]
+    },
+    {
+      "id": 328,
+      "before": {
+        "image_url": "https://juliproz-store.vercel.app/images/moncler-328-clean-v2.webp",
+        "photos": [
+          "https://juliproz-store.vercel.app/images/moncler-328-clean-v2.webp",
+          "https://juliproz-store.vercel.app/images/moncler-328-lookbook-model.jpg",
+          "https://juliproz-store.vercel.app/images/moncler-328-lookbook-group.jpg"
+        ]
+      },
+      "after": {
+        "image_url": "https://juliproz-store.vercel.app/images/moncler-328-clean-v2.webp",
+        "photos": [
+          "https://juliproz-store.vercel.app/images/moncler-328-clean-v2.webp",
+          "https://juliproz-store.vercel.app/images/photo-standard-gallery-20261011/328-1.webp",
+          "https://juliproz-store.vercel.app/images/photo-standard-gallery-20261011/328-2.webp"
+        ]
+      },
+      "sources": [
+        "https://juliproz-store.vercel.app/images/moncler-328-lookbook-model.jpg",
+        "https://juliproz-store.vercel.app/images/moncler-328-lookbook-group.jpg"
+      ]
+    },
+    {
+      "id": 19,
+      "before": {
+        "image_url": "https://juliproz-store.vercel.app/images/covers-20261010/19.webp",
+        "photos": [
+          "https://juliproz-store.vercel.app/images/covers-20261010/19.webp",
+          "https://juliproz-store.vercel.app/images/miu-miu-jacket-model-front.webp",
+          "https://juliproz-store.vercel.app/images/miu-miu-jacket-model-back.webp",
+          "https://juliproz-store.vercel.app/images/miu-miu-jacket-detail-front.webp",
+          "https://juliproz-store.vercel.app/images/miu-miu-jacket-detail-back.webp"
+        ]
+      },
+      "after": {
+        "image_url": "https://juliproz-store.vercel.app/images/covers-20261010/19.webp",
+        "photos": [
+          "https://juliproz-store.vercel.app/images/covers-20261010/19.webp",
+          "https://juliproz-store.vercel.app/images/photo-standard-gallery-20261011/19-1.webp",
+          "https://juliproz-store.vercel.app/images/photo-standard-gallery-20261011/19-2.webp",
+          "https://juliproz-store.vercel.app/images/miu-miu-jacket-detail-front.webp",
+          "https://juliproz-store.vercel.app/images/miu-miu-jacket-detail-back.webp"
+        ]
+      },
+      "sources": [
+        "https://juliproz-store.vercel.app/images/miu-miu-jacket-model-front.webp",
+        "https://juliproz-store.vercel.app/images/miu-miu-jacket-model-back.webp"
+      ]
+    }
+  ]
+}
