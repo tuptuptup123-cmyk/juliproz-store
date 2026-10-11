@@ -5,4 +5,5 @@ fs.rmSync(out,{recursive:true,force:true});fs.mkdirSync(out);
 for(const name of ['admin.html','admin.css','admin.js','admin-selects.js','fonts.css','config.js','image-policy.js','product-framing.js','catalog-taxonomy.js','product-sizes.js','product-pricing.js','photo-codec.js','photo-studio.js','photo-background.js','photo-worker.js','images','fonts','vendor']){const source=path.join(root,name);if(fs.existsSync(source))fs.cpSync(source,path.join(out,name),{recursive:true})}
 const html=fs.readFileSync(path.join(out,'admin.html'),'utf8').replace('href="/" target="_blank"','href="https://juliproz-store.vercel.app/" target="_blank"');
 fs.writeFileSync(path.join(out,'admin.html'),html);fs.writeFileSync(path.join(out,'index.html'),html);
+require('./stage-photo-assets.cjs')(root,out);
 console.log('Isolated admin assets prepared. No Telegram SDK or public catalogue.');
