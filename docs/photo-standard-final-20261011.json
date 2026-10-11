@@ -1,0 +1,21 @@
+{
+  "method": "Exact matching 739028-TQVA1-1561 original product photo; background removal and proportional resize only.",
+  "source": "https://wardatrobe.com/articles/balenciaga-archive_series_connected_t_shirt_oversized-16ae5e8f",
+  "changes": [
+    {
+      "id": 198,
+      "before": {
+        "image_url": "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/07c601d1-2e99-404d-8a9c-41847ded5df3.webp",
+        "photos": [
+          "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/07c601d1-2e99-404d-8a9c-41847ded5df3.webp"
+        ]
+      },
+      "after": {
+        "image_url": "https://juliproz-store.vercel.app/images/photo-standard-final-20261011/198-cover.webp",
+        "photos": [
+          "https://juliproz-store.vercel.app/images/photo-standard-final-20261011/198-cover.webp"
+        ]
+      }
+    }
+  ]
+}
