@@ -175,10 +175,13 @@ const fixtures=[
  for(const width of [390,1280]){
   const page=await browser.newPage({viewport:{width,height:900},reducedMotion:'reduce'});
   const many=Array.from({length:397},(_,i)=>({...base,id:910000+i,brand:'Gucci',name:'Товар '+i,price:100}));
-  await page.route('**/rest/v1/products?**',r=>r.fulfill({json:many}));
+  let directReads=0;
+  await page.route('**/api/catalog',r=>width===390?r.fulfill({json:many}):r.fulfill({status:503,json:{error:'unavailable'}}));
+  await page.route('**/rest/v1/products?**',r=>{directReads++;return r.fulfill({json:many})});
   await page.goto('http://127.0.0.1:'+server.address().port,{waitUntil:'domcontentloaded'});
   await page.locator('.product').first().waitFor();
   assert.equal(await page.locator('.product').count(),24,'First paint mounts one batch');
+  assert.equal(directReads,width===390?0:1,'Shared cache avoids direct reads and failures fall back');
   assert.match(await page.locator('#count').innerText(),/397/);
   await page.locator('#toggleSearch').click();await page.locator('#search').fill('910396');
   await page.locator('[data-id="910396"]').waitFor();
@@ -193,6 +196,10 @@ const fixtures=[
   const ids=await page.locator('.product').evaluateAll(es=>es.map(e=>e.dataset.id));
   assert.equal(ids.length,397);assert.equal(new Set(ids).size,397,'Scrolling reaches every product exactly once');
   assert.equal(await page.locator('.catalogue-more').count(),0);
+  await page.locator('.product .heart').last().click();
+  assert.equal(await page.locator('.product').count(),397,'Wishlist toggle preserves already mounted cards');
+  assert.equal(await page.locator('.product .heart').last().getAttribute('aria-pressed'),'true');
+  assert.ok(await page.evaluate(()=>scrollY>1000),'Wishlist toggle preserves reading position');
   await page.close();
  }
  for(const width of [390,529]){

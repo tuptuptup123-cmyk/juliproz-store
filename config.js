@@ -1,1 +1,1 @@
-window.STORE_CONFIG={url:"https://qhgzzhgxwpcctafpzjid.supabase.co",key:"sb_publishable_AD6Hie5z_KycK1unCJ-Khg_5d0gjGq_",mfaEnrollmentEnabled:true};
+(function(root){const config={url:"https://qhgzzhgxwpcctafpzjid.supabase.co",key:"sb_publishable_AD6Hie5z_KycK1unCJ-Khg_5d0gjGq_",mfaEnrollmentEnabled:true,catalogEndpoint:"/api/catalog"};if(typeof module==='object'&&module.exports)module.exports=config;else root.STORE_CONFIG=config;})(typeof window==='object'?window:globalThis);
