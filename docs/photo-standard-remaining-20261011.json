@@ -1,0 +1,43 @@
+{
+  "method": "Verified matching retail product photographs facing right; original pixel colours and details retained, no mirroring or generative recreation.",
+  "changes": [
+    {
+      "id": 457,
+      "source": "https://sidekicks.co.uk/products/adidas-yeezy-350-v2-cmpct-slate-panda",
+      "before": {
+        "image_url": "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/cc207c16-e30d-4c5e-b1d8-7da26a565c97.webp",
+        "photos": [
+          "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/cc207c16-e30d-4c5e-b1d8-7da26a565c97.webp",
+          "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/9e8558fc-faeb-4bd7-84fc-917b6422b894.webp"
+        ]
+      },
+      "after": {
+        "image_url": "https://juliproz-store.vercel.app/images/photo-standard-remaining-20261011/457-cover.webp",
+        "photos": [
+          "https://juliproz-store.vercel.app/images/photo-standard-remaining-20261011/457-cover.webp",
+          "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/cc207c16-e30d-4c5e-b1d8-7da26a565c97.webp",
+          "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/9e8558fc-faeb-4bd7-84fc-917b6422b894.webp"
+        ]
+      }
+    },
+    {
+      "id": 459,
+      "source": "https://www.genuineauthenticbrand.com/products/gucci-gg-screener-gg-canvas-beige-sneakers-for-men",
+      "before": {
+        "image_url": "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/3ad07764-f901-4a96-bc8d-e333d9302d54.webp",
+        "photos": [
+          "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/3ad07764-f901-4a96-bc8d-e333d9302d54.webp",
+          "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/8c23fba5-e8ce-48fc-b17d-30b07d834e96.webp"
+        ]
+      },
+      "after": {
+        "image_url": "https://juliproz-store.vercel.app/images/photo-standard-remaining-20261011/459-cover.webp",
+        "photos": [
+          "https://juliproz-store.vercel.app/images/photo-standard-remaining-20261011/459-cover.webp",
+          "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/3ad07764-f901-4a96-bc8d-e333d9302d54.webp",
+          "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/8c23fba5-e8ce-48fc-b17d-30b07d834e96.webp"
+        ]
+      }
+    }
+  ]
+}
