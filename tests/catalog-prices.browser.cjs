@@ -5,14 +5,15 @@ const types={'.html':'text/html','.js':'text/javascript','.css':'text/css','.web
 const server=http.createServer((req,res)=>{let file=path.join(root,new URL(req.url,'http://localhost').pathname);if(file===root+'/')file+='index.html';fs.readFile(file,(err,data)=>{res.writeHead(err?404:200,{'Content-Type':types[path.extname(file)]||'application/octet-stream'});res.end(err?'Missing':data)})});
 const base={available:true,currency:'EUR',category:'Одежда',gender:'men',fulfillment_status:'in_stock',product_condition:'new',size:'L',photos:[],image_url:null};
 const fixtures=[
- {...base,id:900001,brand:'Gucci',name:'Рубашка GG cotton poplin bowling',price:350,original_price:538.46,product_condition:'pre_owned',wear_condition:'gently_used',on_commission:true,size:'50'},
+ {...base,id:900001,brand:'Gucci',name:'Рубашка GG cotton poplin bowling',price:350,original_price:538.46,product_condition:'pre_owned',wear_condition:'gently_used',on_commission:true,size:'50',stock_quantities:{'50':3}},
  {...base,id:900002,brand:'Zilli',name:'Кофта',price:400,original_price:571.43},
  {...base,id:900003,brand:'Amiri',name:'Штаны Ball',price:624.9,original_price:892.72,size:'XL'},
  {...base,id:900004,brand:'Dior',name:'Кроссовки B27 Low Grey CD Diamond',price:700,original_price:990,size:'43'},
  {...base,id:900005,brand:'Hermès',name:'Сумка',price:12345.67,original_price:19876.54},
  {...base,id:900006,brand:'Prada',name:'Жакет с очень длинным названием без скрытой информации',price:800,original_price:null,reserved:true,on_commission:true},
  {...base,id:900007,brand:'Chanel',name:'Сумка',price:null,original_price:null},
- {...base,id:900008,brand:'Loro Piana',name:'Шарф',price:300,original_price:null,fulfillment_status:'on_order'}
+ {...base,id:900008,brand:'Loro Piana',name:'Шарф',price:300,original_price:null,fulfillment_status:'on_order'},
+ {...base,id:900009,brand:'Chrome Hearts',name:'Кепка',price:200,stock_quantities:{'L':15}}
 ];
 (async()=>{
  await new Promise(r=>server.listen(0,'127.0.0.1',r));
@@ -54,7 +55,7 @@ const fixtures=[
   assert.match(await page.locator('.card-sale-badge').first().evaluate(e=>getComputedStyle(e).boxShadow),/rgb\(120, 148, 182\)/,'SALE has a brand-blue outline');
   assert.ok(saleColors.every(c=>c.background==='rgb(228, 202, 221)'&&c.color==='rgb(37, 57, 79)'),'SALE is powder pink with dark readable text');
   assert.equal(await page.locator('.product .price-original').count(),5,'Former prices remain visible');
-  assert.equal(await page.locator('.product .catalog-status').filter({hasText:'В наличии'}).count(),0);
+  assert.equal(await page.locator('.product .catalog-status').filter({hasText:'В наличии'}).count(),0);assert.equal(await page.locator('[data-id=900001] .stock-label').innerText(),'В наличии · 3 шт.');assert.equal(await page.locator('[data-id=900006] .stock-label').count(),0);assert.equal(await page.locator('[data-id=900008] .stock-label').count(),0);
   assert.equal(await page.locator('.product .catalog-status.is-reserved').count(),1);
   assert.equal(await page.locator('.product .catalog-status.on-order').innerText(),'Под заказ');
   const saleOrder=await page.locator('.sale-price').evaluateAll(es=>es.map(e=>e.querySelector('.price-original').getBoundingClientRect().bottom<=e.querySelector('.price-current').getBoundingClientRect().y));
@@ -86,9 +87,12 @@ const fixtures=[
   }
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'No horizontal overflow');
   await page.locator('.product').first().scrollIntoViewIfNeeded();await page.screenshot({path:out+'/catalog-'+width+'.png'});
+  await page.locator('#openCatalogMenu').click();const hot=await page.locator('.hot-brands').boundingBox(),sale=await page.locator('[data-sale]').boundingBox();assert.ok(hot.y+hot.height<=sale.y,'Hot brands are above SALE');if(width===390||width===1280)await page.screenshot({path:out+'/hot-brands-'+width+'.png'});
+  for(const [brand,id] of [['Hermès','900005'],['Chrome Hearts','900009']]){await page.locator('[data-hot-brand="'+brand+'"]').click();assert.equal(await page.locator('[data-hot-brand="'+brand+'"]').getAttribute('aria-pressed'),'true');await page.locator('#showMenuProducts').click();assert.equal(await page.locator('#grid .product').count(),1);assert.equal(await page.locator('#grid .product').getAttribute('data-id'),id);await page.locator('#openCatalogMenu').click();}
+  await page.locator('#resetMenu').click();await page.locator('#showMenuProducts').click();
   await page.locator('[data-heart="900001"]').click();await page.locator('[data-tab="favorites"]').click();assert.equal(await page.locator('.product').count(),1);
   await page.locator('.product-open').click();
-  assert.equal(await page.locator('.detail .condition-badge').first().innerText(),'PRE-OWNED');
+  assert.equal(await page.locator('.detail .condition-badge').first().innerText(),'PRE-OWNED');assert.equal(await page.locator('#detailStock').innerText(),'В наличии · 3 шт.');
   assert.match(await page.locator('.product-description').innerText(),/Состояние: Небольшие следы носки/);
   assert.equal(await page.locator('.detail .product-eyebrow span').count(),0,'Do not repeat positive in-stock status in detail');
   assert.equal(await page.locator('.detail .discount-badge').count(),0,'Detail hides percentage badges too');
