@@ -31,6 +31,10 @@ const fixtures=[
   assert.equal(await page.locator('.product .card-name-row p').first().evaluate(e=>getComputedStyle(e).fontWeight),'300');
   assert.equal(await page.locator('.product .price-current').first().evaluate(e=>getComputedStyle(e).fontWeight),'500');
   assert.equal(await page.locator('.brand-signature').innerText(),'BY VASYA');
+  assert.equal(await page.locator('#search').evaluate(e=>getComputedStyle(e).fontSize),'16px');
+  assert.equal(await page.locator('#offerItem svg').count(),1);
+  assert.ok(await page.evaluate(()=>document.querySelector('meta[name=viewport]').content.includes('width=device-width')));
+  assert.equal(await page.locator('html').evaluate(e=>getComputedStyle(e).webkitTextSizeAdjust),'100%');
   const signature=await page.locator('.brand-signature').evaluate(e=>{const r=e.getBoundingClientRect(),s=document.querySelector('#toggleSearch').getBoundingClientRect(),l=document.querySelector('.brand .logo').getBoundingClientRect();return {right:r.right,left:r.left,top:r.top,bottom:r.bottom,searchLeft:s.left,searchBottom:s.bottom,logoRight:l.right,size:getComputedStyle(e).fontSize}});
   const headerControls=await page.evaluate(()=>['.brand .logo','#openCatalogMenu','#toggleSearch'].map(s=>document.querySelector(s).getBoundingClientRect().toJSON()));
   const [logo,menu,search]=headerControls;
