@@ -45,6 +45,17 @@ run("products=[{id:51,product_condition:'pre_owned',on_commission:true,photos:[]
  run('products=[{id:5,brand:"Hermès",name:"Кроссовки Эрмес",size:"43.5",photos:[]}];state.gender=null;state.fulfillment_status=null;state.category=null;state.size=null;render();openProduct(5)');
  assert.match(node('grid').innerHTML,/Размер: 43.5/);assert.match(node('productContent').innerHTML,/Размер: <strong>43.5/);assert.doesNotMatch(node('grid').innerHTML,/Кроссовки Эрмес/);
  const admin=fs.readFileSync(root+'/admin.js','utf8');assert.match(admin,/fulfillment_status:f\.fulfillment_status\.value/);assert.match(admin,/fulfillment_status.value=p\?\.fulfillment_status==='on_order'/);assert.match(admin,/available:!p.available/);
+ run('products=[{id:257,brand:"Dyson",name:"Щетка CameraJet",category:"Техника",size:"розовый; Синий",available:true,price:850,currency:"EUR",stock_quantities:{"розовый":3,"Синий":2}}];state.category=null;state.size=null;render();openProduct(257)');
+ assert.match(node('grid').innerHTML,/Цвета: розовый · Синий/);
+ assert.doesNotMatch(node('grid').innerHTML,/Размеры: розовый/);
+ assert.match(node('productContent').innerHTML,/Выберите цвет/);
+ assert.equal(run("valuesFor('size').length"),1);
+ run('selectedSize="Синий";addToCart();renderCart()');
+ assert.match(node('cartContent').innerHTML,/Цвет: Синий/);
+ assert.equal(run('cartLimit(products[0],"Синий")'),2);
+ assert.equal(run('cartLimit(products[0],"розовый")'),3);
+ assert.equal(sizes.variantLabel({size:'S; M'},true),'Размеры');
+ assert.equal(sizes.variantLabel({size:'Синий'}),'Цвет');
  console.log('Sizes, card, escaping, contact, stale availability, filters, order status and admin field checks passed.');
 })().catch(e=>{console.error(e);process.exitCode=1});
 
