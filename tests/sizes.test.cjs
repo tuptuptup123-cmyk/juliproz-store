@@ -33,7 +33,7 @@ run("products=[{id:51,product_condition:'pre_owned',on_commission:true,photos:[]
  run('state.size=null;products=[{id:3,brand:"Gucci",name:"Rhyton",fulfillment_status:"on_order",available:true,photos:[]}];render();openProduct(3)');
  assert.match(node('grid').innerHTML,/Под заказ/);assert.match(node('productContent').innerHTML,/Под заказ/);assert.match(node('productContent').innerHTML,/10–14 рабочих дней/);assert.match(node('productContent').innerHTML,/data-action="add-cart"/);
  rows=[{id:3,name:'Rhyton',fulfillment_status:'on_order'}];await run('contact(selectedProduct)');assert.match(decodeURIComponent(contactUrl),/Статус: Под заказ/);
- run('products=[{id:4,fulfillment_status:"in_stock",photos:[]}];openProduct(4)');assert.doesNotMatch(node('productContent').innerHTML,/В наличии/);assert.doesNotMatch(node('productContent').innerHTML,/>Купить<\/button>/);
+ run('products=[{id:4,fulfillment_status:"in_stock",photos:[]}];openProduct(4)');assert.match(node('productContent').innerHTML,/В наличии · 1 шт\./);assert.doesNotMatch(node('productContent').innerHTML,/>Купить<\/button>/);
  assert.match(node('productContent').innerHTML,/7–10 рабочих дней/);
  run(`products=[{id:1,gender:'men',category:'Обувь',size:'43',fulfillment_status:'in_stock'},{id:2,gender:'women',category:'Обувь',size:'38',fulfillment_status:'in_stock'},{id:3,gender:'unisex',category:'Аксессуары',size:'XL',fulfillment_status:'on_order'},{id:4,gender:'men',category:'Аксессуары',size:'PM',fulfillment_status:'in_stock'}];state.gender='men';state.category='Аксессуары';state.size=null`);
  assert.deepEqual(Array.from(run('valuesFor("size")')),['Все','PM','XL']);assert.equal(run('filtered().length'),2);
@@ -50,3 +50,9 @@ run("products=[{id:51,product_condition:'pre_owned',on_commission:true,photos:[]
 
 const quantitySizes=require('../product-sizes.js');
 assert.equal(quantitySizes.stockFor({stock_quantities:{'One Size':5}},'One Size'),5);assert.equal(quantitySizes.stockUnits({size:'S; M',stock_quantities:{S:2,M:3}}),5);assert.equal(quantitySizes.stockFor({stock_quantities:{S:0}},'S'),0);assert.equal(quantitySizes.stockUnits({size:'S; M'}),1);assert.equal(quantitySizes.stockFor({stock_quantities:{S:-1}},'S'),0);
+
+assert.equal(run("stockLabel({size:'One Size',stock_quantities:{'One Size':3}})"),'В наличии · 3 шт.');
+assert.equal(run("stockLabel({size:'',stock_quantities:{'':15}})"),'В наличии · 15 шт.');
+assert.equal(run("stockLabel({size:'S; M',stock_quantities:{S:2,M:3}})"),'В наличии · 5 шт.');
+assert.equal(run("stockLabel({size:'S; M',stock_quantities:{S:2,M:0}},'M')"),'Нет в наличии');
+for(const flags of ["reserved:true","available:false","fulfillment_status:'on_order'"])assert.equal(run("stockLabel({stock_quantities:{'':15},"+flags+"})"),'');
