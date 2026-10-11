@@ -160,7 +160,7 @@ function emptyCollection(kind){
 // Keep the full data set for filtering; mount cards only as the reader approaches them.
 const CATALOG_BATCH_SIZE=24;
 let catalogueRows=[],catalogueRendered=0,catalogueMore=null,catalogueObserver=null;
-function catalogueCard(p){return `<article class="product" data-id="${esc(p.id)}"><div class="photo">${imageOf(p)?`<img src="${esc(imageOf(p))}" alt="${esc(p.name)}" loading="lazy">`:"JP"}<button class="heart ${isWishlisted(p)?"is-favorite":""}" aria-label="Виш-лист" aria-pressed="${isWishlisted(p)}" data-heart="${esc(p.id)}"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"/></svg></button></div><h3><button type="button" class="product-open" aria-label="Открыть ${esc(brandsOf(p).join(' × '))} ${esc(displayName(p))}">${esc(brandsOf(p).join(' × '))}</button>${window.ProductPricing.discount(p)?'<span class="card-sale-badge">SALE</span>':''}</h3><div class="card-name-row"><p>${esc(displayName(p))}${p.color_member_ids?` · ${p.color_member_ids.length} ${pluralRu(p.color_member_ids.length,'цвет','цвета','цветов')}`:""}</p></div><div class="card-size">${sizesOf(p).length?`${ProductSizes.variantLabel(p,sizesOf(p).length>1)}: ${esc(sizesOf(p).join(" · "))}`:"Размер уточняйте"}</div><div class="price">${priceMarkup(p)}</div><div class="card-footer"><div class="card-meta">${conditionBadge(p,true)}</div>${availabilityLabel(p)!=='В наличии'?'<div class="catalog-status '+(p.reserved?'is-reserved':onOrder(p)?'on-order':'')+'">'+availabilityLabel(p)+'</div>':''}<div class="card-delivery">Доставка ${deliveryLabel(p)}</div></div></article>`}
+function catalogueCard(p){return `<article class="product" data-id="${esc(p.id)}"><div class="photo">${imageOf(p)?`<img src="${esc(imageOf(p))}" alt="${esc(p.name)}" loading="lazy" decoding="async">`:"JP"}<button class="heart ${isWishlisted(p)?"is-favorite":""}" aria-label="Виш-лист" aria-pressed="${isWishlisted(p)}" data-heart="${esc(p.id)}"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"/></svg></button></div><h3><button type="button" class="product-open" aria-label="Открыть ${esc(brandsOf(p).join(' × '))} ${esc(displayName(p))}">${esc(brandsOf(p).join(' × '))}</button>${window.ProductPricing.discount(p)?'<span class="card-sale-badge">SALE</span>':''}</h3><div class="card-name-row"><p>${esc(displayName(p))}${p.color_member_ids?` · ${p.color_member_ids.length} ${pluralRu(p.color_member_ids.length,'цвет','цвета','цветов')}`:""}</p></div><div class="card-size">${sizesOf(p).length?`${ProductSizes.variantLabel(p,sizesOf(p).length>1)}: ${esc(sizesOf(p).join(" · "))}`:"Размер уточняйте"}</div><div class="price">${priceMarkup(p)}</div><div class="card-footer"><div class="card-meta">${conditionBadge(p,true)}</div>${availabilityLabel(p)!=='В наличии'?'<div class="catalog-status '+(p.reserved?'is-reserved':onOrder(p)?'on-order':'')+'">'+availabilityLabel(p)+'</div>':''}<div class="card-delivery">Доставка ${deliveryLabel(p)}</div></div></article>`}
 function appendCatalogueRows(){
   if(catalogueRendered>=catalogueRows.length)return;
   const end=Math.min(catalogueRendered+CATALOG_BATCH_SIZE,catalogueRows.length);
@@ -317,15 +317,18 @@ function readCatalogueCache(){
   }catch{return null}
 }
 function saveCatalogueCache(rows){try{const value=JSON.stringify({savedAt:Date.now(),products:rows});if(value.length<=2000000)sessionStorage.setItem(CATALOG_CACHE_KEY,value)}catch{}}
-let catalogLoading=false,firstLoad=true,lastCatalogLoadedAt=0;
-async function loadProducts(quiet=false){
-  if(catalogLoading)return;catalogLoading=true;const requestedNavigation=navigationRevision;
-  if(!quiet){
-  count.textContent="Загружаем наличие…";
-  grid.innerHTML='<div class="empty">Загружаем товары…</div>';
+let catalogueEndpointRetryAt=0;
+async function fetchCatalogue(){
+  if(window.STORE_CONFIG.catalogEndpoint&&Date.now()>=catalogueEndpointRetryAt){
+    try{
+      const response=await fetch(window.STORE_CONFIG.catalogEndpoint,{signal:AbortSignal.timeout(8000)});
+      if(!response.ok)throw Error('Catalogue cache unavailable');
+      const rows=await response.json();
+      if(!Array.isArray(rows)||rows.length>10000||rows.some(p=>!p||p.available!==true))throw Error('Invalid catalogue');
+      return rows;
+    }catch{catalogueEndpointRetryAt=Date.now()+60000}
   }
-  try{
-    const rows=[];
+  const rows=[];
     for(let offset=0;;offset+=500){
       const r=await fetch(`${SUPABASE_URL}/rest/v1/products?select=${CATALOG_FIELDS}&available=eq.true&order=created_at.desc,id.desc&limit=500&offset=${offset}`,{headers:{apikey:SUPABASE_KEY},signal:AbortSignal.timeout(20000)});
       if(!r.ok) throw new Error(`Supabase ${r.status}`);
@@ -334,6 +337,17 @@ async function loadProducts(quiet=false){
       rows.push(...page);
       if(page.length<500)break;
     }
+    return rows;
+}
+let catalogLoading=false,firstLoad=true,lastCatalogLoadedAt=0;
+async function loadProducts(quiet=false){
+  if(catalogLoading)return;catalogLoading=true;const requestedNavigation=navigationRevision;
+  if(!quiet){
+  count.textContent="Загружаем наличие…";
+  grid.innerHTML='<div class="empty">Загружаем товары…</div>';
+  }
+  try{
+    const rows=await fetchCatalogue();
     const changed=JSON.stringify(products)!==JSON.stringify(rows);products=rows;lastCatalogLoadedAt=Date.now();saveCatalogueCache(rows);
     if(changed||!quiet)render();
     if(changed)syncOpenProductGallery();
@@ -398,7 +412,11 @@ function toggleWishlist(id,fromCard=false){
   if(id==null)return;id=String(id);const now=Date.now();if(now-(wishlistClicks.get(id)??-Infinity)<450)return;wishlistClicks.set(id,now);if(wishlistClicks.size>200)wishlistClicks.delete(wishlistClicks.keys().next().value);const display=presentationProduct(id),ids=display?.variant_ids?Object.values(display.variant_ids):fromCard&&colorGroupFor(id)?colorGroupFor(id).members.map(x=>x.option.id):[id];if(ids.some(key=>state.favorites.has(key)))ids.forEach(key=>state.favorites.delete(key));else state.favorites.add(id);
   window.StoreAnalytics?.track(state.favorites.has(id)?'wishlist_add':'wishlist_remove',id);
   try{localStorage.setItem('jpFav',JSON.stringify([...state.favorites]))}catch{}
-  render();
+  if(state.tab==='favorites')render();
+  else for(const button of grid.querySelectorAll?.('[data-heart]')||[]){
+    const p=catalogueRows.find(p=>String(p.id)===button.dataset.heart)||presentationProduct(button.dataset.heart);
+    if(p){const saved=isWishlisted(p);button.classList.toggle('is-favorite',saved);button.setAttribute('aria-pressed',String(saved))}
+  }
   const heart=[...grid.querySelectorAll?.('[data-heart]')||[]].find(b=>b.dataset.heart===id);
   heart?.classList.add('motion-pop');
   document.querySelector('.detail-wishlist')?.classList.add('motion-pop');

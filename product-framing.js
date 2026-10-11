@@ -25,21 +25,29 @@
   if(!root.document||!root.IntersectionObserver||!root.ResizeObserver)return;
   const selector='.photo img,.hero img,.related-photo img,.cart-photo img,#previewImage img,.catalogue-preview-photo img';
   const cache=new Map(),records=new WeakMap(),observed=new WeakSet();
-  function measure(src){
+  function measure(img,src){
     if(cache.has(src))return cache.get(src);
+    // JPEG cannot have transparency; no pixel readback is needed.
+    if(/\.jpe?g(?:[?#]|$)/i.test(src))return Promise.resolve(null);
     const pending=new Promise(resolve=>{
+      function inspect(source){
+        const work=()=>{
+          try{
+            if(source===img&&img.getAttribute('src')!==src){cache.delete(src);resolve(null);return}
+            const ratio=Math.min(1,512/Math.max(source.naturalWidth,source.naturalHeight));
+            const canvas=document.createElement('canvas');
+            canvas.width=Math.max(1,Math.round(source.naturalWidth*ratio));canvas.height=Math.max(1,Math.round(source.naturalHeight*ratio));
+            const ctx=canvas.getContext('2d',{willReadFrequently:true});
+            ctx.drawImage(source,0,0,canvas.width,canvas.height);
+            resolve(alphaBounds(ctx.getImageData(0,0,canvas.width,canvas.height).data,canvas.width,canvas.height));
+          }catch{resolve(null)}
+        };
+        if(root.requestIdleCallback)root.requestIdleCallback(work,{timeout:250});else root.setTimeout(work,0);
+      }
+      // Reuse a decoded same-origin image instead of downloading/decoding it twice.
+      if(new URL(img.currentSrc||src,root.location.href).origin===root.location.origin){inspect(img);return}
       const source=new Image();source.crossOrigin='anonymous';
-      source.onload=()=>{
-        try{
-          const ratio=Math.min(1,512/Math.max(source.naturalWidth,source.naturalHeight));
-          const canvas=document.createElement('canvas');
-          canvas.width=Math.max(1,Math.round(source.naturalWidth*ratio));canvas.height=Math.max(1,Math.round(source.naturalHeight*ratio));
-          const ctx=canvas.getContext('2d',{willReadFrequently:true});
-          ctx.drawImage(source,0,0,canvas.width,canvas.height);
-          resolve(alphaBounds(ctx.getImageData(0,0,canvas.width,canvas.height).data,canvas.width,canvas.height));
-        }catch{resolve(null)}
-      };
-      source.onerror=()=>resolve(null);source.src=src;
+      source.onload=()=>inspect(source);source.onerror=()=>resolve(null);source.src=src;
     });
     cache.set(src,pending);if(cache.size>256)cache.delete(cache.keys().next().value);
     return pending;
@@ -54,7 +62,7 @@
   async function frame(img){
     const src=img.getAttribute('src');reset(img);
     if(!src||!img.complete||!img.naturalWidth)return;
-    const bounds=await measure(src);
+    const bounds=await measure(img,src);
     if(!bounds||!img.isConnected||img.getAttribute('src')!==src)return;
     // A tab may have been hidden while CORS/image decoding was in flight.
     // Keep its DOM stable and resume framing when the image is visible again.
@@ -64,10 +72,11 @@
   const visible=new IntersectionObserver(entries=>{
     for(const {target,isIntersecting} of entries)if(isIntersecting){visible.unobserve(target);frame(target)}
   },{rootMargin:'150px'});
-  function discover(){
-    document.querySelectorAll(selector).forEach(img=>{
-      if(observed.has(img))return;observed.add(img);resize.observe(img);visible.observe(img);
-    });
+  function discover(node=document){
+    const images=[...(node.matches?.(selector)?[node]:[]),...node.querySelectorAll(selector)];
+    for(const img of images){
+      if(observed.has(img))continue;observed.add(img);resize.observe(img);visible.observe(img);
+    }
   }
   document.addEventListener('load',event=>{if(event.target.matches?.(selector))visible.observe(event.target)},true);
   new MutationObserver(changes=>{
@@ -79,7 +88,7 @@
     for(const change of changes)if(change.type==='attributes'&&change.target.matches(selector)){
       reset(change.target);visible.observe(change.target);
     }
-    discover();
+    for(const change of changes)for(const node of change.addedNodes||[]){if(node.nodeType===1&&node.isConnected)discover(node)}
   }).observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['src']});
   discover();
 })(typeof window==='object'?window:globalThis);
