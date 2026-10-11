@@ -1,5 +1,20 @@
 const taxonomy=window.CatalogTaxonomy||{category:v=>String(v||'').trim(),brandParts:v=>[...new Set(String(v||'').split(/\s*×\s*/).map(x=>x.trim()).filter(Boolean))],unique:v=>[...new Set(v)]};
-const categoryOf=p=>taxonomy.category(p?.category);
+const adminCategoryAliases={'Сумка':'Сумки','Клатч':'Сумки','Клатчи':'Сумки','Кроссовки':'Обувь','Кроссовок':'Обувь','Ботинки':'Обувь','Сандалии':'Обувь','Туфли':'Обувь','Футболка':'Футболки','Рубашка':'Рубашки','Свитер':'Свитеры','Кардиган':'Кардиганы','Куртка':'Куртки','Жилет':'Жилеты','Костюм':'Костюмы','Шорты':'Шорты','Джинсы':'Джинсы','Брюки':'Брюки','Пиджак':'Пиджаки','Платье':'Платья','Юбка':'Юбки','Топ':'Топы','Майка':'Майки','Свитшот':'Свитшоты','Пуховик':'Пуховики','Тренч':'Тренчи','Купальник':'Купальники','Комбинезон':'Комбинезоны','Час':'Часы','Очки':'Очки','Аксессуар':'Аксессуары','Украшение':'Украшения','Парфюм':'Духи','Свеча':'Ароматические свечи','Свечи':'Ароматические свечи'};
+const adminCategoryKey=v=>String(v??'').normalize('NFKC').trim().toLowerCase().replace(/ё/g,'е').replace(/\s+/g,' ');
+const adminCategories=new Map(Object.entries(adminCategoryAliases).map(([a,b])=>[adminCategoryKey(a),b]));
+const adminCategory=v=>adminCategories.get(adminCategoryKey(v))||taxonomy.category(v);
+const categoryOf=p=>adminCategory(p?.category);
+const adminBrandAliases={'эрмес':'hermes','гермес':'hermes','шанель':'chanel','гуччи':'gucci','диор':'dior','луи виттон':'louis vuitton','луи вuitton':'louis vuitton','лоро пиана':'loro piana','боттега венета':'bottega veneta','боттега':'bottega','хром хартс':'chrome hearts','миу миу':'miu miu','прада':'prada','лоэве':'loewe','сен лоран':'saint laurent'};
+function adminSearchText(v){
+ let value=String(v??'').replace(/№/g,' ').normalize('NFKD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/ё/g,'е');
+ for(const [alias,brand] of Object.entries(adminBrandAliases))value=value.replaceAll(alias,brand);
+ return value.replace(/[^\p{L}\p{N}]+/gu,' ').trim().replace(/\s+/g,' ');
+}
+function matchesAdminSearch(p,query){
+ const terms=adminSearchText(query).split(' ').filter(Boolean);
+ const text=adminSearchText([p.brand,p.name,p.id,p.size,p.category,categoryOf(p),p.description].filter(v=>v!=null).join(' '));
+ return terms.every(term=>text.includes(term));
+}
 const sameLabel=(a,b)=>taxonomy.key?taxonomy.key(a)===taxonomy.key(b):a===b;
 const hasCategory=(p,value)=>sameLabel(categoryOf(p),value);
 const wearLabels={like_new:'Как новая',gently_used:'Небольшие следы носки',used:'Следы носки',very_used:'Сильный износ'};
@@ -165,17 +180,19 @@ function inventoryAvailability(p){return !p.available?'Продано / снят
 function formatPrice(p){return cataloguePrice(p)||'Цена по запросу'}
 function render(){
  updateStockSummary();
- window.AdminSelects?.sync();
  $('adminHome').classList.toggle('hidden',!session);$('adminHome').setAttribute('aria-current',activeView==='home'?'page':'false');
  $('productsMenuToggle').classList.toggle('active',!['analytics','settings','home'].includes(activeView));
- const q=$('adminSearch').value.trim().toLowerCase(),category=$('categoryFilter').value,gender=$('genderFilter').value;
- const filtered=items.filter(p=>matchesView(p,activeView)&&(!category||hasCategory(p,category))&&(!gender||p.gender===gender)&&`${p.brand} ${p.name} ${p.id} ${p.size||''}`.toLowerCase().includes(q));
+ const q=$('adminSearch').value,category=$('categoryFilter').value,gender=$('genderFilter').value;
+ const filtered=items.filter(p=>matchesView(p,activeView)&&(!category||hasCategory(p,category))&&(!gender||p.gender===gender)&&matchesAdminSearch(p,q));
  document.querySelectorAll('[data-count]').forEach(el=>el.textContent=items.filter(p=>matchesView(p,el.dataset.count)).length);
  document.querySelectorAll('[data-view]').forEach(el=>{const selected=el.dataset.view===activeView;el.classList.toggle('active',selected);if(el.classList.contains('nav-item')){if(selected)el.setAttribute('aria-current','page');else el.removeAttribute('aria-current')}});
  $('viewTitle').textContent=viewNames[activeView];$('resultCount').textContent=`Показано ${filtered.length} из ${items.length} товаров`;
  const currentCategory=$('categoryFilter').value;
  const categories=taxonomy.unique(items.map(categoryOf).filter(Boolean)).sort((a,b)=>a.localeCompare(b,'ru'));
- $('categoryFilter').innerHTML='<option value="">Все категории</option>'+categories.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join('');$('categoryFilter').value=currentCategory;
+ $('categoryFilter').innerHTML='<option value="">Все категории</option>'+categories.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join('');$('categoryFilter').value=adminCategory(currentCategory);
+ window.AdminSelects?.sync();
+ const categoryChoices=taxonomy.unique([...document.querySelectorAll('#categories option')].map(o=>adminCategory(o.value||o.textContent)).concat(categories));
+ $('categories').innerHTML=categoryChoices.map(c=>`<option value="${esc(c)}"></option>`).join('');
  $('brands').innerHTML=taxonomy.unique(items.flatMap(brandsOf).filter(Boolean)).sort().map(b=>`<option value="${esc(b)}"></option>`).join('');
  $('inventory').innerHTML=filtered.map(p=>`<article><div class="product-cell">${safeProductImage(p.image_url)?`<img class="product-thumb" src="${esc(p.image_url)}" alt="${esc(p.name)}" loading="lazy">`:'<span class="product-thumb thumb-placeholder">J.P</span>'}<div class="product-title"><strong>${esc(brandsOf(p).join(' × '))}</strong><p>${esc(catalogueDisplayName(p)||p.name)}</p>${p.product_condition&&p.product_condition!=='new'?`<small>${esc(conditionLabels[p.product_condition])}</small>`:''}${p.on_commission?'<small>Комиссия</small>':''}<small>№ ${esc(p.id)} · ${esc(categoryOf(p))} · ${{women:'Женское',men:'Мужское',unisex:'Унисекс'}[p.gender]||'Унисекс'}</small></div></div><div class="product-size">${esc(p.size||'Размер уточняйте')}<small class="inventory-quantity">${ProductSizes.stockUnits(p)+' шт.'}</small></div><div class="product-price">${adminPriceMarkup(p)}</div><div class="product-status"><span class="badge ${!p.available?'concealed':p.reserved?'reserved':p.fulfillment_status==='on_order'?'order':'stock'}">${inventoryAvailability(p)}</span></div><div class="product-wishlist"><span aria-hidden="true">♡</span> <span data-product-wishlist="${esc(p.id)}">${productWishlistLabel(p.id)}</span></div><details class="card-actions"><summary>Управление товаром <span aria-hidden="true">⌄</span></summary><div class="row-actions"><button type="button" data-edit="${esc(p.id)}" aria-label="Изменить ${esc(brandsOf(p).join(' × '))} ${esc(p.name)}">Изменить</button><button type="button" data-toggle="${esc(p.id)}" aria-label="${p.available?'Отметить продано':'Вернуть в продажу'} ${esc(brandsOf(p).join(' × '))} ${esc(p.name)}">${p.available?'Отметить продано':'Вернуть в продажу'}</button><button type="button" data-reserve="${esc(p.id)}" class="reserve-action">${p.reserved?'Снять бронь':'Бронь'}</button><button type="button" data-delete="${esc(p.id)}" class="delete-action" aria-label="Удалить ${esc(brandsOf(p).join(' × '))} ${esc(p.name)}">Удалить</button><button type="button" data-preview="${esc(p.id)}" class="preview-action">Предпросмотр в каталоге <svg class="inline-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg></button></div></details></article>`).join('')||'<div class="empty-state"><h2>Товары не найдены</h2><p>Измените поиск или фильтры.</p></div>';
 }
@@ -346,7 +363,7 @@ async function uploadPhoto(file){
 }
 $('editor').onsubmit=async e=>{e.preventDefault();if(busy)return;busy=true;const b=$('save');b.disabled=true;$('editorFields').disabled=true;try{
  const f=e.target.elements,files=selectedPhotoFiles();if(internalNoteState?.promise)await internalNoteState.promise;if(internalNoteState?.error)throw Error('Не удалось загрузить внутреннюю заметку. Повторите загрузку перед сохранением.');
- const payload={original_price:f.price_on_request?.checked||!f.original_price||f.original_price.value===''?null:Number(f.original_price.value),on_commission:f.on_commission?.checked===true,stock_quantities:editorQuantities(),product_condition:f.product_condition?.value||'new',wear_condition:f.product_condition?.value==='pre_owned'?(f.wear_condition?.value||null):null,brand:editorBrand(f),name:f.name.value.trim(),category:taxonomy.category(f.category.value),size:ProductSizes.serialize(f.size.value),price:f.price_on_request?.checked||f.price.value===''?null:Number(f.price.value),currency:'EUR',description:f.description.value.trim()||null,available:f.available.checked,fulfillment_status:f.fulfillment_status.value,gender:f.gender.value,reserved:f.available.checked&&f.reserved?.checked===true};
+ const payload={original_price:f.price_on_request?.checked||!f.original_price||f.original_price.value===''?null:Number(f.original_price.value),on_commission:f.on_commission?.checked===true,stock_quantities:editorQuantities(),product_condition:f.product_condition?.value||'new',wear_condition:f.product_condition?.value==='pre_owned'?(f.wear_condition?.value||null):null,brand:editorBrand(f),name:f.name.value.trim(),category:adminCategory(f.category.value),size:ProductSizes.serialize(f.size.value),price:f.price_on_request?.checked||f.price.value===''?null:Number(f.price.value),currency:'EUR',description:f.description.value.trim()||null,available:f.available.checked,fulfillment_status:f.fulfillment_status.value,gender:f.gender.value,reserved:f.available.checked&&f.reserved?.checked===true};
  if(!['new','pre_owned','vintage'].includes(payload.product_condition))throw Error('Выберите состояние вещи.');
  if(!['women','men','unisex'].includes(payload.gender))throw Error('Выбери раздел товара.');
  if(!['in_stock','on_order'].includes(payload.fulfillment_status))throw Error('Выбери статус товара.');
