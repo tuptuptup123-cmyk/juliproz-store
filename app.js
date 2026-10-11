@@ -146,10 +146,16 @@ function sortProducts(rows){
 }
 function filtered(){
   if(state.tab==="favorites")return sortProducts(catalogueProducts().filter(p=>isWishlisted(p)));
-  return sortProducts(catalogueProducts().filter(p=>matchesContext(p)&&(`${p.brand||""} ${p.name||""} ${p.id} ${p.variant_ids?Object.values(p.variant_ids).join(" "):""} ${p.size||""} ${p.color_search||""}`.toLowerCase().includes(state.search.toLowerCase()))));
+  const normalize=taxonomy.searchText||((v)=>String(v??'').toLowerCase().trim());
+  const terms=normalize(state.search).split(' ').filter(Boolean);
+  return sortProducts(catalogueProducts().filter(p=>{
+    if(!matchesContext(p))return false;
+    const text=normalize([p.brand,p.name,p.id,...Object.values(p.variant_ids||{}),p.size,p.color_search,categoryOf(p)].filter(v=>v!=null).join(' '));
+    return terms.every(term=>text.includes(term));
+  }));
 }
 function changeCatalogSort(value){if(!['newest','price_asc','price_desc','discount'].includes(value))return;sortRevision++;state.sort=value;document.getElementById('sortStatus').textContent='';render()}
-const sortLabels={newest:'Сначала новые',price_asc:'Дешевле',price_desc:'Дороже',discount:'Больше скидка'};
+const sortLabels={newest:'Сначала новые',price_asc:'Дешевле',price_desc:'Дороже',discount:'Сначала большая скидка'};
 function syncCatalogSort(){document.getElementById('catalogSortLabel').textContent='Сортировка';document.getElementById('catalogSort').setAttribute('aria-label','Сортировка товаров: '+sortLabels[state.sort]);document.getElementById('catalogSort').setAttribute('data-value',state.sort);document.querySelectorAll('[data-sort]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.sort===state.sort)))}
 function setSortOpen(open){document.getElementById('catalogSortOptions').classList.toggle('hidden',!open);document.getElementById('catalogSort').setAttribute('aria-expanded',String(open))}
 document.getElementById('catalogSort').onclick=()=>setSortOpen(document.getElementById('catalogSortOptions').classList.contains('hidden'));
@@ -411,6 +417,7 @@ function cartSnapshot(p){const snapshot=Object.fromEntries(['id','brand','name',
 function saveCart(){cartRevision++;try{localStorage.setItem('jpCart',JSON.stringify(cart))}catch{document.getElementById('cartStatus').textContent='Корзина доступна в этом сеансе. Браузер не разрешил сохранить её.'}}
 function setTab(tab){
   setSortOpen(false);
+  if(tab!=='catalog'){document.getElementById('catalogSearch').classList.add('hidden');document.getElementById('toggleSearch').setAttribute('aria-expanded','false');state.search='';document.getElementById('search').value=''}
   if(state.tab!==tab)window.StoreAnalytics?.track("page_view",null,['sell','services'].includes(tab)?null:tab);
   navigationRevision++;
   state.tab=tab;selectedProduct=null;selectedSize=null;hideProductModal();productReturnFocus=null;
@@ -507,11 +514,13 @@ function relatedMarkup(p){
 let productReturnFocus=null;
 let productNavHome=null;
 function hideProductModal(){
+ document.body?.classList?.remove('product-modal-open');
  const modal=document.getElementById('productModal'),nav=modal.querySelector?.('.bottom-nav');
  if(nav&&productNavHome){productNavHome.replaceWith(nav);productNavHome=null}
  modal.classList.add('hidden');
 }
 function showProductModal(){
+ document.body?.classList?.add('product-modal-open');
  const modal=document.getElementById('productModal');if(modal.classList.contains('hidden'))productReturnFocus=document.activeElement;
  const nav=document.querySelector('.bottom-nav');
  if(nav?.before&&document.createComment&&!modal.contains(nav)){productNavHome=document.createComment('bottom navigation');nav.before(productNavHome);modal.appendChild(nav)}

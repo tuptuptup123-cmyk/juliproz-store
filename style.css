@@ -752,3 +752,7 @@ img.product-framed{padding:0;object-fit:contain;transform-origin:center;box-sizi
 .telegram-fullscreen .product-modal{padding-top:0}
 .product-toolbar{padding-top:calc(12px + max(env(safe-area-inset-top),var(--tg-safe-area-inset-top,0px),var(--tg-content-safe-area-inset-top,0px)))}
 @media(min-width:800px){.product-modal .product-layout{padding-top:24px}.product-toolbar{padding-left:max(20px,calc((100vw - 1120px)/2 + 16px));padding-right:max(20px,calc((100vw - 1120px)/2 + 16px))}}
+
+/* Keep the catalogue behind an open product from scrolling independently. */
+body.product-modal-open{overflow:hidden}
+.product-modal{overscroll-behavior:contain}

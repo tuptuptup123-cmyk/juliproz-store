@@ -9,6 +9,7 @@ const nodes=new Map();function node(id){if(!nodes.has(id))nodes.set(id,{innerHTM
 let rows=[],contactUrl=null;
 const context=vm.createContext({ProductSizes:sizes,safeProductImage:()=>false,window:{STORE_CONFIG:{url:'https://test.invalid',key:'public'},open:u=>contactUrl=u,addEventListener(){}},document:{getElementById:node,querySelectorAll:()=>[],querySelector:()=>null,addEventListener(){}},localStorage:{getItem:()=>null},location:{search:''},URLSearchParams,AbortSignal,setTimeout,fetch:async()=>({ok:true,json:async()=>rows})});
 vm.runInContext(fs.readFileSync(__dirname+'/../product-pricing.js','utf8'),context);
+vm.runInContext(fs.readFileSync(__dirname+'/../catalog-taxonomy.js','utf8'),context);
  vm.runInContext(fs.readFileSync(root+'/app.js','utf8'),context);
 const run=s=>vm.runInContext(s,context);
 assert.deepEqual(sizes.parse('М; xl; OS; One size'),['M','XL','One Size']);
@@ -19,6 +20,15 @@ assert.equal(run("menuSizeLabel('5')"),'Мячи: 5');
 assert.equal(run("menuSizeLabel('XL')"),'Головные уборы: XL');
 run("state.category='Зип-худи'");assert.equal(JSON.stringify(run("valuesFor('size')")),JSON.stringify(['Все','L','XL','XXL']));
 run('state.category=null;state.gender=null');
+run(`products=[{id:1,brand:'Hermès',name:'Кроссовки Bouncing',category:'Обувь',size:'42'},{id:2,brand:'Gucci',name:'Кроссовки',category:'Обувь',size:'41'}];state.search='  42 эрмес кроссовки  '`);
+assert.deepEqual(Array.from(run('filtered().map(p=>p.id)')),[1]);
+run(`state.search='Hermes';state.size='41'`);assert.equal(run('filtered().length'),0);
+run(`state.search='';state.size=null`);
+const adminSource=fs.readFileSync(root+'/admin.js','utf8');
+vm.runInContext(adminSource.slice(adminSource.indexOf('function catalogueDisplayName('),adminSource.indexOf('function cataloguePrice(')),context);
+assert.equal(run("catalogueDisplayName({brand:'Cartier',name:'Очки Santos de Cartier'})"),'Очки Santos de Cartier');
+assert.equal(run("catalogueDisplayName({brand:'Balenciaga',name:'Брюки Balenciaga × eBay Printed Cotton Pants'})"),'Брюки Balenciaga × eBay Printed Cotton Pants');
+
 run("products=[{id:51,product_condition:'pre_owned',on_commission:true,photos:[]},{id:52,product_condition:'pre_owned',on_commission:false,photos:[]}];state.product_condition='commission'");assert.equal(run('filtered().length'),1);assert.equal(run('filtered()[0].id'),51);assert.match(run('conditionBadge(products[0])'),/PRE-OWNED/);assert.match(run('conditionBadge(products[0])'),/Комиссия/);run("state.product_condition='pre_owned'");assert.equal(run('filtered().length'),2);run('state.product_condition=null');
 
 (async()=>{

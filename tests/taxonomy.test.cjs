@@ -18,3 +18,17 @@ test('size spelling aliases retain legacy stock counts and fail closed on ambigu
  assert.deepEqual(S.parse('Длинна: 16 см; Длина: 16 см'),['Длина: 16 см']);
  assert.equal(S.stockFor({stock_quantities:{'Длинна: 16 см':2}},'Длина: 16 см'),2);
 });
+
+test('catalog search handles accents, Russian aliases, punctuation and whitespace',()=>{
+ assert.equal(T.searchText('  Hermès  '),'hermes');
+ assert.equal(T.searchText('Эрмес кроссовки'),'hermes кроссовки');
+ assert.equal(T.searchText('C.P. Company'),T.searchText('C P Company'));
+ assert.equal(T.searchText('№ 257; Щётка'),'257 щетка');
+});
+test('decimal comma stock keys match displayed sizes without inventing inventory',()=>{
+ const p={size:'37,5; 38',stock_quantities:{'37,5':2,'38':0}};
+ assert.equal(S.stockFor(p,S.parse(p.size)[0]),2);
+ assert.equal(S.stockUnits(p),2);
+ assert.equal(S.stockFor(p,'38'),0);
+ assert.equal(S.normalize('37,5'),'37.5');
+});

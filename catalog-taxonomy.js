@@ -11,6 +11,12 @@
  const brand=value=>brands.get(brandKey(value))||clean(value);
  function unique(values,normalize=clean){const result=new Map();for(const value of values){const label=normalize(value);if(label&&!result.has(key(label)))result.set(key(label),label)}return [...result.values()]}
  function brandParts(value){return unique(clean(value).split(/\s*[×]\s*|\s+[xх]\s+/i),brand)}
- const api={clean,key,category,brand,brandParts,unique};root.CatalogTaxonomy=api;
+const searchAliases={'эрмес':'hermes','гермес':'hermes','шанель':'chanel','гуччи':'gucci','диор':'dior','луи виттон':'louis vuitton','луи вuitton':'louis vuitton','лоро пиана':'loro piana','боттега венета':'bottega veneta','боттега':'bottega','хром хартс':'chrome hearts','миу миу':'miu miu','прада':'prada','лоэве':'loewe','сен лоран':'saint laurent'};
+function searchText(v){
+ let value=String(v??'').replace(/№/g,' ').normalize('NFKD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/ё/g,'е');
+ for(const [alias,brand] of Object.entries(searchAliases))value=value.replaceAll(alias,brand);
+ return value.replace(/[^\p{L}\p{N}]+/gu,' ').trim().replace(/\s+/g,' ');
+}
+ const api={clean,key,category,brand,brandParts,unique,searchText};root.CatalogTaxonomy=api;
  if(typeof module==='object')module.exports=api;
 })(typeof window==='object'?window:globalThis);
