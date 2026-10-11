@@ -1,5 +1,5 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
-const nodes=new Map(),saved=new Map();const get=id=>{if(!nodes.has(id))nodes.set(id,{innerHTML:'',textContent:'',value:'',classList:{add(){},remove(){},toggle(){},contains(){return false}},addEventListener(){},setAttribute(){}});return nodes.get(id)};
+const nodes=new Map(),saved=new Map();const get=id=>{if(!nodes.has(id))nodes.set(id,{innerHTML:'',textContent:'',value:'',classList:{add(){},remove(){},toggle(){},contains(){return false}},addEventListener(type,handler){this[type]=handler},setAttribute(){}});return nodes.get(id)};
 let rows=[],fail=false,links=[];
 const context=vm.createContext({ProductSizes:require('../product-sizes.js'),safeProductImage:()=>false,window:{STORE_CONFIG:{url:'https://test.invalid',key:'public'},open:u=>links.push(u),addEventListener(){}},document:{getElementById:get,querySelectorAll:()=>[],querySelector:()=>null,addEventListener(){}},localStorage:{getItem:k=>saved.get(k)||null,setItem:(k,v)=>saved.set(k,v)},location:{search:''},URLSearchParams,AbortSignal,setTimeout,fetch:async()=>{if(fail)throw Error();return {ok:true,json:async()=>rows}}});
 vm.runInContext(fs.readFileSync(__dirname+'/../product-pricing.js','utf8'),context);
@@ -16,6 +16,15 @@ fail=true;await run('checkoutCart()');assert.equal(links.length,2);assert.equal(
 run("toggleWishlist(2);state.tab='favorites';state.category='Обувь';state.search='не найдено'");assert.equal(run('filtered().length'),1);assert.equal(run('filtered()[0].id'),2);assert.equal(JSON.parse(saved.get('jpFav'))[0],'2');
 saved.set('jpCart','{broken');assert.equal(run('readCart().length'),0);saved.set('jpCart',JSON.stringify([{id:'bad,query',size:'',quantity:100},{id:2,size:'',quantity:1000},{id:2,size:'',quantity:2}]));assert.equal(run('readCart().length'),1);assert.equal(run('readCart()[0].quantity'),99);
 run("cart=[];products=[{id:7,brand:'Gucci',name:'Обувь',size:'40',price:100,currency:'EUR',fulfillment_status:'in_stock'}];openProduct(7);addToCart();addToCart()");assert.equal(run('cartCount()'),1);assert.match(get('shareStatus').textContent,/уже в корзине/);run('cart[0].quantity=9;renderCart()');assert.equal(run('cartCount()'),1);
+// Removed products/sizes and zero balances must not borrow the old snapshot's order limit.
+for(const change of ['removed','size','hidden','zero','reserved']){
+ run("cart=[];products=[{id:80,name:'Кепка',size:'M; L',price:100,currency:'EUR',available:true,fulfillment_status:'on_order'}];openProduct(80);selectedSize='M';addToCart();cartMutationTimes.clear()");
+ run(change==='removed'?'products=[]':change==='size'?"products[0].size='L'":change==='hidden'?'products[0].available=false':change==='zero'?"products[0].fulfillment_status='in_stock';products[0].stock_quantities={M:0,L:1}":'products[0].reserved=true');
+ run('renderCart()');assert.match(get('cartContent').innerHTML,/data-cart-action="plus"[^>]*disabled/);
+ // Even an already-dispatched stale click must fail safely before mutating quantity.
+ get('cartContent').click({target:{closest:()=>({dataset:{cartAction:'plus',index:'0'},disabled:false,isConnected:true})}});
+ assert.equal(run('cart[0].quantity'),1,change);assert.match(get('cartStatus').textContent,/не изменено/);
+}
 // A still-open detail must not add a removed item or an obsolete size/price.
 run("cart=[];products=[{id:8,name:'Товар',size:'40',price:100,currency:'EUR',fulfillment_status:'in_stock'}];openProduct(8);products=[];addToCart()");assert.equal(run('cart.length'),0);assert.match(get('shareStatus').textContent,/недоступен/);
 run("products=[{id:8,name:'Товар',size:'40',price:100,currency:'EUR',fulfillment_status:'in_stock'}];openProduct(8);products=[{...products[0],size:'41'}];addToCart()");assert.equal(run('cart.length'),0);assert.match(get('shareStatus').textContent,/изменилась/);assert.equal(run('selectedSize'),'41');run('addToCart()');assert.equal(run('cart[0].size'),'41');
