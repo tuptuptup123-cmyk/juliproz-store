@@ -12,6 +12,7 @@
     return [...new Set(options.map(s=>normalize(s.trim())).filter(Boolean))].sort(compare);
   }
   function normalize(s){
+    s=s.replace(/^(\d+),(\d+)$/,'$1.$2');
     if(/^(?:one[ -]?size|o[ /-]?s|единый размер|универсальный)$/i.test(s))return 'One Size';
     let latin=s.replace(/[Хх]/g,'X').replace(/[Мм]/g,'M').replace(/[Сс]/g,'S').toUpperCase();
     latin=latin.replace(/^2XL$/,'XXL').replace(/^3XL$/,'XXXL').replace(/^XXXXL$/,'4XL');

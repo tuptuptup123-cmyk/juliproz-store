@@ -533,7 +533,11 @@ function catalogueDisplayName(p){
   let result=name;
   for(const label of [brand,...(aliases[key]||[])].filter(Boolean)){
     const escaped=label.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
-    result=result.replace(new RegExp('(^|[\\s,–—-])'+escaped+'(?=$|[\\s,–—-])','gi'),'$1').trim();
+    result=result.replace(new RegExp('(^|[\\s,–—-])'+escaped+'(?=$|[\\s,–—-])','gi'),(match,prefix,offset,full)=>{
+      // Keep brand names that belong to a model or a collaboration.
+      if(/\bde\s*$/i.test(full.slice(0,offset))||/^\s*[×x]\s+/i.test(full.slice(offset+match.length)))return match;
+      return prefix;
+    }).trim();
   }
   return result.replace(/^[,–—-]+|[,–—-]+$/g,'').trim()||p.category||name;
 }
