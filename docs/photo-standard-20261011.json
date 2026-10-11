@@ -1,0 +1,246 @@
+{
+  "method": "Original photographs only; alpha masks, cropping and proportional resizing. No generative recreation or mirroring.",
+  "changes": [
+    {
+      "id": 276,
+      "before": {
+        "image_url": "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/949c77f0-1e1a-4615-b82d-ef06272b8006.webp",
+        "photos": [
+          "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/949c77f0-1e1a-4615-b82d-ef06272b8006.webp",
+          "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/757aed78-34d8-4e67-bd9b-f49289a76f54.webp"
+        ]
+      },
+      "after": {
+        "image_url": "https://juliproz-store.vercel.app/images/photo-standard-20261011/276-cover.webp",
+        "photos": [
+          "https://juliproz-store.vercel.app/images/photo-standard-20261011/276-cover.webp"
+        ]
+      },
+      "source": {
+        "id": 276,
+        "source": "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/757aed78-34d8-4e67-bd9b-f49289a76f54.webp",
+        "kind": "existing gallery",
+        "replace_source": false
+      }
+    },
+    {
+      "id": 80,
+      "before": {
+        "image_url": "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/5f0d1a28-7107-4649-ad05-35478c51a417.webp",
+        "photos": [
+          "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/5f0d1a28-7107-4649-ad05-35478c51a417.webp",
+          "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/cae9150d-0f0b-4bd6-8a7c-8f561cd7a506.webp",
+          "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/3618195e-b68d-495b-b8c0-5b6ceac2c9e4.webp",
+          "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/91ac2730-bef9-4156-8e2f-3ead099b721d.webp",
+          "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/ffa812a0-d045-45cf-b4ef-e924eae8b3e4.webp",
+          "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/61eb281f-41d6-4bc4-9e6f-1be6b7325251.webp"
+        ]
+      },
+      "after": {
+        "image_url": "https://juliproz-store.vercel.app/images/photo-standard-20261011/80-cover.webp",
+        "photos": [
+          "https://juliproz-store.vercel.app/images/photo-standard-20261011/80-cover.webp",
+          "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/cae9150d-0f0b-4bd6-8a7c-8f561cd7a506.webp",
+          "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/3618195e-b68d-495b-b8c0-5b6ceac2c9e4.webp",
+          "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/91ac2730-bef9-4156-8e2f-3ead099b721d.webp",
+          "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/ffa812a0-d045-45cf-b4ef-e924eae8b3e4.webp"
+        ]
+      },
+      "source": {
+        "id": 80,
+        "source": "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/61eb281f-41d6-4bc4-9e6f-1be6b7325251.webp",
+        "kind": "existing gallery",
+        "replace_source": false
+      }
+    },
+    {
+      "id": 33,
+      "before": {
+        "image_url": "https://juliproz-store.vercel.app/images/covers-20261010/33.webp",
+        "photos": [
+          "https://juliproz-store.vercel.app/images/covers-20261010/33.webp",
+          "https://juliproz-store.vercel.app/images/prada-grey-395-side.webp",
+          "https://juliproz-store.vercel.app/images/prada-grey-395-top.webp"
+        ]
+      },
+      "after": {
+        "image_url": "https://juliproz-store.vercel.app/images/photo-standard-20261011/33-cover.webp",
+        "photos": [
+          "https://juliproz-store.vercel.app/images/photo-standard-20261011/33-cover.webp",
+          "https://juliproz-store.vercel.app/images/prada-grey-395-top.webp"
+        ]
+      },
+      "source": {
+        "id": 33,
+        "source": "https://juliproz-store.vercel.app/images/prada-grey-395-side.webp",
+        "kind": "existing gallery",
+        "replace_source": false
+      }
+    },
+    {
+      "id": 23,
+      "before": {
+        "image_url": "https://juliproz-store.vercel.app/images/covers-20261010/23.webp",
+        "photos": [
+          "https://juliproz-store.vercel.app/images/covers-20261010/23.webp",
+          "https://juliproz-store.vercel.app/images/hermes-chypre-beige-nude-side-transparent-v3.webp",
+          "https://juliproz-store.vercel.app/images/hermes-chypre-beige-nude-top-transparent-v3.webp"
+        ]
+      },
+      "after": {
+        "image_url": "https://juliproz-store.vercel.app/images/photo-standard-20261011/23-cover.webp",
+        "photos": [
+          "https://juliproz-store.vercel.app/images/photo-standard-20261011/23-cover.webp",
+          "https://juliproz-store.vercel.app/images/hermes-chypre-beige-nude-top-transparent-v3.webp"
+        ]
+      },
+      "source": {
+        "id": 23,
+        "source": "https://juliproz-store.vercel.app/images/hermes-chypre-beige-nude-side-transparent-v3.webp",
+        "kind": "existing gallery",
+        "replace_source": false
+      }
+    },
+    {
+      "id": 24,
+      "before": {
+        "image_url": "https://juliproz-store.vercel.app/images/covers-20261010/24.webp",
+        "photos": [
+          "https://juliproz-store.vercel.app/images/covers-20261010/24.webp",
+          "https://juliproz-store.vercel.app/images/hermes-bouncing-mesh-beige-side-transparent-v3.webp",
+          "https://juliproz-store.vercel.app/images/hermes-bouncing-mesh-beige-back-transparent-v3.webp"
+        ]
+      },
+      "after": {
+        "image_url": "https://juliproz-store.vercel.app/images/photo-standard-20261011/24-cover.webp",
+        "photos": [
+          "https://juliproz-store.vercel.app/images/photo-standard-20261011/24-cover.webp",
+          "https://juliproz-store.vercel.app/images/hermes-bouncing-mesh-beige-back-transparent-v3.webp"
+        ]
+      },
+      "source": {
+        "id": 24,
+        "source": "https://juliproz-store.vercel.app/images/hermes-bouncing-mesh-beige-side-transparent-v3.webp",
+        "kind": "existing gallery",
+        "replace_source": false
+      }
+    },
+    {
+      "id": 287,
+      "before": {
+        "image_url": "https://juliproz-store.vercel.app/images/photo-cleanup-20261011/287-cover.webp",
+        "photos": [
+          "https://juliproz-store.vercel.app/images/photo-cleanup-20261011/287-cover.webp",
+          "https://juliproz-store.vercel.app/images/photo-cleanup-20261011/287-side.webp"
+        ]
+      },
+      "after": {
+        "image_url": "https://juliproz-store.vercel.app/images/photo-standard-20261011/287-cover.webp",
+        "photos": [
+          "https://juliproz-store.vercel.app/images/photo-standard-20261011/287-cover.webp",
+          "https://juliproz-store.vercel.app/images/photo-cleanup-20261011/287-side.webp"
+        ]
+      },
+      "source": {
+        "id": 287,
+        "source": "https://juliproz-store.vercel.app/images/photo-cleanup-20261011/287-cover.webp",
+        "kind": "existing gallery",
+        "replace_source": false
+      }
+    },
+    {
+      "id": 445,
+      "before": {
+        "image_url": "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/9b0456c4-751e-4b48-b63d-9320c3717054.webp",
+        "photos": [
+          "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/9b0456c4-751e-4b48-b63d-9320c3717054.webp",
+          "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/e9ce04b8-1e51-419c-a17d-d4bfdaa9c156.webp",
+          "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/a2c32a68-8211-474d-9927-5d4867524ddc.webp"
+        ]
+      },
+      "after": {
+        "image_url": "https://juliproz-store.vercel.app/images/photo-standard-20261011/445-cover.webp",
+        "photos": [
+          "https://juliproz-store.vercel.app/images/photo-standard-20261011/445-cover.webp",
+          "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/e9ce04b8-1e51-419c-a17d-d4bfdaa9c156.webp",
+          "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/a2c32a68-8211-474d-9927-5d4867524ddc.webp"
+        ]
+      },
+      "source": {
+        "id": 445,
+        "source": "yeezy-0.png",
+        "kind": "verified matching retail source",
+        "replace_source": false
+      }
+    },
+    {
+      "id": 228,
+      "before": {
+        "image_url": "https://juliproz-store.vercel.app/images/covers-20261010/228.webp",
+        "photos": [
+          "https://juliproz-store.vercel.app/images/covers-20261010/228.webp",
+          "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/cc96fbc1-4752-471a-acbb-a62d88402d7b.webp"
+        ]
+      },
+      "after": {
+        "image_url": "https://juliproz-store.vercel.app/images/photo-standard-20261011/228-cover.webp",
+        "photos": [
+          "https://juliproz-store.vercel.app/images/photo-standard-20261011/228-cover.webp",
+          "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/cc96fbc1-4752-471a-acbb-a62d88402d7b.webp"
+        ]
+      },
+      "source": {
+        "id": 228,
+        "source": "kith-black-0.jpg",
+        "kind": "verified matching retail source",
+        "replace_source": false
+      }
+    },
+    {
+      "id": 223,
+      "before": {
+        "image_url": "https://juliproz-store.vercel.app/images/covers-20261010/223.webp",
+        "photos": [
+          "https://juliproz-store.vercel.app/images/covers-20261010/223.webp",
+          "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/b5fbebc7-317a-4bc0-9c5d-b635ada022e1.webp"
+        ]
+      },
+      "after": {
+        "image_url": "https://juliproz-store.vercel.app/images/photo-standard-20261011/223-cover.webp",
+        "photos": [
+          "https://juliproz-store.vercel.app/images/photo-standard-20261011/223-cover.webp",
+          "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/b5fbebc7-317a-4bc0-9c5d-b635ada022e1.webp"
+        ]
+      },
+      "source": {
+        "id": 223,
+        "source": "kith-green-0.jpg",
+        "kind": "verified matching retail source",
+        "replace_source": false
+      }
+    },
+    {
+      "id": 439,
+      "before": {
+        "image_url": "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/ca0be9a8-93bb-4d2f-8180-093d1a542f10.webp",
+        "photos": [
+          "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/ca0be9a8-93bb-4d2f-8180-093d1a542f10.webp",
+          "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/70374d15-d361-4896-b63d-3d1f56e14887.webp"
+        ]
+      },
+      "after": {
+        "image_url": "https://juliproz-store.vercel.app/images/photo-standard-20261011/439-cover.webp",
+        "photos": [
+          "https://juliproz-store.vercel.app/images/photo-standard-20261011/439-cover.webp",
+          "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/70374d15-d361-4896-b63d-3d1f56e14887.webp"
+        ]
+      },
+      "source": {
+        "id": 439,
+        "source": "photo-review/loro-mesh-1.jpg",
+        "kind": "official Loro Piana FAM1718_F7XA",
+        "replace_source": true
+      }
+    }
+  ]
+}
