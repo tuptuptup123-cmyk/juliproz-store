@@ -61,7 +61,9 @@ run("state.sort='discount'");assert.deepEqual(JSON.parse(run('JSON.stringify(fil
 // Price sorting needs no exchange-rate request.
 fail=true;await run("changeCatalogSort('price_asc')");assert.equal(run('state.sort'),'price_asc');assert.equal(get('sortStatus').textContent,'');fail=false;
 assert.equal(run("money({price:100,currency:'USD'})"),'');
-assert.match(run("conditionBadge({product_condition:'pre_owned',wear_condition:'gently_used'})"),/Небольшие следы носки/);
+assert.doesNotMatch(run("conditionBadge({product_condition:'pre_owned',wear_condition:'gently_used'})"),/следы носки/);
+assert.match(run("descriptionText({product_condition:'pre_owned',wear_condition:'gently_used'})"),/Состояние: Небольшие следы носки/);
+assert.equal(run("descriptionText({description:'Небольшие следы носки на рукавах',product_condition:'pre_owned',wear_condition:'gently_used'})"),'Небольшие следы носки на рукавах');
 assert.equal(run("wearLabel({product_condition:'new',wear_condition:'used'})"),'');
 // Fractional legacy prices become whole EUR unit prices in the store; manager drafts omit all amounts.
 rows=[{id:801,brand:'Gucci',name:'Обувь',size:'',price:624.9,original_price:899.7,currency:'EUR',available:true,fulfillment_status:'on_order'},{id:802,name:'Сумка',size:'',price:124.4,currency:'€',available:true,fulfillment_status:'on_order'},{id:803,name:'По запросу',size:'',price:null,currency:'EUR',available:true,fulfillment_status:'on_order'},{id:804,name:'Другая валюта',size:'',price:100.9,currency:'USD',available:true,fulfillment_status:'on_order'}];context.fixture=rows;
