@@ -19,6 +19,7 @@ jobs:
       - run: node "$RUNNER_TEMP/jp-browser/node_modules/playwright/cli.js" install --with-deps chromium
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" QA_OUTPUT="$RUNNER_TEMP/jp-qa" node tests/light-shadow.browser.cjs
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" QA_OUTPUT="$RUNNER_TEMP/jp-qa" node tests/catalog-prices.browser.cjs
+      - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" QA_OUTPUT="$RUNNER_TEMP/jp-qa" node tests/sale-labels.browser.cjs
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: catalog-preview
