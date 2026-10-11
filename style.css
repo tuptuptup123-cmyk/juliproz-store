@@ -671,3 +671,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 .stock-label{font-size:11px;line-height:1.5;color:var(--muted)}.detail-stock{font-size:13px;margin:12px 0}.detail-stock:empty{display:none}
 
 .hot-brand-options{display:grid;grid-template-columns:1fr 1fr;gap:10px}.hot-brand-options button{min-height:54px;min-width:0;padding:12px 8px;border:1px solid var(--line);border-radius:4px;background:#fff;color:var(--ink);font:inherit;font-size:13px}.hot-brand-options button[aria-pressed=true]{background:#f3f3f3;border-color:var(--ink)}.hot-brand-options button:focus-visible{outline:2px solid var(--brand-blue);outline-offset:3px}
+
+/* Same product bounds and 8% minimum margins in every catalogue preview. */
+.photo,.hero,.related-photo,.cart-photo,#previewImage,.catalogue-preview-photo{overflow:hidden}
+img.product-framed{padding:0;object-fit:contain;transform-origin:center;box-sizing:border-box}
