@@ -28,4 +28,23 @@ for(const width of [320,390,768,1280]){
  await page.evaluate(async()=>{const source=document.createElement('canvas');source.width=source.height=100;source.getContext('2d').fillRect(20,20,60,60);const blob=await new Promise(r=>source.toBlob(r,'image/png')),entry=await PhotoStudio.process(new File([blob],'design-fixture.png',{type:'image/png'}),false);PhotoStudio.open(entry,()=>{},()=>{})});await snap('admin-photo');await page.locator('#studioTools summary').click();await snap('admin-photo-tools');await page.locator('#studioClose').click();
  assert.deepEqual(errors,[],`${width} browser errors`);await page.close();console.log(width+' PASS full-page design review: catalogue, empty states, filters, product variants, cart, sell, services, privacy, auth forms, admin views and dialogs');
 }
+// Real filter and editor integration using legacy alias records, without production writes.
+for(const width of [390,1280]){
+ const page=await browser.newPage({viewport:{width,height:900},reducedMotion:'reduce'});
+ let saved=null;const aliases=[{...base,id:99101,brand:'AMIRI',category:'Кепка',size:'o/s',on_commission:false,stock_quantities:{'o/s':4}},{...base,id:99102,brand:'Amiri',category:'Шапка',size:'One Size',on_commission:false},{...base,id:99103,brand:'Hermes',category:'Кольцо'},{...base,id:99104,brand:'Hermès',category:'Подвеска'},{...base,id:99105,brand:'ON × LOEWE',category:'Обувь'},{...base,id:99106,brand:'On x Loewe',category:'Обувь'}];
+ await page.addInitScript(p=>{localStorage.setItem('jpAnalyticsConsent','declined');localStorage.setItem('jpCart',JSON.stringify([{id:String(p.id),size:'o/s',quantity:2,product:p}]))},aliases[0]);
+ await page.route('https://qhgzzhgxwpcctafpzjid.supabase.co/**',r=>{const u=new URL(r.request().url());if(u.pathname==='/rest/v1/products'){if(r.request().method()==='PATCH'){saved=r.request().postDataJSON();return r.fulfill({json:[{...aliases[0],...saved,revision:2}]})}assert.equal(r.request().method(),'GET');return r.fulfill({json:aliases})}if(u.pathname.includes('wishlist_counts'))return r.fulfill({json:{days:30,counts:{}}});if(u.pathname.includes('analytics_health'))return r.fulfill({json:false});return r.fulfill({json:[]})});
+ await page.goto('http://localhost:8786/');await page.locator('.product').first().waitFor();
+ assert.equal(await page.evaluate(()=>cart[0].size),'One Size');assert.equal(await page.evaluate(()=>cartLimit(liveCartProduct(cart[0]),cart[0].size)),4);
+ assert.deepEqual(await page.evaluate(()=>valuesFor('category')),['Все','Головной убор','Обувь','Украшения']);
+ const brands=await page.evaluate(()=>valuesFor('brand'));assert.equal(brands.filter(b=>b==='Amiri').length,1);assert.equal(brands.filter(b=>b==='Hermès').length,1);assert.equal(brands.filter(b=>b==='Loewe').length,1);
+ await page.locator('#openCatalogMenu').click();await page.locator('[data-menu-type=category][data-menu-value="Головной убор"]').click();assert.deepEqual(await page.locator('#menuChoices-size .menu-choice').allTextContents(),['Все','One Size']);await page.locator('#showMenuProducts').click();assert.equal(await page.locator('.product').count(),2);
+ await page.evaluate(()=>{state.category=null;state.brand='Loewe';render()});assert.equal(await page.locator('.product').count(),2);
+ await page.goto('http://localhost:8786/admin.html');await page.evaluate(rows=>{session={access_token:'synthetic',expires_at:Date.now()/1000+3600,user:{id:'synthetic'}};items=rows;$('authArea').classList.add('hidden');$('workspace').classList.remove('hidden');render()},aliases);
+ assert.deepEqual(await page.locator('#categoryFilter option').allTextContents(),['Все категории','Головной убор','Обувь','Украшения']);
+ await page.evaluate(()=>{$('categoryFilter').value='Головной убор';render()});assert.equal(await page.locator('#inventory article').count(),2);
+ await page.evaluate(p=>edit(p),aliases[0]);assert.equal(await page.locator('[name=brand]').inputValue(),'Amiri');assert.equal(await page.locator('[name=category]').inputValue(),'Головной убор');assert.equal(await page.locator('[data-quantity-size="One Size"]').inputValue(),'4');
+ await page.locator('#save').click();await page.locator('#status').filter({hasText:'Товар сохранён'}).waitFor();assert.equal(saved.brand,'Amiri');assert.equal(saved.category,'Головной убор');assert.deepEqual(saved.stock_quantities,{'One Size':4});
+ await page.close();console.log(width+' PASS taxonomy: aliases stay discoverable, collaboration filters include all records, legacy size stock survives editor save');
+}
 await browser.close();server.close()})().catch(e=>{console.error(e);server.close();process.exit(1)});
