@@ -622,3 +622,6 @@ button,input,select{font-family:inherit}
 #sellTitle{text-align:center;margin-left:auto;margin-right:auto}
 #sellPage .sell-methods>.sell-method{background:#e4cadd;border-color:#e4cadd;color:#25394f}
 #sellPage .sell-methods>.sell-method h2,#sellPage .sell-methods>.sell-method p{color:#25394f}
+
+/* Slightly larger SALE labels, keeping the soft pink and blue palette. */
+.product h3 .card-sale-badge{font-size:10px;padding:3px 7px}
