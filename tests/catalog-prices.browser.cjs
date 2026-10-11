@@ -17,7 +17,7 @@ const fixtures=[
 (async()=>{
  await new Promise(r=>server.listen(0,'127.0.0.1',r));
  const browser=await chromium.launch(process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE?{executablePath:process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE}:{});try{
- for(const width of [320,360,390,400,529,768,1280]){
+ for(const width of [320,360,390,400,529,600,601,700,768,1024,1280,1920]){
   const page=await browser.newPage({viewport:{width,height:1000},reducedMotion:'reduce'});const errors=[];page.on('pageerror',e=>errors.push(e.message));
   await page.route('**/rest/v1/products?**',r=>r.fulfill({json:fixtures}));
   await page.addInitScript(()=>localStorage.setItem('jpAnalyticsConsent','declined'));
@@ -32,6 +32,10 @@ const fixtures=[
   assert.equal(await page.locator('.product .price-current').first().evaluate(e=>getComputedStyle(e).fontWeight),'500');
   assert.equal(await page.locator('.brand-signature').innerText(),'BY VASYA');
   const signature=await page.locator('.brand-signature').evaluate(e=>{const r=e.getBoundingClientRect(),s=document.querySelector('#toggleSearch').getBoundingClientRect(),l=document.querySelector('.brand .logo').getBoundingClientRect();return {right:r.right,left:r.left,top:r.top,bottom:r.bottom,searchLeft:s.left,searchBottom:s.bottom,logoRight:l.right,size:getComputedStyle(e).fontSize}});
+  const headerControls=await page.locator('.brand .logo,#openCatalogMenu,#toggleSearch').evaluateAll(es=>es.map(e=>e.getBoundingClientRect().toJSON()));
+  const [logo,menu,search]=headerControls;
+  assert.ok(logo.left>=menu.right+8||logo.top>=menu.bottom||logo.bottom<=menu.top,'J.P does not overlap menu at '+width);
+  assert.ok(signature.right<=search.left-8||signature.top>=search.bottom||signature.bottom<=search.top,'Signature clears search at '+width);
   assert.equal(signature.size,width<=600?'10px':'13px');assert.ok(signature.left>=signature.logoRight,'Signature sits right of J.P');assert.ok(signature.right<=signature.searchLeft||signature.top>=signature.searchBottom,'Signature does not overlap search');
   if(width<=600){const b=await page.evaluate(()=>{const r=s=>document.querySelector(s).getBoundingClientRect().toJSON();return {logo:r('.brand-lockup'),menu:r('#openCatalogMenu'),search:r('#toggleSearch')}});assert.ok(b.logo.left>=b.menu.right&&b.logo.right<=b.search.left,'Logo is between controls without overlap');assert.ok(Math.abs((b.logo.left+b.logo.right)/2-((b.menu.left+b.menu.right)/2+(b.search.left+b.search.right)/2)/2)<2,'Logo midpoint matches menu/search midpoint');assert.ok(Math.abs((b.logo.top+b.logo.bottom)/2-(b.menu.top+b.menu.bottom)/2)<2,'Logo and menu share the same row');}
   assert.equal(await page.locator('#catalogSortLabel').innerText(),'Сортировка');
