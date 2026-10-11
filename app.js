@@ -226,12 +226,14 @@ function setCatalogMenu(open){
   const menu=document.getElementById('catalogMenu');
   if(menuCloseTimer!==null){clearTimeout(menuCloseTimer);menuCloseTimer=null}
   document.getElementById('openCatalogMenu').setAttribute('aria-expanded',String(open));
+  document.getElementById('openProductMenu')?.setAttribute('aria-expanded',String(open));
   if(open){
     menu.classList.remove('hidden','is-closing');
     if(document.body?.style)document.body.style.overflow='hidden';
     document.querySelector('main')?.toggleAttribute?.('inert',true);
     document.querySelector('.brand')?.toggleAttribute?.('inert',true);
     document.querySelector('.bottom-nav')?.toggleAttribute?.('inert',true);
+    document.getElementById('productModal').toggleAttribute?.('inert',true);
     renderCatalogMenu();document.getElementById('closeCatalogMenu').focus?.();
     return;
   }
@@ -241,12 +243,14 @@ function setCatalogMenu(open){
     document.querySelector('main')?.toggleAttribute?.('inert',false);
     document.querySelector('.brand')?.toggleAttribute?.('inert',false);
     document.querySelector('.bottom-nav')?.toggleAttribute?.('inert',false);
-    document.getElementById('openCatalogMenu').focus?.();
+    document.getElementById('productModal').toggleAttribute?.('inert',false);
+    document.getElementById(document.getElementById('productModal').classList.contains('hidden')?'openCatalogMenu':'openProductMenu').focus?.();
   };
   if(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches){finish();return}
   menu.classList.add('is-closing');menuCloseTimer=setTimeout(finish,280);
 }
 document.getElementById('openCatalogMenu').onclick=()=>setCatalogMenu(true);
+document.getElementById('openProductMenu')?.addEventListener('click',()=>setCatalogMenu(true));
 let pawTimer=null,navPawTimer=null,moneyPawTimer=null;
 function grabLogo(){
   const brand=document.querySelector('.brand');
@@ -277,7 +281,8 @@ function showMoneyPaw(button){
   void paw.offsetWidth;paw.classList.add('is-presenting');
   moneyPawTimer=setTimeout(()=>paw.classList.remove('is-presenting'),1050);
 }
-['closeCatalogMenu','menuBackdrop','showMenuProducts'].forEach(id=>document.getElementById(id).onclick=()=>setCatalogMenu(false));
+['closeCatalogMenu','menuBackdrop'].forEach(id=>document.getElementById(id).onclick=()=>setCatalogMenu(false));
+document.getElementById('showMenuProducts').onclick=()=>{setTab('catalog');setCatalogMenu(false)};
 document.querySelectorAll('[data-hot-brand]').forEach(b=>b.onclick=()=>{const brand=state.brand&&sameLabel(state.brand,b.dataset.hotBrand)?null:b.dataset.hotBrand;state.sale=false;state.product_condition=state.gender=state.fulfillment_status=state.category=state.size=null;state.search='';document.getElementById('search').value='';state.brand=brand;if(state.tab!=='catalog')setTab('catalog');else render()});
 document.querySelectorAll('[data-sale]').forEach(b=>b.onclick=()=>{state.sale=!state.sale;reconcileFilters();if(state.tab!=='catalog')setTab('catalog');else render()});
 document.getElementById('resetMenu').onclick=()=>{document.getElementById('reset').onclick();menuOpenGroup='category';renderCatalogMenu()};
@@ -404,7 +409,7 @@ function setTab(tab){
   setSortOpen(false);
   if(state.tab!==tab)window.StoreAnalytics?.track("page_view",null,['sell','services'].includes(tab)?null:tab);
   navigationRevision++;
-  state.tab=tab;selectedProduct=null;selectedSize=null;document.getElementById('productModal').classList.add('hidden');
+  state.tab=tab;selectedProduct=null;selectedSize=null;hideProductModal();productReturnFocus=null;
   document.querySelectorAll('[data-tab]').forEach(b=>{b.classList.toggle('active',b.dataset.tab===tab);b.setAttribute('aria-current',b.dataset.tab===tab?'page':'false')});render();
 }
 const wishlistClicks=new Map();
@@ -496,13 +501,22 @@ function relatedMarkup(p){
   return `<section class="related-products" aria-labelledby="relatedTitle"><h2 id="relatedTitle">Похожие товары</h2><div class="related-grid">${similar.map(x=>`<button type="button" class="related-card" data-related="${esc(x.id)}"><span class="related-photo">${imageOf(x)?`<img src="${esc(imageOf(x))}" alt="${esc(x.name)}" loading="lazy">`:'J.P'}</span><span class="related-brand">${esc(x.brand)}</span><span class="related-name">${esc(displayName(x))}</span><span class="related-size">${sizesOf(x).length?`${ProductSizes.variantLabel(x,sizesOf(x).length>1)}: ${esc(sizesOf(x).join(' · '))}`:'Размер уточняйте'}</span><strong>${priceMarkup(x)||'Цена по запросу'}</strong></button>`).join('')}</div></section>`;
 }
 let productReturnFocus=null;
+let productNavHome=null;
+function hideProductModal(){
+ const modal=document.getElementById('productModal'),nav=modal.querySelector?.('.bottom-nav');
+ if(nav&&productNavHome){productNavHome.replaceWith(nav);productNavHome=null}
+ modal.classList.add('hidden');
+}
 function showProductModal(){
  const modal=document.getElementById('productModal');if(modal.classList.contains('hidden'))productReturnFocus=document.activeElement;
+ const nav=document.querySelector('.bottom-nav');
+ if(nav?.before&&document.createComment&&!modal.contains(nav)){productNavHome=document.createComment('bottom navigation');nav.before(productNavHome);modal.appendChild(nav)}
  modal.classList.remove('hidden');document.getElementById('backProduct').focus?.();
 }
-function closeProductModal(){navigationRevision++;selectedProduct=null;selectedSize=null;document.getElementById('productModal').classList.add('hidden');productReturnFocus?.focus?.();productReturnFocus=null}
+function closeProductModal(){navigationRevision++;selectedProduct=null;selectedSize=null;hideProductModal();productReturnFocus?.focus?.();productReturnFocus=null}
 document.addEventListener('keydown',e=>{
  const modal=document.getElementById('productModal');if(modal.classList.contains('hidden'))return;
+ if(!document.getElementById('catalogMenu').classList.contains('hidden'))return;
  if(e.key==='Escape'){e.preventDefault();closeProductModal();return}
  if(e.key==='Tab'){
   const nodes=[...modal.querySelectorAll('button:not([disabled]),a[href],input,select,textarea,[tabindex="0"]')].filter(n=>!n.closest('.hidden')&&n.getClientRects().length);
