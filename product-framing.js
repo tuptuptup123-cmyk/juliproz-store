@@ -56,6 +56,9 @@
     if(!src||!img.complete||!img.naturalWidth)return;
     const bounds=await measure(src);
     if(!bounds||!img.isConnected||img.getAttribute('src')!==src)return;
+    // A tab may have been hidden while CORS/image decoding was in flight.
+    // Keep its DOM stable and resume framing when the image is visible again.
+    if(!img.clientWidth||!img.clientHeight){visible.observe(img);return}
     records.set(img,{src,bounds});img.classList.add('product-framed');update(img);
   }
   const visible=new IntersectionObserver(entries=>{
