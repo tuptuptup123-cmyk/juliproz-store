@@ -614,6 +614,21 @@ button,input,select{font-family:inherit}
 }
 @media(max-width:600px){.brand .masthead-inner .logo{width:fit-content}}
 
+/* The signature arrives on a thread once, then settles into the existing lockup. */
+.brand-signature{transform-origin:50% -140px;animation:vasya-rope-drop 2.4s .35s both;will-change:transform}
+.brand-signature::before{content:"";position:absolute;left:50%;bottom:calc(100% + 3px);width:1px;height:140px;background:currentColor;opacity:0;pointer-events:none;animation:vasya-rope-release 2.4s .35s both}
+@keyframes vasya-rope-drop{
+  0%{transform:translateY(-180px) rotate(-7deg);opacity:0}
+  12%{opacity:1}
+  44%{transform:translateY(7px) rotate(4deg)}
+  60%{transform:translateY(-5px) rotate(-3deg)}
+  76%{transform:translateY(2px) rotate(1.5deg)}
+  90%{transform:translateY(0) rotate(-.5deg)}
+  100%{transform:none;opacity:1;will-change:auto}
+}
+@keyframes vasya-rope-release{0%,72%{opacity:.45}100%{opacity:0}}
+@media(prefers-reduced-motion:reduce){.brand-signature{animation:none;transform:none;will-change:auto}.brand-signature::before{display:none}}
+
 /* Keep the shared logo anchor; remove only the stacked information-page padding. */
 .brand.is-information-page{margin-bottom:0}
 #sellPage,#servicesPage{padding-top:0}
