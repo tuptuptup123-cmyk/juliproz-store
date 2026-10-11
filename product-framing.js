@@ -1,0 +1,82 @@
+(function(root){
+  'use strict';
+  // Measure transparency, never colours: white products retain every detail.
+  function alphaBounds(data,width,height){
+    let left=width,top=height,right=-1,bottom=-1,transparent=false;
+    for(let y=0;y<height;y++)for(let x=0;x<width;x++){
+      const alpha=data[(y*width+x)*4+3];
+      if(alpha<255)transparent=true;
+      if(alpha>8){left=Math.min(left,x);top=Math.min(top,y);right=Math.max(right,x);bottom=Math.max(bottom,y)}
+    }
+    if(!transparent||right<left)return null;
+    // A one-pixel guard preserves antialiased edges and fine jewellery chains.
+    left=Math.max(0,left-1);top=Math.max(0,top-1);
+    right=Math.min(width-1,right+1);bottom=Math.min(height-1,bottom+1);
+    return {left:left/width,top:top/height,width:(right-left+1)/width,height:(bottom-top+1)/height};
+  }
+  function placement(bounds,naturalWidth,naturalHeight,width,height){
+    if(!bounds||Math.min(naturalWidth,naturalHeight,width,height)<=0)return null;
+    const fit=Math.min(width/naturalWidth,height/naturalHeight);
+    const drawnWidth=naturalWidth*fit,drawnHeight=naturalHeight*fit;
+    const scale=Math.min(width*.84/(drawnWidth*bounds.width),height*.84/(drawnHeight*bounds.height));
+    return {scale,x:(.5-bounds.left-bounds.width/2)*drawnWidth*scale,y:(.5-bounds.top-bounds.height/2)*drawnHeight*scale};
+  }
+  if(typeof module==='object'&&module.exports){module.exports={alphaBounds,placement};return}
+  if(!root.document||!root.IntersectionObserver||!root.ResizeObserver)return;
+  const selector='.photo img,.hero img,.related-photo img,.cart-photo img,#previewImage img,.catalogue-preview-photo img';
+  const cache=new Map(),records=new WeakMap(),observed=new WeakSet();
+  function measure(src){
+    if(cache.has(src))return cache.get(src);
+    const pending=new Promise(resolve=>{
+      const source=new Image();source.crossOrigin='anonymous';
+      source.onload=()=>{
+        try{
+          const ratio=Math.min(1,512/Math.max(source.naturalWidth,source.naturalHeight));
+          const canvas=document.createElement('canvas');
+          canvas.width=Math.max(1,Math.round(source.naturalWidth*ratio));canvas.height=Math.max(1,Math.round(source.naturalHeight*ratio));
+          const ctx=canvas.getContext('2d',{willReadFrequently:true});
+          ctx.drawImage(source,0,0,canvas.width,canvas.height);
+          resolve(alphaBounds(ctx.getImageData(0,0,canvas.width,canvas.height).data,canvas.width,canvas.height));
+        }catch{resolve(null)}
+      };
+      source.onerror=()=>resolve(null);source.src=src;
+    });
+    cache.set(src,pending);if(cache.size>256)cache.delete(cache.keys().next().value);
+    return pending;
+  }
+  function reset(img){img.classList.remove('product-framed');img.style.removeProperty('transform');records.delete(img)}
+  function update(img){
+    const record=records.get(img);if(!record||record.src!==img.getAttribute('src'))return;
+    const result=placement(record.bounds,img.naturalWidth,img.naturalHeight,img.clientWidth,img.clientHeight);
+    if(result)img.style.transform=`translate(${result.x}px,${result.y}px) scale(${result.scale})`;
+  }
+  const resize=new ResizeObserver(entries=>entries.forEach(({target})=>update(target)));
+  async function frame(img){
+    const src=img.getAttribute('src');reset(img);
+    if(!src||!img.complete||!img.naturalWidth)return;
+    const bounds=await measure(src);
+    if(!bounds||!img.isConnected||img.getAttribute('src')!==src)return;
+    records.set(img,{src,bounds});img.classList.add('product-framed');update(img);
+  }
+  const visible=new IntersectionObserver(entries=>{
+    for(const {target,isIntersecting} of entries)if(isIntersecting){visible.unobserve(target);frame(target)}
+  },{rootMargin:'150px'});
+  function discover(){
+    document.querySelectorAll(selector).forEach(img=>{
+      if(observed.has(img))return;observed.add(img);resize.observe(img);visible.observe(img);
+    });
+  }
+  document.addEventListener('load',event=>{if(event.target.matches?.(selector))visible.observe(event.target)},true);
+  new MutationObserver(changes=>{
+    for(const change of changes)for(const node of change.removedNodes||[]){
+      if(node.nodeType!==1||node.isConnected)continue;
+      const removed=[...(node.matches(selector)?[node]:[]),...node.querySelectorAll(selector)];
+      for(const img of removed){resize.unobserve(img);visible.unobserve(img);observed.delete(img)}
+    }
+    for(const change of changes)if(change.type==='attributes'&&change.target.matches(selector)){
+      reset(change.target);visible.observe(change.target);
+    }
+    discover();
+  }).observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['src']});
+  discover();
+})(typeof window==='object'?window:globalThis);
