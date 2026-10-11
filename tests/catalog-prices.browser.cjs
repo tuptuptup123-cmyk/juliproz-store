@@ -55,7 +55,7 @@ const fixtures=[
   assert.match(await page.locator('.card-sale-badge').first().evaluate(e=>getComputedStyle(e).boxShadow),/rgb\(120, 148, 182\)/,'SALE has a brand-blue outline');
   assert.ok(saleColors.every(c=>c.background==='rgb(228, 202, 221)'&&c.color==='rgb(37, 57, 79)'),'SALE is powder pink with dark readable text');
   assert.equal(await page.locator('.product .price-original').count(),5,'Former prices remain visible');
-  assert.equal(await page.locator('.product .catalog-status').filter({hasText:'В наличии'}).count(),0);assert.equal(await page.locator('[data-id=900001] .stock-label').innerText(),'В наличии · 3 шт.');assert.equal(await page.locator('[data-id=900006] .stock-label').count(),0);assert.equal(await page.locator('[data-id=900008] .stock-label').count(),0);
+  assert.equal(await page.locator('.product .catalog-status').filter({hasText:'В наличии'}).count(),0);assert.equal(await page.locator('[data-id="900001"] .stock-label').innerText(),'В наличии · 3 шт.');assert.equal(await page.locator('[data-id="900006"] .stock-label').count(),0);assert.equal(await page.locator('[data-id="900008"] .stock-label').count(),0);
   assert.equal(await page.locator('.product .catalog-status.is-reserved').count(),1);
   assert.equal(await page.locator('.product .catalog-status.on-order').innerText(),'Под заказ');
   const saleOrder=await page.locator('.sale-price').evaluateAll(es=>es.map(e=>e.querySelector('.price-original').getBoundingClientRect().bottom<=e.querySelector('.price-current').getBoundingClientRect().y));
