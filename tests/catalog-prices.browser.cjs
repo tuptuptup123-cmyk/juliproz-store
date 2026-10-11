@@ -32,7 +32,7 @@ const fixtures=[
   assert.equal(await page.locator('.product .price-current').first().evaluate(e=>getComputedStyle(e).fontWeight),'500');
   assert.equal(await page.locator('.brand-signature').innerText(),'BY VASYA');
   const signature=await page.locator('.brand-signature').evaluate(e=>{const r=e.getBoundingClientRect(),s=document.querySelector('#toggleSearch').getBoundingClientRect(),l=document.querySelector('.brand .logo').getBoundingClientRect();return {right:r.right,left:r.left,top:r.top,bottom:r.bottom,searchLeft:s.left,searchBottom:s.bottom,logoRight:l.right,size:getComputedStyle(e).fontSize}});
-  const headerControls=await page.locator('.brand .logo,#openCatalogMenu,#toggleSearch').evaluateAll(es=>es.map(e=>e.getBoundingClientRect().toJSON()));
+  const headerControls=await page.evaluate(()=>['.brand .logo','#openCatalogMenu','#toggleSearch'].map(s=>document.querySelector(s).getBoundingClientRect().toJSON()));
   const [logo,menu,search]=headerControls;
   assert.ok(logo.left>=menu.right-.5||logo.top>=menu.bottom||logo.bottom<=menu.top,'J.P does not overlap menu at '+width);
   assert.ok(signature.right<=search.left-8||signature.top>=search.bottom||signature.bottom<=search.top,'Signature clears search at '+width);
