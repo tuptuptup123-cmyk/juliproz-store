@@ -86,6 +86,16 @@ const fixtures=[
    assert.ok(neighbours.every(c=>Math.abs(c.price.bottom-card.price.bottom)<1),'Current prices end at the same height within each row');
   }
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'No horizontal overflow');
+  await page.evaluate(()=>window.scrollTo(0,600));
+  await page.waitForFunction(()=>getComputedStyle(document.getElementById('openCatalogMenu')).position==='fixed');
+  const floating=await page.locator('#openCatalogMenu').boundingBox();
+  assert.ok(floating.y>=0&&floating.y<90,'Menu follows catalogue scrolling');
+  await page.locator('#openCatalogMenu').click();
+  assert.equal(await page.locator('[data-hot-brand] .hot-brand-icon').count(),2);
+  await page.locator('#closeCatalogMenu').click();
+  await page.locator('#catalogMenu').waitFor({state:'hidden'});
+  await page.evaluate(()=>window.scrollTo(0,0));
+  await page.waitForFunction(()=>!document.querySelector('.brand').classList.contains('menu-floating'));
   await page.locator('.product').first().scrollIntoViewIfNeeded();await page.screenshot({path:out+'/catalog-'+width+'.png'});
   await page.locator('#openCatalogMenu').click();const hot=await page.locator('.hot-brands').boundingBox(),sale=await page.locator('[data-sale]').boundingBox();assert.ok(hot.y+hot.height<=sale.y,'Hot brands are above SALE');if(width===390||width===1280)await page.screenshot({path:out+'/hot-brands-'+width+'.png'});
   for(const [brand,id] of [['Hermès','900005'],['Chrome Hearts','900009']]){await page.locator('[data-hot-brand="'+brand+'"]').click();assert.equal(await page.locator('[data-hot-brand="'+brand+'"]').getAttribute('aria-pressed'),'true');await page.locator('#showMenuProducts').click();assert.equal(await page.locator('#grid .product').count(),1);assert.equal(await page.locator('#grid .product').getAttribute('data-id'),id);await page.locator('#openCatalogMenu').click();}
