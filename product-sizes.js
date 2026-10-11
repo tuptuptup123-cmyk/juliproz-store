@@ -34,6 +34,13 @@
     const aliases=Object.keys(q).filter(k=>normalize(k.trim())===size),n=Object.hasOwn(q,size)?q[size]:aliases.length===1?q[aliases[0]]:undefined;return typeof n==='number'&&Number.isInteger(n)&&n>=0&&n<=9999?n:0;
   }
   function stockUnits(p){if(p?.stock_quantities==null)return 1;const sizes=parseSizes(p.size);return (sizes.length?sizes:['']).reduce((sum,size)=>sum+stockFor(p,size),0)}
-  root.ProductSizes={parse:parseSizes,serialize:serializeSizes,compare:compare,normalize:normalize,stockFor,stockUnits};
+  // Legacy cards may store colour choices in the size field. Keep their stock keys intact.
+  function variantLabel(p,plural=false){
+    const values=parseSizes(p?.size);
+    const colors=new Set(['розовый','синий','голубой','белый','черный','серый','бежевый','коричневый','красный','зеленый','желтый','фиолетовый','оранжевый','бордовый','серебристый','золотой','pink','blue','white','black','grey','gray','beige','brown','red','green','yellow','purple','orange','silver','gold']);
+    const isColor=values.length>0&&values.every(v=>colors.has(v.toLowerCase().replace(/ё/g,'е')));
+    return isColor?(plural?'Цвета':'Цвет'):(plural?'Размеры':'Размер');
+  }
+  root.ProductSizes={variantLabel,parse:parseSizes,serialize:serializeSizes,compare:compare,normalize:normalize,stockFor,stockUnits};
   if(typeof module==='object')module.exports=root.ProductSizes;
 })(typeof window==='object'?window:globalThis);
