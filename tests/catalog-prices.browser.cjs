@@ -141,7 +141,7 @@ const fixtures=[
   }
   assert.equal(await page.locator('.services-page .sell-paw').count(),0,'Services keeps only the main J.P paw');
   assert.equal(await page.locator('#brandPaw img').count(),1);
-  assert.match(await page.locator('#sellPage').textContent(),/JULIVASYABOT/);
+  assert.match(await page.locator('#sellPage').textContent(),/продажу через наш магазин/);
   assert.equal(await page.locator('#sellPrepare').evaluate(e=>getComputedStyle(e).textAlign),'center');
   assert.equal(await page.locator('#sellTitle').evaluate(e=>getComputedStyle(e).textAlign),'center');
   const sellModes=await page.locator('#sellPage .sell-method').evaluateAll(es=>es.map(e=>({bg:getComputedStyle(e).backgroundColor,color:getComputedStyle(e.querySelector('p')).color})));
@@ -222,3 +222,4 @@ const fixtures=[
  }
  }finally{await browser.close();server.close()}
 })().catch(e=>{console.error(e);server.close();process.exitCode=1});
+
