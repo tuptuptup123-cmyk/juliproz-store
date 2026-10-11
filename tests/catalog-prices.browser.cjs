@@ -61,7 +61,7 @@ const fixtures=[
   assert.equal(await page.locator('[data-id="900001"] .commission-badge').innerText(),'Комиссия');
   assert.equal(await page.locator('[data-id="900001"] .condition-wear').count(),0);
 
-  assert.match(await page.locator('[data-id="900001"] .card-meta').innerText(),/Вещи клиентов/);
+  assert.match(await page.locator('[data-id="900001"] .card-meta').innerText(),/Комиссия/);
   const infoBadges=await page.locator('.product .condition-badge').evaluateAll(es=>es.map(e=>({bg:getComputedStyle(e).backgroundColor,border:getComputedStyle(e).borderColor,weight:getComputedStyle(e).fontWeight})));
   assert.ok(infoBadges.every(b=>b.bg==='rgb(246, 246, 246)'&&b.border==='rgb(216, 216, 216)'&&b.weight==='700'),'Informational badges are neutral with bold text');
   const cards=await page.locator('.product').evaluateAll(els=>els.map(el=>{
@@ -83,6 +83,8 @@ const fixtures=[
   await page.locator('.product').first().scrollIntoViewIfNeeded();await page.screenshot({path:out+'/catalog-'+width+'.png'});
   await page.locator('[data-heart="900001"]').click();await page.locator('[data-tab="favorites"]').click();assert.equal(await page.locator('.product').count(),1);
   await page.locator('.product-open').click();
+  assert.equal(await page.locator('.detail .condition-badge').first().innerText(),'PRE-OWNED');
+  assert.match(await page.locator('.product-description').innerText(),/Состояние: Небольшие следы носки/);
   assert.equal(await page.locator('.detail .product-eyebrow span').count(),0,'Do not repeat positive in-stock status in detail');
   assert.equal(await page.locator('.detail .discount-badge').count(),0,'Detail hides percentage badges too');
   assert.equal(await page.locator('.detail .price-original').count(),1,'Detail retains former price');
