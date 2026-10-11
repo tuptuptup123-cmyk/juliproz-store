@@ -64,3 +64,6 @@ label{display:block;font-weight:500;font-size:12px}input:not([type=checkbox]),te
 
 /* iPhone: keep inputs readable and prevent the floating footer from covering fields. */
 @media(max-width:700px){.editor-footer{position:static;margin-bottom:calc(12px + env(safe-area-inset-bottom));}.editor-footer>div{display:grid;grid-template-columns:1fr 1.5fr;gap:10px}.editor-footer button{width:100%;min-height:48px}#editor input:not([type=checkbox]):not([type=hidden]),#editor textarea,#editor select{font-size:16px}.upload-zone input[type=file]{width:100%;max-width:100%;font-size:12px}#status:not(.admin-loading){position:static;overflow-wrap:anywhere}}
+
+/* Keep decorative branding clear of mobile header actions. */
+@media(max-width:700px){.admin-header .wordmark{width:146px;padding-right:0}.admin-header .header-paw{width:90px;height:80px;left:48px;top:-33px}.admin-header .home-link,.admin-header .header-actions{flex-shrink:0}}
