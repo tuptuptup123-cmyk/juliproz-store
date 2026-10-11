@@ -654,3 +654,10 @@ button,input,select{font-family:inherit}
 @media(min-width:601px) and (max-width:899px){.brand-paw{width:180px;height:146px;right:calc(50% - 104px);top:-26px}}
 
 .product-description{white-space:pre-line}
+
+/* Stable iOS text metrics and a drawn arrow instead of an emoji glyph. */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+.sell-offer svg{width:18px;height:18px;flex-shrink:0;stroke:currentColor;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.search-wrap input{font-size:16px}
+.sell-page,.services-page,.sell-intro,.service-card{min-width:0}
+.sell-intro p,.service-card p{overflow-wrap:anywhere}
