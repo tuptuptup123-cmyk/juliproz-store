@@ -41,7 +41,7 @@ function loroColorGroup(rows=products){
 function colorGroupFor(id){const group=loroColorGroup();return group?.members.some(x=>x.option.id===String(id))?group:null}
 function colorLabel(id){return loroColorDefinitions().find(x=>x.id===String(id))?.label||''}
 function colorCatalogueProduct(group){
-  const first=(state.size?group.members.find(x=>!x.product.reserved&&ProductSizes.parse(x.product.size).includes(state.size)&&ProductSizes.stockFor(x.product,state.size)>0):null)||group.members.find(x=>!x.product.reserved&&ProductSizes.stockUnits(x.product)!==0)||group.members[0];
+  const first=(state.size?group.members.find(x=>ProductSizes.parse(x.product.size).includes(state.size)&&ProductSizes.stockFor(x.product,state.size)>0):null)||group.members.find(x=>!x.product.reserved&&ProductSizes.stockUnits(x.product)!==0)||group.members[0];
   const sizes=[...new Set(group.members.flatMap(x=>ProductSizes.parse(x.product.size).filter(size=>x.product.fulfillment_status==='on_order'||ProductSizes.stockFor(x.product,size)>0)))];
   return {...first.product,id:group.id,name:'Кепка Loro Piana',color_catalog_sizes:sizes,color_member_ids:group.members.map(x=>x.option.id),color_search:group.members.map(x=>`${x.option.id} ${x.option.label} ${x.product.name}`).join(' ')};
 }
@@ -461,6 +461,7 @@ function variantLabel(p){return String(p?.id)==='257'?'цвет':'размер'}
 function syncOpenProductGallery(){
   if(!selectedProduct||document.getElementById('productModal').classList.contains('hidden'))return;
   const fresh=products.find(p=>String(p.id)===String(selectedProduct.id));if(!fresh)return;
+  for(const img of document.querySelectorAll?.('#productContent [data-color-id] img')||[]){const row=products.find(p=>String(p.id)===img.closest('[data-color-id]')?.dataset.colorId),url=row&&imageOf(row);if(url&&img.getAttribute('src')!==url)img.src=url}
   const previous=photosOf(selectedProduct),photos=photosOf(fresh);selectedProduct={...selectedProduct,image_url:fresh.image_url,image:fresh.image,photos:fresh.photos};
   if(JSON.stringify(previous)===JSON.stringify(photos))return;
   const gallery=document.querySelector('#productContent .product-gallery');if(!gallery)return;
@@ -479,7 +480,7 @@ function openProduct(id,linked=false){
   const colorGroup=colorGroupFor(id);
   if(colorGroup&&!linked){
     const favored=state.tab==='favorites'?colorGroup.members.find(x=>state.favorites.has(x.option.id)):null;
-    const sizeMatch=state.size?colorGroup.members.find(x=>!x.product.reserved&&sizesOf(x.product).includes(state.size)):null;
+    const sizeMatch=state.size?colorGroup.members.find(x=>sizesOf(x.product).includes(state.size)):null;
     p=(favored||sizeMatch||colorGroup.members.find(x=>!x.product.reserved&&ProductSizes.stockUnits(x.product)!==0)||colorGroup.members[0]).product;
   }
   // An old variant link must show its own unavailable state, never another size.
@@ -567,7 +568,7 @@ loadProducts(Boolean(cachedCatalogue));
 
 // Retry transient image failures once per URL, then show an explicit status.
 const productImageAttempts=new WeakMap();
-const productImageAreas='.photo,.hero,.related-photo,.photo-picker,.cart-photo';
+const productImageAreas='.photo,.hero,.related-photo,.photo-picker,.cart-photo,.color-option';
 function handleProductImageError(e){
  const img=e.target;if(img.tagName!=='IMG'||!img.closest(productImageAreas))return;
  const parent=img.parentElement,src=img.getAttribute('src'),previous=productImageAttempts.get(img);
@@ -620,7 +621,7 @@ function enablePhotoSwipes(root, selector, productFor){
     if(area&&!e.target.closest('button')&&Date.now()-Number(area.dataset.swipedAt||0)<500){e.preventDefault();e.stopImmediatePropagation()}
   },true);
 }
-enablePhotoSwipes(grid,'.photo',area=>products.find(p=>String(p.id)===area.closest('[data-id]').dataset.id));
+enablePhotoSwipes(grid,'.photo',area=>catalogueProducts().find(p=>String(p.id)===area.closest('[data-id]').dataset.id));
 enablePhotoSwipes(document.getElementById('productContent'),'.hero',()=>selectedProduct);
 
 // Clear finite feedback effects so subsequent taps animate again.
