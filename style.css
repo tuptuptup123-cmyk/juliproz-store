@@ -387,7 +387,7 @@ button:not(:disabled):active{transform:scale(.96)}
 @supports(grid-template-rows:subgrid){
   .grid{row-gap:0}
   .product{display:grid;grid-row:span 6;grid-template-rows:subgrid;row-gap:0}
-  .product .price{min-height:0;align-self:start}
+  .product .price{min-height:0;align-self:end}
   .product .card-footer{padding-bottom:20px}
 }
 

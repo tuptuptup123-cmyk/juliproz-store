@@ -10,7 +10,7 @@ const fixtures=[
  {...base,id:900003,brand:'Amiri',name:'Штаны Ball',price:624.9,original_price:892.72,size:'XL'},
  {...base,id:900004,brand:'Dior',name:'Кроссовки B27 Low Grey CD Diamond',price:700,original_price:990,size:'43'},
  {...base,id:900005,brand:'Hermès',name:'Сумка',price:12345.67,original_price:19876.54},
- {...base,id:900006,brand:'Prada',name:'Жакет с очень длинным названием без скрытой информации',price:800,original_price:null,reserved:true},
+ {...base,id:900006,brand:'Prada',name:'Жакет с очень длинным названием без скрытой информации',price:800,original_price:null,reserved:true,on_commission:true},
  {...base,id:900007,brand:'Chanel',name:'Сумка',price:null,original_price:null},
  {...base,id:900008,brand:'Loro Piana',name:'Шарф',price:300,original_price:null,fulfillment_status:'on_order'}
 ];
@@ -70,18 +70,19 @@ const fixtures=[
   assert.ok(infoBadges.every(b=>b.bg==='rgb(246, 246, 246)'&&b.border==='rgb(216, 216, 216)'&&b.weight==='700'),'Informational badges are neutral with bold text');
   const cards=await page.locator('.product').evaluateAll(els=>els.map(el=>{
    const rect=x=>{const b=x.getBoundingClientRect();return {x:b.x,y:b.y,right:b.right,bottom:b.bottom}};
-   return {photo:rect(el.querySelector('.photo')),price:rect(el.querySelector('.price')),size:rect(el.querySelector('.card-size')),card:rect(el),parts:[...el.querySelectorAll('.sale-price>*')].map(rect).sort((a,b)=>a.y-b.y)};
+   return {photo:rect(el.querySelector('.photo')),price:rect(el.querySelector('.price')),meta:el.querySelector('.card-meta')?.children.length?rect(el.querySelector('.card-meta')):null,size:rect(el.querySelector('.card-size')),card:rect(el),parts:[...el.querySelectorAll('.sale-price>*')].map(rect).sort((a,b)=>a.y-b.y)};
   }));
   for(const card of cards){
    assert.ok(card.price.right<=card.card.right+1,'Price fits card');
-   assert.ok(card.price.y-card.size.bottom<=6,'Compact size-to-price spacing');
+   assert.ok(card.price.y>=card.size.bottom,'Price follows the size');
+   if(card.meta)assert.ok(Math.abs(card.meta.y-card.price.bottom-5)<1,'Badges always sit 5px below price, with or without a discount');
    for(let i=0;i<card.parts.length;i++){
     assert.ok(Math.abs(card.parts[i].x-card.price.x)<1,'Prices share left edge');
     assert.ok(card.parts[i].right<=card.card.right+1,'Amount fits card');
     if(i)assert.ok(card.parts[i].y>=card.parts[i-1].bottom,'Vertical price order');
    }
    const neighbours=cards.filter(c=>Math.abs(c.photo.y-card.photo.y)<1);
-   assert.ok(neighbours.every(c=>Math.abs(c.price.y-card.price.y)<1),'Prices start at same height within each row');
+   assert.ok(neighbours.every(c=>Math.abs(c.price.bottom-card.price.bottom)<1),'Current prices end at the same height within each row');
   }
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'No horizontal overflow');
   await page.locator('.product').first().scrollIntoViewIfNeeded();await page.screenshot({path:out+'/catalog-'+width+'.png'});
