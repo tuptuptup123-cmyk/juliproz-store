@@ -175,5 +175,48 @@
       "reason": "Owner-approved cover is 345px; exact higher-resolution source needed. No fabricated details or upscale claimed."
     }
   ],
-  "rejected": "All generative cutout variants rejected due to altered folds/edges; approved exact programmatic alpha extraction used instead."
+  "rejected": "All generative cutout variants rejected due to altered folds/edges; approved exact programmatic alpha extraction used instead.",
+  "remainingRightFacingCovers": {
+    "ids": [
+      20,
+      61,
+      63,
+      65,
+      66,
+      159,
+      182,
+      183,
+      213,
+      216,
+      217,
+      218,
+      221,
+      223,
+      226,
+      228,
+      232,
+      254,
+      271,
+      272,
+      273,
+      274,
+      277,
+      278,
+      279,
+      332,
+      343,
+      344,
+      345,
+      358
+    ],
+    "reason": "Exact matching real right-facing views not verified; existing product photos retained without mirroring or invented details."
+  },
+  "modelSourceLimitations": {
+    "ids": [
+      132,
+      282,
+      285
+    ],
+    "reason": "Existing model photograph is cropped; complete original or a verified alternate photograph needed. No invented head/body."
+  }
 }
