@@ -157,6 +157,28 @@ function emptyCollection(kind){
   const symbol=cartEmpty?'<path d="M3 4h5l5 25h24l6-18H10"/><circle cx="16" cy="38" r="2.5"/><circle cx="35" cy="38" r="2.5"/>':'<path d="M40 8a11 11 0 0 0-16 0A11 11 0 0 0 8 24l16 16 16-16a11 11 0 0 0 0-16Z"/>';
   return `<div class="collection-empty ${cartEmpty?'cart-empty':'wishlist-empty'}"><div class="empty-content"><svg class="empty-symbol" width="64" height="64" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${symbol}</svg><h2>${cartEmpty?'Корзина':'Ваш виш-лист пока пуст.'}</h2><p>${cartEmpty?'Ваша корзина пока пуста.':'Нажмите на сердечко у понравившегося товара.'}</p>${cartEmpty?'<button type="button" class="primary" data-cart-action="catalog">Перейти в каталог</button>':''}</div><span class="empty-signature" aria-hidden="true">J.P</span></div>`;
 }
+// Keep the full data set for filtering; mount cards only as the reader approaches them.
+const CATALOG_BATCH_SIZE=24;
+let catalogueRows=[],catalogueRendered=0,catalogueMore=null,catalogueObserver=null;
+function catalogueCard(p){return `<article class="product" data-id="${esc(p.id)}"><div class="photo">${imageOf(p)?`<img src="${esc(imageOf(p))}" alt="${esc(p.name)}" loading="lazy">`:"JP"}<button class="heart ${isWishlisted(p)?"is-favorite":""}" aria-label="Виш-лист" aria-pressed="${isWishlisted(p)}" data-heart="${esc(p.id)}"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"/></svg></button></div><h3><button type="button" class="product-open" aria-label="Открыть ${esc(brandsOf(p).join(' × '))} ${esc(displayName(p))}">${esc(brandsOf(p).join(' × '))}</button>${window.ProductPricing.discount(p)?'<span class="card-sale-badge">SALE</span>':''}</h3><div class="card-name-row"><p>${esc(displayName(p))}${p.color_member_ids?` · ${p.color_member_ids.length} ${pluralRu(p.color_member_ids.length,'цвет','цвета','цветов')}`:""}</p></div><div class="card-size">${sizesOf(p).length?`${ProductSizes.variantLabel(p,sizesOf(p).length>1)}: ${esc(sizesOf(p).join(" · "))}`:"Размер уточняйте"}</div><div class="price">${priceMarkup(p)}</div><div class="card-footer"><div class="card-meta">${conditionBadge(p,true)}</div>${availabilityLabel(p)!=='В наличии'?'<div class="catalog-status '+(p.reserved?'is-reserved':onOrder(p)?'on-order':'')+'">'+availabilityLabel(p)+'</div>':''}<div class="card-delivery">Доставка ${deliveryLabel(p)}</div></div></article>`}
+function appendCatalogueRows(){
+  if(catalogueRendered>=catalogueRows.length)return;
+  const end=Math.min(catalogueRendered+CATALOG_BATCH_SIZE,catalogueRows.length);
+  const html=catalogueRows.slice(catalogueRendered,end).map(catalogueCard).join('');
+  if(catalogueMore)catalogueMore.insertAdjacentHTML('beforebegin',html);else grid.insertAdjacentHTML('beforeend',html);
+  catalogueRendered=end;
+  if(catalogueRendered===catalogueRows.length){catalogueObserver?.disconnect();catalogueMore?.remove();catalogueMore=null}
+}
+function renderCatalogueRows(rows,empty){
+  catalogueObserver?.disconnect();catalogueMore=null;catalogueRows=rows;catalogueRendered=0;
+  if(!rows.length){grid.innerHTML=empty;return}
+  if(typeof IntersectionObserver!=='function'){grid.innerHTML=rows.map(catalogueCard).join('');return}
+  grid.innerHTML='';appendCatalogueRows();
+  if(catalogueRendered>=rows.length)return;
+  catalogueMore=document.createElement('button');catalogueMore.type='button';catalogueMore.className='catalogue-more';catalogueMore.textContent='Показать ещё';catalogueMore.onclick=appendCatalogueRows;grid.appendChild(catalogueMore);
+  catalogueObserver=new IntersectionObserver(entries=>{if(entries.some(e=>e.isIntersecting))appendCatalogueRows()},{rootMargin:'800px'});
+  catalogueObserver.observe(catalogueMore);
+}
 function render(){
   const inCart=state.tab==="cart",inSell=state.tab==="sell",inServices=state.tab==="services";
   document.querySelector(".brand")?.classList.toggle("is-information-page",inSell||inServices);
@@ -180,7 +202,7 @@ function render(){
   }
   const list=filtered();
   count.textContent=state.tab==="favorites"?`Виш-лист · ${list.length}`:`В каталоге ${list.length} ${pluralRu(list.length,'товар','товара','товаров')}`;
-  grid.innerHTML=list.length?list.map(p=>`<article class="product" data-id="${esc(p.id)}"><div class="photo">${imageOf(p)?`<img src="${esc(imageOf(p))}" alt="${esc(p.name)}" loading="lazy">`:"JP"}<button class="heart ${isWishlisted(p)?"is-favorite":""}" aria-label="Виш-лист" aria-pressed="${isWishlisted(p)}" data-heart="${esc(p.id)}"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"/></svg></button></div><h3><button type="button" class="product-open" aria-label="Открыть ${esc(brandsOf(p).join(' × '))} ${esc(displayName(p))}">${esc(brandsOf(p).join(' × '))}</button>${window.ProductPricing.discount(p)?'<span class="card-sale-badge">SALE</span>':''}</h3><div class="card-name-row"><p>${esc(displayName(p))}${p.color_member_ids?` · ${p.color_member_ids.length} ${pluralRu(p.color_member_ids.length,'цвет','цвета','цветов')}`:""}</p></div><div class="card-size">${sizesOf(p).length?`${ProductSizes.variantLabel(p,sizesOf(p).length>1)}: ${esc(sizesOf(p).join(" · "))}`:"Размер уточняйте"}</div><div class="price">${priceMarkup(p)}</div><div class="card-footer"><div class="card-meta">${conditionBadge(p,true)}</div>${availabilityLabel(p)!=='В наличии'?'<div class="catalog-status '+(p.reserved?'is-reserved':onOrder(p)?'on-order':'')+'">'+availabilityLabel(p)+'</div>':''}<div class="card-delivery">Доставка ${deliveryLabel(p)}</div></div></article>`).join(""):(state.tab==="favorites"?emptyCollection('favorites'):'<div class="empty">Здесь пока ничего нет</div>');
+  renderCatalogueRows(list,(state.tab==="favorites"?emptyCollection('favorites'):'<div class="empty">Здесь пока ничего нет</div>'));
 }
 let menuOpenGroup='category';
 let menuCloseTimer=null;

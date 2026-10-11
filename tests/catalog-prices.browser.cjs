@@ -171,6 +171,30 @@ const fixtures=[
  }
 
  // Capture real public catalogue data with this revision's UI, without writes.
+ // A full catalogue stays searchable while only nearby cards are mounted.
+ for(const width of [390,1280]){
+  const page=await browser.newPage({viewport:{width,height:900},reducedMotion:'reduce'});
+  const many=Array.from({length:397},(_,i)=>({...base,id:910000+i,brand:'Gucci',name:'Товар '+i,price:100}));
+  await page.route('**/rest/v1/products?**',r=>r.fulfill({json:many}));
+  await page.goto('http://127.0.0.1:'+server.address().port,{waitUntil:'domcontentloaded'});
+  await page.locator('.product').first().waitFor();
+  assert.equal(await page.locator('.product').count(),24,'First paint mounts one batch');
+  assert.match(await page.locator('#count').innerText(),/397/);
+  await page.locator('#toggleSearch').click();await page.locator('#search').fill('910396');
+  await page.locator('[data-id="910396"]').waitFor();
+  assert.equal(await page.locator('.product').count(),1,'Search includes unmounted products');
+  await page.locator('#search').fill('');
+  await page.waitForFunction(()=>document.querySelectorAll('.product').length===24);
+  for(let i=0;i<18&&await page.locator('.catalogue-more').count();i++){
+   const before=await page.locator('.product').count();
+   await page.locator('.catalogue-more').scrollIntoViewIfNeeded();
+   await page.waitForFunction(n=>document.querySelectorAll('.product').length>n,before);
+  }
+  const ids=await page.locator('.product').evaluateAll(es=>es.map(e=>e.dataset.id));
+  assert.equal(ids.length,397);assert.equal(new Set(ids).size,397,'Scrolling reaches every product exactly once');
+  assert.equal(await page.locator('.catalogue-more').count(),0);
+  await page.close();
+ }
  for(const width of [390,529]){
   const page=await browser.newPage({viewport:{width,height:900},reducedMotion:'reduce'});
   await page.addInitScript(()=>localStorage.setItem('jpAnalyticsConsent','declined'));

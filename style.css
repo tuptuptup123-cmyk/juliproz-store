@@ -740,3 +740,5 @@ img.product-framed{padding:0;object-fit:contain;transform-origin:center;box-sizi
  .brand.is-catalog-page.menu-floating .masthead-inner>.search-wrap{left:16px;right:16px}
 }
 @media(prefers-reduced-motion:reduce){.hot-brand-options button{transition:none}}
+
+.catalogue-more{grid-column:1/-1;justify-self:center;margin:20px 0;padding:12px 24px;border:1px solid var(--line);background:#fff;color:var(--ink);font:inherit;cursor:pointer}
