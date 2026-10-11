@@ -1,0 +1,3360 @@
+{
+  "audited_count": 414,
+  "rounding": "Nearest whole EUR, both price fields; sale prices already integer.",
+  "missing_prices": [
+    49,
+    334,
+    335
+  ],
+  "review_prices": [
+    {
+      "id": 223,
+      "price": 900,
+      "reason": "Other K-Tech 2 records 370–400; variant difference not enough evidence for price change."
+    },
+    {
+      "id": 80,
+      "price": 1000,
+      "reason": "Re-Web id85 costs350; variant/size may justify difference."
+    }
+  ],
+  "caveat": "Existing original_price values often appear derived from a discount ratio. They have been rounded, not certified as boutique retail prices. No sales prices changed. Photos untouched.",
+  "changes": [
+    {
+      "id": 12,
+      "revision": 6,
+      "before": {
+        "original_price": "692.31"
+      },
+      "after": {
+        "original_price": 692
+      }
+    },
+    {
+      "id": 20,
+      "revision": 5,
+      "before": {
+        "original_price": "461.54"
+      },
+      "after": {
+        "original_price": 462
+      }
+    },
+    {
+      "id": 26,
+      "revision": 7,
+      "before": {
+        "original_price": "769.23"
+      },
+      "after": {
+        "original_price": 769
+      }
+    },
+    {
+      "id": 30,
+      "revision": 5,
+      "before": {
+        "original_price": "538.46"
+      },
+      "after": {
+        "original_price": 538
+      }
+    },
+    {
+      "id": 31,
+      "revision": 8,
+      "before": {
+        "original_price": "569.23"
+      },
+      "after": {
+        "original_price": 569
+      }
+    },
+    {
+      "id": 33,
+      "revision": 7,
+      "before": {
+        "name": "Кроссовки Prada Downtown Bold Re-Nylon and Suede",
+        "original_price": "615.38"
+      },
+      "after": {
+        "name": "Кроссовки Downtown Bold Re-Nylon and Suede",
+        "original_price": 615
+      }
+    },
+    {
+      "id": 35,
+      "revision": 5,
+      "before": {
+        "original_price": "538.46"
+      },
+      "after": {
+        "original_price": 538
+      }
+    },
+    {
+      "id": 37,
+      "revision": 6,
+      "before": {
+        "original_price": "692.31"
+      },
+      "after": {
+        "original_price": 692
+      }
+    },
+    {
+      "id": 38,
+      "revision": 6,
+      "before": {
+        "original_price": "692.31"
+      },
+      "after": {
+        "original_price": 692
+      }
+    },
+    {
+      "id": 40,
+      "revision": 5,
+      "before": {
+        "original_price": "538.46"
+      },
+      "after": {
+        "original_price": 538
+      }
+    },
+    {
+      "id": 53,
+      "revision": 5,
+      "before": {
+        "original_price": "538.46"
+      },
+      "after": {
+        "original_price": 538
+      }
+    },
+    {
+      "id": 55,
+      "revision": 8,
+      "before": {
+        "name": "Кроссовки Gucci Rhyton",
+        "original_price": "615.38"
+      },
+      "after": {
+        "name": "Кроссовки Rhyton",
+        "original_price": 615
+      }
+    },
+    {
+      "id": 57,
+      "revision": 6,
+      "before": {
+        "original_price": "153.85"
+      },
+      "after": {
+        "original_price": 154
+      }
+    },
+    {
+      "id": 58,
+      "revision": 8,
+      "before": {
+        "name": "Тапки Balenciaga Track Slide"
+      },
+      "after": {
+        "name": "Тапки Track Slide"
+      }
+    },
+    {
+      "id": 61,
+      "revision": 7,
+      "before": {
+        "name": "Кроссовки Gucci Rhyton из коллекции в стиле SEGA",
+        "original_price": "615.38"
+      },
+      "after": {
+        "name": "Кроссовки Rhyton из коллекции в стиле SEGA",
+        "original_price": 615
+      }
+    },
+    {
+      "id": 62,
+      "revision": 8,
+      "before": {
+        "name": "Кепка Loro Piana Logo-Embroidered Linen Baseball Cap",
+        "original_price": "571.43"
+      },
+      "after": {
+        "name": "Кепка Logo-Embroidered Linen Baseball Cap",
+        "original_price": 571
+      }
+    },
+    {
+      "id": 63,
+      "revision": 5,
+      "before": {
+        "name": "Кроссовки Loro Piana Week End Walk"
+      },
+      "after": {
+        "name": "Кроссовки Week End Walk"
+      }
+    },
+    {
+      "id": 65,
+      "revision": 4,
+      "before": {
+        "name": "Кроссовки Loro Piana Modular Walk"
+      },
+      "after": {
+        "name": "Кроссовки Modular Walk"
+      }
+    },
+    {
+      "id": 66,
+      "revision": 4,
+      "before": {
+        "name": "Кроссовки Loro Piana Newport Walk с меховой подкладкой"
+      },
+      "after": {
+        "name": "Кроссовки Newport Walk с меховой подкладкой"
+      }
+    },
+    {
+      "id": 67,
+      "revision": 7,
+      "before": {
+        "name": "Cap-vert Evergreen"
+      },
+      "after": {
+        "name": "Сумка Cap-Vert Evergreen"
+      }
+    },
+    {
+      "id": 68,
+      "revision": 5,
+      "before": {
+        "category": "Ремень",
+        "original_price": "307.69"
+      },
+      "after": {
+        "category": "Аксессуары",
+        "original_price": 308
+      }
+    },
+    {
+      "id": 69,
+      "revision": 5,
+      "before": {
+        "name": "Куртка Burberry Diamond Quilted Jacket"
+      },
+      "after": {
+        "name": "Куртка Diamond Quilted Jacket"
+      }
+    },
+    {
+      "id": 70,
+      "revision": 6,
+      "before": {
+        "name": "Скейт Gucci HA HA HA",
+        "original_price": "461.54"
+      },
+      "after": {
+        "name": "Скейт HA HA HA",
+        "original_price": 462
+      }
+    },
+    {
+      "id": 71,
+      "revision": 5,
+      "before": {
+        "original_price": "461.54"
+      },
+      "after": {
+        "original_price": 462
+      }
+    },
+    {
+      "id": 72,
+      "revision": 6,
+      "before": {
+        "name": "Кроссовки Hermès Next"
+      },
+      "after": {
+        "name": "Кроссовки Next"
+      }
+    },
+    {
+      "id": 74,
+      "revision": 8,
+      "before": {
+        "name": "Кофта Maison Margiela Numbers Logo Hoodie",
+        "original_price": "538.46"
+      },
+      "after": {
+        "name": "Худи Numbers Logo Hoodie",
+        "original_price": 538
+      }
+    },
+    {
+      "id": 75,
+      "revision": 6,
+      "before": {
+        "original_price": "615.38"
+      },
+      "after": {
+        "original_price": 615
+      }
+    },
+    {
+      "id": 77,
+      "revision": 9,
+      "before": {
+        "name": "Кроссовки Hermès Bouncing"
+      },
+      "after": {
+        "name": "Кроссовки Bouncing"
+      }
+    },
+    {
+      "id": 78,
+      "revision": 6,
+      "before": {
+        "category": "Одежда"
+      },
+      "after": {
+        "category": "Футболки"
+      }
+    },
+    {
+      "id": 79,
+      "revision": 7,
+      "before": {
+        "category": "Одежда",
+        "name": "Худи Balenciaga Metal BB Stencil Zip-Up Hoodie"
+      },
+      "after": {
+        "category": "Худи",
+        "name": "Худи Metal BB Stencil Zip-Up Hoodie"
+      }
+    },
+    {
+      "id": 80,
+      "revision": 6,
+      "before": {
+        "name": "Кроссовки Gucci Re-Web",
+        "original_price": "1538.46"
+      },
+      "after": {
+        "name": "Кроссовки Re-Web",
+        "original_price": 1538
+      }
+    },
+    {
+      "id": 83,
+      "revision": 3,
+      "before": {
+        "brand": "Stone Island x New Balance"
+      },
+      "after": {
+        "brand": "Stone Island × New Balance"
+      }
+    },
+    {
+      "id": 85,
+      "revision": 6,
+      "before": {
+        "name": "Кроссовки Gucci Re-Web Sneaker",
+        "original_price": "538.46"
+      },
+      "after": {
+        "name": "Кроссовки Re-Web Sneaker",
+        "original_price": 538
+      }
+    },
+    {
+      "id": 86,
+      "revision": 7,
+      "before": {
+        "original_price": "538.46"
+      },
+      "after": {
+        "original_price": 538
+      }
+    },
+    {
+      "id": 88,
+      "revision": 5,
+      "before": {
+        "original_price": "923.08"
+      },
+      "after": {
+        "original_price": 923
+      }
+    },
+    {
+      "id": 89,
+      "revision": 8,
+      "before": {
+        "name": "Куртка, молочная OVERSIZED ZIP TWIL JACKET"
+      },
+      "after": {
+        "name": "Куртка Oversized Zip Twill, молочная"
+      }
+    },
+    {
+      "id": 93,
+      "revision": 5,
+      "before": {
+        "brand": "RIMOWA"
+      },
+      "after": {
+        "brand": "Rimowa"
+      }
+    },
+    {
+      "id": 94,
+      "revision": 5,
+      "before": {
+        "brand": "RIMOWA"
+      },
+      "after": {
+        "brand": "Rimowa"
+      }
+    },
+    {
+      "id": 95,
+      "revision": 5,
+      "before": {
+        "brand": "RIMOWA"
+      },
+      "after": {
+        "brand": "Rimowa"
+      }
+    },
+    {
+      "id": 97,
+      "revision": 9,
+      "before": {
+        "name": "Vertical Logo White silver"
+      },
+      "after": {
+        "name": "Худи Vertical Logo White silver"
+      }
+    },
+    {
+      "id": 98,
+      "revision": 5,
+      "before": {
+        "name": "Back Arch USA Logo"
+      },
+      "after": {
+        "name": "Зип-худи Back Arch USA Logo"
+      }
+    },
+    {
+      "id": 99,
+      "revision": 5,
+      "before": {
+        "name": "Vertical Logo Black/White"
+      },
+      "after": {
+        "name": "Зип-худи Vertical Logo Black/White"
+      }
+    },
+    {
+      "id": 100,
+      "revision": 6,
+      "before": {
+        "category": "Лонгслив",
+        "name": "White Scroll Logo"
+      },
+      "after": {
+        "category": "Лонгсливы",
+        "name": "Лонгслив White Scroll Logo"
+      }
+    },
+    {
+      "id": 101,
+      "revision": 5,
+      "before": {
+        "category": "Лонгслив",
+        "name": "Scroll Logo Black"
+      },
+      "after": {
+        "category": "Лонгсливы",
+        "name": "Лонгслив Scroll Logo Black"
+      }
+    },
+    {
+      "id": 102,
+      "revision": 6,
+      "before": {
+        "name": "Leather Horseshoe"
+      },
+      "after": {
+        "name": "Зип-худи Leather Horseshoe"
+      }
+    },
+    {
+      "id": 103,
+      "revision": 4,
+      "before": {
+        "category": "Лонгслив",
+        "name": "Staff Orange Horseshoe Logo"
+      },
+      "after": {
+        "category": "Лонгсливы",
+        "name": "Лонгслив Staff Orange Horseshoe Logo"
+      }
+    },
+    {
+      "id": 104,
+      "revision": 4,
+      "before": {
+        "name": "Deadly Doll"
+      },
+      "after": {
+        "name": "Зип-худи Deadly Doll"
+      }
+    },
+    {
+      "id": 105,
+      "revision": 5,
+      "before": {
+        "name": "Vertical Logo Black/Army Green"
+      },
+      "after": {
+        "name": "Худи Vertical Logo Black/Army Green"
+      }
+    },
+    {
+      "id": 106,
+      "revision": 4,
+      "before": {
+        "category": "Лонгслив",
+        "name": "Scroll Logo"
+      },
+      "after": {
+        "category": "Лонгсливы",
+        "name": "Лонгслив Scroll Logo"
+      }
+    },
+    {
+      "id": 107,
+      "revision": 7,
+      "before": {
+        "name": "Horseshoe Floral Cross"
+      },
+      "after": {
+        "name": "Зип-худи Horseshoe Floral Cross"
+      }
+    },
+    {
+      "id": 108,
+      "revision": 5,
+      "before": {
+        "name": "Horse Shoe Logo"
+      },
+      "after": {
+        "name": "Футболка Horse Shoe Logo"
+      }
+    },
+    {
+      "id": 109,
+      "revision": 6,
+      "before": {
+        "name": "Scroll Logo USA"
+      },
+      "after": {
+        "name": "Футболка Scroll Logo USA"
+      }
+    },
+    {
+      "id": 110,
+      "revision": 6,
+      "before": {
+        "name": "Yungblud x Foti"
+      },
+      "after": {
+        "name": "Футболка Yungblud x Foti"
+      }
+    },
+    {
+      "id": 111,
+      "revision": 6,
+      "before": {
+        "name": "Neck Logo"
+      },
+      "after": {
+        "name": "Футболка Neck Logo"
+      }
+    },
+    {
+      "id": 112,
+      "revision": 5,
+      "before": {
+        "name": "Horseshoe Paris"
+      },
+      "after": {
+        "name": "Футболка Horseshoe Paris"
+      }
+    },
+    {
+      "id": 113,
+      "revision": 4,
+      "before": {
+        "name": "Turbo Diesel Carpenter"
+      },
+      "after": {
+        "name": "Джинсы Turbo Diesel Carpenter"
+      }
+    },
+    {
+      "id": 114,
+      "revision": 3,
+      "before": {
+        "category": "Кепка",
+        "name": "RS3"
+      },
+      "after": {
+        "category": "Головной убор",
+        "name": "Кепка RS3"
+      }
+    },
+    {
+      "id": 115,
+      "revision": 3,
+      "before": {
+        "category": "Кепка",
+        "name": "Dagger"
+      },
+      "after": {
+        "category": "Головной убор",
+        "name": "Кепка Dagger"
+      }
+    },
+    {
+      "id": 116,
+      "revision": 3,
+      "before": {
+        "category": "Шапка",
+        "name": "Cross Embroidery Beanie"
+      },
+      "after": {
+        "category": "Головной убор",
+        "name": "Шапка Cross Embroidery Beanie"
+      }
+    },
+    {
+      "id": 117,
+      "revision": 3,
+      "before": {
+        "name": "Checkmate Logo-Print"
+      },
+      "after": {
+        "name": "Перчатки Checkmate Logo-Print"
+      }
+    },
+    {
+      "id": 118,
+      "revision": 3,
+      "before": {
+        "name": "Pills III"
+      },
+      "after": {
+        "name": "Очки Pills III"
+      }
+    },
+    {
+      "id": 119,
+      "revision": 4,
+      "before": {
+        "name": "Pills III"
+      },
+      "after": {
+        "name": "Очки Pills III"
+      }
+    },
+    {
+      "id": 120,
+      "revision": 4,
+      "before": {
+        "name": "SOFFFFFFFFERS I"
+      },
+      "after": {
+        "name": "Очки SOFFFFFFFFERS I"
+      }
+    },
+    {
+      "id": 121,
+      "revision": 4,
+      "before": {
+        "name": "SOFFFFFFFFERS I"
+      },
+      "after": {
+        "name": "Очки SOFFFFFFFFERS I"
+      }
+    },
+    {
+      "id": 122,
+      "revision": 3,
+      "before": {
+        "name": "Vagillionaire II"
+      },
+      "after": {
+        "name": "Очки Vagillionaire II"
+      }
+    },
+    {
+      "id": 125,
+      "revision": 4,
+      "before": {
+        "category": "Подвеска",
+        "name": "Silver Fleur Large Dog"
+      },
+      "after": {
+        "category": "Украшения",
+        "name": "Подвеска Silver Fleur Large Dog"
+      }
+    },
+    {
+      "id": 126,
+      "revision": 3,
+      "before": {
+        "category": "Подвеска",
+        "name": "STD Roll"
+      },
+      "after": {
+        "category": "Украшения",
+        "name": "Подвеска STD Roll"
+      }
+    },
+    {
+      "id": 127,
+      "revision": 3,
+      "before": {
+        "category": "Серьга",
+        "name": "Baby Fat Cross"
+      },
+      "after": {
+        "category": "Украшения",
+        "name": "Серьга Baby Fat Cross"
+      }
+    },
+    {
+      "id": 131,
+      "revision": 6,
+      "before": {
+        "brand": "KITH x BMW"
+      },
+      "after": {
+        "brand": "Kith × BMW"
+      }
+    },
+    {
+      "id": 132,
+      "revision": 8,
+      "before": {
+        "name": "Штаны Balenciaga x eBay Printed Cotton Pants"
+      },
+      "after": {
+        "name": "Брюки Balenciaga × eBay Printed Cotton Pants"
+      }
+    },
+    {
+      "id": 133,
+      "revision": 3,
+      "before": {
+        "brand": "KITH x BMW"
+      },
+      "after": {
+        "brand": "Kith × BMW"
+      }
+    },
+    {
+      "id": 134,
+      "revision": 7,
+      "before": {
+        "brand": "Balenciaga X Adidas"
+      },
+      "after": {
+        "brand": "Balenciaga × Adidas"
+      }
+    },
+    {
+      "id": 135,
+      "revision": 3,
+      "before": {
+        "brand": "KITH x BMW"
+      },
+      "after": {
+        "brand": "Kith × BMW"
+      }
+    },
+    {
+      "id": 136,
+      "revision": 5,
+      "before": {
+        "brand": "KITH x BMW"
+      },
+      "after": {
+        "brand": "Kith × BMW"
+      }
+    },
+    {
+      "id": 139,
+      "revision": 4,
+      "before": {
+        "brand": "KITH x BMW"
+      },
+      "after": {
+        "brand": "Kith × BMW"
+      }
+    },
+    {
+      "id": 140,
+      "revision": 7,
+      "before": {
+        "name": "Micro Twill"
+      },
+      "after": {
+        "name": "Куртка Micro Twill"
+      }
+    },
+    {
+      "id": 141,
+      "revision": 3,
+      "before": {
+        "brand": "KITH x BMW"
+      },
+      "after": {
+        "brand": "Kith × BMW"
+      }
+    },
+    {
+      "id": 142,
+      "revision": 3,
+      "before": {
+        "category": "Панама",
+        "name": "Nylon Metal In Econyl"
+      },
+      "after": {
+        "category": "Головной убор",
+        "name": "Панама Nylon Metal In Econyl"
+      }
+    },
+    {
+      "id": 143,
+      "revision": 5,
+      "before": {
+        "name": "Кепка Balenciaga"
+      },
+      "after": {
+        "name": "Кепка"
+      }
+    },
+    {
+      "id": 144,
+      "revision": 6,
+      "before": {
+        "brand": "KITH x BMW"
+      },
+      "after": {
+        "brand": "Kith × BMW"
+      }
+    },
+    {
+      "id": 145,
+      "revision": 3,
+      "before": {
+        "category": "Кепка",
+        "name": "Nylon Metal In Econyl"
+      },
+      "after": {
+        "category": "Головной убор",
+        "name": "Кепка Nylon Metal In Econyl"
+      }
+    },
+    {
+      "id": 146,
+      "revision": 4,
+      "before": {
+        "brand": "KITH x BMW"
+      },
+      "after": {
+        "brand": "Kith × BMW"
+      }
+    },
+    {
+      "id": 147,
+      "revision": 6,
+      "before": {
+        "name": "Кепка Balenciaga BB Sprayed Cap"
+      },
+      "after": {
+        "name": "Кепка BB Sprayed Cap"
+      }
+    },
+    {
+      "id": 148,
+      "revision": 4,
+      "before": {
+        "brand": "KITH x BMW"
+      },
+      "after": {
+        "brand": "Kith × BMW"
+      }
+    },
+    {
+      "id": 149,
+      "revision": 7,
+      "before": {
+        "name": "Megacity Sky Combed Organic"
+      },
+      "after": {
+        "name": "Футболка Megacity Sky Combed Organic"
+      }
+    },
+    {
+      "id": 150,
+      "revision": 6,
+      "before": {
+        "brand": "Balenciaga X Adidas"
+      },
+      "after": {
+        "brand": "Balenciaga × Adidas"
+      }
+    },
+    {
+      "id": 151,
+      "revision": 6,
+      "before": {
+        "name": "Кепка Balenciaga Political Campaign / Logo Cap"
+      },
+      "after": {
+        "name": "Кепка Political Campaign / Logo Cap"
+      }
+    },
+    {
+      "id": 154,
+      "revision": 7,
+      "before": {
+        "name": "Футболка Stone Island"
+      },
+      "after": {
+        "name": "Футболка"
+      }
+    },
+    {
+      "id": 156,
+      "revision": 9,
+      "before": {
+        "name": "Кардиган Stone Island"
+      },
+      "after": {
+        "name": "Кардиган"
+      }
+    },
+    {
+      "id": 157,
+      "revision": 6,
+      "before": {
+        "name": "Свитшот Stone Island Ghost"
+      },
+      "after": {
+        "name": "Свитшот Ghost"
+      }
+    },
+    {
+      "id": 158,
+      "revision": 5,
+      "before": {
+        "brand": "Hermes",
+        "name": "Брелок Hermes Rodeo Pegase PM charm"
+      },
+      "after": {
+        "brand": "Hermès",
+        "name": "Брелок Rodeo Pégase PM"
+      }
+    },
+    {
+      "id": 159,
+      "revision": 6,
+      "before": {
+        "name": "Кроссовки Balenciaga Drive Caged Mesh Sneakers"
+      },
+      "after": {
+        "name": "Кроссовки Drive Caged Mesh Sneakers"
+      }
+    },
+    {
+      "id": 160,
+      "revision": 6,
+      "before": {
+        "name": "Овершот Stone Island"
+      },
+      "after": {
+        "name": "Овершёрт"
+      }
+    },
+    {
+      "id": 161,
+      "revision": 8,
+      "before": {
+        "name": "Рубашка Stone Island"
+      },
+      "after": {
+        "name": "Рубашка"
+      }
+    },
+    {
+      "id": 162,
+      "revision": 7,
+      "before": {
+        "name": "Куртка Stone Island"
+      },
+      "after": {
+        "name": "Куртка"
+      }
+    },
+    {
+      "id": 164,
+      "revision": 8,
+      "before": {
+        "name": "Рубашка Stone Island Ghost"
+      },
+      "after": {
+        "name": "Рубашка Ghost"
+      }
+    },
+    {
+      "id": 165,
+      "revision": 4,
+      "before": {
+        "brand": "Hermes",
+        "name": "Кроссовки Hermes Bouncing"
+      },
+      "after": {
+        "brand": "Hermès",
+        "name": "Кроссовки Bouncing"
+      }
+    },
+    {
+      "id": 166,
+      "revision": 6,
+      "before": {
+        "name": "Джемпер Stone Island"
+      },
+      "after": {
+        "name": "Джемпер"
+      }
+    },
+    {
+      "id": 169,
+      "revision": 4,
+      "before": {
+        "name": "Кепка Stone Island Nylon Metal"
+      },
+      "after": {
+        "name": "Кепка Nylon Metal"
+      }
+    },
+    {
+      "id": 170,
+      "revision": 6,
+      "before": {
+        "name": "Мюли Balenciaga Sunday Mule"
+      },
+      "after": {
+        "name": "Мюли Sunday Mule"
+      }
+    },
+    {
+      "id": 171,
+      "revision": 6,
+      "before": {
+        "name": "Куртка Jil Sander",
+        "original_price": "538.46"
+      },
+      "after": {
+        "name": "Куртка",
+        "original_price": 538
+      }
+    },
+    {
+      "id": 172,
+      "revision": 6,
+      "before": {
+        "name": "Кепка Balenciaga Soccer Club Cap"
+      },
+      "after": {
+        "name": "Кепка Soccer Club Cap"
+      }
+    },
+    {
+      "id": 173,
+      "revision": 6,
+      "before": {
+        "name": "Кепка Balenciaga Sporty B Football Crest Cap"
+      },
+      "after": {
+        "name": "Кепка Sporty B Football Crest Cap"
+      }
+    },
+    {
+      "id": 175,
+      "revision": 6,
+      "before": {
+        "name": "Куртка Jil Sander",
+        "original_price": "538.46"
+      },
+      "after": {
+        "name": "Куртка",
+        "original_price": 538
+      }
+    },
+    {
+      "id": 176,
+      "revision": 6,
+      "before": {
+        "name": "Худи Balenciaga Big Logo"
+      },
+      "after": {
+        "name": "Худи Big Logo"
+      }
+    },
+    {
+      "id": 177,
+      "revision": 5,
+      "before": {
+        "brand": "Van Cleef",
+        "name": "Van Cleef Arpels Malachite Vintage Alhambra Bracelet 5 Motifs"
+      },
+      "after": {
+        "brand": "Van Cleef & Arpels",
+        "name": "Браслет Vintage Alhambra, 5 мотивов, малахит"
+      }
+    },
+    {
+      "id": 178,
+      "revision": 8,
+      "before": {
+        "name": "Худи Jil Sander"
+      },
+      "after": {
+        "name": "Худи"
+      }
+    },
+    {
+      "id": 180,
+      "revision": 7,
+      "before": {
+        "name": "Рубашка Jil Sander",
+        "original_price": "615.38"
+      },
+      "after": {
+        "name": "Рубашка",
+        "original_price": 615
+      }
+    },
+    {
+      "id": 182,
+      "revision": 4,
+      "before": {
+        "name": "Сандали Isabel Marant x Havaianas"
+      },
+      "after": {
+        "name": "Сандалии Isabel Marant × Havaianas"
+      }
+    },
+    {
+      "id": 183,
+      "revision": 3,
+      "before": {
+        "name": "Тапки Nike Mind 001"
+      },
+      "after": {
+        "name": "Тапки Mind 001"
+      }
+    },
+    {
+      "id": 184,
+      "revision": 6,
+      "before": {
+        "name": "Худи Jil Sander",
+        "original_price": "538.46"
+      },
+      "after": {
+        "name": "Худи",
+        "original_price": 538
+      }
+    },
+    {
+      "id": 185,
+      "revision": 7,
+      "before": {
+        "name": "Худи Balenciaga Maison Wide Fit Hoodie"
+      },
+      "after": {
+        "name": "Худи Maison Wide Fit Hoodie"
+      }
+    },
+    {
+      "id": 186,
+      "revision": 4,
+      "before": {
+        "name": "Браслет Burberry Logo Engraved Braided Leather Bracelet"
+      },
+      "after": {
+        "name": "Браслет Logo Engraved Braided Leather Bracelet"
+      }
+    },
+    {
+      "id": 187,
+      "revision": 6,
+      "before": {
+        "category": "Одежда",
+        "name": "Свитшот Jil Sander",
+        "original_price": "461.54"
+      },
+      "after": {
+        "category": "Свитшоты",
+        "name": "Свитшот",
+        "original_price": 462
+      }
+    },
+    {
+      "id": 188,
+      "revision": 4,
+      "before": {
+        "name": "Очки Cartier Santos de Cartier"
+      },
+      "after": {
+        "name": "Очки Santos de Cartier"
+      }
+    },
+    {
+      "id": 189,
+      "revision": 5,
+      "before": {
+        "brand": "Hermes",
+        "category": "Ремень",
+        "name": "Ремень Kelly 18 Hermes"
+      },
+      "after": {
+        "brand": "Hermès",
+        "category": "Аксессуары",
+        "name": "Ремень Kelly 18"
+      }
+    },
+    {
+      "id": 190,
+      "revision": 5,
+      "before": {
+        "name": "Шорты Jil Sander",
+        "original_price": "230.77"
+      },
+      "after": {
+        "name": "Шорты",
+        "original_price": 231
+      }
+    },
+    {
+      "id": 191,
+      "revision": 6,
+      "before": {
+        "name": "Тапки Maison Margiela MM6 Orange Rubber Slide Sandals",
+        "original_price": "461.54"
+      },
+      "after": {
+        "name": "Тапки MM6 Orange Rubber Slide Sandals",
+        "original_price": 462
+      }
+    },
+    {
+      "id": 192,
+      "revision": 7,
+      "before": {
+        "category": "Лонгслив",
+        "name": "Лонгслив Jil Sander",
+        "original_price": "184.62"
+      },
+      "after": {
+        "category": "Лонгсливы",
+        "name": "Лонгслив",
+        "original_price": 185
+      }
+    },
+    {
+      "id": 193,
+      "revision": 5,
+      "before": {
+        "category": "Ремень",
+        "name": "Ремень Kelly 18 Hermes"
+      },
+      "after": {
+        "category": "Аксессуары",
+        "name": "Ремень Kelly 18"
+      }
+    },
+    {
+      "id": 194,
+      "revision": 8,
+      "before": {
+        "name": "Рубашка Balenciaga Logo-Print Shirt «PARIS / BALENCIAGA»"
+      },
+      "after": {
+        "name": "Рубашка Logo-Print Shirt «PARIS / BALENCIAGA»"
+      }
+    },
+    {
+      "id": 195,
+      "revision": 6,
+      "before": {
+        "name": "Майка Balenciaga Logo-Print Tank Top"
+      },
+      "after": {
+        "name": "Майка Logo-Print Tank Top"
+      }
+    },
+    {
+      "id": 196,
+      "revision": 7,
+      "before": {
+        "name": "Кроссовки Balenciaga Triple S"
+      },
+      "after": {
+        "name": "Кроссовки Triple S"
+      }
+    },
+    {
+      "id": 197,
+      "revision": 7,
+      "before": {
+        "name": "Шорты Balenciaga BB Monogram Poplin / Casual Shorts"
+      },
+      "after": {
+        "name": "Шорты BB Monogram Poplin / Casual Shorts"
+      }
+    },
+    {
+      "id": 198,
+      "revision": 8,
+      "before": {
+        "name": "Футболка Balenciaga Music Archive Series Connected Oversized T-Shirt"
+      },
+      "after": {
+        "name": "Футболка Music Archive Series Connected Oversized T-Shirt"
+      }
+    },
+    {
+      "id": 202,
+      "revision": 5,
+      "before": {
+        "name": "Панама Balenciaga"
+      },
+      "after": {
+        "name": "Панама"
+      }
+    },
+    {
+      "id": 206,
+      "revision": 6,
+      "before": {
+        "name": "Кофта Balenciaga"
+      },
+      "after": {
+        "name": "Кофта"
+      }
+    },
+    {
+      "id": 207,
+      "revision": 2,
+      "before": {
+        "name": "LOUIS VUITTON Avenue Sling Bag"
+      },
+      "after": {
+        "name": "Сумка Avenue Sling Bag"
+      }
+    },
+    {
+      "id": 208,
+      "revision": 6,
+      "before": {
+        "name": "Куртка Zilli"
+      },
+      "after": {
+        "name": "Куртка"
+      }
+    },
+    {
+      "id": 209,
+      "revision": 5,
+      "before": {
+        "name": "Кофта Zilli"
+      },
+      "after": {
+        "name": "Кофта"
+      }
+    },
+    {
+      "id": 210,
+      "revision": 7,
+      "before": {
+        "name": "Кофта Zilli"
+      },
+      "after": {
+        "name": "Кофта"
+      }
+    },
+    {
+      "id": 211,
+      "revision": 7,
+      "before": {
+        "name": "Худи Balenciaga Political Campaign / Large Fit Hoodie"
+      },
+      "after": {
+        "name": "Худи Political Campaign / Large Fit Hoodie"
+      }
+    },
+    {
+      "id": 212,
+      "revision": 5,
+      "before": {
+        "name": "Кофта Zilli"
+      },
+      "after": {
+        "name": "Кофта"
+      }
+    },
+    {
+      "id": 213,
+      "revision": 7,
+      "before": {
+        "brand": "ON",
+        "name": "Кроссовки ON Cloudtilt"
+      },
+      "after": {
+        "brand": "On",
+        "name": "Кроссовки Cloudtilt"
+      }
+    },
+    {
+      "id": 215,
+      "revision": 4,
+      "before": {
+        "brand": "ON × KITH"
+      },
+      "after": {
+        "brand": "On × Kith"
+      }
+    },
+    {
+      "id": 216,
+      "revision": 5,
+      "before": {
+        "brand": "ON × KITH"
+      },
+      "after": {
+        "brand": "On × Kith"
+      }
+    },
+    {
+      "id": 217,
+      "revision": 6,
+      "before": {
+        "brand": "ON × KITH"
+      },
+      "after": {
+        "brand": "On × Kith"
+      }
+    },
+    {
+      "id": 218,
+      "revision": 5,
+      "before": {
+        "brand": "ON × KITH"
+      },
+      "after": {
+        "brand": "On × Kith"
+      }
+    },
+    {
+      "id": 220,
+      "revision": 4,
+      "before": {
+        "name": "Сумка  Hermes Kelly depeches 25 pouch"
+      },
+      "after": {
+        "name": "Сумка Kelly Dépêches 25"
+      }
+    },
+    {
+      "id": 221,
+      "revision": 5,
+      "before": {
+        "brand": "ON × LOEWE"
+      },
+      "after": {
+        "brand": "On × Loewe"
+      }
+    },
+    {
+      "id": 222,
+      "revision": 7,
+      "before": {
+        "name": "Джинсы Balenciaga Tattoo Baggy Pants"
+      },
+      "after": {
+        "name": "Джинсы Tattoo Baggy Pants"
+      }
+    },
+    {
+      "id": 223,
+      "revision": 5,
+      "before": {
+        "brand": "ON × KITH"
+      },
+      "after": {
+        "brand": "On × Kith"
+      }
+    },
+    {
+      "id": 224,
+      "revision": 6,
+      "before": {
+        "name": "Шорты Balenciaga"
+      },
+      "after": {
+        "name": "Шорты"
+      }
+    },
+    {
+      "id": 225,
+      "revision": 6,
+      "before": {
+        "brand": "ON × LOEWE"
+      },
+      "after": {
+        "brand": "On × Loewe"
+      }
+    },
+    {
+      "id": 226,
+      "revision": 3,
+      "before": {
+        "brand": "ON × KITH"
+      },
+      "after": {
+        "brand": "On × Kith"
+      }
+    },
+    {
+      "id": 227,
+      "revision": 5,
+      "before": {
+        "name": "Футболка Balenciaga Banana Raglan Oversized T-Shirt"
+      },
+      "after": {
+        "name": "Футболка Banana Raglan Oversized T-Shirt"
+      }
+    },
+    {
+      "id": 228,
+      "revision": 5,
+      "before": {
+        "brand": "ON × KITH",
+        "name": "K-Tech 1"
+      },
+      "after": {
+        "brand": "On × Kith",
+        "name": "Кроссовки K-Tech 1"
+      }
+    },
+    {
+      "id": 229,
+      "revision": 5,
+      "before": {
+        "brand": "ON"
+      },
+      "after": {
+        "brand": "On"
+      }
+    },
+    {
+      "id": 230,
+      "revision": 6,
+      "before": {
+        "name": "Сумка Balenciaga Car Flap Bag"
+      },
+      "after": {
+        "name": "Сумка Car Flap Bag"
+      }
+    },
+    {
+      "id": 231,
+      "revision": 5,
+      "before": {
+        "brand": "ON"
+      },
+      "after": {
+        "brand": "On"
+      }
+    },
+    {
+      "id": 232,
+      "revision": 3,
+      "before": {
+        "brand": "ON × KITH"
+      },
+      "after": {
+        "brand": "On × Kith"
+      }
+    },
+    {
+      "id": 233,
+      "revision": 5,
+      "before": {
+        "brand": "ON × LOEWE"
+      },
+      "after": {
+        "brand": "On × Loewe"
+      }
+    },
+    {
+      "id": 234,
+      "revision": 6,
+      "before": {
+        "original_price": "338.46"
+      },
+      "after": {
+        "original_price": 338
+      }
+    },
+    {
+      "id": 235,
+      "revision": 6,
+      "before": {
+        "brand": "C.P.company × Palace"
+      },
+      "after": {
+        "brand": "C.P. Company × Palace"
+      }
+    },
+    {
+      "id": 236,
+      "revision": 7,
+      "before": {
+        "original_price": "384.62"
+      },
+      "after": {
+        "original_price": 385
+      }
+    },
+    {
+      "id": 237,
+      "revision": 5,
+      "before": {
+        "brand": "C.P.company × Palace"
+      },
+      "after": {
+        "brand": "C.P. Company × Palace"
+      }
+    },
+    {
+      "id": 239,
+      "revision": 6,
+      "before": {
+        "name": "Куртка Prada Linea Rossa",
+        "original_price": "1230.77"
+      },
+      "after": {
+        "name": "Куртка Linea Rossa",
+        "original_price": 1231
+      }
+    },
+    {
+      "id": 240,
+      "revision": 6,
+      "before": {
+        "name": "Штаны Prada Linea Rossa",
+        "original_price": "1076.92"
+      },
+      "after": {
+        "name": "Брюки Linea Rossa",
+        "original_price": 1077
+      }
+    },
+    {
+      "id": 241,
+      "revision": 6,
+      "before": {
+        "name": "Кроссовки Maison Margiela Tabi Canvas",
+        "original_price": "769.23"
+      },
+      "after": {
+        "name": "Кроссовки Tabi Canvas",
+        "original_price": 769
+      }
+    },
+    {
+      "id": 242,
+      "revision": 7,
+      "before": {
+        "name": "Кроссовки Maison Margiela Tabi Canvas",
+        "original_price": "769.23"
+      },
+      "after": {
+        "name": "Кроссовки Tabi Canvas",
+        "original_price": 769
+      }
+    },
+    {
+      "id": 243,
+      "revision": 4,
+      "before": {
+        "name": "Сандалии Hermes Izmir"
+      },
+      "after": {
+        "name": "Сандалии Izmir"
+      }
+    },
+    {
+      "id": 244,
+      "revision": 6,
+      "before": {
+        "name": "Кроссовки Brioni  Woven Runner",
+        "original_price": "692.31"
+      },
+      "after": {
+        "name": "Кроссовки Woven Runner",
+        "original_price": 692
+      }
+    },
+    {
+      "id": 249,
+      "revision": 4,
+      "before": {
+        "brand": "Hermes",
+        "name": "Сандалии Hermes Izmir"
+      },
+      "after": {
+        "brand": "Hermès",
+        "name": "Сандалии Izmir"
+      }
+    },
+    {
+      "id": 250,
+      "revision": 5,
+      "before": {
+        "category": "Одежда",
+        "name": "Штаны embroidered cargo pants"
+      },
+      "after": {
+        "category": "Брюки",
+        "name": "Брюки embroidered cargo pants"
+      }
+    },
+    {
+      "id": 251,
+      "revision": 6,
+      "before": {
+        "name": "Кроссовки Hermes Bouncing"
+      },
+      "after": {
+        "name": "Кроссовки Bouncing"
+      }
+    },
+    {
+      "id": 252,
+      "revision": 5,
+      "before": {
+        "name": "Кроссовки Hermes Bouncing"
+      },
+      "after": {
+        "name": "Кроссовки Bouncing"
+      }
+    },
+    {
+      "id": 253,
+      "revision": 5,
+      "before": {
+        "name": "Кроссовки Hermes Bouncing"
+      },
+      "after": {
+        "name": "Кроссовки Bouncing"
+      }
+    },
+    {
+      "id": 254,
+      "revision": 5,
+      "before": {
+        "name": "Кроссовки Hermes Bouncing"
+      },
+      "after": {
+        "name": "Кроссовки Bouncing"
+      }
+    },
+    {
+      "id": 257,
+      "revision": 6,
+      "before": {
+        "name": "Щетка Dyson CameraJet"
+      },
+      "after": {
+        "name": "Электрическая зубная щётка CameraJet"
+      }
+    },
+    {
+      "id": 259,
+      "revision": 3,
+      "before": {
+        "name": "Духи Louis Vuitton Tea Storm"
+      },
+      "after": {
+        "name": "Духи Tea Storm"
+      }
+    },
+    {
+      "id": 264,
+      "revision": 3,
+      "before": {
+        "name": "Духи Louis Vuitton Rain Tea"
+      },
+      "after": {
+        "name": "Духи Rain Tea"
+      }
+    },
+    {
+      "id": 265,
+      "revision": 3,
+      "before": {
+        "name": "Духи Louis Vuitton Ink Mark"
+      },
+      "after": {
+        "name": "Духи Ink Mark"
+      }
+    },
+    {
+      "id": 266,
+      "revision": 3,
+      "before": {
+        "name": "Духи Louis Vuitton Rhapsody"
+      },
+      "after": {
+        "name": "Духи Rhapsody"
+      }
+    },
+    {
+      "id": 267,
+      "revision": 4,
+      "before": {
+        "name": "Духи  Louis Vuitton Symphony"
+      },
+      "after": {
+        "name": "Духи Symphony"
+      }
+    },
+    {
+      "id": 268,
+      "revision": 3,
+      "before": {
+        "name": "Духи Clive Christian Kinam"
+      },
+      "after": {
+        "name": "Духи Kinam"
+      }
+    },
+    {
+      "id": 269,
+      "revision": 5,
+      "before": {
+        "name": "Духи Chrome Hearts +33+ Eau de Parfum"
+      },
+      "after": {
+        "name": "Духи +33+ Eau de Parfum"
+      }
+    },
+    {
+      "id": 270,
+      "revision": 4,
+      "before": {
+        "name": "Духи Chrome Hearts +22+ Eau de Parfum"
+      },
+      "after": {
+        "name": "Духи +22+ Eau de Parfum"
+      }
+    },
+    {
+      "id": 271,
+      "revision": 5,
+      "before": {
+        "name": "Кроссовки Brioni Olympia",
+        "original_price": "692.31"
+      },
+      "after": {
+        "name": "Кроссовки Olympia",
+        "original_price": 692
+      }
+    },
+    {
+      "id": 272,
+      "revision": 6,
+      "before": {
+        "name": "Кеды Brioni suede slip-on sneakers",
+        "original_price": "692.31"
+      },
+      "after": {
+        "name": "Кеды suede slip-on sneakers",
+        "original_price": 692
+      }
+    },
+    {
+      "id": 273,
+      "revision": 5,
+      "before": {
+        "name": "Кроссовки Brioni Olympia",
+        "original_price": "692.31"
+      },
+      "after": {
+        "name": "Кроссовки Olympia",
+        "original_price": 692
+      }
+    },
+    {
+      "id": 274,
+      "revision": 5,
+      "before": {
+        "name": "Кроссовки Brioni Suede-Trimmed Leather Sneakers",
+        "original_price": "692.31"
+      },
+      "after": {
+        "name": "Кроссовки Suede-Trimmed Leather Sneakers",
+        "original_price": 692
+      }
+    },
+    {
+      "id": 275,
+      "revision": 5,
+      "before": {
+        "name": "Кроссовки Dior B27 Low Grey CD Diamond"
+      },
+      "after": {
+        "name": "Кроссовки B27 Low Grey CD Diamond"
+      }
+    },
+    {
+      "id": 276,
+      "revision": 5,
+      "before": {
+        "name": "Кроссовки Dior B27 Uptown Low-Top"
+      },
+      "after": {
+        "name": "Кроссовки B27 Uptown Low-Top"
+      }
+    },
+    {
+      "id": 277,
+      "revision": 3,
+      "before": {
+        "name": "Тапки Nike Mind 001"
+      },
+      "after": {
+        "name": "Тапки Mind 001"
+      }
+    },
+    {
+      "id": 278,
+      "revision": 4,
+      "before": {
+        "name": "Тапки Nike Mind 001"
+      },
+      "after": {
+        "name": "Тапки Mind 001"
+      }
+    },
+    {
+      "id": 279,
+      "revision": 3,
+      "before": {
+        "name": "Тапки Nike Mind 001"
+      },
+      "after": {
+        "name": "Тапки Mind 001"
+      }
+    },
+    {
+      "id": 282,
+      "revision": 7,
+      "before": {
+        "name": "Худи Balenciaga Ripped Pocket Hoodie 'Beige'"
+      },
+      "after": {
+        "name": "Худи Ripped Pocket Hoodie 'Beige'"
+      }
+    },
+    {
+      "id": 283,
+      "revision": 6,
+      "before": {
+        "name": "Футболка Balenciaga Metal BB Stencil"
+      },
+      "after": {
+        "name": "Футболка Metal BB Stencil"
+      }
+    },
+    {
+      "id": 285,
+      "revision": 8,
+      "before": {
+        "original_price": "923.08"
+      },
+      "after": {
+        "original_price": 923
+      }
+    },
+    {
+      "id": 286,
+      "revision": 6,
+      "before": {
+        "name": "Жилетка  Light Technical Fabric",
+        "original_price": "1692.31"
+      },
+      "after": {
+        "name": "Жилет Light Technical Fabric",
+        "original_price": 1692
+      }
+    },
+    {
+      "id": 287,
+      "revision": 8,
+      "before": {
+        "name": "Кроссовки Prada Prax 01 Re-Nylon Logo Print"
+      },
+      "after": {
+        "name": "Кроссовки Prax 01 Re-Nylon Logo Print"
+      }
+    },
+    {
+      "id": 288,
+      "revision": 4,
+      "before": {
+        "name": "Сумка Rimowa Never Still Wrist Pouch"
+      },
+      "after": {
+        "name": "Сумка Never Still Wrist Pouch"
+      }
+    },
+    {
+      "id": 289,
+      "revision": 4,
+      "before": {
+        "name": "Паспортхолдер Rimowa Never Still Passport Cover"
+      },
+      "after": {
+        "name": "Паспортхолдер Never Still Passport Cover"
+      }
+    },
+    {
+      "id": 290,
+      "revision": 5,
+      "before": {
+        "name": "Рюкзак Rimowa Never Still Canvas"
+      },
+      "after": {
+        "name": "Рюкзак Never Still Canvas"
+      }
+    },
+    {
+      "id": 291,
+      "revision": 4,
+      "before": {
+        "name": "Сумка Rimowa Never Still Canvas Briefcase"
+      },
+      "after": {
+        "name": "Сумка Never Still Canvas Briefcase"
+      }
+    },
+    {
+      "id": 292,
+      "revision": 7,
+      "before": {
+        "name": "Кофта Moncler SINCE 1952",
+        "original_price": "584.62"
+      },
+      "after": {
+        "name": "Кофта SINCE 1952",
+        "original_price": 585
+      }
+    },
+    {
+      "id": 293,
+      "revision": 5,
+      "before": {
+        "name": "Кофта Moncler Glitter Logo",
+        "original_price": "615.38"
+      },
+      "after": {
+        "name": "Кофта Glitter Logo",
+        "original_price": 615
+      }
+    },
+    {
+      "id": 294,
+      "revision": 5,
+      "before": {
+        "name": "Поло Brioni",
+        "original_price": "384.62"
+      },
+      "after": {
+        "name": "Поло",
+        "original_price": 385
+      }
+    },
+    {
+      "id": 295,
+      "revision": 5,
+      "before": {
+        "name": "Джинсы Brioni",
+        "original_price": "461.54"
+      },
+      "after": {
+        "name": "Джинсы",
+        "original_price": 462
+      }
+    },
+    {
+      "id": 296,
+      "revision": 5,
+      "before": {
+        "name": "Джинсы  Brioni",
+        "original_price": "461.54"
+      },
+      "after": {
+        "name": "Джинсы",
+        "original_price": 462
+      }
+    },
+    {
+      "id": 297,
+      "revision": 7,
+      "before": {
+        "name": "Кепка Loro Piana Baseball Cap",
+        "original_price": "571.43"
+      },
+      "after": {
+        "name": "Кепка Baseball Cap",
+        "original_price": 571
+      }
+    },
+    {
+      "id": 298,
+      "revision": 6,
+      "before": {
+        "name": "Куртка Brioni Zipped Shirt Jacket",
+        "original_price": "923.08"
+      },
+      "after": {
+        "name": "Куртка Zipped Shirt Jacket",
+        "original_price": 923
+      }
+    },
+    {
+      "id": 299,
+      "revision": 6,
+      "before": {
+        "name": "Кепка Loro Piana Baseball Cap",
+        "original_price": "571.43"
+      },
+      "after": {
+        "name": "Кепка Baseball Cap",
+        "original_price": 571
+      }
+    },
+    {
+      "id": 300,
+      "revision": 5,
+      "before": {
+        "name": "Майка Jil Sander",
+        "original_price": "184.62"
+      },
+      "after": {
+        "name": "Майка",
+        "original_price": 185
+      }
+    },
+    {
+      "id": 301,
+      "revision": 6,
+      "before": {
+        "name": "Джинсы Brioni",
+        "original_price": "461.54"
+      },
+      "after": {
+        "name": "Джинсы",
+        "original_price": 462
+      }
+    },
+    {
+      "id": 302,
+      "revision": 4,
+      "before": {
+        "name": "Джинсы Brioni",
+        "original_price": "461.54"
+      },
+      "after": {
+        "name": "Джинсы",
+        "original_price": 462
+      }
+    },
+    {
+      "id": 303,
+      "revision": 6,
+      "before": {
+        "name": "Кепка Loro Piana Baseball Cap",
+        "original_price": "571.43"
+      },
+      "after": {
+        "name": "Кепка Baseball Cap",
+        "original_price": 571
+      }
+    },
+    {
+      "id": 304,
+      "revision": 6,
+      "before": {
+        "name": "Кепка Loro Piana Baseball Cap",
+        "original_price": "571.43"
+      },
+      "after": {
+        "name": "Кепка Baseball Cap",
+        "original_price": 571
+      }
+    },
+    {
+      "id": 305,
+      "revision": 6,
+      "before": {
+        "name": "Кепка Loro Piana Baseball Cap",
+        "original_price": "571.43"
+      },
+      "after": {
+        "name": "Кепка Baseball Cap",
+        "original_price": 571
+      }
+    },
+    {
+      "id": 306,
+      "revision": 6,
+      "before": {
+        "name": "Кепка Loro Piana Baseball Cap",
+        "original_price": "571.43"
+      },
+      "after": {
+        "name": "Кепка Baseball Cap",
+        "original_price": 571
+      }
+    },
+    {
+      "id": 310,
+      "revision": 7,
+      "before": {
+        "name": "Подвеска Gucci Lion Head Necklace",
+        "original_price": "307.69"
+      },
+      "after": {
+        "name": "Подвеска Lion Head Necklace",
+        "original_price": 308
+      }
+    },
+    {
+      "id": 314,
+      "revision": 6,
+      "before": {
+        "name": "Кроссовки Prada Bubble Comics",
+        "original_price": "461.54"
+      },
+      "after": {
+        "name": "Кроссовки Bubble Comics",
+        "original_price": 462
+      }
+    },
+    {
+      "id": 316,
+      "revision": 6,
+      "before": {
+        "name": "Кроссовки Alexander McQueen Sprint Runner"
+      },
+      "after": {
+        "name": "Кроссовки Sprint Runner"
+      }
+    },
+    {
+      "id": 320,
+      "revision": 6,
+      "before": {
+        "name": "Кроссовки Hermes Bouncing"
+      },
+      "after": {
+        "name": "Кроссовки Bouncing"
+      }
+    },
+    {
+      "id": 321,
+      "revision": 6,
+      "before": {
+        "name": "Кроссовки Gucci Tortuga GG Sneakers in Camel",
+        "original_price": "461.54"
+      },
+      "after": {
+        "name": "Кроссовки Tortuga GG Sneakers in Camel",
+        "original_price": 462
+      }
+    },
+    {
+      "id": 322,
+      "revision": 7,
+      "before": {
+        "name": "Кроссовки Gucci Off The Grid Tennis 1977",
+        "original_price": "461.54"
+      },
+      "after": {
+        "name": "Кроссовки Off The Grid Tennis 1977",
+        "original_price": 462
+      }
+    },
+    {
+      "id": 323,
+      "revision": 4,
+      "before": {
+        "original_price": "461.54"
+      },
+      "after": {
+        "original_price": 462
+      }
+    },
+    {
+      "id": 324,
+      "revision": 5,
+      "before": {
+        "name": "Шапка Canada Goose Arctic Disc Rib Toque",
+        "original_price": "184.62"
+      },
+      "after": {
+        "name": "Шапка Arctic Disc Rib Toque",
+        "original_price": 185
+      }
+    },
+    {
+      "id": 325,
+      "revision": 4,
+      "before": {
+        "original_price": "769.23"
+      },
+      "after": {
+        "original_price": 769
+      }
+    },
+    {
+      "id": 326,
+      "revision": 5,
+      "before": {
+        "name": "Свитшот Maison Margiela Numbers Motif Sweater | Black",
+        "original_price": "461.54"
+      },
+      "after": {
+        "name": "Свитшот Numbers Motif Sweater | Black",
+        "original_price": 462
+      }
+    },
+    {
+      "id": 327,
+      "revision": 6,
+      "before": {
+        "name": "Жилетка MM6 Maison Margiela x CHENPENG",
+        "original_price": "615.38"
+      },
+      "after": {
+        "name": "Жилет MM6 × CHENPENG",
+        "original_price": 615
+      }
+    },
+    {
+      "id": 328,
+      "revision": 7,
+      "before": {
+        "name": "Шапка Moncler SS21 proposal and entitled \"Holding Court\"",
+        "original_price": "307.69"
+      },
+      "after": {
+        "name": "Шапка Holding Court",
+        "original_price": 308
+      }
+    },
+    {
+      "id": 329,
+      "revision": 5,
+      "before": {
+        "name": "Футболка Maison Margiela Numeric",
+        "original_price": "338.46"
+      },
+      "after": {
+        "name": "Футболка Numeric",
+        "original_price": 338
+      }
+    },
+    {
+      "id": 330,
+      "revision": 5,
+      "before": {
+        "name": "Футболка Maison Margiela SS Mockneck Logo",
+        "original_price": "338.46"
+      },
+      "after": {
+        "name": "Футболка SS Mockneck Logo",
+        "original_price": 338
+      }
+    },
+    {
+      "id": 331,
+      "revision": 6,
+      "before": {
+        "name": "Шапка Canada Goose Arctic Disc Toque",
+        "original_price": "184.62"
+      },
+      "after": {
+        "name": "Шапка Arctic Disc Toque",
+        "original_price": 185
+      }
+    },
+    {
+      "id": 332,
+      "revision": 6,
+      "before": {
+        "name": "Кеды Maison Margiela Tabi Canvas",
+        "original_price": "446.15"
+      },
+      "after": {
+        "name": "Кеды Tabi Canvas",
+        "original_price": 446
+      }
+    },
+    {
+      "id": 333,
+      "revision": 7,
+      "before": {
+        "category": "Ремень",
+        "name": "Ремень Gucci GG Marmont"
+      },
+      "after": {
+        "category": "Аксессуары",
+        "name": "Ремень GG Marmont"
+      }
+    },
+    {
+      "id": 334,
+      "revision": 5,
+      "before": {
+        "name": "Кеды Kiton NAPOLI Chukka Boot"
+      },
+      "after": {
+        "name": "Кеды NAPOLI Chukka Boot"
+      }
+    },
+    {
+      "id": 335,
+      "revision": 5,
+      "before": {
+        "name": "Кеды Kiton NAPOLI Chukka Boot"
+      },
+      "after": {
+        "name": "Кеды NAPOLI Chukka Boot"
+      }
+    },
+    {
+      "id": 336,
+      "revision": 5,
+      "before": {
+        "name": "Кофта Gucci Rock Logo Popover Hoody in Purple",
+        "original_price": "615.38"
+      },
+      "after": {
+        "name": "Худи Rock Logo Popover Hoody in Purple",
+        "original_price": 615
+      }
+    },
+    {
+      "id": 337,
+      "revision": 4,
+      "before": {
+        "name": "Джинсы YSL"
+      },
+      "after": {
+        "name": "Джинсы"
+      }
+    },
+    {
+      "id": 338,
+      "revision": 5,
+      "before": {
+        "name": "Кофта Palm Angels Bear Hoodie 'Brown/Navy'"
+      },
+      "after": {
+        "name": "Худи Bear Hoodie 'Brown/Navy'"
+      }
+    },
+    {
+      "id": 339,
+      "revision": 8,
+      "before": {
+        "name": "Кепка Loro Piana Storm System",
+        "original_price": "571.43"
+      },
+      "after": {
+        "name": "Кепка Storm System",
+        "original_price": 571
+      }
+    },
+    {
+      "id": 340,
+      "revision": 6,
+      "before": {
+        "name": "Кепка Loro Piana",
+        "original_price": "571.43"
+      },
+      "after": {
+        "name": "Кепка",
+        "original_price": 571
+      }
+    },
+    {
+      "id": 341,
+      "revision": 8,
+      "before": {
+        "name": "Кроссовки Maison Margiela Tabi High Top Sneaker",
+        "original_price": "461.54"
+      },
+      "after": {
+        "name": "Кроссовки Tabi High Top Sneaker",
+        "original_price": 462
+      }
+    },
+    {
+      "id": 342,
+      "revision": 6,
+      "before": {
+        "name": "Ботинки Bottega Veneta Shiny Rubber Boots High"
+      },
+      "after": {
+        "name": "Ботинки Shiny Rubber Boots High"
+      }
+    },
+    {
+      "id": 343,
+      "revision": 11,
+      "before": {
+        "name": "Тапки Bottega Veneta Intrecciato Slip-On"
+      },
+      "after": {
+        "name": "Эспадрильи Intrecciato"
+      }
+    },
+    {
+      "id": 344,
+      "revision": 6,
+      "before": {
+        "name": "Тапки Bottega Veneta Intrecciato Slip-On"
+      },
+      "after": {
+        "name": "Тапки Intrecciato Slip-On"
+      }
+    },
+    {
+      "id": 345,
+      "revision": 6,
+      "before": {
+        "name": "Кеды Maison Margiela Almond High Top Sneakers in Black",
+        "original_price": "384.62"
+      },
+      "after": {
+        "name": "Кеды Almond High Top Sneakers in Black",
+        "original_price": 385
+      }
+    },
+    {
+      "id": 346,
+      "revision": 5,
+      "before": {
+        "name": "Кроссовки Maison Margiela Replika",
+        "original_price": "615.38"
+      },
+      "after": {
+        "name": "Кроссовки Replica",
+        "original_price": 615
+      }
+    },
+    {
+      "id": 347,
+      "revision": 6,
+      "before": {
+        "name": "Кроссовки Tom Ford Jago",
+        "original_price": "461.54"
+      },
+      "after": {
+        "name": "Кроссовки Jago",
+        "original_price": 462
+      }
+    },
+    {
+      "id": 348,
+      "revision": 6,
+      "before": {
+        "name": "Тапки Givenchy Marshmallow",
+        "original_price": "307.69"
+      },
+      "after": {
+        "name": "Тапки Marshmallow",
+        "original_price": 308
+      }
+    },
+    {
+      "id": 349,
+      "revision": 6,
+      "before": {
+        "name": "Футболка Maison Margiela Black Cut-Out Logo",
+        "original_price": "384.62"
+      },
+      "after": {
+        "name": "Футболка Black Cut-Out Logo",
+        "original_price": 385
+      }
+    },
+    {
+      "id": 351,
+      "revision": 6,
+      "before": {
+        "name": "Адвент календарь Dyson Beauty Advent Calendar 2026"
+      },
+      "after": {
+        "name": "Адвент-календарь Beauty Advent Calendar 2026"
+      }
+    },
+    {
+      "id": 352,
+      "revision": 7,
+      "before": {
+        "brand": "Hermes",
+        "name": "Сумка Hermes Kelly To Go"
+      },
+      "after": {
+        "brand": "Hermès",
+        "name": "Сумка Kelly To Go"
+      }
+    },
+    {
+      "id": 355,
+      "revision": 5,
+      "before": {
+        "brand": "LOEWE × On running"
+      },
+      "after": {
+        "brand": "On × Loewe"
+      }
+    },
+    {
+      "id": 356,
+      "revision": 7,
+      "before": {
+        "name": "Зип-худи Amiri Dragon"
+      },
+      "after": {
+        "name": "Зип-худи Dragon"
+      }
+    },
+    {
+      "id": 358,
+      "revision": 4,
+      "before": {
+        "name": "Лоферы Loro Piana Open Wintery Walk"
+      },
+      "after": {
+        "name": "Лоферы Open Wintery Walk"
+      }
+    },
+    {
+      "id": 360,
+      "revision": 7,
+      "before": {
+        "category": "Лонгслив"
+      },
+      "after": {
+        "category": "Лонгсливы"
+      }
+    },
+    {
+      "id": 361,
+      "revision": 5,
+      "before": {
+        "name": "Кроссовки Louis Vuitton Skate Sneaker"
+      },
+      "after": {
+        "name": "Кроссовки Skate Sneaker"
+      }
+    },
+    {
+      "id": 362,
+      "revision": 7,
+      "before": {
+        "category": "Лонгслив",
+        "name": "Кофта Amiri Dragon"
+      },
+      "after": {
+        "category": "Лонгсливы",
+        "name": "Кофта Dragon"
+      }
+    },
+    {
+      "id": 363,
+      "revision": 4,
+      "before": {
+        "name": "Dior Oblique T-Shirt, Relaxed Fit"
+      },
+      "after": {
+        "name": "Футболка Oblique, свободный крой"
+      }
+    },
+    {
+      "id": 365,
+      "revision": 3,
+      "before": {
+        "name": "Шорты Vetements destroyed denim"
+      },
+      "after": {
+        "name": "Шорты destroyed denim"
+      }
+    },
+    {
+      "id": 366,
+      "revision": 4,
+      "before": {
+        "brand": "AMIRI",
+        "name": "AMIRI  SHOTGUN"
+      },
+      "after": {
+        "brand": "Amiri",
+        "name": "Худи Shotgun"
+      }
+    },
+    {
+      "id": 367,
+      "revision": 5,
+      "before": {
+        "name": "Льняные Штаны Brunello Cucinelli"
+      },
+      "after": {
+        "name": "Льняные брюки"
+      }
+    },
+    {
+      "id": 369,
+      "revision": 2,
+      "before": {
+        "name": "Джинсы  Valentino"
+      },
+      "after": {
+        "name": "Джинсы"
+      }
+    },
+    {
+      "id": 370,
+      "revision": 5,
+      "before": {
+        "name": "Овершот"
+      },
+      "after": {
+        "name": "Овершёрт"
+      }
+    },
+    {
+      "id": 376,
+      "revision": 3,
+      "before": {
+        "name": "Штаны Brunello Cucinelli"
+      },
+      "after": {
+        "name": "Брюки"
+      }
+    },
+    {
+      "id": 377,
+      "revision": 3,
+      "before": {
+        "name": "Куртка Prada Denim jacket",
+        "original_price": "1538.46"
+      },
+      "after": {
+        "name": "Куртка Denim jacket",
+        "original_price": 1538
+      }
+    },
+    {
+      "id": 378,
+      "revision": 2,
+      "before": {
+        "name": "Штаны Louis Vuitton Buckle Pants"
+      },
+      "after": {
+        "name": "Брюки Buckle Pants"
+      }
+    },
+    {
+      "id": 379,
+      "revision": 5,
+      "before": {
+        "brand": "AMIRI",
+        "name": "Штаны AMIRI SHOTGUN"
+      },
+      "after": {
+        "brand": "Amiri",
+        "name": "Брюки Shotgun"
+      }
+    },
+    {
+      "id": 380,
+      "revision": 2,
+      "before": {
+        "brand": "Hermes",
+        "name": "Сумка через плечо Hermes Hac a Dos Noir"
+      },
+      "after": {
+        "brand": "Hermès",
+        "name": "Рюкзак Hac à Dos, Noir"
+      }
+    },
+    {
+      "id": 381,
+      "revision": 5,
+      "before": {
+        "name": "Gucci Рубашка GG cotton poplin bowling"
+      },
+      "after": {
+        "name": "Рубашка GG cotton poplin bowling"
+      }
+    },
+    {
+      "id": 382,
+      "revision": 6,
+      "before": {
+        "name": "Шорты Gucci GG printed swim trunks"
+      },
+      "after": {
+        "name": "Шорты GG printed swim trunks"
+      }
+    },
+    {
+      "id": 383,
+      "revision": 1,
+      "before": {
+        "name": "Кофта Palm Angels"
+      },
+      "after": {
+        "name": "Кофта"
+      }
+    },
+    {
+      "id": 384,
+      "revision": 3,
+      "before": {
+        "name": "Штаны Palm Angels Logo-Embroidered Grosgrain Trimmed Jersey Track Pants"
+      },
+      "after": {
+        "name": "Брюки Logo-Embroidered Grosgrain Trimmed Jersey Track Pants"
+      }
+    },
+    {
+      "id": 385,
+      "revision": 2,
+      "before": {
+        "name": "Versace шелковая рубашка с принтом Barocco"
+      },
+      "after": {
+        "name": "Шёлковая рубашка с принтом Barocco"
+      }
+    },
+    {
+      "id": 387,
+      "revision": 2,
+      "before": {
+        "name": "Футболка Rhude Chevron logo"
+      },
+      "after": {
+        "name": "Футболка Chevron logo"
+      }
+    },
+    {
+      "id": 388,
+      "revision": 3,
+      "before": {
+        "original_price": "571.43"
+      },
+      "after": {
+        "original_price": 571
+      }
+    },
+    {
+      "id": 389,
+      "revision": 2,
+      "before": {
+        "name": "Свитер Gg Wool & Acrylic Crewneck",
+        "original_price": "538.46"
+      },
+      "after": {
+        "name": "Свитер GG Wool & Acrylic Crewneck",
+        "original_price": 538
+      }
+    },
+    {
+      "id": 390,
+      "revision": 2,
+      "before": {
+        "name": "Кепка Loro Piana, мятная"
+      },
+      "after": {
+        "name": "Кепка, мятная"
+      }
+    },
+    {
+      "id": 392,
+      "revision": 3,
+      "before": {
+        "name": "Кепка Loro Piana, красная",
+        "original_price": "571.43"
+      },
+      "after": {
+        "name": "Кепка, красная",
+        "original_price": 571
+      }
+    },
+    {
+      "id": 394,
+      "revision": 3,
+      "before": {
+        "original_price": "571.43"
+      },
+      "after": {
+        "original_price": 571
+      }
+    },
+    {
+      "id": 396,
+      "revision": 2,
+      "before": {
+        "original_price": "571.43"
+      },
+      "after": {
+        "original_price": 571
+      }
+    },
+    {
+      "id": 397,
+      "revision": 3,
+      "before": {
+        "original_price": "571.43"
+      },
+      "after": {
+        "original_price": 571
+      }
+    },
+    {
+      "id": 424,
+      "revision": 3,
+      "before": {
+        "original_price": "461.54"
+      },
+      "after": {
+        "original_price": 462
+      }
+    },
+    {
+      "id": 427,
+      "revision": 2,
+      "before": {
+        "category": "Сумки",
+        "name": "Косметичка Instariso Toiletry Case"
+      },
+      "after": {
+        "category": "Аксессуары",
+        "name": "Косметичка Intarsio Toiletry Case"
+      }
+    },
+    {
+      "id": 428,
+      "revision": 2,
+      "before": {
+        "original_price": "153.85"
+      },
+      "after": {
+        "original_price": 154
+      }
+    },
+    {
+      "id": 431,
+      "revision": 1,
+      "before": {
+        "category": "Аксессуары",
+        "name": "Очки Gucci Small Fit"
+      },
+      "after": {
+        "category": "Очки",
+        "name": "Очки Small Fit"
+      }
+    },
+    {
+      "id": 432,
+      "revision": 3,
+      "before": {
+        "name": "Дубленка Fall Winter 2026",
+        "category": "Одежда"
+      },
+      "after": {
+        "name": "Дублёнка Fall Winter 2026",
+        "category": "Куртки"
+      }
+    },
+    {
+      "id": 434,
+      "revision": 2,
+      "before": {
+        "brand": "Hermes",
+        "name": "Hermès Izmir из кожи страуса"
+      },
+      "after": {
+        "brand": "Hermès",
+        "name": "Сандалии Izmir из кожи страуса"
+      }
+    },
+    {
+      "id": 435,
+      "revision": 2,
+      "before": {
+        "name": "Кроссовки для тенисa AG-LT23"
+      },
+      "after": {
+        "name": "Кроссовки для тенниса AG-LT23"
+      }
+    },
+    {
+      "id": 436,
+      "revision": 3,
+      "before": {
+        "name": "Sneakers Bouncing"
+      },
+      "after": {
+        "name": "Кроссовки Bouncing"
+      }
+    },
+    {
+      "id": 437,
+      "revision": 5,
+      "before": {
+        "name": "deep sneaker"
+      },
+      "after": {
+        "name": "Кроссовки Deep"
+      }
+    },
+    {
+      "id": 441,
+      "revision": 2,
+      "before": {
+        "category": "Аксессуары",
+        "name": "Serena Nautic cap"
+      },
+      "after": {
+        "category": "Головной убор",
+        "name": "Кепка Serena Nautic"
+      }
+    },
+    {
+      "id": 443,
+      "revision": 3,
+      "before": {
+        "name": "Day sneaker"
+      },
+      "after": {
+        "name": "Кроссовки Day"
+      }
+    },
+    {
+      "id": 445,
+      "revision": 2,
+      "before": {
+        "name": "Кроссовки Adidas Yeezy 500 utility black"
+      },
+      "after": {
+        "name": "Кроссовки Yeezy 500 Utility Black"
+      }
+    },
+    {
+      "id": 446,
+      "revision": 3,
+      "before": {
+        "name": "Bouncing sneaker"
+      },
+      "after": {
+        "name": "Кроссовки Bouncing"
+      }
+    },
+    {
+      "id": 448,
+      "revision": 1,
+      "before": {
+        "name": "Кроссовки Super Star"
+      },
+      "after": {
+        "name": "Кроссовки Super-Star"
+      }
+    },
+    {
+      "id": 449,
+      "revision": 1,
+      "before": {
+        "category": "Одежда"
+      },
+      "after": {
+        "category": "Куртки"
+      }
+    },
+    {
+      "id": 453,
+      "revision": 4,
+      "before": {
+        "name": "Футболка C.P Company"
+      },
+      "after": {
+        "name": "Футболка"
+      }
+    },
+    {
+      "id": 454,
+      "revision": 2,
+      "before": {
+        "category": "Одежда"
+      },
+      "after": {
+        "category": "Куртки"
+      }
+    },
+    {
+      "id": 455,
+      "revision": 1,
+      "before": {
+        "name": "Портсигар Palm Angels"
+      },
+      "after": {
+        "name": "Портсигар"
+      }
+    },
+    {
+      "id": 457,
+      "revision": 3,
+      "before": {
+        "name": "Кроссовки Yeezy Boost 350 V2"
+      },
+      "after": {
+        "name": "Кроссовки Yeezy 350 V2 CMPCT Slate Panda"
+      }
+    },
+    {
+      "id": 460,
+      "revision": 1,
+      "before": {
+        "name": "Тапки Balenciaga"
+      },
+      "after": {
+        "name": "Тапки"
+      }
+    },
+    {
+      "id": 461,
+      "revision": 2,
+      "before": {
+        "name": "Шорты Undder Armour x Mansory"
+      },
+      "after": {
+        "name": "Шорты Under Armour × Mansory"
+      }
+    },
+    {
+      "id": 462,
+      "revision": 2,
+      "before": {
+        "name": "Футболка Undder Armour x Mansory"
+      },
+      "after": {
+        "name": "Футболка Under Armour × Mansory"
+      }
+    },
+    {
+      "id": 163,
+      "revision": 4,
+      "before": {
+        "name": "Часы AP x swatch мятные"
+      },
+      "after": {
+        "name": "Часы Royal Pop, мятные"
+      }
+    },
+    {
+      "id": 406,
+      "revision": 4,
+      "before": {
+        "brand": "Amiri × Preemo Vinyl Negra",
+        "name": "Футболка"
+      },
+      "after": {
+        "brand": "Amiri × Preemo",
+        "name": "Футболка Preemo Vinyl, чёрная"
+      }
+    },
+    {
+      "id": 130,
+      "revision": 4,
+      "before": {
+        "name": "Pills III"
+      },
+      "after": {
+        "name": "Очки Pills III"
+      }
+    },
+    {
+      "id": 123,
+      "revision": 3,
+      "before": {
+        "name": "+22+ Candle Set (set of three)"
+      },
+      "after": {
+        "name": "Набор ароматических свечей +22+, 3 штуки"
+      }
+    },
+    {
+      "id": 124,
+      "revision": 5,
+      "before": {
+        "name": "33 Incense Set"
+      },
+      "after": {
+        "name": "Набор благовоний +33+"
+      }
+    },
+    {
+      "id": 433,
+      "revision": 3,
+      "before": {
+        "name": "22 Incense Set"
+      },
+      "after": {
+        "name": "Набор благовоний +22+"
+      }
+    },
+    {
+      "id": 255,
+      "revision": 5,
+      "before": {
+        "name": "Штаны Arrow"
+      },
+      "after": {
+        "name": "Брюки Arrow"
+      }
+    },
+    {
+      "id": 258,
+      "revision": 5,
+      "before": {
+        "name": "Штаны"
+      },
+      "after": {
+        "name": "Брюки"
+      }
+    },
+    {
+      "id": 260,
+      "revision": 5,
+      "before": {
+        "name": "Штаны"
+      },
+      "after": {
+        "name": "Брюки"
+      }
+    },
+    {
+      "id": 357,
+      "revision": 10,
+      "before": {
+        "name": "Штаны Ball"
+      },
+      "after": {
+        "name": "Брюки Ball"
+      }
+    },
+    {
+      "id": 393,
+      "revision": 3,
+      "before": {
+        "name": "Штаны"
+      },
+      "after": {
+        "name": "Брюки"
+      }
+    },
+    {
+      "id": 395,
+      "revision": 3,
+      "before": {
+        "name": "Штаны"
+      },
+      "after": {
+        "name": "Брюки"
+      }
+    },
+    {
+      "id": 399,
+      "revision": 3,
+      "before": {
+        "name": "Штаны"
+      },
+      "after": {
+        "name": "Брюки"
+      }
+    },
+    {
+      "id": 400,
+      "revision": 3,
+      "before": {
+        "name": "Штаны"
+      },
+      "after": {
+        "name": "Брюки"
+      }
+    },
+    {
+      "id": 414,
+      "revision": 3,
+      "before": {
+        "name": "Штаны"
+      },
+      "after": {
+        "name": "Брюки"
+      }
+    },
+    {
+      "id": 415,
+      "revision": 3,
+      "before": {
+        "name": "Штаны"
+      },
+      "after": {
+        "name": "Брюки"
+      }
+    }
+  ]
+}
