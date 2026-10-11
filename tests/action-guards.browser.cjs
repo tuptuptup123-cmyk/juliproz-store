@@ -21,6 +21,15 @@ for(const width of [390,1280]){
  await page.evaluate(()=>{for(let n=0;n<150;n++)document.querySelector('[data-cart-action=plus]').click()});assert.equal(await page.evaluate(()=>cart[0].quantity),2);await page.waitForTimeout(370);
  await page.evaluate(()=>{openProduct(1);selectedSize='40';addToCart();setTab('cart')});
  await page.evaluate(()=>{for(let n=0;n<150;n++){const b=document.querySelector('[data-cart-action=remove]');if(b)b.click()}});assert.equal(await page.locator('.cart-item').count(),1);await page.waitForTimeout(370);await page.locator('[data-cart-action=remove]').click();assert.equal(await page.locator('.cart-empty').count(),1);
+ // A genuine catalogue refresh invalidating an on-order size disables quantity growth.
+ await page.evaluate(()=>{openProduct(2);selectedSize='XL';addToCart();setTab('cart')});
+ const oldHoodie=rows[1];rows[1]={...oldHoodie,size:'XXL'};
+ await page.evaluate(()=>loadProducts(true));
+ assert.equal(await page.locator('[data-cart-action=plus]').isDisabled(),true);
+ assert.match(await page.locator('.cart-delivery').innerText(),/недоступен/);
+ assert.equal(await page.evaluate(()=>cart[0].quantity),1);
+ await page.waitForTimeout(370);await page.locator('[data-cart-action=remove]').click();
+ rows[1]=oldHoodie;await page.evaluate(()=>loadProducts(true));
  delayLinked=250;await page.evaluate(()=>{openLinkedProduct(999);setTab('favorites')});await page.waitForTimeout(300);assert.equal(await page.locator('#productModal').isHidden(),true);assert.equal(await page.evaluate(()=>state.tab),'favorites');
  await page.locator('[data-tab=catalog]').click();await page.locator('[data-id="3"]').click();assert.equal(await page.locator('[data-action=add-cart]').isDisabled(),true);assert.equal(await page.evaluate(()=>cart.length),0);
  // Live catalogue edits must also update an already-open gallery.
