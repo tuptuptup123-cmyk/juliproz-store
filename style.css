@@ -652,3 +652,5 @@ button,input,select{font-family:inherit}
 
 /* Match the paw to the smaller wordmark between phone and desktop layouts. */
 @media(min-width:601px) and (max-width:899px){.brand-paw{width:180px;height:146px;right:calc(50% - 104px);top:-26px}}
+
+.product-description{white-space:pre-line}
