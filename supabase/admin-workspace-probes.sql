@@ -4,8 +4,9 @@ do $$
 declare owner_id uuid:=gen_random_uuid(); staff_id uuid:=gen_random_uuid(); outsider uuid:=gen_random_uuid(); unverified uuid:=gen_random_uuid(); product bigint; hist jsonb; count_rows integer; log_id bigint; i integer; staff_email text:='probe-'||staff_id::text||'@example.invalid';
 begin
  insert into auth.users(id,email,email_confirmed_at) values(owner_id,'probe-'||owner_id::text||'@example.invalid',now()),(staff_id,staff_email,now()),(outsider,'probe-'||outsider::text||'@example.invalid',now()),(unverified,'probe-'||unverified::text||'@example.invalid',null);
+ insert into auth.sessions(id,user_id,created_at,updated_at) values(owner_id,owner_id,now(),now()),(staff_id,staff_id,now(),now()),(outsider,outsider,now(),now());
  insert into public.store_admins(user_id,display_name,access_role) values(owner_id,'Test owner','owner');
- perform set_config('request.jwt.claims',jsonb_build_object('sub',owner_id,'role','authenticated','aal','aal2')::text,true);
+ perform set_config('request.jwt.claims',jsonb_build_object('sub',owner_id,'session_id',owner_id,'role','authenticated','aal','aal2')::text,true);
  set local role authenticated;
  perform public.store_add_workspace_admin(staff_email,'Test staff');
  for i in 1..10 loop perform public.store_prepare_workspace_invite('probe-invite-'||owner_id::text||'-'||i||'@example.invalid','Probe invite');end loop;
@@ -13,7 +14,7 @@ begin
  begin perform public.store_add_workspace_admin('probe-'||unverified::text||'@example.invalid','Unverified');raise exception 'Unverified account admitted';exception when raise_exception then if sqlerrm='Unverified account admitted' then raise;end if;end;
  insert into public.products(brand,name,category,currency,image_url,photos,available,creation_key) values('Audit probe','Hidden rollback fixture','Аксессуары','EUR','https://juliproz-store.vercel.app/images/security-probe.webp','[]',false,gen_random_uuid()) returning id into product;
  insert into public.product_admin_notes(product_id,note,location,custodian) values(product,'Private note','Private warehouse','Private custodian');
- perform set_config('request.jwt.claims',jsonb_build_object('sub',staff_id,'role','authenticated','aal','aal2')::text,true);
+ perform set_config('request.jwt.claims',jsonb_build_object('sub',staff_id,'session_id',staff_id,'role','authenticated','aal','aal2')::text,true);
  update public.product_admin_notes set location='Moved warehouse' where product_id=product and revision=1;
  get diagnostics count_rows=row_count;if count_rows<>1 then raise exception 'Valid note edit failed';end if;
  update public.product_admin_notes set location='Stale overwrite' where product_id=product and revision=1;
@@ -31,19 +32,19 @@ begin
  begin perform public.store_remove_workspace_admin(owner_id);raise exception 'Staff removed owner';exception when insufficient_privilege then null;end;
  perform public.store_save_workspace_profile('Staff renamed');
  -- New administrators must complete MFA before reading private data.
- perform set_config('request.jwt.claims',jsonb_build_object('sub',staff_id,'role','authenticated','aal','aal1')::text,true);
+ perform set_config('request.jwt.claims',jsonb_build_object('sub',staff_id,'session_id',staff_id,'role','authenticated','aal','aal1')::text,true);
  begin perform public.store_workspace_history();raise exception 'AAL1 read history';exception when insufficient_privilege then null;end;
  if exists(select 1 from public.product_admin_notes where product_id=product) then raise exception 'AAL1 read notes';end if;
- perform set_config('request.jwt.claims',jsonb_build_object('sub',owner_id,'role','authenticated','aal','aal2')::text,true);
+ perform set_config('request.jwt.claims',jsonb_build_object('sub',owner_id,'session_id',owner_id,'role','authenticated','aal','aal2')::text,true);
  perform public.store_remove_workspace_admin(staff_id);
  begin perform public.store_remove_workspace_admin(owner_id);raise exception 'Owner removed own access';exception when raise_exception then if sqlerrm='Owner removed own access' then raise;end if;end;
- perform set_config('request.jwt.claims',jsonb_build_object('sub',staff_id,'role','authenticated','aal','aal2')::text,true);
+ perform set_config('request.jwt.claims',jsonb_build_object('sub',staff_id,'session_id',staff_id,'role','authenticated','aal','aal2')::text,true);
  begin perform public.store_workspace_team();raise exception 'Revoked staff read team';exception when insufficient_privilege then null;end;
  begin perform public.store_workspace_history();raise exception 'Revoked staff read history';exception when insufficient_privilege then null;end;
  if exists(select 1 from public.product_admin_notes where product_id=product) then raise exception 'Revoked staff read notes';end if;
  update public.products set name='Forbidden edit' where id=product;
  get diagnostics count_rows=row_count;if count_rows<>0 then raise exception 'Revoked staff wrote product';end if;
- perform set_config('request.jwt.claims',jsonb_build_object('sub',outsider,'role','authenticated','aal','aal2')::text,true);
+ perform set_config('request.jwt.claims',jsonb_build_object('sub',outsider,'session_id',outsider,'role','authenticated','aal','aal2')::text,true);
  begin perform public.store_workspace_history();raise exception 'Nonadmin read history';exception when insufficient_privilege then null;end;
  if exists(select 1 from public.product_admin_notes where product_id=product) then raise exception 'Nonadmin read notes';end if;
  reset role;perform set_config('request.jwt.claims','{}',true);set local role anon;
