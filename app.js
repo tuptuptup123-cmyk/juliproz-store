@@ -49,16 +49,10 @@ function loroColorGroup(rows=products){
 }
 function colorGroupFor(id){const group=loroColorGroup();return group?.members.some(x=>x.option.id===String(id))?group:null}
 function colorLabel(id){return loroColorDefinitions().find(x=>x.id===String(id))?.label||''}
-function colorCatalogueProduct(group){
-  const first=(state.size?group.members.find(x=>ProductSizes.parse(x.product.size).includes(state.size)&&ProductSizes.stockFor(x.product,state.size)>0):null)||group.members.find(x=>!x.product.reserved&&ProductSizes.stockUnits(x.product)!==0)||group.members[0];
-  const sizes=[...new Set(group.members.flatMap(x=>ProductSizes.parse(x.product.size).filter(size=>x.product.fulfillment_status==='on_order'||ProductSizes.stockFor(x.product,size)>0)))];
-  return {...first.product,id:group.id,name:'Кепка Loro Piana',color_catalog_sizes:sizes,color_member_ids:group.members.map(x=>x.option.id),color_search:group.members.map(x=>`${x.option.id} ${x.option.label} ${x.product.name}`).join(' ')};
-}
 function catalogueProducts(){
-  const group=brioniSizeGroup(),colors=loroColorGroup();
-  let result=group?products.filter(p=>String(p.id)!=='301').map(p=>String(p.id)==='302'?group:p):products;
-  if(colors){const ids=new Set(colors.members.map(x=>x.option.id));result=result.filter(p=>!ids.has(String(p.id))||String(p.id)===colors.id).map(p=>String(p.id)===colors.id?colorCatalogueProduct(colors):p)}
-  return result;
+  // Colour variants keep their own catalogue cards; the detail selector connects them.
+  const group=brioniSizeGroup();
+  return group?products.filter(p=>String(p.id)!=='301').map(p=>String(p.id)==='302'?group:p):products;
 }
 function presentationProduct(id){
   const raw=products.find(p=>String(p.id)===String(id));
@@ -428,7 +422,7 @@ function setTab(tab){
 }
 const wishlistClicks=new Map();
 function toggleWishlist(id,fromCard=false){
-  if(id==null)return;id=String(id);const now=Date.now();if(now-(wishlistClicks.get(id)??-Infinity)<450)return;wishlistClicks.set(id,now);if(wishlistClicks.size>200)wishlistClicks.delete(wishlistClicks.keys().next().value);const display=presentationProduct(id),ids=display?.variant_ids?Object.values(display.variant_ids):fromCard&&colorGroupFor(id)?colorGroupFor(id).members.map(x=>x.option.id):[id];if(ids.some(key=>state.favorites.has(key)))ids.forEach(key=>state.favorites.delete(key));else state.favorites.add(id);
+  if(id==null)return;id=String(id);const now=Date.now();if(now-(wishlistClicks.get(id)??-Infinity)<450)return;wishlistClicks.set(id,now);if(wishlistClicks.size>200)wishlistClicks.delete(wishlistClicks.keys().next().value);const display=presentationProduct(id),ids=display?.variant_ids?Object.values(display.variant_ids):[id];if(ids.some(key=>state.favorites.has(key)))ids.forEach(key=>state.favorites.delete(key));else state.favorites.add(id);
   window.StoreAnalytics?.track(state.favorites.has(id)?'wishlist_add':'wishlist_remove',id);
   try{localStorage.setItem('jpFav',JSON.stringify([...state.favorites]))}catch{}
   if(state.tab==='favorites')render();
@@ -561,12 +555,6 @@ function openProduct(id,linked=false){
   navigationRevision++;
   const raw=products.find(x=>String(x.id)===String(id));if(!raw)return;
   let p=presentationProduct(id);
-  const colorGroup=colorGroupFor(id);
-  if(colorGroup&&!linked){
-    const favored=state.tab==='favorites'?colorGroup.members.find(x=>state.favorites.has(x.option.id)):null;
-    const sizeMatch=state.size?colorGroup.members.find(x=>sizesOf(x.product).includes(state.size)):null;
-    p=(favored||sizeMatch||colorGroup.members.find(x=>!x.product.reserved&&ProductSizes.stockUnits(x.product)!==0)||colorGroup.members[0]).product;
-  }
   // An old variant link must show its own unavailable state, never another size.
   if(linked&&p.variant_ids&&!sizesOf(p).includes(raw.size))p=raw;
   window.StoreAnalytics?.track("product_view",p.id);
