@@ -762,3 +762,7 @@ body.product-modal-open{overflow:hidden}
 
 /* Alpha framing already includes the 8% margins; do not add CSS padding a second time. */
 .product .photo img.product-framed,.hero img.product-framed,.related-photo img.product-framed,.cart-photo img.product-framed,.photo-picker img.product-framed,.color-option img.product-framed,#previewImage img.product-framed,.catalogue-preview-photo img.product-framed{padding:0;object-fit:contain;object-position:center;transform-origin:center;box-sizing:border-box}
+
+/* Center the close icon geometrically, independently of font metrics. */
+.menu-header .menu-close{padding:0}
+.menu-close svg{display:block;flex-shrink:0}
