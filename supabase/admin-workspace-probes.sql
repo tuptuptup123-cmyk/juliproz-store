@@ -1,0 +1,52 @@
+-- Synthetic users and a synthetic hidden product; every change rolls back.
+begin;
+do $$
+declare owner_id uuid:=gen_random_uuid(); staff_id uuid:=gen_random_uuid(); outsider uuid:=gen_random_uuid(); unverified uuid:=gen_random_uuid(); product bigint; hist jsonb; count_rows integer; log_id bigint; staff_email text:='probe-'||staff_id::text||'@example.invalid';
+begin
+ insert into auth.users(id,email,email_confirmed_at) values(owner_id,'probe-'||owner_id::text||'@example.invalid',now()),(staff_id,staff_email,now()),(outsider,'probe-'||outsider::text||'@example.invalid',now()),(unverified,'probe-'||unverified::text||'@example.invalid',null);
+ insert into public.store_admins(user_id,display_name,access_role) values(owner_id,'Test owner','owner');
+ perform set_config('request.jwt.claims',jsonb_build_object('sub',owner_id,'role','authenticated','aal','aal2')::text,true);
+ set local role authenticated;
+ perform public.store_add_workspace_admin(staff_email,'Test staff');
+ begin perform public.store_add_workspace_admin('probe-'||unverified::text||'@example.invalid','Unverified');raise exception 'Unverified account admitted';exception when raise_exception then if sqlerrm='Unverified account admitted' then raise;end if;end;
+ insert into public.products(brand,name,category,currency,image_url,photos,available,creation_key) values('Audit probe','Hidden rollback fixture','Аксессуары','EUR','https://juliproz-store.vercel.app/images/security-probe.webp','[]',false,gen_random_uuid()) returning id into product;
+ insert into public.product_admin_notes(product_id,note,location,custodian) values(product,'Private note','Private warehouse','Private custodian');
+ perform set_config('request.jwt.claims',jsonb_build_object('sub',staff_id,'role','authenticated','aal','aal2')::text,true);
+ update public.product_admin_notes set location='Moved warehouse' where product_id=product and revision=1;
+ get diagnostics count_rows=row_count;if count_rows<>1 then raise exception 'Valid note edit failed';end if;
+ update public.product_admin_notes set location='Stale overwrite' where product_id=product and revision=1;
+ get diagnostics count_rows=row_count;if count_rows<>0 then raise exception 'Stale note overwritten';end if;
+ hist:=public.store_workspace_history(null,product,staff_id);
+ if jsonb_array_length(hist)<>1 or hist->0->>'actor_id'<>staff_id::text or hist->0->'changes'->'location'->>'before'<>'Private warehouse' or hist->0->'changes'->'location'->>'after'<>'Moved warehouse' then raise exception 'Audit attribution/diff failed: %',hist;end if;
+ log_id:=(hist->0->>'id')::bigint;
+ if jsonb_array_length(public.store_workspace_history(log_id,product,staff_id))<>0 then raise exception 'Cursor duplicated row';end if;
+ begin perform public.store_add_workspace_admin('probe-'||outsider::text||'@example.invalid','Intruder');raise exception 'Staff granted privileges';exception when insufficient_privilege then null;end;
+ begin update public.store_admins set access_role='owner' where user_id=staff_id;raise exception 'Staff escalated own role';exception when insufficient_privilege then null;end;
+ begin update store_private.store_change_log set actor_label='Forged';raise exception 'Audit was editable';exception when insufficient_privilege then null;end;
+ begin perform public.store_remove_workspace_admin(owner_id);raise exception 'Staff removed owner';exception when insufficient_privilege then null;end;
+ perform public.store_save_workspace_profile('Staff renamed');
+ -- New administrators must complete MFA before reading private data.
+ perform set_config('request.jwt.claims',jsonb_build_object('sub',staff_id,'role','authenticated','aal','aal1')::text,true);
+ begin perform public.store_workspace_history();raise exception 'AAL1 read history';exception when insufficient_privilege then null;end;
+ if exists(select 1 from public.product_admin_notes where product_id=product) then raise exception 'AAL1 read notes';end if;
+ perform set_config('request.jwt.claims',jsonb_build_object('sub',owner_id,'role','authenticated','aal','aal2')::text,true);
+ perform public.store_remove_workspace_admin(staff_id);
+ begin perform public.store_remove_workspace_admin(owner_id);raise exception 'Owner removed own access';exception when raise_exception then if sqlerrm='Owner removed own access' then raise;end if;end;
+ perform set_config('request.jwt.claims',jsonb_build_object('sub',staff_id,'role','authenticated','aal','aal2')::text,true);
+ begin perform public.store_workspace_team();raise exception 'Revoked staff read team';exception when insufficient_privilege then null;end;
+ begin perform public.store_workspace_history();raise exception 'Revoked staff read history';exception when insufficient_privilege then null;end;
+ if exists(select 1 from public.product_admin_notes where product_id=product) then raise exception 'Revoked staff read notes';end if;
+ update public.products set name='Forbidden edit' where id=product;
+ get diagnostics count_rows=row_count;if count_rows<>0 then raise exception 'Revoked staff wrote product';end if;
+ perform set_config('request.jwt.claims',jsonb_build_object('sub',outsider,'role','authenticated','aal','aal2')::text,true);
+ begin perform public.store_workspace_history();raise exception 'Nonadmin read history';exception when insufficient_privilege then null;end;
+ if exists(select 1 from public.product_admin_notes where product_id=product) then raise exception 'Nonadmin read notes';end if;
+ reset role;perform set_config('request.jwt.claims','{}',true);set local role anon;
+ begin perform public.store_workspace_history();raise exception 'Anonymous read history';exception when insufficient_privilege then null;end;
+ begin perform count(*) from public.product_admin_notes;raise exception 'Anonymous read notes';exception when insufficient_privilege then null;end;
+ reset role;
+ if not exists(select 1 from store_private.store_change_log where id=log_id and actor_label='Test staff') then raise exception 'Actor label lost after removal';end if;
+ if has_table_privilege('anon','store_private.store_change_log','SELECT') or has_table_privilege('authenticated','store_private.store_change_log','SELECT') or has_table_privilege('authenticated','store_private.store_change_log','INSERT') then raise exception 'History table exposed';end if;
+end $$;
+select 'PASS: owner grants, confirmed-email requirement, MFA, role-escalation denial, private notes, revision conflicts, audit identity/diffs/paging/immutability, revocation with old token, anonymous/nonadmin denial; all fixtures rolled back' as verification;
+rollback;

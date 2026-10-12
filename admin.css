@@ -79,3 +79,19 @@ label{display:block;font-weight:500;font-size:12px}input:not([type=checkbox]),te
 /* Same product bounds and 8% minimum margins in every catalogue preview. */
 .photo,.hero,.related-photo,.cart-photo,#previewImage,.catalogue-preview-photo{overflow:hidden}
 img.product-framed{padding:0;object-fit:contain;transform-origin:center;box-sizing:border-box}
+
+/* Private history and personal administrator accounts. */
+.history-filters{display:flex;align-items:end;gap:12px;flex-wrap:wrap;margin-bottom:20px}
+.history-filters label{display:grid;gap:7px;flex:1;min-width:180px}
+.history-entry,.team-member{background:#fff;border:1px solid var(--line,#dde2e9);border-radius:14px;padding:20px;margin:14px 0;min-width:0;overflow-wrap:anywhere}
+.history-entry-heading,.team-member{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.history-entry-heading span,.history-meta{font-size:13px;color:#566475}
+.history-entry summary{cursor:pointer;min-height:44px;display:flex;align-items:center}
+.history-change{display:grid;grid-template-columns:1fr 1fr;gap:12px;border-top:1px solid #e5e9ef;padding:14px 0}
+.history-change h3{grid-column:1/-1;margin:0;font-size:14px}
+.history-change>div{min-width:0}.history-change span{font-size:12px;color:#566475}
+.history-change pre{white-space:pre-wrap;overflow-wrap:anywhere;font:inherit;font-size:13px;line-height:1.6;max-height:260px;overflow:auto;margin:7px 0}
+#teamPanel .form-card{margin:20px 0}#teamPanel form label{display:grid;gap:8px;margin:16px 0}#teamPanel form button{margin-top:12px}
+#currentAdminProfile{overflow-wrap:anywhere}#internalNoteCard input,#internalNoteCard textarea{font-size:16px}
+#staffRegistration label{display:grid;gap:8px;margin:16px 0}#staffRegistration>button{margin-top:12px}
+@media(max-width:600px){.history-entry,.team-member{padding:16px}.history-change{grid-template-columns:1fr}.team-member{align-items:flex-start;flex-direction:column}.history-filters{align-items:stretch}.history-filters label{min-width:100%;}.history-entry-heading{align-items:flex-start}.history-meta{line-height:1.6}}
