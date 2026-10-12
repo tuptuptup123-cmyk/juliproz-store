@@ -1,6 +1,7 @@
 'use strict';
 
 const { createHmac, timingSafeEqual } = require('node:crypto');
+const { createDistributedGuard } = require('./telegram-limit.cjs');
 
 const BOT_USERNAME = 'JuliProzBot';
 const SHOP_URL = 'https://juliproz-store.vercel.app/';
@@ -106,7 +107,7 @@ function callbackResponse(update) {
     link_preview_options: { is_disabled: true }, reply_markup: { inline_keyboard: selected.keyboard } };
 }
 
-function createHandler(env = process.env, allowReply = createReplyGuard(), apiRequest = fetch, allowCallback = createReplyGuard(() => performance.now(), 30)) {
+function createHandler(env = process.env, allowReply = createReplyGuard(), apiRequest = fetch, allowCallback = createReplyGuard(() => performance.now(), 30), allowShared = createDistributedGuard(env)) {
   return function telegram(req, res) {
     res.setHeader('Cache-Control', 'no-store');
     res.setHeader('X-Content-Type-Options', 'nosniff');
@@ -140,20 +141,37 @@ function createHandler(env = process.env, allowReply = createReplyGuard(), apiRe
     } catch {
       return res.status(400).json({ error: 'Invalid JSON' });
     }
+    // Authentication and structural validation precede any shared-database call.
+    // In-memory counters are only an extra guard; shared admission is authoritative.
+    function admit(reply, kind, localGuard, send) {
+      if (!reply) return res.status(200).json({ ok: true });
+      const finish = allowed => allowed && localGuard(reply.chat_id, update.update_id)
+        ? send() : res.status(200).json({ ok: true });
+      const unavailable = () => {
+        res.setHeader('Retry-After', '5');
+        return res.status(503).json({ error: 'Bot temporarily unavailable' });
+      };
+      try {
+        const result = allowShared(reply.chat_id, update.update_id, kind);
+        return result && typeof result.then === 'function'
+          ? result.then(finish).catch(unavailable) : finish(result === true);
+      } catch { return unavailable(); }
+    }
     // Telegram executes this response as a Bot API method; no chat data or token is logged.
     const callback = callbackResponse(update);
     if (callback) {
       // Suppress retries and excess taps before making an outbound API request.
-      if (!allowCallback(callback.chat_id, update.update_id)) return res.status(200).json({ ok: true });
+      return admit(callback, 'callback', allowCallback, () => {
       // Acknowledge the tap to stop Telegram's spinner; never log token-bearing fetch errors.
       return apiRequest(`https://api.telegram.org/bot${token}/answerCallbackQuery`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ callback_query_id: update.callback_query.id }), redirect: 'error', signal: AbortSignal.timeout(3000)
       }).catch(() => {}).then(() => res.status(200).json(callback));
+      });
     }
     const reply = messageResponse(update);
     // Acknowledge suppressed updates to avoid Telegram retry storms.
-    return res.status(200).json(reply && allowReply(reply.chat_id, update.update_id) ? reply : { ok: true });
+    return admit(reply, 'message', allowReply, () => res.status(200).json(reply));
   };
 }
 
