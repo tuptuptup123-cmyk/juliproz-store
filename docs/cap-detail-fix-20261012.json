@@ -1,0 +1,34 @@
+{
+  "changes": [
+    {
+      "id": 396,
+      "old": {
+        "image_url": "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/8cb3673f-6e67-4ee7-879a-5cfbd72c6972.png",
+        "photos": [
+          "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/8cb3673f-6e67-4ee7-879a-5cfbd72c6972.png"
+        ]
+      },
+      "new": {
+        "image_url": "https://juliproz-store.vercel.app/images/cap-detail-fix-20261012/396.webp",
+        "photos": [
+          "https://juliproz-store.vercel.app/images/cap-detail-fix-20261012/396.webp"
+        ]
+      }
+    },
+    {
+      "id": 397,
+      "old": {
+        "image_url": "https://juliproz-store.vercel.app/images/loro-cap-cleanup-20261011/397-cover.webp",
+        "photos": [
+          "https://juliproz-store.vercel.app/images/loro-cap-cleanup-20261011/397-cover.webp"
+        ]
+      },
+      "new": {
+        "image_url": "https://juliproz-store.vercel.app/images/cap-detail-fix-20261012/397.webp",
+        "photos": [
+          "https://juliproz-store.vercel.app/images/cap-detail-fix-20261012/397.webp"
+        ]
+      }
+    }
+  ]
+}
