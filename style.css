@@ -759,3 +759,6 @@ body.product-modal-open{overflow:hidden}
 
 /* Light transparent product photos need a neutral edge on pale cards. */
 .photo img.product-light,.hero img.product-light,.related-photo img.product-light,.cart-photo img.product-light,#previewImage img.product-light,.catalogue-preview-photo img.product-light{filter:drop-shadow(0 0 1px #46505b48) drop-shadow(0 4px 6px #25394f38)}
+
+/* Alpha framing already includes the 8% margins; do not add CSS padding a second time. */
+.product .photo img.product-framed,.hero img.product-framed,.related-photo img.product-framed,.cart-photo img.product-framed,.photo-picker img.product-framed,.color-option img.product-framed,#previewImage img.product-framed,.catalogue-preview-photo img.product-framed{padding:0;object-fit:contain;object-position:center;transform-origin:center;box-sizing:border-box}

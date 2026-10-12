@@ -32,7 +32,7 @@
   }
   if(typeof module==='object'&&module.exports){module.exports={alphaBounds,placement,isLightCutout};return}
   if(!root.document||!root.IntersectionObserver||!root.ResizeObserver)return;
-  const selector='.photo img,.hero img,.related-photo img,.cart-photo img,#previewImage img,.catalogue-preview-photo img';
+  const selector='.photo img,.hero img,.related-photo img,.cart-photo img,.photo-picker img,.color-option img,#previewImage img,.catalogue-preview-photo img';
   const cache=new Map(),records=new WeakMap(),observed=new WeakSet();
   function measure(img,src){
     if(cache.has(src))return cache.get(src);
