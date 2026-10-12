@@ -578,11 +578,11 @@ function openProduct(id,linked=false){
 document.getElementById("backProduct").onclick=closeProductModal;
 document.querySelectorAll('[data-service]').forEach(b=>b.onclick=()=>{
   const text=b.dataset.service==='authentication'?'Здравствуйте! Хочу организовать аутентификацию вещи через ваших партнёров. Подскажите онлайн- и офлайн-варианты, стоимость и сроки.':'Здравствуйте! Хочу обратиться в ателье или обсудить спа для сумки, полировку или обслуживание часов через ваших партнёров. Пришлю фотографии и описание запроса.';
-  if(telegramLink('https://t.me/juliproz?text='+encodeURIComponent(text)))window.StoreAnalytics?.track('manager_open');
+  if(telegramLink('https://t.me/juliproz?text='+encodeURIComponent(text)))window.StoreAnalytics?.track(b.dataset.service==='authentication'?'manager_authentication':'manager_atelier');
 });
 document.getElementById('offerItem').onclick=()=>{
   const text='Здравствуйте! Хочу предложить вещь для выкупа или продажи на комиссии через ваш магазин.';
-  if(telegramLink('https://t.me/juliproz?text='+encodeURIComponent(text)))window.StoreAnalytics?.track('manager_open');
+  if(telegramLink('https://t.me/juliproz?text='+encodeURIComponent(text)))window.StoreAnalytics?.track('manager_sell');
 };
 document.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>{setTab(b.dataset.tab);pressNavWithPaw(b)});
 async function openLinkedProduct(id){
@@ -606,11 +606,11 @@ async function openLinkedProduct(id){
   showProductModal();
 }
 let contactBusy=false;
-async function contact(p){
+async function contact(p,event=null,sourceProduct=null){
   if(contactBusy)return;contactBusy=true;
-  try{await contactUnchecked(p,navigationRevision)}finally{contactBusy=false}
+  try{await contactUnchecked(p,navigationRevision,event,sourceProduct)}finally{contactBusy=false}
 }
-async function contactUnchecked(p,requestedNavigation){
+async function contactUnchecked(p,requestedNavigation,event=null,sourceProduct=null){
   const requestedSize=p?selectedSize:null;
   if(p&&sizesOf(p).length>1&&!requestedSize){document.getElementById("sizeHint").textContent=`Пожалуйста, выберите ${variantLabel(p)}.`;document.querySelector('[data-size]')?.focus();return}
 
@@ -621,9 +621,9 @@ async function contactUnchecked(p,requestedNavigation){
   if(p&&currentSizes.length>1&&!requestedSize){document.getElementById("shareStatus").textContent="Размеры изменились. Откройте карточку заново и выберите размер.";loadProducts(true);return}
   const size=requestedSize||(currentSizes.length===1?currentSizes[0]:null);
   const text=p?.id!=null?`Здравствуйте! Меня интересует ${p.brand||""} ${p.name||""}${size?`, ${variantLabel(p)} ${size}`:""}.\nСтатус: ${availabilityLabel(p)}\nАртикул: ${p.id}\n${productLink(p)}`:"";
-  if(telegramLink(`https://t.me/juliproz${text?`?text=${encodeURIComponent(text)}`:""}`))window.StoreAnalytics?.track("manager_open",p?.id);
+  if(telegramLink(`https://t.me/juliproz${text?`?text=${encodeURIComponent(text)}`:""}`))window.StoreAnalytics?.track(event||(p?.id!=null?"manager_product":"manager_general"),p?.id??sourceProduct);
 }
-document.getElementById("productContent").addEventListener("click",e=>{const colorButton=e.target.closest('[data-color-id]');if(colorButton&&selectedProduct){const group=colorGroupFor(selectedProduct.id),id=colorButton.dataset.colorId;if(group?.members.some(x=>x.option.id===id)){const scroll=document.getElementById('productModal').scrollTop;openProduct(id,true);document.getElementById('productModal').scrollTop=scroll;document.querySelector(`[data-color-id="${id}"]`)?.focus?.()}return}const related=e.target.closest("[data-related]");if(related){openProduct(related.dataset.related);return}const sizeButton=e.target.closest('[data-size]');if(sizeButton&&selectedProduct&&sizesOf(selectedProduct).includes(sizeButton.dataset.size)){selectedSize=sizeButton.dataset.size;document.querySelectorAll('[data-size]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.size===selectedSize)));document.getElementById('sizeHint').textContent=`Выбран ${variantLabel(selectedProduct)} ${selectedSize}`;document.getElementById('detailStock').textContent=stockLabel(selectedProduct,selectedSize);}const action=e.target.closest("[data-action]")?.dataset.action;if(action==="add-cart")addToCart();if(action==="wishlist")toggleWishlist(selectedProduct?.id);if(action==="open-cart")setTab("cart");if(action==="contact")contact(selectedProduct);if(action==="sourcing")contact();const b=e.target.closest("[data-photo]");if(b){const img=document.querySelector(".hero img");if(img){img.hidden=false;img.src=b.dataset.photo;img.parentElement.querySelector(".image-fallback")?.remove()}}});
+document.getElementById("productContent").addEventListener("click",e=>{const colorButton=e.target.closest('[data-color-id]');if(colorButton&&selectedProduct){const group=colorGroupFor(selectedProduct.id),id=colorButton.dataset.colorId;if(group?.members.some(x=>x.option.id===id)){const scroll=document.getElementById('productModal').scrollTop;openProduct(id,true);document.getElementById('productModal').scrollTop=scroll;document.querySelector(`[data-color-id="${id}"]`)?.focus?.()}return}const related=e.target.closest("[data-related]");if(related){openProduct(related.dataset.related);return}const sizeButton=e.target.closest('[data-size]');if(sizeButton&&selectedProduct&&sizesOf(selectedProduct).includes(sizeButton.dataset.size)){selectedSize=sizeButton.dataset.size;document.querySelectorAll('[data-size]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.size===selectedSize)));document.getElementById('sizeHint').textContent=`Выбран ${variantLabel(selectedProduct)} ${selectedSize}`;document.getElementById('detailStock').textContent=stockLabel(selectedProduct,selectedSize);}const action=e.target.closest("[data-action]")?.dataset.action;if(action==="add-cart")addToCart();if(action==="wishlist")toggleWishlist(selectedProduct?.id);if(action==="open-cart")setTab("cart");if(action==="contact")contact(selectedProduct);if(action==="sourcing")contact(null,"manager_search_product",selectedProduct?.id);const b=e.target.closest("[data-photo]");if(b){const img=document.querySelector(".hero img");if(img){img.hidden=false;img.src=b.dataset.photo;img.parentElement.querySelector(".image-fallback")?.remove()}}});
 let telegramInitialized=false;
 function initializeTelegram(){
   const tg=window.Telegram?.WebApp;if(!tg||telegramInitialized)return;telegramInitialized=true;
