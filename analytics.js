@@ -2,6 +2,22 @@
  'use strict';
  const config=window.STORE_CONFIG;if(!config)return;
  let consent=null,visitor=null,session=null,sent=0;const recent=new Map();
+ // Load Vercel's same-origin collectors only after the visitor opts in.
+ let vercelStarted=false;
+ const publicHosts=new Set(['juliproz.com','www.juliproz.com','juliproz-store.vercel.app']);
+ function beforeVercelSend(event){
+  if(consent!==true)return null;
+  try{const url=new URL(event.url,window.location.href);if(!publicHosts.has(url.hostname)||!['/','/index.html'].includes(url.pathname))return null;url.search='';url.hash='';return {...event,url:url.href}}catch{return null}
+ }
+ function startVercel(){
+  if(vercelStarted||!publicHosts.has(window.location?.hostname)||!['/','/index.html'].includes(window.location.pathname))return;
+  vercelStarted=true;
+  for(const [name,queue,src] of [['va','vaq','/_vercel/insights/script.js'],['si','siq','/_vercel/speed-insights/script.js']]){
+   window[name]=window[name]||function(){(window[queue]=window[queue]||[]).push(arguments)};
+   window[name]('beforeSend',beforeVercelSend);
+   const script=document.createElement('script');script.defer=true;script.src=src;document.head.appendChild(script);
+  }
+ }
  const uuid=()=>crypto.randomUUID(),valid=x=>/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(x||'');
  function identity(storage,key){try{let id=storage.getItem(key);if(!valid(id)){id=uuid();storage.setItem(key,id)}return id}catch{return uuid()}}
  function forget(){try{localStorage.removeItem('jpAnalyticsVisitor');sessionStorage.removeItem('jpAnalyticsSession')}catch{}visitor=null;session=null;recent.clear();sent=0}
@@ -10,7 +26,7 @@
   consent=value===true;try{localStorage.setItem('jpAnalyticsConsent',consent?'accepted':'declined')}catch{}
   document.getElementById('analyticsConsent')?.classList.add('hidden');
   if(!consent){forget();return}
-  visitor=identity(localStorage,'jpAnalyticsVisitor');session=identity(sessionStorage,'jpAnalyticsSession');track('visit');
+  visitor=identity(localStorage,'jpAnalyticsVisitor');session=identity(sessionStorage,'jpAnalyticsSession');track('visit');startVercel();
  }
  function track(event,product=null,page=null){
   if(consent!==true||document.visibilityState==='hidden'||sent>=2000)return;const now=Date.now(),key=`${event}:${product||''}:${page||''}`;
