@@ -756,3 +756,6 @@ img.product-framed{padding:0;object-fit:contain;transform-origin:center;box-sizi
 /* Keep the catalogue behind an open product from scrolling independently. */
 body.product-modal-open{overflow:hidden}
 .product-modal{overscroll-behavior:contain}
+
+/* Light transparent product photos need a neutral edge on pale cards. */
+.photo img.product-light,.hero img.product-light,.related-photo img.product-light,.cart-photo img.product-light,#previewImage img.product-light,.catalogue-preview-photo img.product-light{filter:drop-shadow(0 0 1px #46505b48) drop-shadow(0 4px 6px #25394f38)}

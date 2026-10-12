@@ -1,0 +1,648 @@
+[
+  {
+    "id": 453,
+    "brand": "C.P. Company",
+    "name": "Футболка",
+    "old_image_url": "https://juliproz-store.vercel.app/images/photo-standard-20261011b/453-cover.webp",
+    "old_photos": [
+      "https://juliproz-store.vercel.app/images/photo-standard-20261011b/453-cover.webp",
+      "https://juliproz-store.vercel.app/images/photo-manual-20261011/453-0.webp",
+      "https://juliproz-store.vercel.app/images/photo-manual-20261011/453-1.webp"
+    ],
+    "image_url": "https://juliproz-store.vercel.app/images/photo-standard-20261011b/453-cover.webp",
+    "photos": [
+      "https://juliproz-store.vercel.app/images/photo-standard-20261011b/453-cover.webp"
+    ]
+  },
+  {
+    "id": 452,
+    "brand": "Burberry",
+    "name": "Кепка",
+    "old_image_url": "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/e5c3042f-48fb-45fa-8934-8921458eef51.webp",
+    "old_photos": [
+      "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/e5c3042f-48fb-45fa-8934-8921458eef51.webp",
+      "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/72e6e8a8-09c2-4a8c-b384-43ace5f5aaf2.webp"
+    ],
+    "image_url": "https://juliproz-store.vercel.app/images/photo-audit-fixes-20261012/452.webp",
+    "photos": [
+      "https://juliproz-store.vercel.app/images/photo-audit-fixes-20261012/452.webp",
+      "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/72e6e8a8-09c2-4a8c-b384-43ace5f5aaf2.webp"
+    ]
+  },
+  {
+    "id": 394,
+    "brand": "Loro Piana",
+    "name": "Кепка, синяя",
+    "old_image_url": "https://juliproz-store.vercel.app/images/loro-cap-cleanup-20261011/394-cover.webp",
+    "old_photos": [
+      "https://juliproz-store.vercel.app/images/loro-cap-cleanup-20261011/394-cover.webp"
+    ],
+    "image_url": "https://juliproz-store.vercel.app/images/photo-audit-fixes-20261012/394.webp",
+    "photos": [
+      "https://juliproz-store.vercel.app/images/photo-audit-fixes-20261012/394.webp"
+    ]
+  },
+  {
+    "id": 388,
+    "brand": "Loro Piana",
+    "name": "Кепка",
+    "old_image_url": "https://juliproz-store.vercel.app/images/loro-red-approved-20261010/388-cover.webp",
+    "old_photos": [
+      "https://juliproz-store.vercel.app/images/loro-red-approved-20261010/388-cover.webp",
+      "https://juliproz-store.vercel.app/images/loro-red-approved-20261010/388-model.webp"
+    ],
+    "image_url": "https://juliproz-store.vercel.app/images/photo-audit-fixes-20261012/388.webp",
+    "photos": [
+      "https://juliproz-store.vercel.app/images/photo-audit-fixes-20261012/388.webp"
+    ]
+  },
+  {
+    "id": 358,
+    "brand": "Loro Piana",
+    "name": "Лоферы Open Wintery Walk",
+    "old_image_url": "https://juliproz-store.vercel.app/images/approved-covers-20261012/358.webp",
+    "old_photos": [
+      "https://juliproz-store.vercel.app/images/covers-20261010/358.webp",
+      "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/1a96451b-d6d7-4602-9098-21b49a221c78.webp"
+    ],
+    "image_url": "https://juliproz-store.vercel.app/images/approved-covers-20261012/358.webp",
+    "photos": [
+      "https://juliproz-store.vercel.app/images/approved-covers-20261012/358.webp",
+      "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/1a96451b-d6d7-4602-9098-21b49a221c78.webp"
+    ]
+  },
+  {
+    "id": 353,
+    "brand": "Amiri",
+    "name": "Кепка Ma Spirit",
+    "old_image_url": "https://juliproz-store.vercel.app/images/approved-covers-20261012/353.webp",
+    "old_photos": [
+      "https://juliproz-store.vercel.app/images/covers-20261010/353.webp"
+    ],
+    "image_url": "https://juliproz-store.vercel.app/images/approved-covers-20261012/353.webp",
+    "photos": [
+      "https://juliproz-store.vercel.app/images/approved-covers-20261012/353.webp"
+    ]
+  },
+  {
+    "id": 348,
+    "brand": "Givenchy",
+    "name": "Тапки Marshmallow",
+    "old_image_url": "https://juliproz-store.vercel.app/images/approved-covers-20261012/348.webp",
+    "old_photos": [
+      "https://juliproz-store.vercel.app/images/covers-20261010/348.webp"
+    ],
+    "image_url": "https://juliproz-store.vercel.app/images/approved-covers-20261012/348.webp",
+    "photos": [
+      "https://juliproz-store.vercel.app/images/approved-covers-20261012/348.webp"
+    ]
+  },
+  {
+    "id": 346,
+    "brand": "Maison Margiela",
+    "name": "Кроссовки Replica",
+    "old_image_url": "https://juliproz-store.vercel.app/images/approved-covers-20261012/346.webp",
+    "old_photos": [
+      "https://juliproz-store.vercel.app/images/covers-20261010/346.webp"
+    ],
+    "image_url": "https://juliproz-store.vercel.app/images/approved-covers-20261012/346.webp",
+    "photos": [
+      "https://juliproz-store.vercel.app/images/approved-covers-20261012/346.webp"
+    ]
+  },
+  {
+    "id": 345,
+    "brand": "Maison Margiela",
+    "name": "Кеды Almond High Top Sneakers in Black",
+    "old_image_url": "https://juliproz-store.vercel.app/images/approved-covers-20261012/345.webp",
+    "old_photos": [
+      "https://juliproz-store.vercel.app/images/covers-20261010/345.webp"
+    ],
+    "image_url": "https://juliproz-store.vercel.app/images/approved-covers-20261012/345.webp",
+    "photos": [
+      "https://juliproz-store.vercel.app/images/approved-covers-20261012/345.webp"
+    ]
+  },
+  {
+    "id": 340,
+    "brand": "Loro Piana",
+    "name": "Кепка",
+    "old_image_url": "https://juliproz-store.vercel.app/images/loro-cap-cleanup-20261011/340-cover.webp",
+    "old_photos": [
+      "https://juliproz-store.vercel.app/images/loro-cap-cleanup-20261011/340-cover.webp",
+      "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/8ae4009b-2fc8-470e-95e3-cdb830a96487.webp"
+    ],
+    "image_url": "https://juliproz-store.vercel.app/images/photo-audit-fixes-20261012/340.webp",
+    "photos": [
+      "https://juliproz-store.vercel.app/images/photo-audit-fixes-20261012/340.webp",
+      "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/8ae4009b-2fc8-470e-95e3-cdb830a96487.webp"
+    ]
+  },
+  {
+    "id": 332,
+    "brand": "Maison Margiela",
+    "name": "Кеды Tabi Canvas",
+    "old_image_url": "https://juliproz-store.vercel.app/images/approved-covers-20261012/332.webp",
+    "old_photos": [
+      "https://juliproz-store.vercel.app/images/covers-20261010/332.webp",
+      "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/d0f080e5-d806-4e04-94ba-9c8f7b64db71.webp",
+      "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/950121e2-0b62-4fa9-8e97-47537c3f005c.webp",
+      "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/84ae6c2c-083c-4af5-a87e-ad10c53cbaa6.webp"
+    ],
+    "image_url": "https://juliproz-store.vercel.app/images/approved-covers-20261012/332.webp",
+    "photos": [
+      "https://juliproz-store.vercel.app/images/approved-covers-20261012/332.webp",
+      "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/d0f080e5-d806-4e04-94ba-9c8f7b64db71.webp",
+      "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/950121e2-0b62-4fa9-8e97-47537c3f005c.webp",
+      "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/84ae6c2c-083c-4af5-a87e-ad10c53cbaa6.webp"
+    ]
+  },
+  {
+    "id": 328,
+    "brand": "Moncler",
+    "name": "Шапка Holding Court",
+    "old_image_url": "https://juliproz-store.vercel.app/images/approved-covers-20261012/328.webp",
+    "old_photos": [
+      "https://juliproz-store.vercel.app/images/moncler-328-clean-v2.webp",
+      "https://juliproz-store.vercel.app/images/photo-standard-gallery-20261011/328-1.webp",
+      "https://juliproz-store.vercel.app/images/photo-standard-gallery-20261011/328-2.webp"
+    ],
+    "image_url": "https://juliproz-store.vercel.app/images/approved-covers-20261012/328.webp",
+    "photos": [
+      "https://juliproz-store.vercel.app/images/approved-covers-20261012/328.webp",
+      "https://juliproz-store.vercel.app/images/photo-standard-gallery-20261011/328-1.webp",
+      "https://juliproz-store.vercel.app/images/photo-standard-gallery-20261011/328-2.webp"
+    ]
+  },
+  {
+    "id": 316,
+    "brand": "Alexander McQueen",
+    "name": "Кроссовки Sprint Runner",
+    "old_image_url": "https://juliproz-store.vercel.app/images/approved-covers-20261012/316.webp",
+    "old_photos": [
+      "https://juliproz-store.vercel.app/images/photo-manual-20261011/316-cover.webp",
+      "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/85b630c5-7988-4b7d-8ac5-acdff241c86c.webp",
+      "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/51ba9f5c-9bc5-45db-9d15-e0895ca1385d.webp"
+    ],
+    "image_url": "https://juliproz-store.vercel.app/images/approved-covers-20261012/316.webp",
+    "photos": [
+      "https://juliproz-store.vercel.app/images/approved-covers-20261012/316.webp",
+      "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/85b630c5-7988-4b7d-8ac5-acdff241c86c.webp",
+      "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/51ba9f5c-9bc5-45db-9d15-e0895ca1385d.webp"
+    ]
+  },
+  {
+    "id": 314,
+    "brand": "Prada",
+    "name": "Кроссовки Bubble Comics",
+    "old_image_url": "https://juliproz-store.vercel.app/images/approved-covers-20261012/314.webp",
+    "old_photos": [
+      "https://juliproz-store.vercel.app/images/photo-fix-oct10-314-0.webp",
+      "https://juliproz-store.vercel.app/images/photo-fix-oct10-314-1.webp"
+    ],
+    "image_url": "https://juliproz-store.vercel.app/images/approved-covers-20261012/314.webp",
+    "photos": [
+      "https://juliproz-store.vercel.app/images/approved-covers-20261012/314.webp",
+      "https://juliproz-store.vercel.app/images/photo-fix-oct10-314-1.webp"
+    ]
+  },
+  {
+    "id": 306,
+    "brand": "Loro Piana",
+    "name": "Кепка Baseball Cap",
+    "old_image_url": "https://juliproz-store.vercel.app/images/covers-20261010/306.webp",
+    "old_photos": [
+      "https://juliproz-store.vercel.app/images/covers-20261010/306.webp"
+    ],
+    "image_url": "https://juliproz-store.vercel.app/images/photo-audit-fixes-20261012/306.webp",
+    "photos": [
+      "https://juliproz-store.vercel.app/images/photo-audit-fixes-20261012/306.webp"
+    ]
+  },
+  {
+    "id": 305,
+    "brand": "Loro Piana",
+    "name": "Кепка Baseball Cap",
+    "old_image_url": "https://juliproz-store.vercel.app/images/covers-20261010/305.webp",
+    "old_photos": [
+      "https://juliproz-store.vercel.app/images/covers-20261010/305.webp"
+    ],
+    "image_url": "https://juliproz-store.vercel.app/images/photo-audit-fixes-20261012/305.webp",
+    "photos": [
+      "https://juliproz-store.vercel.app/images/photo-audit-fixes-20261012/305.webp"
+    ]
+  },
+  {
+    "id": 304,
+    "brand": "Loro Piana",
+    "name": "Кепка Baseball Cap",
+    "old_image_url": "https://juliproz-store.vercel.app/images/covers-20261010/304.webp",
+    "old_photos": [
+      "https://juliproz-store.vercel.app/images/covers-20261010/304.webp"
+    ],
+    "image_url": "https://juliproz-store.vercel.app/images/photo-audit-fixes-20261012/304.webp",
+    "photos": [
+      "https://juliproz-store.vercel.app/images/photo-audit-fixes-20261012/304.webp"
+    ]
+  },
+  {
+    "id": 303,
+    "brand": "Loro Piana",
+    "name": "Кепка Baseball Cap",
+    "old_image_url": "https://juliproz-store.vercel.app/images/covers-20261010/303.webp",
+    "old_photos": [
+      "https://juliproz-store.vercel.app/images/covers-20261010/303.webp"
+    ],
+    "image_url": "https://juliproz-store.vercel.app/images/photo-audit-fixes-20261012/303.webp",
+    "photos": [
+      "https://juliproz-store.vercel.app/images/photo-audit-fixes-20261012/303.webp"
+    ]
+  },
+  {
+    "id": 299,
+    "brand": "Loro Piana",
+    "name": "Кепка Baseball Cap",
+    "old_image_url": "https://juliproz-store.vercel.app/images/covers-20261010/299.webp",
+    "old_photos": [
+      "https://juliproz-store.vercel.app/images/covers-20261010/299.webp"
+    ],
+    "image_url": "https://juliproz-store.vercel.app/images/photo-audit-fixes-20261012/299.webp",
+    "photos": [
+      "https://juliproz-store.vercel.app/images/photo-audit-fixes-20261012/299.webp"
+    ]
+  },
+  {
+    "id": 297,
+    "brand": "Loro Piana",
+    "name": "Кепка Baseball Cap",
+    "old_image_url": "https://juliproz-store.vercel.app/images/loro-cap-cleanup-20261011/297-cover.webp",
+    "old_photos": [
+      "https://juliproz-store.vercel.app/images/loro-cap-cleanup-20261011/297-cover.webp"
+    ],
+    "image_url": "https://juliproz-store.vercel.app/images/photo-audit-fixes-20261012/297.webp",
+    "photos": [
+      "https://juliproz-store.vercel.app/images/photo-audit-fixes-20261012/297.webp"
+    ]
+  },
+  {
+    "id": 274,
+    "brand": "Brioni",
+    "name": "Кроссовки Suede-Trimmed Leather Sneakers",
+    "old_image_url": "https://juliproz-store.vercel.app/images/approved-covers-20261012/274.webp",
+    "old_photos": [
+      "https://juliproz-store.vercel.app/images/covers-20261010/274.webp"
+    ],
+    "image_url": "https://juliproz-store.vercel.app/images/approved-covers-20261012/274.webp",
+    "photos": [
+      "https://juliproz-store.vercel.app/images/approved-covers-20261012/274.webp"
+    ]
+  },
+  {
+    "id": 273,
+    "brand": "Brioni",
+    "name": "Кроссовки Olympia",
+    "old_image_url": "https://juliproz-store.vercel.app/images/approved-covers-20261012/273.webp",
+    "old_photos": [
+      "https://juliproz-store.vercel.app/images/brioni-fix-20261010/273-cover.png"
+    ],
+    "image_url": "https://juliproz-store.vercel.app/images/approved-covers-20261012/273.webp",
+    "photos": [
+      "https://juliproz-store.vercel.app/images/approved-covers-20261012/273.webp"
+    ]
+  },
+  {
+    "id": 272,
+    "brand": "Brioni",
+    "name": "Кеды suede slip-on sneakers",
+    "old_image_url": "https://juliproz-store.vercel.app/images/approved-covers-20261012/272.webp",
+    "old_photos": [
+      "https://juliproz-store.vercel.app/images/covers-20261010/272.webp"
+    ],
+    "image_url": "https://juliproz-store.vercel.app/images/approved-covers-20261012/272.webp",
+    "photos": [
+      "https://juliproz-store.vercel.app/images/approved-covers-20261012/272.webp"
+    ]
+  },
+  {
+    "id": 271,
+    "brand": "Brioni",
+    "name": "Кроссовки Olympia",
+    "old_image_url": "https://juliproz-store.vercel.app/images/approved-covers-20261012/271.webp",
+    "old_photos": [
+      "https://juliproz-store.vercel.app/images/covers-20261010/271.webp"
+    ],
+    "image_url": "https://juliproz-store.vercel.app/images/approved-covers-20261012/271.webp",
+    "photos": [
+      "https://juliproz-store.vercel.app/images/approved-covers-20261012/271.webp"
+    ]
+  },
+  {
+    "id": 247,
+    "brand": "Under Armour × Mansory",
+    "name": "Кепка Under Armour UA x Mansory StealthForm",
+    "old_image_url": "https://juliproz-store.vercel.app/images/covers-20261010/247.webp",
+    "old_photos": [
+      "https://juliproz-store.vercel.app/images/covers-20261010/247.webp"
+    ],
+    "image_url": "https://juliproz-store.vercel.app/images/photo-audit-fixes-20261012/247.webp",
+    "photos": [
+      "https://juliproz-store.vercel.app/images/photo-audit-fixes-20261012/247.webp"
+    ]
+  },
+  {
+    "id": 242,
+    "brand": "Maison Margiela",
+    "name": "Кроссовки Tabi Canvas",
+    "old_image_url": "https://juliproz-store.vercel.app/images/approved-covers-20261012/242.webp",
+    "old_photos": [
+      "https://juliproz-store.vercel.app/images/photo-fix-batch2-20261010/242-cover.png",
+      "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/723e50ac-ac8d-42c3-8623-b2971821e963.webp",
+      "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/8d67ca72-0c46-49a8-92a6-701255adc2ae.webp"
+    ],
+    "image_url": "https://juliproz-store.vercel.app/images/approved-covers-20261012/242.webp",
+    "photos": [
+      "https://juliproz-store.vercel.app/images/approved-covers-20261012/242.webp",
+      "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/723e50ac-ac8d-42c3-8623-b2971821e963.webp",
+      "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/8d67ca72-0c46-49a8-92a6-701255adc2ae.webp"
+    ]
+  },
+  {
+    "id": 237,
+    "brand": "C.P. Company × Palace",
+    "name": "Кепка C.P.company x Palace",
+    "old_image_url": "https://juliproz-store.vercel.app/images/covers-20261010/237.webp",
+    "old_photos": [
+      "https://juliproz-store.vercel.app/images/covers-20261010/237.webp",
+      "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/6bc084d1-fd24-4c90-bd5d-620e2b8f4291.webp"
+    ],
+    "image_url": "https://juliproz-store.vercel.app/images/photo-audit-fixes-20261012/237.webp",
+    "photos": [
+      "https://juliproz-store.vercel.app/images/photo-audit-fixes-20261012/237.webp",
+      "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/6bc084d1-fd24-4c90-bd5d-620e2b8f4291.webp"
+    ]
+  },
+  {
+    "id": 235,
+    "brand": "C.P. Company × Palace",
+    "name": "Кепка C.P.company x Palace",
+    "old_image_url": "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/db4e77a8-0f33-4e8c-839e-49f0959f2409.webp",
+    "old_photos": [
+      "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/db4e77a8-0f33-4e8c-839e-49f0959f2409.webp",
+      "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/8c46358d-adee-4d8a-a95c-69a7b0b35e66.webp"
+    ],
+    "image_url": "https://juliproz-store.vercel.app/images/photo-audit-fixes-20261012/235.webp",
+    "photos": [
+      "https://juliproz-store.vercel.app/images/photo-audit-fixes-20261012/235.webp",
+      "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/8c46358d-adee-4d8a-a95c-69a7b0b35e66.webp"
+    ]
+  },
+  {
+    "id": 211,
+    "brand": "Balenciaga",
+    "name": "Худи Political Campaign / Large Fit Hoodie",
+    "old_image_url": "https://juliproz-store.vercel.app/images/approved-covers-20261012/211.webp",
+    "old_photos": [
+      "https://juliproz-store.vercel.app/images/covers-20261010/211.webp",
+      "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/d8a38008-474d-44a0-9bc5-d869e6664770.webp"
+    ],
+    "image_url": "https://juliproz-store.vercel.app/images/approved-covers-20261012/211.webp",
+    "photos": [
+      "https://juliproz-store.vercel.app/images/approved-covers-20261012/211.webp",
+      "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/d8a38008-474d-44a0-9bc5-d869e6664770.webp"
+    ]
+  },
+  {
+    "id": 191,
+    "brand": "Maison Margiela",
+    "name": "Тапки MM6 Orange Rubber Slide Sandals",
+    "old_image_url": "https://juliproz-store.vercel.app/images/covers-20261010/191.webp",
+    "old_photos": [
+      "https://juliproz-store.vercel.app/images/covers-20261010/191.webp"
+    ],
+    "image_url": "https://juliproz-store.vercel.app/images/photo-audit-fixes-20261012/191.webp",
+    "photos": [
+      "https://juliproz-store.vercel.app/images/photo-audit-fixes-20261012/191.webp"
+    ]
+  },
+  {
+    "id": 180,
+    "brand": "Jil Sander",
+    "name": "Рубашка",
+    "old_image_url": "https://juliproz-store.vercel.app/images/approved-covers-20261012/180.webp",
+    "old_photos": [
+      "https://juliproz-store.vercel.app/images/covers-20261010/180.webp",
+      "https://juliproz-store.vercel.app/images/photo-cleanup-20261011/180-back.webp"
+    ],
+    "image_url": "https://juliproz-store.vercel.app/images/approved-covers-20261012/180.webp",
+    "photos": [
+      "https://juliproz-store.vercel.app/images/approved-covers-20261012/180.webp",
+      "https://juliproz-store.vercel.app/images/photo-cleanup-20261011/180-back.webp"
+    ]
+  },
+  {
+    "id": 173,
+    "brand": "Balenciaga",
+    "name": "Кепка Sporty B Football Crest Cap",
+    "old_image_url": "https://juliproz-store.vercel.app/images/covers-20261010/173.webp",
+    "old_photos": [
+      "https://juliproz-store.vercel.app/images/covers-20261010/173.webp"
+    ],
+    "image_url": "https://juliproz-store.vercel.app/images/photo-audit-fixes-20261012/173.webp",
+    "photos": [
+      "https://juliproz-store.vercel.app/images/photo-audit-fixes-20261012/173.webp"
+    ]
+  },
+  {
+    "id": 172,
+    "brand": "Balenciaga",
+    "name": "Кепка Soccer Club Cap",
+    "old_image_url": "https://juliproz-store.vercel.app/images/covers-20261010/172.webp",
+    "old_photos": [
+      "https://juliproz-store.vercel.app/images/covers-20261010/172.webp"
+    ],
+    "image_url": "https://juliproz-store.vercel.app/images/photo-audit-fixes-20261012/172.webp",
+    "photos": [
+      "https://juliproz-store.vercel.app/images/photo-audit-fixes-20261012/172.webp"
+    ]
+  },
+  {
+    "id": 169,
+    "brand": "Stone Island",
+    "name": "Кепка Nylon Metal",
+    "old_image_url": "https://juliproz-store.vercel.app/images/covers-20261010/169.webp",
+    "old_photos": [
+      "https://juliproz-store.vercel.app/images/covers-20261010/169.webp"
+    ],
+    "image_url": "https://juliproz-store.vercel.app/images/photo-audit-fixes-20261012/169.webp",
+    "photos": [
+      "https://juliproz-store.vercel.app/images/photo-audit-fixes-20261012/169.webp"
+    ]
+  },
+  {
+    "id": 159,
+    "brand": "Balenciaga",
+    "name": "Кроссовки Drive Caged Mesh Sneakers",
+    "old_image_url": "https://juliproz-store.vercel.app/images/covers-20261010/159.webp",
+    "old_photos": [
+      "https://juliproz-store.vercel.app/images/covers-20261010/159.webp"
+    ],
+    "image_url": "https://juliproz-store.vercel.app/images/photo-audit-fixes-20261012/159.webp",
+    "photos": [
+      "https://juliproz-store.vercel.app/images/photo-audit-fixes-20261012/159.webp"
+    ]
+  },
+  {
+    "id": 151,
+    "brand": "Balenciaga",
+    "name": "Кепка Political Campaign / Logo Cap",
+    "old_image_url": "https://juliproz-store.vercel.app/images/covers-20261010/151.webp",
+    "old_photos": [
+      "https://juliproz-store.vercel.app/images/covers-20261010/151.webp"
+    ],
+    "image_url": "https://juliproz-store.vercel.app/images/photo-audit-fixes-20261012/151.webp",
+    "photos": [
+      "https://juliproz-store.vercel.app/images/photo-audit-fixes-20261012/151.webp"
+    ]
+  },
+  {
+    "id": 147,
+    "brand": "Balenciaga",
+    "name": "Кепка BB Sprayed Cap",
+    "old_image_url": "https://juliproz-store.vercel.app/images/covers-20261010/147.webp",
+    "old_photos": [
+      "https://juliproz-store.vercel.app/images/covers-20261010/147.webp"
+    ],
+    "image_url": "https://juliproz-store.vercel.app/images/photo-audit-fixes-20261012/147.webp",
+    "photos": [
+      "https://juliproz-store.vercel.app/images/photo-audit-fixes-20261012/147.webp"
+    ]
+  },
+  {
+    "id": 143,
+    "brand": "Balenciaga",
+    "name": "Кепка",
+    "old_image_url": "https://juliproz-store.vercel.app/images/covers-20261010/143.webp",
+    "old_photos": [
+      "https://juliproz-store.vercel.app/images/covers-20261010/143.webp"
+    ],
+    "image_url": "https://juliproz-store.vercel.app/images/photo-audit-fixes-20261012/143.webp",
+    "photos": [
+      "https://juliproz-store.vercel.app/images/photo-audit-fixes-20261012/143.webp"
+    ]
+  },
+  {
+    "id": 115,
+    "brand": "Chrome Hearts",
+    "name": "Кепка Dagger",
+    "old_image_url": "https://juliproz-store.vercel.app/images/covers-20261010/115.webp",
+    "old_photos": [
+      "https://juliproz-store.vercel.app/images/covers-20261010/115.webp",
+      "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/92420751-ebde-43ff-a812-d3c6983014d8.webp"
+    ],
+    "image_url": "https://juliproz-store.vercel.app/images/photo-audit-fixes-20261012/115.webp",
+    "photos": [
+      "https://juliproz-store.vercel.app/images/photo-audit-fixes-20261012/115.webp",
+      "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/92420751-ebde-43ff-a812-d3c6983014d8.webp"
+    ]
+  },
+  {
+    "id": 114,
+    "brand": "Chrome Hearts",
+    "name": "Кепка RS3",
+    "old_image_url": "https://juliproz-store.vercel.app/images/covers-20261010/114.webp",
+    "old_photos": [
+      "https://juliproz-store.vercel.app/images/covers-20261010/114.webp",
+      "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/9d14efef-f4f6-4879-af30-18c0625440de.webp"
+    ],
+    "image_url": "https://juliproz-store.vercel.app/images/photo-audit-fixes-20261012/114.webp",
+    "photos": [
+      "https://juliproz-store.vercel.app/images/photo-audit-fixes-20261012/114.webp",
+      "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/9d14efef-f4f6-4879-af30-18c0625440de.webp"
+    ]
+  },
+  {
+    "id": 86,
+    "brand": "Gucci",
+    "name": "Футболка из шёлка и хлопка",
+    "old_image_url": "https://juliproz-store.vercel.app/images/covers-20261010/86.webp",
+    "old_photos": [
+      "https://juliproz-store.vercel.app/images/covers-20261010/86.webp",
+      "https://juliproz-store.vercel.app/images/gucci-silk-cotton-m-model-v1.webp"
+    ],
+    "image_url": "https://juliproz-store.vercel.app/images/covers-20261010/86.webp",
+    "photos": [
+      "https://juliproz-store.vercel.app/images/covers-20261010/86.webp"
+    ]
+  },
+  {
+    "id": 66,
+    "brand": "Loro Piana",
+    "name": "Кроссовки Newport Walk с меховой подкладкой",
+    "old_image_url": "https://juliproz-store.vercel.app/images/covers-20261010/66.webp",
+    "old_photos": [
+      "https://juliproz-store.vercel.app/images/covers-20261010/66.webp",
+      "https://juliproz-store.vercel.app/images/loro-piana-shearling-435-2.webp"
+    ],
+    "image_url": "https://juliproz-store.vercel.app/images/photo-audit-fixes-20261012/66.webp",
+    "photos": [
+      "https://juliproz-store.vercel.app/images/photo-audit-fixes-20261012/66.webp",
+      "https://juliproz-store.vercel.app/images/loro-piana-shearling-435-2.webp"
+    ]
+  },
+  {
+    "id": 62,
+    "brand": "Loro Piana",
+    "name": "Кепка Logo-Embroidered Linen Baseball Cap",
+    "old_image_url": "https://juliproz-store.vercel.app/images/loro-cap-cleanup-20261011/62-cover.webp",
+    "old_photos": [
+      "https://juliproz-store.vercel.app/images/loro-cap-cleanup-20261011/62-cover.webp"
+    ],
+    "image_url": "https://juliproz-store.vercel.app/images/photo-audit-fixes-20261012/62.webp",
+    "photos": [
+      "https://juliproz-store.vercel.app/images/photo-audit-fixes-20261012/62.webp"
+    ]
+  },
+  {
+    "id": 61,
+    "brand": "Gucci",
+    "name": "Кроссовки Rhyton из коллекции в стиле SEGA",
+    "old_image_url": "https://juliproz-store.vercel.app/images/covers-20261010/61.webp",
+    "old_photos": [
+      "https://juliproz-store.vercel.app/images/covers-20261010/61.webp"
+    ],
+    "image_url": "https://juliproz-store.vercel.app/images/photo-audit-fixes-20261012/61.webp",
+    "photos": [
+      "https://juliproz-store.vercel.app/images/photo-audit-fixes-20261012/61.webp"
+    ]
+  },
+  {
+    "id": 36,
+    "brand": "Chanel",
+    "name": "Кроссовки с золотым CC",
+    "old_image_url": "https://juliproz-store.vercel.app/images/covers-20261010/36.webp",
+    "old_photos": [
+      "https://juliproz-store.vercel.app/images/covers-20261010/36.webp",
+      "https://juliproz-store.vercel.app/images/chanel-black-gold-375-side.webp",
+      "https://juliproz-store.vercel.app/images/chanel-black-gold-375-back.webp"
+    ],
+    "image_url": "https://juliproz-store.vercel.app/images/photo-audit-fixes-20261012/36.webp",
+    "photos": [
+      "https://juliproz-store.vercel.app/images/photo-audit-fixes-20261012/36.webp",
+      "https://juliproz-store.vercel.app/images/chanel-black-gold-375-side.webp",
+      "https://juliproz-store.vercel.app/images/chanel-black-gold-375-back.webp"
+    ]
+  },
+  {
+    "id": 20,
+    "brand": "Gucci",
+    "name": "Лаковые туфли с цепочкой",
+    "old_image_url": "https://juliproz-store.vercel.app/images/covers-20261010/20.webp",
+    "old_photos": [
+      "https://juliproz-store.vercel.app/images/covers-20261010/20.webp"
+    ],
+    "image_url": "https://juliproz-store.vercel.app/images/photo-audit-fixes-20261012/20.webp",
+    "photos": [
+      "https://juliproz-store.vercel.app/images/photo-audit-fixes-20261012/20.webp"
+    ]
+  }
+]
