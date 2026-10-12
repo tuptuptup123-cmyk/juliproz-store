@@ -1,0 +1,88 @@
+{
+  "date": "2026-10-12",
+  "description": "Six screenshot-requested product cover corrections; original URLs retained for rollback.",
+  "changes": [
+    {
+      "id": 295,
+      "name": "Джинсы",
+      "old_image_url": "https://juliproz-store.vercel.app/images/photo-fix-batch2-20261010/295-cover.png",
+      "old_photos": [
+        "https://juliproz-store.vercel.app/images/photo-fix-batch2-20261010/295-cover.png"
+      ],
+      "image_url": "https://juliproz-store.vercel.app/images/photo-rebuild-extra-20261012/295.webp",
+      "photos": [
+        "https://juliproz-store.vercel.app/images/photo-rebuild-extra-20261012/295.webp"
+      ],
+      "prompt": "Precise product photo editing for a premium ecommerce catalog. Edit the actual referenced item faithfully, preserve exact materials, color, stitching, pockets, hardware, logos and product identity. Clean high-resolution studio photograph, soft even lighting, clean crisp natural edges, fully transparent background, no cast shadow, no floor, no border, no text overlay. Center complete object in a square canvas with balanced generous margins about 12% at the longest dimension. Remove cutout halos and accidental transparent holes inside the object; object itself must be opaque. Brioni medium dark blue jeans. Preserve precise blue color and subtle all-over patterned fabric texture, five-pocket construction and hardware. Neatly arranged perfectly front-facing flat lay, level waistband, centered fly, legs straight nearly parallel with a small natural gap, both hems level. Reduce large storage wrinkles, retain natural denim texture and wash variation. No creases ironed down center. Remove all blue/cyan cutout edge artifacts."
+    },
+    {
+      "id": 296,
+      "name": "Джинсы",
+      "old_image_url": "https://juliproz-store.vercel.app/images/photo-fix-batch2-20261010/296-cover.png",
+      "old_photos": [
+        "https://juliproz-store.vercel.app/images/photo-fix-batch2-20261010/296-cover.png",
+        "https://juliproz-store.vercel.app/images/brioni-fix-20261010/296-back.png"
+      ],
+      "image_url": "https://juliproz-store.vercel.app/images/photo-rebuild-extra-20261012/296.webp",
+      "photos": [
+        "https://juliproz-store.vercel.app/images/photo-rebuild-extra-20261012/296.webp",
+        "https://juliproz-store.vercel.app/images/brioni-fix-20261010/296-back.png"
+      ],
+      "prompt": "Precise product photo editing for a premium ecommerce catalog. Edit the actual referenced item faithfully, preserve exact materials, color, stitching, pockets, hardware, logos and product identity. Clean high-resolution studio photograph, soft even lighting, clean crisp natural edges, fully transparent background, no cast shadow, no floor, no border, no text overlay. Center complete object in a square canvas with balanced generous margins about 12% at the longest dimension. Remove cutout halos and accidental transparent holes inside the object; object itself must be opaque. Brioni light blue jeans. Preserve precise pale blue wash and subtle all-over patterned fabric texture, five-pocket construction, rectangular coin pocket with rivet. Neatly arranged perfectly front-facing flat lay, level waistband, centered fly, legs straight nearly parallel with a small natural gap, both hems level. Reduce large storage wrinkles, retain natural denim texture and wash variation. No creases ironed down center. Remove all blue/cyan cutout edge artifacts."
+    },
+    {
+      "id": 314,
+      "name": "Кроссовки Bubble Comics",
+      "old_image_url": "https://juliproz-store.vercel.app/images/approved-covers-20261012/314.webp",
+      "old_photos": [
+        "https://juliproz-store.vercel.app/images/approved-covers-20261012/314.webp",
+        "https://juliproz-store.vercel.app/images/photo-fix-oct10-314-1.webp"
+      ],
+      "image_url": "https://juliproz-store.vercel.app/images/photo-rebuild-extra-20261012/314.webp",
+      "photos": [
+        "https://juliproz-store.vercel.app/images/photo-rebuild-extra-20261012/314.webp",
+        "https://juliproz-store.vercel.app/images/photo-fix-oct10-314-1.webp"
+      ],
+      "prompt": "Precise product photo editing for a premium ecommerce catalog. Edit the actual referenced item faithfully, preserve exact materials, color, stitching, pockets, hardware, logos and product identity. Clean high-resolution studio photograph, soft even lighting, clean crisp natural edges, fully transparent background, no cast shadow, no floor, no border, no text overlay. Center complete object in a square canvas with balanced generous margins about 12% at the longest dimension. Remove cutout halos and accidental transparent holes inside the object; object itself must be opaque. Prada Bubble Comics white leather sneaker with tan gum sole, large raised white P with black outline on outer side and outlined comic motif at heel, gold Prada on tongue. Repose exactly ONE shoe into a clean true lateral side profile, HEEL LEFT TOE RIGHT, sole level horizontal, no diagonal/front three-quarter view. Preserve exact graphic motifs, P letter orientation, stitching, white laces, proportions and gum sole. Remove old dark cast shadow."
+    },
+    {
+      "id": 398,
+      "name": "Шорты",
+      "old_image_url": "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/31c7bf04-7cc5-448e-9207-f602a331a549.png",
+      "old_photos": [
+        "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/31c7bf04-7cc5-448e-9207-f602a331a549.png"
+      ],
+      "image_url": "https://juliproz-store.vercel.app/images/photo-rebuild-extra-20261012/398.webp",
+      "photos": [
+        "https://juliproz-store.vercel.app/images/photo-rebuild-extra-20261012/398.webp"
+      ],
+      "prompt": "Precise product photo editing for a premium ecommerce catalog. Edit the actual referenced item faithfully, preserve exact materials, color, stitching, pockets, hardware, logos and product identity. Clean high-resolution studio photograph, soft even lighting, clean crisp natural edges, fully transparent background, no cast shadow, no floor, no border, no text overlay. Center complete object in a square canvas with balanced generous margins about 12% at the longest dimension. Remove cutout halos and accidental transparent holes inside the object; object itself must be opaque. C.P. Company light grey shorts. Remove dangling paper retail tags and tag string only, KEEP original functional drawstring and black pocket zipper pulls. Neat front-facing symmetrical flat lay, level elastic waistband and level hems, natural small gap between legs. Gently smooth storage wrinkles preserving fabric texture. Keep round black lens on viewer-right thigh and diagonal zip pockets exactly."
+    },
+    {
+      "id": 414,
+      "name": "Брюки",
+      "old_image_url": "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/fafa2d32-593b-4a17-a3b4-c9d71ab53f57.png",
+      "old_photos": [
+        "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/fafa2d32-593b-4a17-a3b4-c9d71ab53f57.png"
+      ],
+      "image_url": "https://juliproz-store.vercel.app/images/photo-rebuild-extra-20261012/414.webp",
+      "photos": [
+        "https://juliproz-store.vercel.app/images/photo-rebuild-extra-20261012/414.webp"
+      ],
+      "prompt": "Precise product photo editing for a premium ecommerce catalog. Edit the actual referenced item faithfully, preserve exact materials, color, stitching, pockets, hardware, logos and product identity. Clean high-resolution studio photograph, soft even lighting, clean crisp natural edges, fully transparent background, no cast shadow, no floor, no border, no text overlay. Center complete object in a square canvas with balanced generous margins about 12% at the longest dimension. Remove cutout halos and accidental transparent holes inside the object; object itself must be opaque. C.P. Company pale sage grey nylon cargo trousers. Remove dangling paper retail tags and their attachment string only. Neatly arrange front-facing symmetrical flat lay, level elastic waistband, vertical centerline, legs almost parallel with a small natural gap, level hems. Smooth severe storage creases but preserve authentic slightly crinkled technical fabric. Preserve two cargo flap pockets with black snaps, horizontal black zip pockets beneath them, and round black lens on viewer-right thigh."
+    },
+    {
+      "id": 436,
+      "name": "Кроссовки Bouncing",
+      "old_image_url": "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/d85bbc49-ca78-4778-b5a7-fd907d40d1db.webp",
+      "old_photos": [
+        "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/d85bbc49-ca78-4778-b5a7-fd907d40d1db.webp"
+      ],
+      "image_url": "https://juliproz-store.vercel.app/images/photo-rebuild-extra-20261012/436.webp",
+      "photos": [
+        "https://juliproz-store.vercel.app/images/photo-rebuild-extra-20261012/436.webp"
+      ],
+      "prompt": "Precise product photo editing for a premium ecommerce catalog. Edit the actual referenced item faithfully, preserve exact materials, color, stitching, pockets, hardware, logos and product identity. Clean high-resolution studio photograph, soft even lighting, clean crisp natural edges, fully transparent background, no cast shadow, no floor, no border, no text overlay. Center complete object in a square canvas with balanced generous margins about 12% at the longest dimension. Remove cutout halos and accidental transparent holes inside the object; object itself must be opaque. Hermes Bouncing sneaker white textile and cream leather with red rear quarter panel, pale grey beige toe cap, sculpted white ribbed sole and black H-shaped heel sole insert. Show exactly ONE shoe in a true lateral side profile, HEEL ON LEFT and TOE ON RIGHT, sole horizontal. Remove the second upside-down shoe entirely. Repair damaged transparent holes across white upper, laces and sole. Preserve exact red panel shape and all design details. Do not add new logos."
+    }
+  ]
+}
