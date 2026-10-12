@@ -1,0 +1,268 @@
+{
+  "description": "22 user-approved AI-processed covers. Latest right-facing footwear and Amiri cap variants. Original galleries preserved; conditional cover replacement.",
+  "products": [
+    {
+      "id": 180,
+      "brand": "Jil Sander",
+      "name": "Рубашка",
+      "previous_url": "https://juliproz-store.vercel.app/images/covers-20261010/180.webp",
+      "previous_photos": [
+        "https://juliproz-store.vercel.app/images/covers-20261010/180.webp",
+        "https://juliproz-store.vercel.app/images/photo-cleanup-20261011/180-back.webp"
+      ],
+      "previous_revision": 8,
+      "new_url": "https://juliproz-store.vercel.app/images/approved-covers-20261012/180.webp"
+    },
+    {
+      "id": 211,
+      "brand": "Balenciaga",
+      "name": "Худи Political Campaign / Large Fit Hoodie",
+      "previous_url": "https://juliproz-store.vercel.app/images/covers-20261010/211.webp",
+      "previous_photos": [
+        "https://juliproz-store.vercel.app/images/covers-20261010/211.webp",
+        "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/d8a38008-474d-44a0-9bc5-d869e6664770.webp"
+      ],
+      "previous_revision": 8,
+      "new_url": "https://juliproz-store.vercel.app/images/approved-covers-20261012/211.webp"
+    },
+    {
+      "id": 241,
+      "brand": "Maison Margiela",
+      "name": "Кроссовки Tabi Canvas",
+      "previous_url": "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/0dd45817-7209-4976-8343-f895629e8ecd.webp",
+      "previous_photos": [
+        "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/0dd45817-7209-4976-8343-f895629e8ecd.webp",
+        "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/e2a64f49-3003-4cf7-8acf-4a5d3d6b22d2.webp",
+        "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/29a74a19-949b-48aa-ab8b-3c1ce4e41db6.webp",
+        "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/9173f4e7-8a36-48b9-b325-d1e3517426d7.webp"
+      ],
+      "previous_revision": 7,
+      "new_url": "https://juliproz-store.vercel.app/images/approved-covers-20261012/241.webp"
+    },
+    {
+      "id": 242,
+      "brand": "Maison Margiela",
+      "name": "Кроссовки Tabi Canvas",
+      "previous_url": "https://juliproz-store.vercel.app/images/photo-fix-batch2-20261010/242-cover.png",
+      "previous_photos": [
+        "https://juliproz-store.vercel.app/images/photo-fix-batch2-20261010/242-cover.png",
+        "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/723e50ac-ac8d-42c3-8623-b2971821e963.webp",
+        "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/8d67ca72-0c46-49a8-92a6-701255adc2ae.webp"
+      ],
+      "previous_revision": 8,
+      "new_url": "https://juliproz-store.vercel.app/images/approved-covers-20261012/242.webp"
+    },
+    {
+      "id": 271,
+      "brand": "Brioni",
+      "name": "Кроссовки Olympia",
+      "previous_url": "https://juliproz-store.vercel.app/images/covers-20261010/271.webp",
+      "previous_photos": [
+        "https://juliproz-store.vercel.app/images/covers-20261010/271.webp"
+      ],
+      "previous_revision": 6,
+      "new_url": "https://juliproz-store.vercel.app/images/approved-covers-20261012/271.webp"
+    },
+    {
+      "id": 272,
+      "brand": "Brioni",
+      "name": "Кеды suede slip-on sneakers",
+      "previous_url": "https://juliproz-store.vercel.app/images/covers-20261010/272.webp",
+      "previous_photos": [
+        "https://juliproz-store.vercel.app/images/covers-20261010/272.webp"
+      ],
+      "previous_revision": 7,
+      "new_url": "https://juliproz-store.vercel.app/images/approved-covers-20261012/272.webp"
+    },
+    {
+      "id": 273,
+      "brand": "Brioni",
+      "name": "Кроссовки Olympia",
+      "previous_url": "https://juliproz-store.vercel.app/images/brioni-fix-20261010/273-cover.png",
+      "previous_photos": [
+        "https://juliproz-store.vercel.app/images/brioni-fix-20261010/273-cover.png"
+      ],
+      "previous_revision": 6,
+      "new_url": "https://juliproz-store.vercel.app/images/approved-covers-20261012/273.webp"
+    },
+    {
+      "id": 274,
+      "brand": "Brioni",
+      "name": "Кроссовки Suede-Trimmed Leather Sneakers",
+      "previous_url": "https://juliproz-store.vercel.app/images/covers-20261010/274.webp",
+      "previous_photos": [
+        "https://juliproz-store.vercel.app/images/covers-20261010/274.webp"
+      ],
+      "previous_revision": 6,
+      "new_url": "https://juliproz-store.vercel.app/images/approved-covers-20261012/274.webp"
+    },
+    {
+      "id": 314,
+      "brand": "Prada",
+      "name": "Кроссовки Bubble Comics",
+      "previous_url": "https://juliproz-store.vercel.app/images/photo-fix-oct10-314-0.webp",
+      "previous_photos": [
+        "https://juliproz-store.vercel.app/images/photo-fix-oct10-314-0.webp",
+        "https://juliproz-store.vercel.app/images/photo-fix-oct10-314-1.webp"
+      ],
+      "previous_revision": 7,
+      "new_url": "https://juliproz-store.vercel.app/images/approved-covers-20261012/314.webp"
+    },
+    {
+      "id": 316,
+      "brand": "Alexander McQueen",
+      "name": "Кроссовки Sprint Runner",
+      "previous_url": "https://juliproz-store.vercel.app/images/photo-manual-20261011/316-cover.webp",
+      "previous_photos": [
+        "https://juliproz-store.vercel.app/images/photo-manual-20261011/316-cover.webp",
+        "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/85b630c5-7988-4b7d-8ac5-acdff241c86c.webp",
+        "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/51ba9f5c-9bc5-45db-9d15-e0895ca1385d.webp"
+      ],
+      "previous_revision": 7,
+      "new_url": "https://juliproz-store.vercel.app/images/approved-covers-20261012/316.webp"
+    },
+    {
+      "id": 328,
+      "brand": "Moncler",
+      "name": "Шапка Holding Court",
+      "previous_url": "https://juliproz-store.vercel.app/images/moncler-328-clean-v2.webp",
+      "previous_photos": [
+        "https://juliproz-store.vercel.app/images/moncler-328-clean-v2.webp",
+        "https://juliproz-store.vercel.app/images/photo-standard-gallery-20261011/328-1.webp",
+        "https://juliproz-store.vercel.app/images/photo-standard-gallery-20261011/328-2.webp"
+      ],
+      "previous_revision": 8,
+      "new_url": "https://juliproz-store.vercel.app/images/approved-covers-20261012/328.webp"
+    },
+    {
+      "id": 332,
+      "brand": "Maison Margiela",
+      "name": "Кеды Tabi Canvas",
+      "previous_url": "https://juliproz-store.vercel.app/images/covers-20261010/332.webp",
+      "previous_photos": [
+        "https://juliproz-store.vercel.app/images/covers-20261010/332.webp",
+        "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/d0f080e5-d806-4e04-94ba-9c8f7b64db71.webp",
+        "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/950121e2-0b62-4fa9-8e97-47537c3f005c.webp",
+        "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/84ae6c2c-083c-4af5-a87e-ad10c53cbaa6.webp"
+      ],
+      "previous_revision": 7,
+      "new_url": "https://juliproz-store.vercel.app/images/approved-covers-20261012/332.webp"
+    },
+    {
+      "id": 343,
+      "brand": "Bottega Veneta",
+      "name": "Эспадрильи Intrecciato",
+      "previous_url": "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/c706e6ff-ca14-4293-9349-a9710e87f032.webp",
+      "previous_photos": [
+        "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/c706e6ff-ca14-4293-9349-a9710e87f032.webp",
+        "https://juliproz-store.vercel.app/images/bottega-343-cover-v6.webp",
+        "https://juliproz-store.vercel.app/images/bottega-343-side-v6.webp",
+        "https://juliproz-store.vercel.app/images/bottega-343-pair-v6.webp"
+      ],
+      "previous_revision": 12,
+      "new_url": "https://juliproz-store.vercel.app/images/approved-covers-20261012/343.webp"
+    },
+    {
+      "id": 345,
+      "brand": "Maison Margiela",
+      "name": "Кеды Almond High Top Sneakers in Black",
+      "previous_url": "https://juliproz-store.vercel.app/images/covers-20261010/345.webp",
+      "previous_photos": [
+        "https://juliproz-store.vercel.app/images/covers-20261010/345.webp"
+      ],
+      "previous_revision": 7,
+      "new_url": "https://juliproz-store.vercel.app/images/approved-covers-20261012/345.webp"
+    },
+    {
+      "id": 346,
+      "brand": "Maison Margiela",
+      "name": "Кроссовки Replica",
+      "previous_url": "https://juliproz-store.vercel.app/images/covers-20261010/346.webp",
+      "previous_photos": [
+        "https://juliproz-store.vercel.app/images/covers-20261010/346.webp"
+      ],
+      "previous_revision": 6,
+      "new_url": "https://juliproz-store.vercel.app/images/approved-covers-20261012/346.webp"
+    },
+    {
+      "id": 348,
+      "brand": "Givenchy",
+      "name": "Тапки Marshmallow",
+      "previous_url": "https://juliproz-store.vercel.app/images/covers-20261010/348.webp",
+      "previous_photos": [
+        "https://juliproz-store.vercel.app/images/covers-20261010/348.webp"
+      ],
+      "previous_revision": 7,
+      "new_url": "https://juliproz-store.vercel.app/images/approved-covers-20261012/348.webp"
+    },
+    {
+      "id": 353,
+      "brand": "Amiri",
+      "name": "Кепка Ma Spirit",
+      "previous_url": "https://juliproz-store.vercel.app/images/covers-20261010/353.webp",
+      "previous_photos": [
+        "https://juliproz-store.vercel.app/images/covers-20261010/353.webp"
+      ],
+      "previous_revision": 8,
+      "new_url": "https://juliproz-store.vercel.app/images/approved-covers-20261012/353.webp"
+    },
+    {
+      "id": 358,
+      "brand": "Loro Piana",
+      "name": "Лоферы Open Wintery Walk",
+      "previous_url": "https://juliproz-store.vercel.app/images/covers-20261010/358.webp",
+      "previous_photos": [
+        "https://juliproz-store.vercel.app/images/covers-20261010/358.webp",
+        "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/1a96451b-d6d7-4602-9098-21b49a221c78.webp"
+      ],
+      "previous_revision": 5,
+      "new_url": "https://juliproz-store.vercel.app/images/approved-covers-20261012/358.webp"
+    },
+    {
+      "id": 433,
+      "brand": "Chrome Hearts",
+      "name": "Набор благовоний +22+",
+      "previous_url": "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/d8c9b087-bde8-44b9-8eb3-d3f6bc5ec663.webp",
+      "previous_photos": [
+        "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/d8c9b087-bde8-44b9-8eb3-d3f6bc5ec663.webp"
+      ],
+      "previous_revision": 4,
+      "new_url": "https://juliproz-store.vercel.app/images/approved-covers-20261012/433.webp"
+    },
+    {
+      "id": 450,
+      "brand": "Prada",
+      "name": "Кроссовки Prax 01",
+      "previous_url": "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/f3cf61ad-7f51-4b7d-b119-8d81739f6c3b.webp",
+      "previous_photos": [
+        "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/f3cf61ad-7f51-4b7d-b119-8d81739f6c3b.webp",
+        "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/1bcec4cc-754d-4dfc-83aa-b66413ed3a8e.webp"
+      ],
+      "previous_revision": 2,
+      "new_url": "https://juliproz-store.vercel.app/images/approved-covers-20261012/450.webp"
+    },
+    {
+      "id": 451,
+      "brand": "Prada",
+      "name": "Кроссовки Prax 01",
+      "previous_url": "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/07f48bd7-6e2c-4023-a3cb-5746a8a5f628.webp",
+      "previous_photos": [
+        "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/07f48bd7-6e2c-4023-a3cb-5746a8a5f628.webp",
+        "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/6dcca716-1512-4296-965e-743a78fa4811.webp"
+      ],
+      "previous_revision": 2,
+      "new_url": "https://juliproz-store.vercel.app/images/approved-covers-20261012/451.webp"
+    },
+    {
+      "id": 460,
+      "brand": "Balenciaga",
+      "name": "Тапки",
+      "previous_url": "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/ba220c46-3eca-404c-802c-2ebe6de1be0c.webp",
+      "previous_photos": [
+        "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/ba220c46-3eca-404c-802c-2ebe6de1be0c.webp"
+      ],
+      "previous_revision": 2,
+      "new_url": "https://juliproz-store.vercel.app/images/approved-covers-20261012/460.webp"
+    }
+  ]
+}
