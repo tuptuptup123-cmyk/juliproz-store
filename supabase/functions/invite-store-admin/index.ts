@@ -1,5 +1,5 @@
-const allowedOrigin='https://juliproz-store.vercel.app';
-const origins=new Set([allowedOrigin,'https://juliproz.com','https://www.juliproz.com']);
+const allowedOrigin='https://admin.juliproz.com';
+const origins=new Set([allowedOrigin]);
 const cors={'Access-Control-Allow-Origin':allowedOrigin,'Access-Control-Allow-Headers':'authorization, apikey, content-type','Access-Control-Allow-Methods':'POST, OPTIONS','Vary':'Origin','Cache-Control':'no-store'};
 Deno.serve(async req=>{
  const origin=req.headers.get('origin');

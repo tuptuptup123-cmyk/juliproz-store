@@ -229,3 +229,11 @@ test('invitation callback removes URL tokens, validates identity and requires MF
  const a=api({factors:[factor]}),h=setup(a.fetch);h.run("location.hash='#type=invite&access_token=synthetic-token&refresh_token=synthetic-refresh&expires_in=3600';location.pathname='/admin.html';location.search='';globalThis.history={replaceState:(a,b,p)=>{location.hash='';globalThis.cleanCallbackPath=p}};");
  await h.run('restoreAdminSession()');assert.equal(h.run('location.hash'),'');assert.equal(h.run('cleanCallbackPath'),'/admin.html');assert.equal(h.run('recovering'),true);assert.equal(h.get('mfaPanel').classList.contains('hidden'),false);assert.equal(h.get('workspace').classList.contains('hidden'),true);assert.equal(a.calls.some(c=>c.path.includes('/products')),false);
 });
+
+test('recovery requests the isolated admin callback explicitly',async()=>{
+ const calls=[],h=setup(async(path,options)=>{calls.push({path,options});return response({})});
+ await h.run('adminSessionReady');h.get('login').email={value:'owner@example.invalid'};
+ await h.get('recover').onclick();
+ const call=calls.find(c=>c.path.includes('/auth/v1/recover?'));
+ assert.ok(call);assert.equal(new URL(call.path).searchParams.get('redirect_to'),'https://admin.juliproz.com/admin.html');
+});

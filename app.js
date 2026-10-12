@@ -1,3 +1,6 @@
+// Remove legacy admin credentials left on the public storefront origin.
+try{localStorage.removeItem('jpAdminSessionV1')}catch{}
+try{sessionStorage.removeItem('jpAdminSessionV1')}catch{}
 const taxonomy=window.CatalogTaxonomy||{category:v=>String(v||'').trim(),brandParts:v=>[...new Set(String(v||'').split(/\s*×\s*/).map(x=>x.trim()).filter(Boolean))],unique:v=>[...new Set(v)]};
 const categoryOf=p=>taxonomy.category(p?.category);
 const sameLabel=(a,b)=>taxonomy.key?taxonomy.key(a)===taxonomy.key(b):a===b;
