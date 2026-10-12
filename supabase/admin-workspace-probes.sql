@@ -1,13 +1,15 @@
 -- Synthetic users and a synthetic hidden product; every change rolls back.
 begin;
 do $$
-declare owner_id uuid:=gen_random_uuid(); staff_id uuid:=gen_random_uuid(); outsider uuid:=gen_random_uuid(); unverified uuid:=gen_random_uuid(); product bigint; hist jsonb; count_rows integer; log_id bigint; staff_email text:='probe-'||staff_id::text||'@example.invalid';
+declare owner_id uuid:=gen_random_uuid(); staff_id uuid:=gen_random_uuid(); outsider uuid:=gen_random_uuid(); unverified uuid:=gen_random_uuid(); product bigint; hist jsonb; count_rows integer; log_id bigint; i integer; staff_email text:='probe-'||staff_id::text||'@example.invalid';
 begin
  insert into auth.users(id,email,email_confirmed_at) values(owner_id,'probe-'||owner_id::text||'@example.invalid',now()),(staff_id,staff_email,now()),(outsider,'probe-'||outsider::text||'@example.invalid',now()),(unverified,'probe-'||unverified::text||'@example.invalid',null);
  insert into public.store_admins(user_id,display_name,access_role) values(owner_id,'Test owner','owner');
  perform set_config('request.jwt.claims',jsonb_build_object('sub',owner_id,'role','authenticated','aal','aal2')::text,true);
  set local role authenticated;
  perform public.store_add_workspace_admin(staff_email,'Test staff');
+ for i in 1..10 loop perform public.store_prepare_workspace_invite('probe-invite-'||owner_id::text||'-'||i||'@example.invalid','Probe invite');end loop;
+ begin perform public.store_prepare_workspace_invite('probe-extra-'||owner_id::text||'@example.invalid','Probe invite');raise exception 'Invite rate limit bypassed';exception when raise_exception then if sqlerrm='Invite rate limit bypassed' then raise;end if;end;
  begin perform public.store_add_workspace_admin('probe-'||unverified::text||'@example.invalid','Unverified');raise exception 'Unverified account admitted';exception when raise_exception then if sqlerrm='Unverified account admitted' then raise;end if;end;
  insert into public.products(brand,name,category,currency,image_url,photos,available,creation_key) values('Audit probe','Hidden rollback fixture','Аксессуары','EUR','https://juliproz-store.vercel.app/images/security-probe.webp','[]',false,gen_random_uuid()) returning id into product;
  insert into public.product_admin_notes(product_id,note,location,custodian) values(product,'Private note','Private warehouse','Private custodian');
@@ -19,6 +21,9 @@ begin
  hist:=public.store_workspace_history(null,product,staff_id);
  if jsonb_array_length(hist)<>1 or hist->0->>'actor_id'<>staff_id::text or hist->0->'changes'->'location'->>'before'<>'Private warehouse' or hist->0->'changes'->'location'->>'after'<>'Moved warehouse' then raise exception 'Audit attribution/diff failed: %',hist;end if;
  log_id:=(hist->0->>'id')::bigint;
+ begin update public.product_admin_notes set product_id=product+1 where product_id=product;raise exception 'Client reassigned private note';exception when insufficient_privilege then null;end;
+ begin update public.product_admin_notes set revision=999 where product_id=product;raise exception 'Client forged note revision';exception when insufficient_privilege then null;end;
+ begin perform public.store_prepare_workspace_invite('probe-forbidden@example.invalid','Forbidden');raise exception 'Staff could prepare invite';exception when insufficient_privilege then null;end;
  if jsonb_array_length(public.store_workspace_history(log_id,product,staff_id))<>0 then raise exception 'Cursor duplicated row';end if;
  begin perform public.store_add_workspace_admin('probe-'||outsider::text||'@example.invalid','Intruder');raise exception 'Staff granted privileges';exception when insufficient_privilege then null;end;
  begin update public.store_admins set access_role='owner' where user_id=staff_id;raise exception 'Staff escalated own role';exception when insufficient_privilege then null;end;

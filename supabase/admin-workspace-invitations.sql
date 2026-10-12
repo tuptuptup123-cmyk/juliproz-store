@@ -33,4 +33,7 @@ begin
  insert into public.store_admins(user_id,display_name,access_role) values(target,btrim(p_name),'admin');
  return store_private.workspace_team();
 end $$;
+-- A client cannot move a private note to another product or forge its revision.
+revoke insert,update on public.product_admin_notes from authenticated;
+grant insert(product_id,note,location,custodian),update(note,location,custodian) on public.product_admin_notes to authenticated;
 commit;
