@@ -1,5 +1,10 @@
 -- Additive server-only limiter. No changes to products, admin access, or bot routing.
 BEGIN;
+CREATE TABLE store_private.telegram_limit_secret (
+  id boolean PRIMARY KEY DEFAULT true CHECK(id), secret_hash bytea NOT NULL
+);
+ALTER TABLE store_private.telegram_limit_secret ENABLE ROW LEVEL SECURITY;
+REVOKE ALL ON store_private.telegram_limit_secret FROM PUBLIC, anon, authenticated, service_role;
 CREATE TABLE store_private.telegram_limit_global (
   id boolean PRIMARY KEY DEFAULT true CHECK (id),
   minute_start timestamptz NOT NULL DEFAULT '-infinity', minute_count integer NOT NULL DEFAULT 0,
@@ -56,11 +61,19 @@ BEGIN
 END $$;
 REVOKE ALL ON FUNCTION store_private.consume_telegram_update(text,bigint,text) FROM PUBLIC, anon, authenticated;
 GRANT EXECUTE ON FUNCTION store_private.consume_telegram_update(text,bigint,text) TO service_role;
-CREATE FUNCTION public.consume_telegram_update(p_chat_hash text, p_update_id bigint, p_kind text)
-RETURNS boolean LANGUAGE sql SECURITY INVOKER SET search_path = '' AS $$
-  SELECT store_private.consume_telegram_update(p_chat_hash,p_update_id,p_kind);
-$$;
-REVOKE ALL ON FUNCTION public.consume_telegram_update(text,bigint,text) FROM PUBLIC, anon, authenticated;
-GRANT EXECUTE ON FUNCTION public.consume_telegram_update(text,bigint,text) TO service_role;
+-- Narrow capability: the dedicated secret authorizes only this limiter, never data access.
+CREATE FUNCTION public.consume_telegram_update(p_chat_hash text, p_update_id bigint, p_kind text, p_secret text)
+RETURNS boolean LANGUAGE plpgsql SECURITY DEFINER SET search_path = '' AS $$
+BEGIN
+  IF p_secret IS NULL OR length(p_secret) <> 64 OR NOT EXISTS(
+    SELECT 1 FROM store_private.telegram_limit_secret
+    WHERE id=true AND secret_hash=pg_catalog.sha256(pg_catalog.convert_to(p_secret,'UTF8'))
+  ) THEN
+    RAISE EXCEPTION 'Unauthorized' USING ERRCODE='42501';
+  END IF;
+  RETURN store_private.consume_telegram_update(p_chat_hash,p_update_id,p_kind);
+END $$;
+REVOKE ALL ON FUNCTION public.consume_telegram_update(text,bigint,text,text) FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.consume_telegram_update(text,bigint,text,text) TO anon, service_role;
 NOTIFY pgrst, 'reload schema';
 COMMIT;

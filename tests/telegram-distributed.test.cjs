@@ -4,7 +4,7 @@ const assert = require('node:assert/strict');
 const {createDistributedGuard} = require('../server/telegram-limit.cjs');
 const {createHandler,webhookSecret} = require('../server/telegram.cjs');
 const token = `123456789:${'x'.repeat(35)}`;
-const env = {VERCEL_ENV:'production', TELEGRAM_BOT_TOKEN:token, SUPABASE_SERVICE_ROLE_KEY:'synthetic-server-key'};
+const env = {VERCEL_ENV:'production', TELEGRAM_BOT_TOKEN:token, TELEGRAM_LIMIT_SECRET:'synthetic-server-key'};
 const message = id => ({update_id:id,message:{message_id:1,from:{id:42,is_bot:false},chat:{id:42,type:'private'},text:'/start'}});
 const callback = id => ({update_id:id,callback_query:{id:'synthetic',from:{id:42,is_bot:false},message:{message_id:1,chat:{id:42,type:'private'}},data:'jp:menu'}});
 async function invoke(handler,body,secret=webhookSecret(token)) {
@@ -21,13 +21,13 @@ test('shared requests hash chat IDs and send credentials only to the fixed Supab
   const payload=JSON.parse(calls[0].o.body);
   assert.match(payload.p_chat_hash,/^[a-f0-9]{64}$/);
   assert.equal(payload.p_update_id,123);assert.equal(payload.p_kind,'message');
-  assert.equal(payload.chat_id,undefined);assert.equal(payload.text,undefined);
+  assert.equal(payload.p_secret,env.TELEGRAM_LIMIT_SECRET);assert.equal(payload.chat_id,undefined);assert.equal(payload.text,undefined);
   assert.equal(calls[0].o.redirect,'error');assert.ok(calls[0].o.signal);
   await allow(42,124,'callback');assert.equal(JSON.parse(calls[1].o.body).p_chat_hash,payload.p_chat_hash);
 });
 test('missing credentials, timeouts, denied HTTP responses and malformed results fail closed',async()=>{
   let calls=0;
-  await assert.rejects(createDistributedGuard({...env,SUPABASE_SERVICE_ROLE_KEY:undefined},async()=>{calls++})(42,1,'message'));
+  await assert.rejects(createDistributedGuard({...env,TELEGRAM_LIMIT_SECRET:undefined},async()=>{calls++})(42,1,'message'));
   assert.equal(calls,0);
   for(const request of [async()=>{throw Error(token)},async()=>({ok:false}),async()=>({ok:true,json:async()=>({allowed:true})})]) {
     await assert.rejects(createDistributedGuard(env,request)(42,1,'message'),e=>e.message==='Shared bot limiter unavailable');
