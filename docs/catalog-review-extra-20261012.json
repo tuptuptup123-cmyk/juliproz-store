@@ -1,0 +1,36 @@
+{
+  "changes": [
+    {
+      "id": 437,
+      "old": {
+        "image_url": "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/276ddb48-97f3-4b15-ac14-779bd3e6375e.webp",
+        "photos": [
+          "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/276ddb48-97f3-4b15-ac14-779bd3e6375e.webp"
+        ]
+      },
+      "new": {
+        "image_url": "https://juliproz-store.vercel.app/images/catalog-review-20261012/437.webp",
+        "photos": [
+          "https://juliproz-store.vercel.app/images/catalog-review-20261012/437.webp",
+          "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/276ddb48-97f3-4b15-ac14-779bd3e6375e.webp"
+        ]
+      }
+    },
+    {
+      "id": 443,
+      "old": {
+        "image_url": "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/c0c6ca52-13df-457d-b241-672b742a87dc.webp",
+        "photos": [
+          "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/c0c6ca52-13df-457d-b241-672b742a87dc.webp"
+        ]
+      },
+      "new": {
+        "image_url": "https://juliproz-store.vercel.app/images/catalog-review-20261012/443.webp",
+        "photos": [
+          "https://juliproz-store.vercel.app/images/catalog-review-20261012/443.webp",
+          "https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/f5a3ca3a-d730-451d-9759-7145325f29b7/c0c6ca52-13df-457d-b241-672b742a87dc.webp"
+        ]
+      }
+    }
+  ]
+}
