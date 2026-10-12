@@ -14,6 +14,15 @@
     right=Math.min(width-1,right+1);bottom=Math.min(height-1,bottom+1);
     return {left:left/width,top:top/height,width:(right-left+1)/width,height:(bottom-top+1)/height};
   }
+  // Classify only opaque product pixels; transparent padding is not a colour.
+  function isLightCutout(data){
+    let clear=0,solid=0,light=0;
+    for(let i=0;i<data.length;i+=4){
+      if(data[i+3]<8)clear++;
+      if(data[i+3]>240){solid++;if(Math.min(data[i],data[i+1],data[i+2])>210)light++}
+    }
+    return clear>data.length/4*.08&&solid>0&&light/solid>.55;
+  }
   function placement(bounds,naturalWidth,naturalHeight,width,height){
     if(!bounds||Math.min(naturalWidth,naturalHeight,width,height)<=0)return null;
     const fit=Math.min(width/naturalWidth,height/naturalHeight);
@@ -21,7 +30,7 @@
     const scale=Math.min(width*.84/(drawnWidth*bounds.width),height*.84/(drawnHeight*bounds.height));
     return {scale,x:(.5-bounds.left-bounds.width/2)*drawnWidth*scale,y:(.5-bounds.top-bounds.height/2)*drawnHeight*scale};
   }
-  if(typeof module==='object'&&module.exports){module.exports={alphaBounds,placement};return}
+  if(typeof module==='object'&&module.exports){module.exports={alphaBounds,placement,isLightCutout};return}
   if(!root.document||!root.IntersectionObserver||!root.ResizeObserver)return;
   const selector='.photo img,.hero img,.related-photo img,.cart-photo img,#previewImage img,.catalogue-preview-photo img';
   const cache=new Map(),records=new WeakMap(),observed=new WeakSet();
@@ -39,7 +48,10 @@
             canvas.width=Math.max(1,Math.round(source.naturalWidth*ratio));canvas.height=Math.max(1,Math.round(source.naturalHeight*ratio));
             const ctx=canvas.getContext('2d',{willReadFrequently:true});
             ctx.drawImage(source,0,0,canvas.width,canvas.height);
-            resolve(alphaBounds(ctx.getImageData(0,0,canvas.width,canvas.height).data,canvas.width,canvas.height));
+            const pixels=ctx.getImageData(0,0,canvas.width,canvas.height).data;
+            const bounds=alphaBounds(pixels,canvas.width,canvas.height);
+            if(bounds)bounds.lightProduct=isLightCutout(pixels);
+            resolve(bounds);
           }catch{resolve(null)}
         };
         if(root.requestIdleCallback)root.requestIdleCallback(work,{timeout:250});else root.setTimeout(work,0);
@@ -52,7 +64,7 @@
     cache.set(src,pending);if(cache.size>256)cache.delete(cache.keys().next().value);
     return pending;
   }
-  function reset(img){img.classList.remove('product-framed');img.style.removeProperty('transform');records.delete(img)}
+  function reset(img){img.classList.remove('product-framed','product-light');img.style.removeProperty('transform');records.delete(img)}
   function update(img){
     const record=records.get(img);if(!record||record.src!==img.getAttribute('src'))return;
     const result=placement(record.bounds,img.naturalWidth,img.naturalHeight,img.clientWidth,img.clientHeight);
@@ -67,7 +79,7 @@
     // A tab may have been hidden while CORS/image decoding was in flight.
     // Keep its DOM stable and resume framing when the image is visible again.
     if(!img.clientWidth||!img.clientHeight){visible.observe(img);return}
-    records.set(img,{src,bounds});img.classList.add('product-framed');update(img);
+    records.set(img,{src,bounds});img.classList.add('product-framed');img.classList.toggle('product-light',bounds.lightProduct===true);update(img);
   }
   const visible=new IntersectionObserver(entries=>{
     for(const {target,isIntersecting} of entries)if(isIntersecting){visible.unobserve(target);frame(target)}
