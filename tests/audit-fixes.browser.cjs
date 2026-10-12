@@ -17,6 +17,7 @@ for(const width of [390,1280]){
  const page=await browser.newPage({viewport:{width,height:900}}),events=[],errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.route('https://telegram.org/**',r=>r.fulfill({contentType:'text/javascript',body:''}));
  await page.route('**/functions/v1/store-analytics',r=>{events.push(r.request().postDataJSON());return r.fulfill({status:202,json:{accepted:true}})});
+ await page.route('**/rest/v1/product_admin_notes?**',r=>r.fulfill({json:[]}));
  await page.route('**/rest/v1/products?**',r=>r.fulfill({json:[{id:1,brand:'Gucci',name:'Hoodie',size:'38,40',description:'Материал: хлопок\n<script>unsafe</script>',price:100,currency:'EUR',available:true,fulfillment_status:'in_stock',photos:[]}]}));
  await page.goto('http://localhost:8778/');await page.locator('.product-open').waitFor();assert.equal(events.length,0);assert.equal(await page.evaluate(()=>localStorage.getItem('jpAnalyticsVisitor')),null);await page.locator('#analyticsDecline').click();
  await page.locator('#toggleSearch').click();

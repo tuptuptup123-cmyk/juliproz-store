@@ -215,3 +215,17 @@ test('note load failure cannot be treated as an empty note, and unavailable Data
  const h=setup(async()=>response({message:'offline'},503));h.seed(session());h.run("$('editor').elements.internal_note={value:'',disabled:false};$('editor').elements.on_commission={checked:true};resetInternalNote({id:42})");await h.run('internalNoteState.promise');assert.ok(h.run('internalNoteState.error'));await assert.rejects(h.run('saveInternalNote(42)'),/не загружена/);
  h.run("pendingPreviews=[{file:{name:'first.png'}},{file:{name:'second.png'}}];DataTransfer=class{constructor(){throw Error('unsupported')}};syncPendingFiles()");assert.equal(h.run('selectedPhotoFiles().length'),2);assert.equal(h.run('selectedPhotoFiles()[0].name'),'first.png');
 });
+
+test('internal location and custodian are available on non-commission items and stay private',async()=>{
+ let saved={product_id:45,note:'Private',location:'City A',custodian:'Holder A',revision:2};const calls=[];
+ const h=setup(async(path,o={})=>{calls.push({path,o});if(o.method==='PATCH')saved={...saved,...JSON.parse(o.body),revision:saved.revision+1};return response([saved])});h.seed(session());
+ h.run("$('editor').elements.internal_note={value:'',disabled:false};$('editor').elements.internal_location={value:'',disabled:false};$('editor').elements.internal_custodian={value:'',disabled:false};$('editor').elements.on_commission={checked:false};resetInternalNote({id:45})");await h.run('internalNoteState.promise');
+ assert.equal(h.get('internalNoteCard').classList.contains('hidden'),false);assert.equal(h.run("$('editor').elements.internal_location.value"),'City A');
+ h.run("$('editor').elements.internal_location.value='City B';$('editor').elements.internal_custodian.value='Holder B'");await h.run('saveInternalNote(45)');assert.equal(saved.location,'City B');assert.equal(saved.custodian,'Holder B');assert.ok(calls.every(c=>c.path.includes('/product_admin_notes')));
+ h.run('endSession()');assert.equal(h.run("$('editor').elements.internal_location.value"),'');assert.equal(h.run("$('editor').elements.internal_custodian.value"),'');
+});
+
+test('invitation callback removes URL tokens, validates identity and requires MFA before workspace',async()=>{
+ const a=api({factors:[factor]}),h=setup(a.fetch);h.run("location.hash='#type=invite&access_token=synthetic-token&refresh_token=synthetic-refresh&expires_in=3600';location.pathname='/admin.html';location.search='';globalThis.history={replaceState:(a,b,p)=>{location.hash='';globalThis.cleanCallbackPath=p}};");
+ await h.run('restoreAdminSession()');assert.equal(h.run('location.hash'),'');assert.equal(h.run('cleanCallbackPath'),'/admin.html');assert.equal(h.run('recovering'),true);assert.equal(h.get('mfaPanel').classList.contains('hidden'),false);assert.equal(h.get('workspace').classList.contains('hidden'),true);assert.equal(a.calls.some(c=>c.path.includes('/products')),false);
+});
