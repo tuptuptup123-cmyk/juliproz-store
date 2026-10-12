@@ -15,3 +15,9 @@ test('failed invite never grants membership and partial failures give safe retry
  const s=setup({invite:429}),r=await s.run({Authorization:'Bearer synthetic-owner'});assert.equal(r.status,429);assert.equal(s.calls.some(c=>c.url.includes('add_workspace_admin')),false);
  const p=setup({grant:403}),response=await p.run({Authorization:'Bearer synthetic-owner'});assert.equal(response.status,409);assert.match((await response.json()).message,/Приглашение отправлено.*существующий аккаунт/);
 });
+test('invitation preflight and responses allow the owned custom domains',async()=>{
+ for(const Origin of ['https://juliproz.com','https://www.juliproz.com']){
+  const s=setup();const preflight=await s.run({Origin},null,'OPTIONS');assert.equal(preflight.status,204);assert.equal(preflight.headers.get('Access-Control-Allow-Origin'),Origin);
+  const r=await s.run({Origin,Authorization:'Bearer synthetic-owner'});assert.equal(r.status,200);assert.equal(r.headers.get('Access-Control-Allow-Origin'),Origin);
+ }
+});

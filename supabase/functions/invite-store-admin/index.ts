@@ -1,9 +1,12 @@
 const allowedOrigin='https://juliproz-store.vercel.app';
+const origins=new Set([allowedOrigin,'https://juliproz.com','https://www.juliproz.com']);
 const cors={'Access-Control-Allow-Origin':allowedOrigin,'Access-Control-Allow-Headers':'authorization, apikey, content-type','Access-Control-Allow-Methods':'POST, OPTIONS','Vary':'Origin','Cache-Control':'no-store'};
-const reply=(status,body)=>new Response(JSON.stringify(body),{status,headers:{...cors,'Content-Type':'application/json'}});
 Deno.serve(async req=>{
- if(req.headers.get('origin')&&req.headers.get('origin')!==allowedOrigin)return reply(403,{message:'Недопустимый источник запроса'});
- if(req.method==='OPTIONS')return new Response(null,{status:204,headers:cors});
+ const origin=req.headers.get('origin');
+ const corsHeaders={...cors,'Access-Control-Allow-Origin':origins.has(origin)?origin:allowedOrigin};
+ const reply=(status,body)=>new Response(JSON.stringify(body),{status,headers:{...corsHeaders,'Content-Type':'application/json'}});
+ if(req.headers.get('origin')&&!origins.has(req.headers.get('origin')))return reply(403,{message:'Недопустимый источник запроса'});
+ if(req.method==='OPTIONS')return new Response(null,{status:204,headers:corsHeaders});
  if(req.method!=='POST')return reply(405,{message:'Используйте POST'});
  const auth=req.headers.get('authorization');if(!auth?.startsWith('Bearer '))return reply(401,{message:'Войдите в аккаунт владельца'});
  const base=Deno.env.get('SUPABASE_URL'),publicKey=Deno.env.get('SUPABASE_ANON_KEY'),secret=Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');

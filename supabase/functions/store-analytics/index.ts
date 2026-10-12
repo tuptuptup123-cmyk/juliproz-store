@@ -1,6 +1,6 @@
 const events=new Set(['visit','heartbeat','page_view','product_view','wishlist_add','wishlist_remove','cart_add','cart_remove','checkout_open','manager_open']);
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-const origin='https://juliproz-store.vercel.app';
+const origins=new Set(['https://juliproz-store.vercel.app','https://juliproz.com','https://www.juliproz.com']);
 let cachedSalt=null;
 async function dailySalt(){
  const day=new Date().toISOString().slice(0,10);if(cachedSalt?.day===day)return cachedSalt.value;
@@ -13,11 +13,12 @@ async function boundedBody(req){
  const bytes=new Uint8Array(size);let offset=0;for(const b of chunks){bytes.set(b,offset);offset+=b.length}return new TextDecoder().decode(bytes);
 }
 Deno.serve(async(req)=>{
- const headers={'Access-Control-Allow-Origin':origin,'Access-Control-Allow-Headers':'authorization,apikey,content-type','Access-Control-Allow-Methods':'POST,OPTIONS','Content-Type':'application/json','Cache-Control':'no-store'};
+ const origin=req.headers.get('origin');
+ const headers={'Access-Control-Allow-Origin':origins.has(origin)?origin:'https://juliproz-store.vercel.app','Vary':'Origin','Access-Control-Allow-Headers':'authorization,apikey,content-type','Access-Control-Allow-Methods':'POST,OPTIONS','Content-Type':'application/json','Cache-Control':'no-store'};
  const reply=(status,value)=>new Response(JSON.stringify(value),{status,headers});
+ if(!origins.has(origin))return reply(403,{error:'origin'});
  if(req.method==='OPTIONS')return new Response(null,{status:204,headers});
  if(req.method!=='POST')return reply(405,{error:'method'});
- if(req.headers.get('origin')!==origin)return reply(403,{error:'origin'});
  if(Number(req.headers.get('content-length')||0)>2048)return reply(413,{error:'size'});
  try{
   const text=await boundedBody(req);if(text===null)return reply(413,{error:'size'});const b=JSON.parse(text);
