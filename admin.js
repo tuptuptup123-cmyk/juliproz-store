@@ -402,7 +402,7 @@ async function signOut(scope='local'){
  if(scope==='global'&&!confirm('Выйти на всех устройствах? Потребуется войти заново.'))return;
  if(busy)return;if(editorDirty&&!confirm('Выйти из аккаунта без сохранения карточки?'))return;busy=true;let revoked=false;
  try{await request(`/auth/v1/logout?scope=${scope}`,{method:'POST'});revoked=true}catch{}finally{endSession();busy=false}
- status(revoked?(scope==='global'?'Вы вышли на всех устройствах. Уже выданные токены могут действовать до истечения их срока.':'Вы вышли'):(scope==='global'?'Вы вышли на этом устройстве. Сервер не подтвердил выход на остальных устройствах — войдите и повторите попытку.':'Вы вышли на этом устройстве. Сервер не подтвердил завершение сессии.'));
+ status(revoked?(scope==='global'?'Вы вышли на всех устройствах. Доступ к управлению магазином для этих сессий закрыт.':'Вы вышли'):(scope==='global'?'Вы вышли на этом устройстве. Сервер не подтвердил выход на остальных устройствах — войдите и повторите попытку.':'Вы вышли на этом устройстве. Сервер не подтвердил завершение сессии.'));
 }
 $('logout').onclick=()=>signOut();
 $('logoutAll').onclick=()=>signOut('global');
