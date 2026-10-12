@@ -2,8 +2,11 @@
 
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { createHandler, createReplyGuard, webhookSecret, WEBHOOK_URL, WELCOME } = require('../server/telegram.cjs');
+const { createHandler: productionHandler, createReplyGuard, webhookSecret, WEBHOOK_URL, WELCOME } = require('../server/telegram.cjs');
 const { configureTelegram } = require('../scripts/configure-telegram.cjs');
+
+// Existing routing tests explicitly inject shared admission; production never bypasses it.
+const createHandler = (env, reply, api, callback) => productionHandler(env, reply, api, callback, () => true);
 
 // Fabricated test credential; never a real bot token.
 const TOKEN = `123456789:${'x'.repeat(35)}`;
