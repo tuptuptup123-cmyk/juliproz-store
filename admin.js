@@ -475,9 +475,9 @@ async function loadAnalytics(){
  if(analyticsBusy||!session)return;analyticsBusy=true;const epoch=sessionEpoch;$('analyticsDays').disabled=true;$('refreshAnalytics').disabled=true;$('analyticsStatus').textContent='Загружаем статистику…';
  try{const data=await request('/rest/v1/rpc/store_analytics_summary',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({p_days:Number($('analyticsDays').value)})});if(epoch!==sessionEpoch)return;
   updateOverview(data,Number($('analyticsDays').value)===7);
-  const labels={active:'Сейчас в магазине',visitors:'Посетители',sessions:'Посещения',product_view:'Просмотры товаров',wishlist_add:'Добавили в вишлист',wishlist_remove:'Убрали из вишлиста',cart_add:'Добавили в корзину',cart_remove:'Убрали из корзины',checkout_open:'Оформить через менеджера',manager_open:'Написать менеджеру'};
-  $('analyticsCards').innerHTML=Object.entries(labels).map(([key,label])=>`<div class="stat"><span>${label}</span><strong>${Number(data[key])||0}</strong></div>`).join('');
-  $('analyticsProducts').innerHTML=(data.products||[]).map(p=>`<div class="analytics-product"><span>${esc(brandsOf(p).join(' × '))} ${esc(p.name)} <small>№ ${esc(p.id)}</small></span><span>${Number(p.views)||0} просмотров · ${Number(p.wishlist)||0} вишлист · ${Number(p.cart)||0} корзина</span></div>`).join('')||'<p class="muted">Пока нет событий за этот период.</p>';
+  const report=window.AnalyticsReport.render(data);
+  $('analyticsCards').innerHTML=report.cards;
+  $('analyticsProducts').innerHTML=report.details;
   $('analyticsStatus').textContent=`Обновлено ${new Date().toLocaleTimeString('ru-RU')}. Добавления и удаления — количество действий за период.`;
   try{const limited=await request('/rest/v1/rpc/store_analytics_health',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});if(epoch!==sessionEpoch)return;if(limited===true)$('analyticsStatus').textContent+=' Сейчас достигнут лимит сбора: данные могут быть неполными.'}catch{if(epoch===sessionEpoch&&session)$('analyticsStatus').textContent+=' Статус лимитов недоступен.'}
  }catch(e){if(epoch===sessionEpoch)$('analyticsStatus').textContent='Не удалось получить статистику. Попробуйте обновить.'}
