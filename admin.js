@@ -96,7 +96,7 @@ let mfaFactorId=null,mfaMode=null,mfaEnrollment=null,recovering=false;
 function clearMfa(){
  mfaFactorId=null;mfaMode=null;mfaEnrollment=null;
  $('mfaPanel').classList.add('hidden');$('mfaSetup').classList.add('hidden');$('mfaChoice').classList.add('hidden');
- $('mfaVerify').reset();$('mfaQr').removeAttribute?.('src');$('mfaSecret').textContent='';$('mfaFactor').innerHTML='';
+ $('mfaVerify').reset();$('mfaQr').onload=null;$('mfaQr').onerror=null;$('mfaQr').removeAttribute?.('src');$('mfaQr').classList.add('hidden');$('mfaQrError').classList.add('hidden');$('mfaSecret').textContent='';$('mfaFactor').innerHTML='';
 }
 function endSession(){
  sessionClock.clear();activityPromise=null;$('sessionWarning').classList.add('hidden');$('photoStudio').close?.();
@@ -447,15 +447,23 @@ $('mfaCancel').onclick=async()=>{
  if(pending){try{await request(`/auth/v1/factors/${encodeURIComponent(pending)}`,{method:'DELETE'})}catch{}}
  busy=false;await signOut();
 };
+function mfaQrImageSource(value){
+ if(typeof value!=='string'||value.length>100000)return null;
+ // Supabase REST uses SVGo: an XML declaration and generator comment precede <svg>.
+ // Keep SVG in an inert image; never insert server markup into the document.
+ const svg=value.trim().replace(/^<\?xml\b[^?]*\?>\s*/,'').replace(/^(?:<!--[\s\S]*?-->\s*)*/,'');
+ return /^<svg(?:\s|>)/.test(svg)?`data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`:null;
+}
 async function prepareMfaEnrollment(){
   const factor=await request('/auth/v1/factors',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({factor_type:'totp',friendly_name:`JULI.PROZ ${crypto.randomUUID().slice(0,8)}`,issuer:'JULI.PROZ'})});
-  if(!factor?.id||!factor.totp?.secret||!factor.totp?.qr_code)throw Error('Не удалось подготовить защиту входа.');
+  if(!factor?.id||typeof factor.totp?.secret!=='string'||!factor.totp.secret)throw Error('Не удалось подготовить защиту входа.');
   clearMfa();mfaFactorId=factor.id;mfaEnrollment={id:factor.id};mfaMode='enroll';
-  // SVG is rendered as an image, never inserted into the page as markup.
-  const svg=factor.totp.qr_code;
-  if(typeof svg==='string'&&svg.length<100000&&svg.trim().startsWith('<svg'))$('mfaQr').src=`data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+  const qr=$('mfaQr'),source=mfaQrImageSource(factor.totp.qr_code);
+  qr.onload=()=>{qr.classList.remove('hidden');$('mfaQrError').classList.add('hidden')};
+  qr.onerror=()=>{qr.classList.add('hidden');$('mfaQrError').classList.remove('hidden')};
+  if(source)qr.src=source;else qr.onerror();
   $('mfaSecret').textContent=factor.totp.secret;
-  $('mfaInfo').textContent='Добавь этот QR-код в Google Authenticator, 1Password или другое приложение-аутентификатор. Затем введи код из приложения. Сохрани доступ к нему: для отключения защиты понадобится владелец проекта.';
+  $('mfaInfo').textContent='Добавь этот QR-код в Google Authenticator, 1Password или другое приложение-аутентификатор. Если открываешь админку на этом же телефоне, добавь ключ ниже вручную и выбери код по времени. Затем введи шестизначный код из приложения — код из письма сюда не подходит. Сохрани доступ к аутентификатору.';
   $('authArea').classList.remove('hidden');$('mfaSetup').classList.remove('hidden');$('mfaPanel').classList.remove('hidden');$('workspace').classList.add('hidden');status('');
 }
 $('securityBtn').onclick=async()=>{
