@@ -96,6 +96,20 @@ function shareSelectedProduct(){
   window.ProductSharing.open(product,{title:[brandsOf(product).join(' × '),displayName(product)].filter(Boolean).join(' — '),size:selectedSize});
 }
 function pluralRu(n,one,few,many){const k=Math.abs(n)%100;return k>=11&&k<=14?many:k%10===1?one:k%10>=2&&k%10<=4?few:many}
+// Presentation-only detection: the public SDK also loads in ordinary browsers.
+function isTelegramStore(){
+ const app=window.Telegram?.WebApp;
+ if(app&&((typeof app.initData==='string'&&app.initData.length>0)||(typeof app.platform==='string'&&app.platform!==''&&app.platform!=='unknown')))return true;
+ const launch=new URLSearchParams(location.hash?.slice(1)||'');
+ return Boolean(launch.get('tgWebAppData')||launch.get('tgWebAppVersion')||(launch.get('tgWebAppPlatform')&&launch.get('tgWebAppPlatform')!=='unknown'));
+}
+function syncWebNavigation(){
+ const web=!isTelegramStore();
+ document.querySelectorAll('.bottom-nav .web-only').forEach(b=>b.classList.toggle('hidden',!web));
+ document.querySelector('.bottom-nav')?.classList.toggle('is-website-navigation',web);
+ if(!web&&['home','about'].includes(state.tab))setTab('catalog');
+}
+
 let state={sort:"brand",sale:false,product_condition:null,gender:null,fulfillment_status:null,category:null,brand:null,size:null,search:"",favorites:new Set((()=>{try{return JSON.parse(localStorage.getItem("jpFav")||"[]").map(String)}catch{return []}})()),tab:"catalog"};
 const grid=document.getElementById("grid"),count=document.getElementById("count"),sheet=document.getElementById("sheet"),options=document.getElementById("sheetOptions");
 let currentFilter=null,tempValue=null;
@@ -203,17 +217,19 @@ function renderCatalogueRows(rows,empty){
   catalogueObserver.observe(catalogueMore);
 }
 function render(){
-  const inCart=state.tab==="cart",inSell=state.tab==="sell",inServices=state.tab==="services";
-  document.querySelector(".brand")?.classList.toggle("is-information-page",inSell||inServices);
+  const inCart=state.tab==="cart",inSell=state.tab==="sell",inServices=state.tab==="services",inHome=state.tab==="home",inAbout=state.tab==="about",inWebPage=inHome||inAbout;
+  document.getElementById("webHomePage").classList.toggle("hidden",!inHome);
+  document.getElementById("webAboutPage").classList.toggle("hidden",!inAbout);
+  document.querySelector(".brand")?.classList.toggle("is-information-page",inSell||inServices||inWebPage);
   document.querySelector(".brand")?.classList.toggle("is-catalog-page",state.tab==="catalog");
   document.getElementById("servicesPage").classList.toggle("hidden",!inServices);
   document.getElementById("sellPage").classList.toggle("hidden",!inSell);
   document.getElementById("cartPage").classList.toggle("hidden",!inCart);
-  grid.classList.toggle("hidden",inCart||inSell||inServices);
+  grid.classList.toggle("hidden",inCart||inSell||inServices||inWebPage);
   document.querySelector(".catalog-toolbar")?.classList.toggle("hidden",state.tab!=="catalog");
-  document.querySelector(".catalog-head")?.classList.toggle("hidden",inCart||inSell||inServices);
+  document.querySelector(".catalog-head")?.classList.toggle("hidden",inCart||inSell||inServices||inWebPage);
   document.getElementById("filterSummary").classList.toggle("hidden",state.tab!=="catalog"||!document.getElementById("filterSummary").textContent);
-  if(inSell||inServices)return;
+  if(inSell||inServices||inWebPage)return;
   renderCart();
   if(inCart)return;
   syncCatalogSort();
@@ -429,9 +445,10 @@ function liveCartProduct(row){const p=products.find(p=>String(p.id)===row.id);re
 function cartSnapshot(p){const snapshot=Object.fromEntries(['id','brand','name','category','price','currency','image_url','photos','size','fulfillment_status','reserved','stock_quantities','original_price'].map(k=>[k,['price','original_price'].includes(k)?window.ProductPricing.amount(p[k],p.currency):p[k]]));snapshot.price_basis=p.price_basis||{price:p.price,original_price:p.original_price};return snapshot}
 function saveCart(){cartRevision++;try{localStorage.setItem('jpCart',JSON.stringify(cart))}catch{document.getElementById('cartStatus').textContent='Корзина доступна в этом сеансе. Браузер не разрешил сохранить её.'}}
 function setTab(tab){
+  if(['home','about'].includes(tab)&&isTelegramStore())return;
   setSortOpen(false);
   if(tab!=='catalog'){document.getElementById('catalogSearch').classList.add('hidden');document.getElementById('toggleSearch').setAttribute('aria-expanded','false');state.search='';document.getElementById('search').value=''}
-  if(state.tab!==tab)window.StoreAnalytics?.track("page_view",null,['sell','services'].includes(tab)?null:tab);
+  if(state.tab!==tab)window.StoreAnalytics?.track("page_view",null,['sell','services','home','about'].includes(tab)?null:tab);
   navigationRevision++;
   state.tab=tab;selectedProduct=null;selectedSize=null;hideProductModal();productReturnFocus=null;
   document.querySelectorAll('[data-tab]').forEach(b=>{b.classList.toggle('active',b.dataset.tab===tab);b.setAttribute('aria-current',b.dataset.tab===tab?'page':'false')});render();
@@ -591,6 +608,7 @@ document.getElementById('offerItem').onclick=()=>{
   const text='Здравствуйте! Хочу предложить вещь для выкупа или продажи на комиссии через ваш магазин.';
   if(telegramLink('https://t.me/juliproz?text='+encodeURIComponent(text)))window.StoreAnalytics?.track('manager_sell');
 };
+document.querySelectorAll('[data-web-section]').forEach(b=>b.onclick=()=>setTab(b.dataset.webSection));
 document.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>{setTab(b.dataset.tab);pressNavWithPaw(b)});
 async function openLinkedProduct(id){
   const requestedNavigation=++navigationRevision;selectedProduct=null;selectedSize=null;
@@ -633,6 +651,7 @@ async function contactUnchecked(p,requestedNavigation,event=null,sourceProduct=n
 document.getElementById("productContent").addEventListener("click",e=>{const colorButton=e.target.closest('[data-color-id]');if(colorButton&&selectedProduct){const group=colorGroupFor(selectedProduct.id),id=colorButton.dataset.colorId;if(group?.members.some(x=>x.option.id===id)){const scroll=document.getElementById('productModal').scrollTop;openProduct(id,true);document.getElementById('productModal').scrollTop=scroll;document.querySelector(`[data-color-id="${id}"]`)?.focus?.()}return}const related=e.target.closest("[data-related]");if(related){openProduct(related.dataset.related);return}const sizeButton=e.target.closest('[data-size]');if(sizeButton&&selectedProduct&&sizesOf(selectedProduct).includes(sizeButton.dataset.size)){selectedSize=sizeButton.dataset.size;document.querySelectorAll('[data-size]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.size===selectedSize)));document.getElementById('sizeHint').textContent=`Выбран ${variantLabel(selectedProduct)} ${selectedSize}`;document.getElementById('detailStock').textContent=stockLabel(selectedProduct,selectedSize);}const action=e.target.closest("[data-action]")?.dataset.action;if(action==="share")shareSelectedProduct();if(action==="add-cart")addToCart();if(action==="wishlist")toggleWishlist(selectedProduct?.id);if(action==="open-cart")setTab("cart");if(action==="contact")contact(selectedProduct);if(action==="sourcing")contact(null,"manager_search_product",selectedProduct?.id);const b=e.target.closest("[data-photo]");if(b){const img=document.querySelector(".hero img");if(img){img.hidden=false;img.src=b.dataset.photo;img.parentElement.querySelector(".image-fallback")?.remove()}}});
 let telegramInitialized=false;
 function initializeTelegram(){
+  syncWebNavigation();
   const tg=window.Telegram?.WebApp;if(!tg||telegramInitialized)return;telegramInitialized=true;
   tg.ready();tg.expand();
   // Desktop clients can open the catalog across the screen.
