@@ -5,6 +5,11 @@
  const rpc=(name,body={})=>request('/rest/v1/rpc/'+name,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
  function hidePanels(){$('profilePanel').classList.add('hidden');$('historyPanel').classList.add('hidden');$('teamPanel').classList.add('hidden')}
  function clear(){team=null;teamRequest++;historyRequest++;historyCursor=null;historyRows=[];historyBusy=false;hidePanels();for(const id of ['historyList','teamMembers','currentAdminProfile','profileEmail','teamStatus','profileStatus','historyStatus'])$(id).textContent='';$('historyActor').innerHTML='<option value="">Все администраторы</option>';$('historyProduct').value='';$('profileForm').reset();$('addAdminForm').reset();$('addAdminForm').classList.add('hidden')}
+ function invitationStatus(invite){
+  if(invite.ready)return 'Почта подтверждена · Аутентификатор настроен · Ожидает вашего одобрения';
+  if(typeof invite.email_confirmed!=='boolean')return 'Ожидаем подтверждение почты и настройку аутентификатора';
+  return `Почта: ${invite.email_confirmed?'подтверждена':'не подтверждена'} · Аутентификатор: ${invite.mfa_confirmed?'настроен':'не настроен'}${invite.email_confirmed&&invite.mfa_confirmed?' · Требуется проверка аккаунта':''}`;
+ }
  function applyTeam(data){
   if(!data||!Array.isArray(data.members)||data.current_user_id!==session?.user?.id)throw Error('Не удалось проверить профиль');
   team=data;const me=data.members.find(m=>m.user_id===data.current_user_id);if(!me)throw Error('Нет доступа к команде');
@@ -12,7 +17,7 @@
   $('profileEmail').textContent=me.email;$('profileForm').elements.display_name.value=me.display_name||'';
   $('addAdminForm').classList.toggle('hidden',me.access_role!=='owner');
   $('teamMembers').innerHTML=data.members.map(m=>`<article class="team-member"><div><strong>${esc(m.display_name||'Имя не указано')}</strong><p>${esc(m.email)}</p><small>${m.access_role==='owner'?'Владелец':'Администратор'}${m.user_id===me.user_id?' · это вы':''}</small></div>${me.access_role==='owner'&&m.access_role!=='owner'?`<button type="button" data-revoke-admin="${esc(m.user_id)}">Отключить доступ</button>`:''}</article>`).join('');
-  if(me.access_role==='owner')$('teamMembers').innerHTML+=(data.pending_invitations||[]).map(i=>`<article class="team-member"><div><strong>${esc(i.display_name||'Приглашение')}</strong><p>${esc(i.email)}</p><small>${i.ready?'Почта и MFA подтверждены':'Ожидаем подтверждение почты и MFA'}</small></div>${i.ready?`<button type="button" data-approve-invite="${esc(i.email)}">Подтвердить доступ</button>`:''}</article>`).join('');
+  if(me.access_role==='owner')$('teamMembers').innerHTML+=(data.pending_invitations||[]).map(i=>`<article class="team-member"><div><strong>${esc(i.display_name||'Приглашение')}</strong><p>${esc(i.email)}</p><small>${invitationStatus(i)}</small></div>${i.ready?`<button type="button" data-approve-invite="${esc(i.email)}">Подтвердить доступ</button>`:''}</article>`).join('');
   const selected=$('historyActor').value;$('historyActor').innerHTML='<option value="">Все администраторы</option>'+data.members.map(m=>`<option value="${esc(m.user_id)}">${esc(m.display_name||m.email)}</option>`).join('');$('historyActor').value=selected;window.AdminSelects?.sync();
  }
  async function loadTeam(){
