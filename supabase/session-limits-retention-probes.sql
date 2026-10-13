@@ -11,25 +11,33 @@ BEGIN
  PERFORM set_config('request.jwt.claims',jsonb_build_object('sub',actor,'role','authenticated','aal','aal2','session_id',sid)::text,true);
  SET LOCAL ROLE authenticated;
  value:=public.touch_store_admin_session();
- IF (value->>'expires_at')::timestamptz<>(now()+interval '12 hours') THEN RAISE EXCEPTION 'Incorrect absolute deadline';END IF;
+ IF (value->>'expires_at')::timestamptz<>(now()+interval '7 days') THEN RAISE EXCEPTION 'Incorrect absolute deadline';END IF;
  IF NOT store_private.admin_session_active() THEN RAISE EXCEPTION 'Fresh session denied';END IF;
  INSERT INTO public.products(brand,name,category,currency,image_url,photos,available,creation_key)
  VALUES('Security probe','Rollback session boundary','Аксессуары','EUR','https://juliproz-store.vercel.app/images/security-probe.webp','[]',false,gen_random_uuid()) RETURNING id INTO fixture;
  INSERT INTO public.product_admin_notes(product_id,note) VALUES(fixture,'Rollback private note');
  RESET ROLE;
- -- Exact boundary, with a recently refreshed token, must remain denied.
- UPDATE store_private.admin_session_activity SET last_seen=now()-interval '30 minutes' WHERE session_id=sid;
+ -- Six idle days remain valid; activity is neither needed nor recorded.
+ UPDATE auth.sessions SET created_at=now()-interval '6 days' WHERE id=sid;
+ INSERT INTO store_private.admin_session_activity(session_id,last_seen) VALUES(sid,now()-interval '6 days') ON CONFLICT(session_id) DO UPDATE SET last_seen=excluded.last_seen;
+ SET LOCAL ROLE authenticated;
+ IF NOT store_private.admin_session_active() THEN RAISE EXCEPTION 'Idle session denied before seven days';END IF;
+ value:=public.touch_store_admin_session();
+ IF value->>'idle_expires_at' IS NOT NULL THEN RAISE EXCEPTION 'Idle timeout remains enabled';END IF;
+ RESET ROLE;
+ -- Exact seven-day boundary remains denied even with a freshly refreshed token.
+ UPDATE auth.sessions SET created_at=now()-interval '7 days' WHERE id=sid;
  UPDATE auth.sessions SET refreshed_at=now() WHERE id=sid;
  SET LOCAL ROLE authenticated;
- IF store_private.admin_session_active() THEN RAISE EXCEPTION 'Idle token refresh revived session';END IF;
- BEGIN PERFORM public.touch_store_admin_session();RAISE EXCEPTION 'Idle heartbeat revived session';EXCEPTION WHEN insufficient_privilege THEN NULL;END;
+ IF store_private.admin_session_active() THEN RAISE EXCEPTION 'Token refresh revived expired week';END IF;
+ BEGIN PERFORM public.touch_store_admin_session();RAISE EXCEPTION 'Deadline check revived expired week';EXCEPTION WHEN insufficient_privilege THEN NULL;END;
  IF EXISTS(SELECT 1 FROM public.products WHERE id=fixture) OR EXISTS(SELECT 1 FROM public.product_admin_notes WHERE product_id=fixture) THEN RAISE EXCEPTION 'Expired session read private records';END IF;
- UPDATE public.products SET name='Forbidden idle edit' WHERE id=fixture;GET DIAGNOSTICS affected=ROW_COUNT;
+ UPDATE public.products SET name='Forbidden expired edit' WHERE id=fixture;GET DIAGNOSTICS affected=ROW_COUNT;
  IF affected<>0 THEN RAISE EXCEPTION 'Expired session wrote inventory';END IF;
  BEGIN PERFORM public.store_workspace_history();RAISE EXCEPTION 'Expired session read history';EXCEPTION WHEN insufficient_privilege THEN NULL;END;
  RESET ROLE;
  UPDATE store_private.admin_session_activity SET last_seen=now() WHERE session_id=sid;
- UPDATE auth.sessions SET created_at=now()-interval '12 hours' WHERE id=sid;
+ UPDATE auth.sessions SET created_at=now()-interval '7 days' WHERE id=sid;
  SET LOCAL ROLE authenticated;
  IF store_private.admin_session_active() THEN RAISE EXCEPTION 'Absolute expiry ignored';END IF;
  BEGIN PERFORM public.touch_store_admin_session();RAISE EXCEPTION 'Absolute expiry revived';EXCEPTION WHEN insufficient_privilege THEN NULL;END;

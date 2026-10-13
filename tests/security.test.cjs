@@ -29,7 +29,7 @@ function api({factors=[],verification=session('aal2',[factor]),activateError=fal
  const calls=[];
  return {calls,fetch:async(path,options={})=>{
   calls.push({path,options});
-  if(path.includes('/rpc/touch_store_admin_session')){const t=Date.now();return response({server_now:new Date(t).toISOString(),expires_at:new Date(t+43200000).toISOString(),idle_expires_at:new Date(t+1800000).toISOString()})}
+  if(path.includes('/rpc/touch_store_admin_session')){const t=Date.now();return response({server_now:new Date(t).toISOString(),expires_at:new Date(t+604800000).toISOString(),idle_expires_at:new Date(t+1800000).toISOString()})}
   if(path.includes('/rpc/store_admin_security_status'))return response({paused,pending,access_role:pending?null:'owner'});
   if(path.includes('/store_admins'))return response(pending?[]:[{user_id:'owner'}]);
   if(path.endsWith('/auth/v1/user'))return response(user(factors));
@@ -139,9 +139,9 @@ test('legacy browser tokens are discarded without automatic login or private API
  const h=setup(async path=>{calls.push(path);return response({})},true,tab,local);
  await h.run('adminSessionReady');assert.equal(h.run('session'),null);assert.equal(local.getItem('jpAdminSessionV1'),null);assert.equal(tab.getItem('jpAdminSessionV1'),null);assert.deepEqual(calls,[]);
 });
-test('login and refresh credentials remain only in memory, including recovery sessions',async()=>{
+test('recovery sessions remain only in memory until password and access checks finish',async()=>{
  const local=tabStorage(),tab=tabStorage(),h=setup(async()=>response(session('aal2',[factor])),true,tab,local);
- h.seed(session('aal2',[factor]));h.run('recovering=true;saveAdminSession()');
+ h.seed(session('aal2',[factor]));h.run('recovering=true;rememberAdminSession=true;saveAdminSession()');
  assert.equal(h.run('session.refresh_token'),'synthetic-refresh');assert.equal(local.getItem('jpAdminSessionV1'),null);assert.equal(tab.getItem('jpAdminSessionV1'),null);
  const reopened=setup(async()=>{throw Error('Unexpected auto-login')},true,tab,local);await reopened.run('adminSessionReady');assert.equal(reopened.run('session'),null);
 });
@@ -253,4 +253,27 @@ test('enforcing MFA preserves the owner role returned by the security endpoint',
  const a=api({factors:[factor]}),h=setup(a.fetch);
  h.run("session={access_token:'synthetic',expires_at:Date.now()/1000+3600,user:{id:'owner'}};adminSecurity={owner:true,paused:true,pending:false}");
  await h.run('enableMfaProtection()');assert.equal(h.run('adminSecurity.owner'),true);assert.equal(h.run('adminSecurity.paused'),false);
+});
+
+test('verified login persists for a week and reopening verifies the user and access before inventory',async()=>{
+ const local=tabStorage(),tab=tabStorage(),a=api({factors:[factor]}),h=setup(a.fetch,true,tab,local);
+ h.seed(session('aal2',[factor]));await h.run('enterWorkspace()');
+ const saved=JSON.parse(local.getItem('jpAdminSessionV2'));assert.equal(saved.session.user.id,'owner');assert.ok(saved.deadline>Date.now()+6*86400000);
+ const b=api({factors:[factor]}),reopened=setup(b.fetch,true,tab,local);await reopened.run('adminSessionReady');
+ assert.equal(reopened.run('session.user.id'),'owner');assert.equal(reopened.get('workspace').classList.contains('hidden'),false);
+ assert.ok(b.calls.findIndex(c=>c.path.endsWith('/auth/v1/user'))<b.calls.findIndex(c=>c.path.includes('/products?')));
+ assert.ok(JSON.parse(local.getItem('jpAdminSessionV2')).deadline<=saved.deadline);
+ reopened.run('endSession()');assert.equal(local.getItem('jpAdminSessionV2'),null);
+});
+test('expired or invalid persisted sessions cannot auto-login or request private data',async()=>{
+ for(const deadline of [Date.now()-1,Date.now()+8*86400000,'invalid']){
+  const local=tabStorage(),calls=[];local.setItem('jpAdminSessionV2',JSON.stringify({id:'synthetic',deadline,session:session('aal2',[factor])}));
+  const h=setup(async path=>{calls.push(path);return response([])},true,tabStorage(),local);await h.run('adminSessionReady');
+  assert.equal(h.run('session'),null);assert.deepEqual(calls,[]);assert.equal(local.getItem('jpAdminSessionV2'),null);
+ }
+});
+test('revoked persisted session clears local credentials and never loads private inventory',async()=>{
+ const local=tabStorage();local.setItem('jpAdminSessionV2',JSON.stringify({id:'synthetic',deadline:Date.now()+86400000,session:session('aal2',[factor])}));
+ const calls=[],h=setup(async path=>{calls.push(path);return response({message:'revoked'},403)},true,tabStorage(),local);await h.run('adminSessionReady');
+ assert.equal(h.run('session'),null);assert.equal(local.getItem('jpAdminSessionV2'),null);assert.equal(calls.some(p=>p.includes('/products?')),false);
 });

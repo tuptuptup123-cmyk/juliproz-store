@@ -2,6 +2,8 @@
 
 This release follows the fixes in PR #252. It does not claim the absence of all vulnerabilities.
 
+**Policy update requested by the owner later on 2026-10-13:** the 12-hour/30-minute session policy below is superseded by [seven-day sessions](admin-week-session-2026-10-13.md). The remaining audit findings still apply.
+
 ## Administrative access
 
 - Supabase Auth time-box is 12 hours. Strict database checks also enforce a 12-hour maximum and 30-minute idle lifetime on each protected operation, without waiting for JWT expiry or Auth cleanup.

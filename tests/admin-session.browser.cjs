@@ -10,25 +10,24 @@ const server=http.createServer((req,res)=>{const file=path.resolve(root,'.'+new 
   if(url.pathname==='/auth/v1/token'){if(url.searchParams.get('grant_type')==='refresh_token')refreshes++;else sessionStart=now;return route.fulfill({json:{access_token:'synthetic-token',refresh_token:'synthetic-refresh',expires_at:now/1000+3600,user}})}
   if(url.pathname==='/auth/v1/logout'){signouts++;return route.fulfill({status:204})}
   if(url.pathname==='/auth/v1/user')return route.fulfill({json:user});
-  if(url.pathname.endsWith('touch_store_admin_session')){touches++;return route.fulfill({json:{server_now:new Date(now).toISOString(),expires_at:new Date(sessionStart+43200000).toISOString(),idle_expires_at:new Date(Math.min(sessionStart+43200000,now+1800000)).toISOString()}})}
+  if(url.pathname.endsWith('touch_store_admin_session')){touches++;return route.fulfill({json:{server_now:new Date(now).toISOString(),expires_at:new Date(sessionStart+604800000).toISOString(),idle_expires_at:null}})}
   if(url.pathname.endsWith('store_admin_security_status'))return route.fulfill({json:{paused:true,access_role:'owner'}});
   if(url.pathname==='/rest/v1/store_admins')return route.fulfill({json:[{user_id:user.id}]});
   if(url.pathname==='/rest/v1/products')return route.fulfill({json:[{id:1,brand:'Private',name:'Hidden fixture',available:false,price:100,currency:'EUR',photos:[]}]});
   return route.fulfill({json:{counts:{},healthy:true}});
  });
  await page.goto('http://localhost:8782/admin.html');
- const login=async()=>{await page.locator('#login [name=email]').fill('synthetic@example.invalid');await page.locator('#login [name=password]').fill('synthetic-password');await page.locator('#login button[type=submit]').click();await page.locator('#workspace').waitFor();await page.waitForFunction(()=>!activityPromise&&!overviewBusy)};
- await login();assert.equal(touches,1);
- await page.clock.fastForward(28*60000);await page.locator('#sessionWarning').waitFor();await page.waitForFunction(()=>!overviewBusy);assert.equal(touches,1,'background overview cannot touch activity');
- await page.evaluate(()=>document.dispatchEvent(new Event('keydown')));assert.equal(touches,1,'script-generated input cannot extend the UI session');
- await page.locator('#continueSession').click();await page.waitForFunction(()=>!activityPromise);assert.equal(touches,2);assert.equal(await page.locator('#sessionWarning').isHidden(),true);
- await page.clock.fastForward(29*60000);await page.locator('#sessionWarning').waitFor();assert.equal(touches,2,'stale queued activity after sleep cannot extend a session');await page.clock.fastForward(60000);await page.locator('#login').waitFor();
- assert.equal(await page.locator('#workspace').isHidden(),true);assert.equal(await page.evaluate(()=>session),null);assert.equal(await page.locator('#inventory').innerText(),'');assert.equal(touches,2);assert.equal(refreshes,0);
- await page.waitForFunction(()=>document.getElementById('status').textContent.includes('Время входа истекло'));assert.equal(signouts,1);
- await login();const initialTouches=touches;
- for(let i=0;i<35;i++){await page.clock.fastForward(20*60000);await page.keyboard.press('Tab');await page.waitForFunction(()=>!activityPromise&&!overviewBusy)}
- assert.ok(touches>=initialTouches+35);assert.ok(refreshes>0,'active session can refresh tokens');
- await page.clock.fastForward(19*60000);await page.locator('#sessionWarning').waitFor();assert.match(await page.locator('#sessionWarningText').innerText(),/12-часовой/);assert.equal(await page.locator('#continueSession').isHidden(),true);
- await page.clock.fastForward(60000);await page.locator('#login').waitFor();assert.equal(await page.evaluate(()=>session),null);assert.deepEqual(errors,[]);
- console.log('PASS actual login, idle warning/continue, background and synthetic events, token refresh, private data clearing, exact 30m/12h logout');
+ const login=async()=>{await page.locator('#login [name=email]').fill('synthetic@example.invalid');await page.locator('#login [name=password]').fill('synthetic-password');await page.locator('#login button[type=submit]').click();await page.locator('#workspace').waitFor();await page.waitForFunction(()=>!sessionCheckPromise&&!overviewBusy)};
+ await login();assert.equal(touches,1);const deadline=await page.evaluate(()=>sessionClock.deadline());
+ await page.clock.fastForward(30*60000);assert.equal(await page.locator('#workspace').isVisible(),true);assert.equal(await page.locator('#sessionWarning').isHidden(),true);
+ await page.clock.fastForward(12*3600000);await page.waitForFunction(()=>!overviewBusy);assert.equal(await page.locator('#workspace').isVisible(),true);assert.equal(touches,1,'idle/background checks do not send activity');
+ await page.clock.fastForward(6*86400000-12*3600000-30*60000);await page.waitForFunction(()=>!overviewBusy);assert.equal(await page.locator('#sessionWarning').isHidden(),true);
+ await page.reload();await page.locator('#workspace').waitFor();await page.waitForFunction(()=>!sessionCheckPromise&&!overviewBusy);assert.equal(touches,2);assert.equal(await page.evaluate(()=>sessionClock.deadline()),deadline,'reload does not reset the week');
+ await page.clock.fastForward(86400000-120000);await page.locator('#sessionWarning').waitFor();assert.match(await page.locator('#sessionWarningText').innerText(),/недельный/);assert.equal(await page.locator('#continueSession').count(),0);
+ await page.keyboard.press('Tab');assert.equal(touches,2);assert.ok(refreshes>0,'weekly session can refresh its short-lived access token');
+ await page.clock.fastForward(120000);await page.locator('#login').waitFor();await page.waitForFunction(()=>document.getElementById('status').textContent.includes('Неделя'));
+ assert.equal(await page.locator('#workspace').isHidden(),true);assert.equal(await page.evaluate(()=>session),null);assert.equal(await page.locator('#inventory').innerText(),'');assert.equal(await page.evaluate(()=>localStorage.getItem('jpAdminSessionV2')),null);assert.equal(signouts,1);
+ await login();assert.equal(await page.locator('#workspace').isVisible(),true);assert.deepEqual(errors,[]);
+ console.log('PASS no idle logout, six inactive days, reload persistence, token refresh, fixed seven-day expiry, private data clearing and fresh login');
+
 }finally{await browser.close();server.close()}})().catch(error=>{console.error(error);server.close();process.exitCode=1});
