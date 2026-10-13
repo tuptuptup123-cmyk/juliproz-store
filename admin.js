@@ -117,7 +117,7 @@ function showMfaChallenge(factors){
 async function enableMfaProtection(){
  if(adminSecurity.pending)return;
  if(!MFA_ENROLLMENT_ENABLED)return;
- await request('/rest/v1/rpc/enforce_store_mfa',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});adminSecurity={paused:false};
+ await request('/rest/v1/rpc/enforce_store_mfa',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});adminSecurity={...adminSecurity,paused:false};
 }
 async function enterWorkspace(){
  saveAdminSession();
@@ -143,9 +143,10 @@ async function enterWorkspace(){
  await load();$('login').reset();$('confirmEmail').reset();$('login').classList.add('hidden');$('confirmEmail').classList.add('hidden');$('workspace').classList.remove('hidden');$('authArea').classList.add('hidden');selectView('home',true);window.AdminWorkspace?.loadTeam();status('');refreshOverview();loadProductWishlistCounts();updateStockSummary('force');
 }
 $('login').onsubmit=async e=>{e.preventDefault();if(busy)return;const b=e.submitter,epoch=sessionEpoch;b.disabled=true;busy=true;try{
+ status('');$('status').classList.add('admin-loading');$('status').innerHTML='<span class="admin-loading-content"><span class="loading-brand" aria-hidden="true"><span class="admin-logo">J.P</span><img class="loading-paw" src="images/brand-paw.webp" alt=""><span class="loading-signature">BY VASYA</span></span><span class="loading-caption">Загружаем управление магазином…</span><span class="loading-track" aria-hidden="true"></span></span>';
  const data=await request('/auth/v1/token?grant_type=password',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:e.target.email.value.trim(),password:e.target.password.value})});
  if(epoch!==sessionEpoch)return;keepSession(data);await enterWorkspace();
-}catch(err){if(epoch===sessionEpoch||!session)status(err.message)}finally{busy=false;b.disabled=false;e.target.password.value=''}};
+}catch(err){if(epoch===sessionEpoch||!session)status(err.message)}finally{$('status').classList.remove('admin-loading');if($('status').querySelector?.('.loading-brand'))status('');busy=false;b.disabled=false;e.target.password.value=''}};
 $('recover').onclick=async()=>{
  if(busy)return;
  const email=$('login').email.value.trim();if(!email){status('Введи Email для восстановления пароля.');return}

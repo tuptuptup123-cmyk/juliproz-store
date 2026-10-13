@@ -246,3 +246,9 @@ test('pending recovery sets password before waiting for owner approval',async()=
 test('ordinary administrator cannot dispatch permanent product deletion',async()=>{
  const a=api({factors:[factor]}),h=setup(a.fetch);h.seed(session('aal2',[factor]));h.run("items=[{id:44,brand:'Brand',name:'Item',revision:1}];adminSecurity={paused:false,pending:false,owner:false}");await h.get('inventory').onclick({target:{dataset:{delete:'44'}}});assert.ok(!a.calls.some(c=>c.options.method==='DELETE'));assert.match(h.get('status').textContent,/только владелец/);
 });
+
+test('enforcing MFA preserves the owner role returned by the security endpoint',async()=>{
+ const a=api({factors:[factor]}),h=setup(a.fetch);
+ h.run("session={access_token:'synthetic',expires_at:Date.now()/1000+3600,user:{id:'owner'}};adminSecurity={owner:true,paused:true,pending:false}");
+ await h.run('enableMfaProtection()');assert.equal(h.run('adminSecurity.owner'),true);assert.equal(h.run('adminSecurity.paused'),false);
+});
