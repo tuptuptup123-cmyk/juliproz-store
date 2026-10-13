@@ -86,7 +86,7 @@ Public signup was verified disabled through Auth settings. Dashboard-only action
 
 ## Audit corrections — 13 October 2026
 
-Apply `supabase/migrations/20261013044613_audit_security_and_logic_fixes.sql` before deploying the changed admin or Edge functions. Admin access/refresh tokens now live only in document memory; reload or a new tab requires sign-in, while non-sensitive editor preferences remain stored. Legacy saved credentials are removed. Invite/recovery links explicitly confirm the target email and cannot silently replace another active account.
+Apply `supabase/migrations/20261013054144_audit_security_and_logic_fixes.sql` before deploying the changed admin or Edge functions. Admin access/refresh tokens now live only in document memory; reload or a new tab requires sign-in, while non-sensitive editor preferences remain stored. Legacy saved credentials are removed. Invite/recovery links explicitly confirm the target email and cannot silently replace another active account.
 
 Invitation email delivery does not grant membership. The invited user confirms email, sets a password and enrolls TOTP, then waits for the owner to approve access. Existing accounts also require verified email and TOTP before an owner can add them. Only the owner can permanently delete products; ordinary administrators can mark them sold or hidden. MFA and active server sessions remain required.
 
