@@ -79,6 +79,19 @@ Apply `supabase/audit-fixes.sql` after the existing schema. The one-time `retire
 
 The admin Delete action intentionally deletes a product permanently after confirmation; existing product links then become unavailable. The private change log keeps the audit record. Photo objects are retained. Cart checkout is a manager request, not an atomic stock reservation or paid order.
 
-Analytics starts only after consent; rejection/revocation removes local analytics IDs and stops new events. Totals reflect consenting devices only. Ingest limits: 120 requests/min globally, 10,000/day globally, 30/min per IP fingerprint and visitor, 20 new sessions/min globally and 5/min per fingerprint. Origin and IP headers are not authentication; global limits bound traffic even if IP is forged. The privacy notice describes implemented behavior and should receive legal review for the store's jurisdictions.
+Analytics starts only after consent; rejection/revocation removes local analytics IDs and stops new events. Totals reflect consenting devices only. Ingest limits: 2,400 requests/min globally, 250,000/day globally, 600/min and 20,000/day per IP fingerprint, 120/min per visitor, 300 new sessions/min globally and 150/min per fingerprint. Origin and IP headers are not authentication; global limits bound traffic even if IP is forged. The privacy notice describes implemented behavior and should receive legal review for the store's jurisdictions.
 
 Public signup was verified disabled through Auth settings. Dashboard-only actions still needed: set password minimum 12 and enable leaked-password protection if the plan supports it. These settings cannot be changed through the connected database tools.
+
+
+## Audit corrections — 13 October 2026
+
+Apply `supabase/migrations/20261013054144_audit_security_and_logic_fixes.sql` before deploying the changed admin or Edge functions. Admin access/refresh tokens now live only in document memory; reload or a new tab requires sign-in, while non-sensitive editor preferences remain stored. Legacy saved credentials are removed. Invite/recovery links explicitly confirm the target email and cannot silently replace another active account.
+
+Invitation email delivery does not grant membership. The invited user confirms email, sets a password and enrolls TOTP, then waits for the owner to approve access. Existing accounts also require verified email and TOTP before an owner can add them. Only the owner can permanently delete products; ordinary administrators can mark them sold or hidden. MFA and active server sessions remain required.
+
+Checkout drafts retain each selected variant and its quantity alongside the canonical product link, with no prices. Analytics validates published product IDs and reports pressure at 80% of global limits. Anonymous event counts can still be fabricated and are not proof of messages, orders or individual humans. Per-IP limits depend on trusted proxy behavior, which needs a separate live verification. Consent withdrawal stops new collection; the previous visitor reference can be copied while the page stays open to support a deletion request.
+
+Telegram local admission now precedes shared admission and refunds local reservations on refusal/outage. UTC daily caps are 100 messages or 500 callbacks per chat, in addition to existing global caps. Many-account attacks can still exhaust global availability. The obsolete exchange-rate endpoint returns 410 without contacting an external service. Historical import Edge functions are source-controlled 403 stubs; the retired upload function returns 410.
+
+Current regression probes: `supabase/audit-security-probes.sql`. Legacy MFA probes describe the earlier enrollment policy and are not the current acceptance check. Do not run historic setup/rollback scripts against an installed production database as routine maintenance.

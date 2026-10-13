@@ -83,18 +83,25 @@ function createReplyGuard(now = () => performance.now(), maxReplies = 5) {
   const seen = new Map();
   const windowMs = 60_000;
   const duplicateMs = 300_000;
-  return function allow(chatId, updateId) {
+  function allow(chatId, updateId) {
     const time = now();
-    for (const [id, expiry] of seen) if (expiry <= time) seen.delete(id);
+    for (const [id, entry] of seen) if (entry.expiry <= time) seen.delete(id);
     for (const [id, state] of chats) if (state.reset <= time) chats.delete(id);
     if (seen.has(updateId)) return false;
-    const state = chats.get(chatId);
+    let state = chats.get(chatId);
     if ((!state && chats.size >= 2000) || seen.size >= 10000 || (state && state.count >= maxReplies)) return false;
-    seen.set(updateId, time + duplicateMs);
-    if (state) state.count++;
-    else chats.set(chatId, { count: 1, reset: time + windowMs });
+    if (!state) { state = { count: 0, reset: time + windowMs }; chats.set(chatId, state); }
+    state.count++;
+    seen.set(updateId, { expiry: time + duplicateMs, chatId, state });
     return true;
+  }
+  allow.release = (chatId, updateId) => {
+    const entry = seen.get(updateId);
+    if (!entry || entry.chatId !== chatId) return;
+    seen.delete(updateId);
+    if (chats.get(chatId) === entry.state && --entry.state.count <= 0) chats.delete(chatId);
   };
+  return allow;
 }
 
 function callbackResponse(update) {
@@ -145,10 +152,12 @@ function createHandler(env = process.env, allowReply = createReplyGuard(), apiRe
     // In-memory counters are only an extra guard; shared admission is authoritative.
     function admit(reply, kind, localGuard, send) {
       if (!reply) return res.status(200).json({ ok: true });
-      const finish = allowed => allowed && localGuard(reply.chat_id, update.update_id)
-        ? send() : res.status(200).json({ ok: true });
+      // Reserve synchronously before shared admission; undo on rejection/failure.
+      if (!localGuard(reply.chat_id, update.update_id)) return res.status(200).json({ ok: true });
+      const release = () => localGuard.release?.(reply.chat_id, update.update_id);
+      const finish = allowed => { if (allowed) return send(); release(); return res.status(200).json({ ok: true }); };
       const unavailable = () => {
-        res.setHeader('Retry-After', '5');
+        release();res.setHeader('Retry-After', '5');
         return res.status(503).json({ error: 'Bot temporarily unavailable' });
       };
       try {

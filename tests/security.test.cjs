@@ -12,24 +12,24 @@ function node(){
 }
 const factor={id:'synthetic-factor',friendly_name:'My device',factor_type:'totp',status:'verified'};
 const jwt=aal=>`synthetic.${Buffer.from(JSON.stringify({aal})).toString('base64url')}.synthetic`;
-const user=factors=>({id:'owner',factors});
+const user=factors=>({id:'owner',email:'owner@example.invalid',factors});
 const session=(aal='aal1',factors=[])=>({access_token:jwt(aal),refresh_token:'synthetic-refresh',expires_in:3600,user:user(factors)});
 const response=(body,status=200)=>({ok:status<400,status,json:async()=>body});
 function setup(fetch,mfaEnrollmentEnabled=true,sessionStorage,localStorage){
  const nodes=new Map();const get=id=>{if(!nodes.has(id))nodes.set(id,node());return nodes.get(id)};
- const context=vm.createContext({sessionStorage,localStorage,document:{getElementById:get,querySelectorAll:()=>[],addEventListener(){}},window:{addEventListener(){},STORE_CONFIG:{url:'https://test.supabase.co',key:'public',mfaEnrollmentEnabled}},fetch,URL,URLSearchParams,atob,AbortController,setTimeout,clearTimeout,structuredClone,crypto,location:{search:''},safeProductImage:()=>true});
+ const context=vm.createContext({confirm:()=>true,sessionStorage,localStorage,document:{getElementById:get,querySelectorAll:()=>[],addEventListener(){}},window:{addEventListener(){},STORE_CONFIG:{url:'https://test.supabase.co',key:'public',mfaEnrollmentEnabled}},fetch,URL,URLSearchParams,atob,AbortController,setTimeout,clearTimeout,structuredClone,crypto,location:{search:''},safeProductImage:()=>true});
  get('editor').elements=Object.fromEntries(['brand','name','size','price','currency','available','fulfillment_status'].map(k=>[k,node()]));
  vm.runInContext(fs.readFileSync(__dirname+'/../product-pricing.js','utf8'),context);
  vm.runInContext(fs.readFileSync(__dirname+'/../admin.js','utf8'),context);
  get('mfaVerify').code=node();
  return {get,run:code=>vm.runInContext(code,context),seed:s=>vm.runInContext('keepSession('+JSON.stringify(s)+')',context)};
 }
-function api({factors=[],verification=session('aal2',[factor]),activateError=false,paused=false}={}){
+function api({factors=[],verification=session('aal2',[factor]),activateError=false,paused=false,pending=false}={}){
  const calls=[];
  return {calls,fetch:async(path,options={})=>{
   calls.push({path,options});
-  if(path.includes('/rpc/store_admin_security_status'))return response({paused});
-  if(path.includes('/store_admins'))return response([{user_id:'owner'}]);
+  if(path.includes('/rpc/store_admin_security_status'))return response({paused,pending,access_role:pending?null:'owner'});
+  if(path.includes('/store_admins'))return response(pending?[]:[{user_id:'owner'}]);
   if(path.endsWith('/auth/v1/user'))return response(user(factors));
   if(path.endsWith('/challenge'))return response({id:'challenge'});
   if(path.endsWith('/verify')){factors=[factor];return response(verification)}
@@ -132,34 +132,21 @@ test('paused owner can resume MFA only after verifying a factor',async()=>{
 });
 
 function tabStorage(saved){const values=new Map(saved?[['jpAdminSessionV1',JSON.stringify(saved)]]:[]);return {getItem:k=>values.get(k)||null,setItem:(k,v)=>values.set(k,v),removeItem:k=>values.delete(k)}}
-test('refresh restores tab session only after server identity and admin checks',async()=>{
- const saved={...session('aal2',[factor]),recovering:false};const storage=tabStorage(saved),a=api({factors:[factor]});
- const h=setup(async(path,options)=>path.includes('grant_type=refresh_token')?response(session('aal2',[factor])):a.fetch(path,options),true,storage);
- await h.run('adminSessionReady');assert.equal(h.run('session.user.id'),'owner');assert.ok(a.calls.some(c=>c.path.includes('/store_admins')));assert.ok(a.calls.some(c=>c.path.endsWith('/auth/v1/user')));assert.ok(a.calls.some(c=>c.path.includes('/products?')));
- assert.ok(storage.getItem('jpAdminSessionV1'));h.run('endSession()');assert.equal(storage.getItem('jpAdminSessionV1'),null);
+test('legacy browser tokens are discarded without automatic login or private API calls',async()=>{
+ const local=tabStorage(session('aal2',[factor])),tab=tabStorage(session()),calls=[];
+ const h=setup(async path=>{calls.push(path);return response({})},true,tab,local);
+ await h.run('adminSessionReady');assert.equal(h.run('session'),null);assert.equal(local.getItem('jpAdminSessionV1'),null);assert.equal(tab.getItem('jpAdminSessionV1'),null);assert.deepEqual(calls,[]);
 });
-test('revoked saved session is removed and never loads inventory',async()=>{
- const storage=tabStorage(session()),calls=[];const h=setup(async path=>{calls.push(path);return response({message:'Revoked'},401)},true,storage);
- await h.run('adminSessionReady');assert.equal(h.run('session'),null);assert.equal(storage.getItem('jpAdminSessionV1'),null);assert.equal(calls.length,1);assert.ok(calls[0].includes('grant_type=refresh_token'));
+test('login and refresh credentials remain only in memory, including recovery sessions',async()=>{
+ const local=tabStorage(),tab=tabStorage(),h=setup(async()=>response(session('aal2',[factor])),true,tab,local);
+ h.seed(session('aal2',[factor]));h.run('recovering=true;saveAdminSession()');
+ assert.equal(h.run('session.refresh_token'),'synthetic-refresh');assert.equal(local.getItem('jpAdminSessionV1'),null);assert.equal(tab.getItem('jpAdminSessionV1'),null);
+ const reopened=setup(async()=>{throw Error('Unexpected auto-login')},true,tab,local);await reopened.run('adminSessionReady');assert.equal(reopened.run('session'),null);
 });
-test('transient restore failure retains saved tokens for retry',async()=>{
- const storage=tabStorage(session());const h=setup(async()=>response({message:'Unavailable'},503),true,storage);await h.run('adminSessionReady');assert.equal(h.run('session'),null);assert.ok(storage.getItem('jpAdminSessionV1'));
-});
-test('restored aal1 session cannot bypass MFA',async()=>{
- const storage=tabStorage(session()),a=api({factors:[factor]});const h=setup(async(path,options)=>path.includes('grant_type=refresh_token')?response(session()):a.fetch(path,options),true,storage);await h.run('adminSessionReady');assert.equal(h.run('mfaMode'),'challenge');assert.ok(!a.calls.some(c=>c.path.includes('/products?')));
-});
-
-test('login persists across new tabs and migrates legacy tab storage',async()=>{
- const local=tabStorage(),legacy=tabStorage(session('aal2',[factor])),a=api({factors:[factor]});const fetch=async(path,options)=>path.includes('grant_type=refresh_token')?response(session('aal2',[factor])):a.fetch(path,options);
- const first=setup(fetch,true,legacy,local);await first.run('adminSessionReady');assert.ok(local.getItem('jpAdminSessionV1'));assert.equal(legacy.getItem('jpAdminSessionV1'),null);
- const second=setup(fetch,true,tabStorage(),local);await second.run('adminSessionReady');assert.equal(second.run('session.user.id'),'owner');second.run('endSession()');assert.equal(local.getItem('jpAdminSessionV1'),null);
-});
-test('persistent restored session still fails closed when server revokes it',async()=>{
- const local=tabStorage(session()),h=setup(async()=>response({message:'Revoked'},401),true,tabStorage(),local);await h.run('adminSessionReady');assert.equal(h.run('session'),null);assert.equal(local.getItem('jpAdminSessionV1'),null);
-});
-
-test('reload with a valid saved access token does not rotate the refresh token',async()=>{
- const saved={...session('aal2',[factor]),expires_at:Date.now()/1000+3600},local=tabStorage(saved),a=api({factors:[factor]});const h=setup(a.fetch,true,tabStorage(),local);await h.run('adminSessionReady');assert.equal(h.run('session.user.id'),'owner');assert.ok(!a.calls.some(c=>c.path.includes('grant_type=refresh_token')));assert.ok(a.calls.some(c=>c.path.endsWith('/auth/v1/user')));assert.equal(h.get('login').classList.contains('hidden'),true);
+test('expired in-memory session refreshes once and still validates server identity',async()=>{
+ const a=api({factors:[factor]});let refreshes=0;
+ const h=setup(async(path,o)=>{if(path.includes('grant_type=refresh_token')){refreshes++;return response(session('aal2',[factor]))}return a.fetch(path,o)});
+ h.seed({...session('aal2',[factor]),expires_at:1});await Promise.all([h.run("request('/auth/v1/user')"),h.run("request('/auth/v1/user')")]);assert.equal(refreshes,1);assert.equal(h.run('sessionAal()'),'aal2');
 });
 
 test('successful login initializes home while loading blocks user navigation',async()=>{
@@ -236,4 +223,32 @@ test('recovery requests the isolated admin callback explicitly',async()=>{
  await h.get('recover').onclick();
  const call=calls.find(c=>c.path.includes('/auth/v1/recover?'));
  assert.ok(call);assert.equal(new URL(call.path).searchParams.get('redirect_to'),'https://admin.juliproz.com/admin.html');
+});
+
+test('callback for another account cannot replace the current in-memory session',async()=>{
+ const h=setup(async()=>response({id:'other',email:'other@example.invalid',factors:[]}));h.seed(session('aal2',[factor]));
+ h.run("location.hash='#type=recovery&access_token=other&refresh_token=other-refresh';globalThis.history={replaceState:()=>{location.hash=''}}");
+ await h.run('restoreAdminSession()');assert.equal(h.run('session.user.id'),'owner');assert.match(h.get('status').textContent,/другому аккаунту/);assert.equal(h.run('location.hash'),'');
+});
+test('callback identity requires explicit acceptance before adopting credentials',async()=>{
+ const a=api(),h=setup(a.fetch);h.run("confirm=()=>false;location.hash='#type=invite&access_token=synthetic&refresh_token=synthetic-refresh';globalThis.history={replaceState:()=>{location.hash=''}}");
+ await h.run('restoreAdminSession()');assert.equal(h.run('session'),null);assert.equal(a.calls.some(c=>c.path.includes('/products')),false);assert.equal(h.run('location.hash'),'');
+});
+
+test('pending invitation can enroll MFA without membership or private inventory access',async()=>{
+ const a=api({pending:true}),h=setup(a.fetch);h.seed(session());await h.run('enterWorkspace()');assert.equal(h.run('mfaMode'),'enroll');assert.ok(!a.calls.some(c=>c.path.includes('/products?')));
+ h.get('mfaVerify').code.value='123456';await h.get('mfaVerify').onsubmit({preventDefault(){},submitter:node(),target:h.get('mfaVerify')});
+ assert.equal(h.get('pendingAccess').classList.contains('hidden'),false);assert.equal(h.get('workspace').classList.contains('hidden'),true);assert.ok(!a.calls.some(c=>c.path.includes('/rpc/enforce_store_mfa')));assert.ok(!a.calls.some(c=>c.path.includes('/products?')));
+});
+test('pending recovery sets password before waiting for owner approval',async()=>{
+ const a=api({pending:true,factors:[factor]}),h=setup(a.fetch);h.seed(session('aal2',[factor]));h.run('recovering=true');await h.run('enterWorkspace()');assert.equal(h.get('newPassword').classList.contains('hidden'),false);assert.equal(h.get('workspace').classList.contains('hidden'),true);assert.ok(!a.calls.some(c=>c.path.includes('/products?')));
+});
+test('ordinary administrator cannot dispatch permanent product deletion',async()=>{
+ const a=api({factors:[factor]}),h=setup(a.fetch);h.seed(session('aal2',[factor]));h.run("items=[{id:44,brand:'Brand',name:'Item',revision:1}];adminSecurity={paused:false,pending:false,owner:false}");await h.get('inventory').onclick({target:{dataset:{delete:'44'}}});assert.ok(!a.calls.some(c=>c.options.method==='DELETE'));assert.match(h.get('status').textContent,/только владелец/);
+});
+
+test('enforcing MFA preserves the owner role returned by the security endpoint',async()=>{
+ const a=api({factors:[factor]}),h=setup(a.fetch);
+ h.run("session={access_token:'synthetic',expires_at:Date.now()/1000+3600,user:{id:'owner'}};adminSecurity={owner:true,paused:true,pending:false}");
+ await h.run('enableMfaProtection()');assert.equal(h.run('adminSecurity.owner'),true);assert.equal(h.run('adminSecurity.paused'),false);
 });

@@ -66,3 +66,15 @@ test('a failed database admission does not consume the local guard',async()=>{
   assert.equal((await invoke(handler,message(1))).status,503);down=false;
   assert.equal((await invoke(handler,message(1))).body.method,'sendMessage');
 });
+
+test('local reservations bound concurrent shared admissions and refund refusals',async()=>{
+ let calls=0,resolve;const waiting=new Promise(r=>resolve=r);
+ const handler=createHandler(env,undefined,undefined,undefined,async()=>{calls++;return waiting});
+ const pending=Array.from({length:8},(_,i)=>invoke(handler,message(200+i)));
+ await new Promise(setImmediate);assert.equal(calls,5);resolve(false);await Promise.all(pending);
+ assert.equal((await invoke(createHandler(env,undefined,undefined,undefined,async()=>true),message(300))).body.method,'sendMessage');
+ // Refusals return local capacity, including the same update ID.
+ let denied=true;const retry=createHandler(env,undefined,undefined,undefined,async()=>!denied);
+ assert.equal((await invoke(retry,message(400))).body.ok,true);denied=false;
+ assert.equal((await invoke(retry,message(400))).body.method,'sendMessage');
+});

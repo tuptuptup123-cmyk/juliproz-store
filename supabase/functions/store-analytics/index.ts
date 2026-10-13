@@ -5,7 +5,7 @@ let cachedSalt=null;
 async function dailySalt(){
  const day=new Date().toISOString().slice(0,10);if(cachedSalt?.day===day)return cachedSalt.value;
  const r=await fetch(`${Deno.env.get('SUPABASE_URL')}/rest/v1/rpc/store_analytics_daily_salt`,{method:'POST',headers:{apikey:Deno.env.get('SUPABASE_SERVICE_ROLE_KEY'),Authorization:`Bearer ${Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')}`,'Content-Type':'application/json'},body:'{}',signal:AbortSignal.timeout(8000)});
- if(!r.ok)throw Error('salt unavailable');const value=await r.json();if(!/^[a-f0-9]{64}$/.test(value))throw Error('salt invalid');cachedSalt={day,value};return value;
+ if(!r.ok)throw Object.assign(Error('salt unavailable'),{status:503});let value;try{value=await r.json()}catch{throw Object.assign(Error('salt invalid'),{status:503})}if(!/^[a-f0-9]{64}$/.test(value))throw Object.assign(Error('salt invalid'),{status:503});cachedSalt={day,value};return value;
 }
 async function boundedBody(req){
  if(!req.body)return '';const reader=req.body.getReader();let size=0;const chunks=[];
@@ -21,7 +21,7 @@ Deno.serve(async(req)=>{
  if(req.method!=='POST')return reply(405,{error:'method'});
  if(Number(req.headers.get('content-length')||0)>2048)return reply(413,{error:'size'});
  try{
-  const text=await boundedBody(req);if(text===null)return reply(413,{error:'size'});const b=JSON.parse(text);
+  const text=await boundedBody(req);if(text===null)return reply(413,{error:'size'});const b=JSON.parse(text);if(!b||typeof b!=='object'||Array.isArray(b))return reply(400,{error:'event'});
   if(!uuid.test(b.event_id)||!uuid.test(b.visitor_id)||!uuid.test(b.session_id)||!events.has(b.event)||b.product_id!=null&&(!Number.isSafeInteger(b.product_id)||b.product_id<1)||b.page!=null&&!['catalog','wishlist','cart'].includes(b.page))return reply(400,{error:'event'});
   // Rightmost forwarding hop; global DB limits also apply independently of IP headers.
   const ip=(req.headers.get('x-forwarded-for')||'unknown').split(',').at(-1).trim().slice(0,128);
@@ -29,6 +29,6 @@ Deno.serve(async(req)=>{
   const digest=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(`${await dailySalt()}:${ip}`));
   const fingerprint=Array.from(new Uint8Array(digest),x=>x.toString(16).padStart(2,'0')).join('');
   const response=await fetch(`${Deno.env.get('SUPABASE_URL')}/rest/v1/rpc/store_analytics_ingest`,{method:'POST',headers:{apikey:Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,Authorization:`Bearer ${Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')}`,'Content-Type':'application/json'},body:JSON.stringify({p_event_id:b.event_id,p_visitor:b.visitor_id,p_session:b.session_id,p_event:b.event,p_product:b.product_id??null,p_page:b.page??null,p_fingerprint:fingerprint}),signal:AbortSignal.timeout(8000)});
-  if(!response.ok)return reply(503,{error:'unavailable'});const accepted=await response.json();return reply(accepted?202:429,{accepted});
- }catch{return reply(400,{error:'invalid'})}
+  if(!response.ok)return reply(503,{error:'unavailable'});let accepted;try{accepted=await response.json()}catch{return reply(503,{error:'unavailable'})}if(typeof accepted!=='boolean')return reply(503,{error:'unavailable'});return reply(accepted?202:429,{accepted});
+ }catch(error){return reply(error?.status!==503&&error instanceof SyntaxError?400:503,{error:error instanceof SyntaxError?'invalid':'unavailable'})}
 });

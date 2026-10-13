@@ -1,6 +1,7 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
 const nodes=new Map(),saved=new Map();const get=id=>{if(!nodes.has(id))nodes.set(id,{innerHTML:'',textContent:'',value:'',classList:{add(){},remove(){},toggle(){},contains(){return false}},addEventListener(type,handler){this[type]=handler},setAttribute(){}});return nodes.get(id)};
 let rows=[],fail=false,links=[];
+const managerDraft=rows=>'Привет! Хочу заказать:\n\n'+rows.map(([id,size,quantity])=>`https://t.me/JuliProzBot/shop?startapp=p_${id}\nРазмер: ${size||'уточнить'} · Количество: ${quantity}`).join('\n\n');
 const context=vm.createContext({ProductSizes:require('../product-sizes.js'),safeProductImage:()=>false,window:{STORE_CONFIG:{url:'https://test.invalid',key:'public'},open:u=>links.push(u),addEventListener(){}},document:{getElementById:get,querySelectorAll:()=>[],querySelector:()=>null,addEventListener(){}},localStorage:{getItem:k=>saved.get(k)||null,setItem:(k,v)=>saved.set(k,v)},location:{search:''},URLSearchParams,AbortSignal,setTimeout,fetch:async()=>{if(fail)throw Error();return {ok:true,json:async()=>rows}}});
 vm.runInContext(fs.readFileSync(__dirname+'/../product-pricing.js','utf8'),context);
  vm.runInContext(fs.readFileSync(__dirname+'/../app.js','utf8'),context);const run=s=>vm.runInContext(s,context);
@@ -8,7 +9,7 @@ vm.runInContext(fs.readFileSync(__dirname+'/../product-pricing.js','utf8'),conte
 rows=[{id:1,brand:'Gucci',name:'Обувь',size:'40; 41',price:100,original_price:125,currency:'EUR',fulfillment_status:'on_order'},{id:2,brand:'Chanel',name:'Сумка',size:'',price:200,currency:'EUR',fulfillment_status:'on_order'}];context.fixture=rows;run('products=fixture;openProduct(1);addToCart()');assert.equal(run('cart.length'),0);
 run("selectedSize='40';addToCart();addToCart();selectedSize='41';addToCart();openProduct(2);addToCart()");assert.equal(run('cart.length'),3);assert.equal(run('cartCount()'),3);assert.doesNotMatch(get('cartContent').innerHTML,/discount-badge/);assert.match(get('cartContent').innerHTML,/price-original/);assert.equal(run('readCart().length'),3);assert.deepEqual(JSON.parse(run('JSON.stringify(cartTotals().totals)')),[{currency:'EUR',price:400}]);
 await run('checkoutCart()');assert.equal(links.length,1);
-assert.equal(new URL(links[0]).searchParams.get('text'),'Привет! Хочу заказать:\n\nhttps://t.me/JuliProzBot/shop?startapp=p_1\nhttps://t.me/JuliProzBot/shop?startapp=p_2');
+assert.equal(new URL(links[0]).searchParams.get('text'),managerDraft([[1,'40',1],[1,'41',1],[2,'',1]]));
 await run('checkoutCart()');assert.equal(links.length,1);assert.match(get('cartStatus').textContent,/Подождите/);
 rows[0]={...rows[0],price:120};await run('checkoutCart()');assert.equal(links.length,1);assert.match(get('cartStatus').textContent,/изменились/);assert.equal(run('cartTotals().totals[0].price'),440);run('telegramOpenTimes.clear()');await run('checkoutCart()');assert.equal(links.length,2);
 rows[0]={...rows[0],size:'40'};await run('checkoutCart()');assert.equal(links.length,2);assert.match(get('cartStatus').textContent,/недоступны/);
@@ -65,7 +66,7 @@ assert.doesNotMatch(run("conditionBadge({product_condition:'pre_owned',wear_cond
 assert.match(run("descriptionText({product_condition:'pre_owned',wear_condition:'gently_used'})"),/Состояние: Небольшие следы носки/);
 assert.equal(run("descriptionText({description:'Небольшие следы носки на рукавах',product_condition:'pre_owned',wear_condition:'gently_used'})"),'Небольшие следы носки на рукавах');
 assert.equal(run("wearLabel({product_condition:'new',wear_condition:'used'})"),'');
-// Fractional legacy prices become whole EUR unit prices in the store; manager drafts omit all amounts.
+// Fractional legacy prices become whole EUR unit prices in the store; manager drafts preserve quantities without prices.
 rows=[{id:801,brand:'Gucci',name:'Обувь',size:'',price:624.9,original_price:899.7,currency:'EUR',available:true,fulfillment_status:'on_order'},{id:802,name:'Сумка',size:'',price:124.4,currency:'€',available:true,fulfillment_status:'on_order'},{id:803,name:'По запросу',size:'',price:null,currency:'EUR',available:true,fulfillment_status:'on_order'},{id:804,name:'Другая валюта',size:'',price:100.9,currency:'USD',available:true,fulfillment_status:'on_order'}];context.fixture=rows;
 run("cart=[];products=fixture;state.tab='catalog';state.sort='newest';state.favorites=new Set(['801']);render();openProduct(801);addToCart();cart[0].quantity=2;openProduct(802);addToCart();cart[1].quantity=3;openProduct(803);addToCart();openProduct(804);addToCart();saveCart();renderCart()");
 assert.match(get('grid').innerHTML,/€ 625/);assert.match(get('grid').innerHTML,/€ 900/);assert.doesNotMatch(get('grid').innerHTML,/624,9|899,7/);
@@ -73,17 +74,17 @@ run("state.tab='favorites';render();openProduct(801)");assert.match(get('grid').
 assert.equal(run('cart[0].product.price'),625);assert.equal(run('cart[0].product.original_price'),900);assert.equal(run('cartTotals().totals[0].price'),1622);assert.equal(run('cartTotals().unknown'),true);
 assert.equal(JSON.parse(saved.get('jpCart'))[0].product.price,625);assert.equal(run("money({price:624.5,currency:'EUR'})"),'€ 625');assert.equal(run("money({price:null,currency:'EUR'})"),'');assert.equal(run("money({price:-0.1,currency:'EUR'})"),'');
 const beforeRounded=links.length;await run('checkoutCart()');assert.equal(links.length,beforeRounded+1);
-const roundedDraft=new URL(links.at(-1)).searchParams.get('text');assert.equal(roundedDraft,'Привет! Хочу заказать:\n\n'+[801,802,803,804].map(id=>'https://t.me/JuliProzBot/shop?startapp=p_'+id).join('\n'));
+const roundedDraft=new URL(links.at(-1)).searchParams.get('text');assert.equal(roundedDraft,managerDraft([[801,'',2],[802,'',3],[803,'',1],[804,'',1]]));
 rows[0]={...rows[0],price:624.6};run('telegramOpenTimes.clear()');await run('checkoutCart()');assert.equal(links.length,beforeRounded+2);assert.doesNotMatch(get('cartStatus').textContent,/изменились/);
 rows[0]={...rows[0],price:625.6};await run('checkoutCart()');assert.equal(links.length,beforeRounded+2);assert.match(get('cartStatus').textContent,/изменились/);assert.equal(run('cartTotals().totals[0].price'),1624);assert.equal(run('cart[0].product.price'),626);
 saved.set('jpCart',JSON.stringify([{id:801,size:'',quantity:2,product:{price:624.9,original_price:899.7,currency:'EUR'}}]));run('products=[];cart=readCart()');assert.equal(run('cart[0].product.price'),625);assert.equal(run('cart[0].product.original_price'),900);assert.equal(run('cartTotals().totals[0].price'),1250);
-// Manager messages greet the seller, then list canonical links without product details or prices.
+// Manager messages retain canonical links, variant and quantity per cart row, without prices.
 rows=[{id:901,brand:'Bottega Veneta',name:'Bottega Veneta Куртка Oversized Zip Twill, молочная',size:'XL',price:624.9,currency:'EUR',available:true,fulfillment_status:'on_order'}];context.fixture=rows;run('cart=[];products=fixture;openProduct(901);addToCart()');const beforeSingle=links.length;await run('checkoutCart()');assert.equal(links.length,beforeSingle+1);
-assert.equal(new URL(links.at(-1)).searchParams.get('text'),'Привет! Хочу заказать:\n\nhttps://t.me/JuliProzBot/shop?startapp=p_901');
+assert.equal(new URL(links.at(-1)).searchParams.get('text'),managerDraft([[901,'XL',1]]));
 assert.match(get('cartContent').innerHTML,/€ 625/);assert.equal(run('cartTotals().totals[0].price'),625);
-// Price-on-request products also produce only their canonical link.
+// Price-on-request products preserve their quantity without inventing a price.
 rows=[{id:902,brand:'CHANEL',name:'CHANEL Сумка Classic',size:'',price:null,currency:'EUR',available:true,fulfillment_status:'in_stock'}];context.fixture=rows;run('cart=[];products=fixture;openProduct(902);addToCart()');await run('checkoutCart()');assert.equal(links.length,beforeSingle+2);
-assert.equal(new URL(links.at(-1)).searchParams.get('text'),'Привет! Хочу заказать:\n\nhttps://t.me/JuliProzBot/shop?startapp=p_902');
+assert.equal(new URL(links.at(-1)).searchParams.get('text'),managerDraft([[902,'',1]]));
 assert.match(get('cartContent').innerHTML,/Цена по запросу/);assert.equal(run('cartTotals().unknown'),true);
 // Offline cart snapshots preserve the canonical percentage basis but charge whole euros.
 rows=[{id:903,brand:'Loro Piana',name:'Кепка',size:'L',price:400,original_price:571.43,currency:'EUR',available:true,fulfillment_status:'on_order'}];context.fixture=rows;run('cart=[];products=fixture;openProduct(903);addToCart();saveCart();products=[];cart=readCart();renderCart()');

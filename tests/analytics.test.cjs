@@ -18,3 +18,28 @@ test('Edge bounds bodies, rejects foreign origins and uses private cached salt',
  assert.equal((await handler(req(JSON.stringify(event)))).status,202);accepted=false;assert.equal((await handler(req(JSON.stringify(event)))).status,429);assert.equal(saltReads,1);
  const payload=JSON.parse(requests.find(x=>x.u.endsWith('ingest')).o.body);assert.match(payload.p_fingerprint,/^[a-f0-9]{64}$/);assert.equal(Object.keys(payload).some(k=>/ip|name|email/.test(k)),false);
 });
+
+test('withdrawal receipt survives only in memory and never resumes tracking',()=>{
+ const local=new Map(),session=new Map(),calls=[],nodes=new Map();
+ const storage=m=>({getItem:k=>m.get(k)||null,setItem:(k,v)=>m.set(k,v),removeItem:k=>m.delete(k)});
+ const node=id=>{if(!nodes.has(id))nodes.set(id,{textContent:'',classList:{toggle(){},add(){},remove(){}},focus(){},addEventListener(){}});return nodes.get(id)};
+ const context=vm.createContext({window:{STORE_CONFIG:{url:'https://test.invalid',key:'public'}},document:{visibilityState:'visible',getElementById:node,addEventListener(){}},localStorage:storage(local),sessionStorage:storage(session),crypto,Date,AbortSignal,setInterval(){},fetch:async(...args)=>calls.push(args)});
+ vm.runInContext(fs.readFileSync(__dirname+'/../analytics.js','utf8'),context);
+ context.window.StoreAnalytics.setConsent(true);const id=local.get('jpAnalyticsVisitor');
+ context.window.StoreAnalytics.setConsent(false);context.window.StoreAnalytics.showChoices();
+ assert.ok(node('analyticsDeletionReference').textContent.includes(id));assert.equal(local.has('jpAnalyticsVisitor'),false);assert.equal(session.size,0);
+ const count=calls.length;context.window.StoreAnalytics.track('visit');assert.equal(calls.length,count);
+ assert.equal([...local.values()].some(v=>v.includes(id)),false);
+});
+test('salt and upstream failures are 503 while malformed client input is 400',async()=>{
+ for(const mode of ['salt-http','salt-json','salt-value','ingest-json','ingest-value']){
+  let handler;const context=vm.createContext({Deno:{serve:f=>handler=f,env:{get:()=> 'synthetic'}},Request,Response,TextDecoder,TextEncoder,Uint8Array,AbortSignal,crypto:crypto.webcrypto,fetch:async u=>{
+   if(u.endsWith('daily_salt'))return mode==='salt-http'?new Response('',{status:500}):mode==='salt-json'?new Response('{'):Response.json(mode==='salt-value'?'wrong':'a'.repeat(64));
+   return mode==='ingest-json'?new Response('{'):Response.json({wrong:true});
+  }});
+  vm.runInContext(fs.readFileSync(__dirname+'/../supabase/functions/store-analytics/index.ts','utf8').replace(/Deno\.env\.get\(([^)]+)\)!/g,'Deno.env.get($1)'),context);
+  const req=body=>new Request('https://edge.invalid',{method:'POST',headers:{origin:'https://www.juliproz.com'},body});
+  assert.equal((await handler(req(JSON.stringify({event_id:crypto.randomUUID(),visitor_id:crypto.randomUUID(),session_id:crypto.randomUUID(),event:'visit'})))).status,503,mode);
+  assert.equal((await handler(req('{'))).status,400);assert.equal((await handler(req('null'))).status,400);
+ }
+});

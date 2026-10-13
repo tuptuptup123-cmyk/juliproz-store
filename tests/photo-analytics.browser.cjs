@@ -7,6 +7,7 @@ for(const width of [390,1280]){
  await page.route('**/functions/v1/store-analytics',r=>{events.push(r.request().postDataJSON());return r.fulfill({status:202,json:{accepted:true}})});
  await page.route('**/rest/v1/rpc/store_product_wishlist_counts',r=>r.fulfill({json:{days:30,counts:{}}}));
  await page.route('**/rest/v1/product_admin_notes?**',r=>r.fulfill({json:[]}));
+ await page.route('**/rest/v1/rpc/store_bot_health',r=>r.fulfill({json:false}));
  await page.route('**/rest/v1/products?**',r=>r.fulfill({json:[]}));
  await page.goto('http://localhost:8774/');await page.waitForTimeout(150);
  assert.equal(events.length,0);assert.equal(await page.evaluate(()=>localStorage.getItem('jpAnalyticsVisitor')),null);const visitSent=page.waitForResponse(r=>r.url().includes('/functions/v1/store-analytics')&&r.request().postDataJSON()?.event==='visit'),wishlistSent=page.waitForResponse(r=>r.url().includes('/functions/v1/store-analytics')&&r.request().postDataJSON()?.event==='wishlist_add');await page.locator('#analyticsAccept').click();await page.evaluate(()=>{for(let i=0;i<150;i++)StoreAnalytics.track('wishlist_add',42)});await Promise.all([visitSent,wishlistSent]);assert.equal(events.filter(x=>x.event==='wishlist_add').length,1);assert.equal(events.filter(x=>x.event==='visit').length,1);assert.ok(events.every(x=>!('telegram_id'in x)&&!('name'in x)));
