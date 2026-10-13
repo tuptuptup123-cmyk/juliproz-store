@@ -1,26 +1,26 @@
 const {test}=require('node:test'),assert=require('node:assert/strict');
-const {create,IDLE,MAX}=require('../admin-session.js');
-const reply=(now,max=now+MAX,idle=now+IDLE)=>({server_now:new Date(now).toISOString(),expires_at:new Date(max).toISOString(),idle_expires_at:new Date(idle).toISOString()});
-test('idle clock warns before expiry and background checks never extend it',()=>{
+const {create,MAX}=require('../admin-session.js');
+const reply=(now,max=now+MAX)=>({server_now:new Date(now).toISOString(),expires_at:new Date(max).toISOString(),idle_expires_at:null});
+test('session stays active without input for a week and expires exactly at seven days',()=>{
  let now=1_800_000_000_000;const clock=create(()=>now);clock.start();const start=now;
- for(let i=0;i<28;i++){now+=60000;assert.equal(clock.state().expired,false);assert.equal(clock.due(),false)}
- assert.equal(clock.state().warning,true);now=start+IDLE;assert.equal(clock.state().expired,true);assert.equal(clock.activity(),false);
- assert.equal(clock.accept(reply(now),now),false,'late heartbeat cannot revive an expired session');
+ for(const elapsed of [30*60000,12*3600000,6*86400000]){now=start+elapsed;assert.equal(clock.state().expired,false);assert.equal(clock.state().warning,false)}
+ now=start+MAX-120000;assert.equal(clock.state().warning,true);
+ now=start+MAX;assert.equal(clock.state().expired,true);assert.equal(clock.accept(reply(now),now),false);
 });
-test('activity needs server acknowledgement and absolute expiry never moves',()=>{
- let now=1_800_000_000_000;const clock=create(()=>now);clock.start();const start=now;
- for(let i=0;i<28;i++){now+=25*60000;assert.equal(clock.activity(),true);assert.equal(clock.due(),true);const sent=clock.sent();clock.accept(reply(now,start+MAX),sent);assert.equal(clock.state().expired,false);assert.equal(clock.due(),false)}
- now=start+MAX-60000;clock.activity();clock.accept(reply(now,start+MAX,start+MAX),clock.sent());assert.equal(clock.state().absolute,true);assert.equal(clock.state().warning,true);
- now=start+MAX;assert.equal(clock.state().expired,true);
+test('server checks and token refresh never extend the original sign-in deadline',()=>{
+ let now=1_800_000_000_000;const clock=create(()=>now);clock.start();const deadline=clock.deadline();
+ for(let i=0;i<6;i++){now+=86400000;clock.accept(reply(now),now);assert.equal(clock.deadline(),deadline)}
+ now=deadline;assert.equal(clock.state().expired,true);
 });
-test('server deadlines account for network transit and reject malformed or widened limits',()=>{
- let now=1_800_000_000_000;const clock=create(()=>now);clock.start();const sent=clock.sent(),server=now;
- now+=10000;clock.accept(reply(server,server+MAX,server+IDLE),sent);assert.equal(clock.state().remaining,IDLE-10000);
- assert.throws(()=>clock.accept({},sent));assert.throws(()=>clock.accept(reply(server,server+MAX+1),sent));
- now=sent+IDLE;assert.equal(clock.state().expired,true);clock.clear();clock.start();assert.equal(clock.state().expired,false);
+test('server deadline includes network transit and rejects malformed or widened limits',()=>{
+ let now=1_800_000_000_000;const clock=create(()=>now);clock.start();const sent=now;
+ now+=10000;clock.accept(reply(sent),sent);assert.equal(clock.state().remaining,MAX-10000);
+ assert.throws(()=>clock.accept({},sent));assert.throws(()=>clock.accept(reply(sent,sent+MAX+1),sent));
+ clock.accept(reply(now,now+60000),now);assert.equal(clock.state().remaining,60000);
 });
-test('queued input becomes stale during sleep and cannot generate a delayed heartbeat',()=>{
- let now=1_800_000_000_000;const clock=create(()=>now);clock.start();clock.activity();const sent=clock.sent();now+=1;clock.activity();clock.accept(reply(sent),sent);
- now+=29*60000;assert.equal(clock.due(),false);assert.equal(clock.state().warning,true);
- now=sent+IDLE;assert.equal(clock.state().expired,true);
+test('restoring a browser session retains its original deadline and never resets the week',()=>{
+ let now=1_800_000_000_000;const first=create(()=>now);first.start();const saved=first.deadline();
+ now+=6*86400000;const reopened=create(()=>now);reopened.start(saved);assert.equal(reopened.state().remaining,86400000);
+ now=saved;assert.equal(reopened.state().expired,true);reopened.clear();reopened.start();assert.equal(reopened.state().remaining,MAX);
+ assert.throws(()=>reopened.start(NaN));assert.throws(()=>reopened.start(now+MAX+1));
 });

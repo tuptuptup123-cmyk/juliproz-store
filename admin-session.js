@@ -1,23 +1,20 @@
 (function(root){
  'use strict';
- const IDLE=30*60*1000,MAX=12*60*60*1000,WARNING=2*60*1000;
+ const MAX=7*24*60*60*1000,WARNING=2*60*1000;
  function create(now=()=>Date.now()){
-  let started=false,absolute=0,idle=0,dirty=false,dirtyAt=0,lastSent=0;
+  let started=false,absolute=0;
   return {
-   start(){const t=now();started=true;absolute=t+MAX;idle=t+IDLE;dirty=false;lastSent=0},
-   clear(){started=false;dirty=false},
-   state(){const t=now(),remaining=Math.min(absolute,idle)-t;return {started,expired:started&&remaining<=0,warning:started&&remaining>0&&remaining<=WARNING,absolute:started&&absolute<=idle,remaining}},
-   activity(){if(!started||this.state().expired)return false;dirty=true;dirtyAt=now();return true},
-   due(){return started&&dirty&&now()-dirtyAt<=60000&&!this.state().expired&&now()-lastSent>=60000},
-   sent(){dirty=false;lastSent=now();return lastSent},
-   retry(){dirty=true},
+   start(deadline=now()+MAX){if(!Number.isFinite(deadline)||deadline>now()+MAX)throw Error('Некорректный срок входа.');started=true;absolute=deadline},
+   clear(){started=false;absolute=0},
+   deadline(){return absolute},
+   state(){const remaining=absolute-now();return {started,expired:started&&remaining<=0,warning:started&&remaining>0&&remaining<=WARNING,remaining}},
    accept(data,sentAt){
-    const server=Date.parse(data?.server_now),max=Date.parse(data?.expires_at),end=Date.parse(data?.idle_expires_at);
-    if(![server,max,end].every(Number.isFinite)||max<=server||end<=server||max-server>MAX||end-server>IDLE)throw Error('Не удалось проверить срок входа. Войди заново.');
+    const server=Date.parse(data?.server_now),max=Date.parse(data?.expires_at);
+    if(![server,max,sentAt].every(Number.isFinite)||max<=server||max-server>MAX)throw Error('Не удалось проверить срок входа. Войди заново.');
     if(!started||this.state().expired)return false;
-    if(dirtyAt<=sentAt)dirty=false;absolute=Math.min(absolute,sentAt+max-server);idle=Math.min(absolute,sentAt+end-server);return !this.state().expired;
+    absolute=Math.min(absolute,sentAt+max-server);return !this.state().expired;
    }
   };
  }
- const api={create,IDLE,MAX};if(typeof module==='object'&&module.exports)module.exports=api;else root.AdminSessionClock=api;
+ const api={create,MAX};if(typeof module==='object'&&module.exports)module.exports=api;else root.AdminSessionClock=api;
 })(typeof window==='object'?window:globalThis);
