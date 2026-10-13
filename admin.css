@@ -161,3 +161,5 @@ input:focus,textarea:focus,select:focus{border-color:#aaa;box-shadow:0 0 0 3px #
  .auth-card{border-radius:12px}.stock-summary{padding:18px}
 }
 @media(max-width:380px){#inventory{grid-template-columns:minmax(0,1fr)}}
+
+.history-entry-heading span,.history-meta,.history-change span,.team-member small{color:var(--muted)}
