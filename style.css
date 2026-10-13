@@ -766,3 +766,15 @@ body.product-modal-open{overflow:hidden}
 /* Center the close icon geometrically, independently of font metrics. */
 .menu-header .menu-close{padding:0}
 .menu-close svg{display:block;flex-shrink:0}
+
+/* Wishlist feedback: smooth fill on pointer hover and a press response. */
+.heart svg,.detail-wishlist svg{fill:transparent;transition:fill .2s ease,transform .2s ease;transform-origin:center}
+.heart.is-favorite svg,.detail-wishlist[aria-pressed=true] svg{fill:currentColor}
+@media(hover:hover) and (pointer:fine){
+  .heart:hover svg,.detail-wishlist:hover svg{fill:currentColor;transform:scale(1.12)}
+}
+.heart:active svg,.detail-wishlist:active svg{fill:currentColor;transform:scale(.9)}
+@media(prefers-reduced-motion:reduce){
+  .heart svg,.detail-wishlist svg{transition:none;transform:none!important}
+  .heart.motion-pop,.detail-wishlist.motion-pop{animation:none}
+}
