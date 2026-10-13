@@ -804,3 +804,24 @@ body.product-modal-open{overflow:hidden}
  .web-home-links{grid-template-columns:1fr;gap:12px}
  .web-page-intro{padding:16px 12px 22px}.web-about-copy{padding:0 12px}
 }
+
+/* The website home explains the buyer service using the shop typography. */
+#webHomePage .web-page-intro{padding-bottom:36px}
+#webHomePage .web-page-intro p{max-width:610px}
+.buyer-service-story{padding:26px 24px 0;border-top:1px solid var(--line)}
+.buyer-service-story>h2,.buyer-service-process>h2{font:400 28px/1.3 "Playfair Display",Georgia,serif;letter-spacing:-.02em;margin:0 0 24px}
+.buyer-service-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px 36px}
+.buyer-service-grid article{min-width:0;padding:0 0 20px;border-bottom:1px solid var(--line)}
+.buyer-service-grid h3{font:400 22px/1.3 "Playfair Display",Georgia,serif;margin:0 0 12px}
+.buyer-service-grid p,.buyer-service-process p{font-size:14px;line-height:1.8;color:var(--muted);margin:0}
+.buyer-service-process{padding:34px 24px 12px;text-align:center}
+.buyer-service-process>h2{margin-bottom:16px}
+.buyer-service-process p{max-width:600px;margin:auto}
+.buyer-service-process a{text-decoration:none;color:var(--ink)}
+@media(max-width:600px){
+ .buyer-service-story{padding:24px 12px 0}
+ .buyer-service-grid{grid-template-columns:1fr;gap:22px}
+ .buyer-service-story>h2,.buyer-service-process>h2{font-size:26px}
+ .buyer-service-process{padding:28px 12px 10px}
+ #webHomePage h1{font-size:clamp(28px,7vw,38px)}
+}
