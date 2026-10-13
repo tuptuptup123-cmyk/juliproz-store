@@ -24,3 +24,9 @@ test('queued input becomes stale during sleep and cannot generate a delayed hear
  now+=29*60000;assert.equal(clock.due(),false);assert.equal(clock.state().warning,true);
  now=sent+IDLE;assert.equal(clock.state().expired,true);
 });
+test('reload restores deadlines without extending them and rejects expired or widened snapshots',()=>{
+ let now=1_800_000_000_000;const before=create(()=>now);before.start();const saved=before.snapshot();now+=10*60000;
+ const after=create(()=>now);after.start(saved);assert.deepEqual(after.snapshot(),saved);assert.equal(after.state().remaining,20*60000);
+ for(const invalid of [{...saved,idle:NaN},{...saved,absolute:now+MAX+1},{...saved,idle:now+IDLE+1},{absolute:now+1,idle:now+2}])assert.throws(()=>create(()=>now).start(invalid));
+ now=saved.idle;assert.throws(()=>create(()=>now).start(saved));
+});

@@ -27,7 +27,8 @@ let adminSecurity={paused:false,pending:false};
 const mfaPaused=()=>adminSecurity.paused===true;
 const MFA_ENROLLMENT_ENABLED=window.STORE_CONFIG.mfaEnrollmentEnabled===true;
 const $=id=>document.getElementById(id);
-const ADMIN_SESSION_KEY='jpAdminSessionV1';
+const ADMIN_SESSION_KEY='jpAdminReloadSessionV1';
+let rememberAdminSession=false;
 let session=null,items=[],editing=null,photos=[],busy=false;
 function stockSummary(rows){const stock=rows.filter(p=>p.available&&p.fulfillment_status!=='on_order');let total=0,unpriced=0,unconverted=0,count=0;for(const p of stock){const units=typeof ProductSizes!=='undefined'?ProductSizes.stockUnits(p):1;count+=units;if(!units)continue;if(window.ProductPricing.amount(p.price,p.currency)==null){unpriced++;continue}if(!['EUR','€'].includes(p.currency||'EUR')){unconverted++;continue}total+=window.ProductPricing.amount(p.price,p.currency)*units}return {count,total,unpriced,unconverted}}
 function setStockNumber(id,value,animate=false){
@@ -44,9 +45,20 @@ function setStockNumber(id,value,animate=false){
 }
 function updateStockSummary(animate=!$('workspace').classList.contains('hidden')){const s=stockSummary(items);setStockNumber('stockTotal',String(items.length),animate);setStockNumber('stockCount',String(s.count),animate);setStockNumber('stockValue',(s.unconverted?'от ':'')+new Intl.NumberFormat('ru-RU',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(s.total),animate);$('stockValueNote').textContent=[s.unpriced?'Без цены: '+s.unpriced:'',s.unconverted?'Требуют проверки цены: '+s.unconverted:''].filter(Boolean).join(' · ')}
 
-// Legacy tokens are removed; credentials live only in this document's memory.
-function clearSavedAdminSession(){try{localStorage.removeItem(ADMIN_SESSION_KEY)}catch{}try{sessionStorage.removeItem(ADMIN_SESSION_KEY)}catch{}}
-function saveAdminSession(){clearSavedAdminSession();return true}
+// Only completed logins survive a reload in this tab. Server access checks still run.
+function clearLegacyAdminSession(){try{localStorage.removeItem('jpAdminSessionV1')}catch{}try{sessionStorage.removeItem('jpAdminSessionV1')}catch{}}
+function readSavedAdminSession(){
+ try{const saved=JSON.parse(sessionStorage.getItem(ADMIN_SESSION_KEY)||'null'),s=saved?.session,t=Date.now(),limits=saved?.limits;
+  if(!s||typeof s.access_token!=='string'||!s.access_token||typeof s.refresh_token!=='string'||!s.refresh_token||typeof s.user?.id!=='string'||!s.user.id||!Number.isFinite(s.expires_at)||!limits||![limits.absolute,limits.idle].every(Number.isFinite)||limits.absolute<=t||limits.absolute>t+window.AdminSessionClock.MAX||limits.idle<=t||limits.idle>t+window.AdminSessionClock.IDLE||limits.idle>limits.absolute)return null;
+  return saved;
+ }catch{return null}
+}
+function clearSavedAdminSession(){clearLegacyAdminSession();try{sessionStorage.removeItem(ADMIN_SESSION_KEY)}catch{}}
+function saveAdminSession(){
+ if(!session||!rememberAdminSession||recovering||sessionClock.state().expired)return false;
+ const {access_token,refresh_token,expires_at,user}=session;
+ try{sessionStorage.setItem(ADMIN_SESSION_KEY,JSON.stringify({session:{access_token,refresh_token,expires_at,user:{id:user.id}},limits:sessionClock.snapshot()}));return true}catch{return false}
+}
 
 
 let adminPreferences={autoPhoto:true,reducedMotion:false};
@@ -77,7 +89,7 @@ async function touchAdminSession(force=false){
  const epoch=sessionEpoch,sentAt=sessionClock.sent();
  const pending=(async()=>{
   try{const data=await request('/rest/v1/rpc/touch_store_admin_session',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});
-   if(epoch!==sessionEpoch)return;if(!sessionClock.accept(data,sentAt))expireAdminSession();else checkAdminSession();
+   if(epoch!==sessionEpoch)return;if(!sessionClock.accept(data,sentAt))expireAdminSession();else{checkAdminSession();saveAdminSession()}
   }catch(error){if(epoch===sessionEpoch){if([401,403].includes(error.httpStatus)){expireAdminSession();error.message='Сессия завершена или у аккаунта нет доступа. Войди заново.'}else sessionClock.retry()}throw error}
   finally{if(activityPromise===pending)activityPromise=null}
  })();activityPromise=pending;return pending;
@@ -99,7 +111,7 @@ function clearMfa(){
  $('mfaVerify').reset();$('mfaQr').onload=null;$('mfaQr').onerror=null;$('mfaQr').removeAttribute?.('src');$('mfaQr').classList.add('hidden');$('mfaQrError').classList.add('hidden');$('mfaSecret').textContent='';$('mfaFactor').innerHTML='';
 }
 function endSession(){
- sessionClock.clear();activityPromise=null;$('sessionWarning').classList.add('hidden');$('photoStudio').close?.();
+ sessionClock.clear();rememberAdminSession=false;activityPromise=null;$('sessionWarning').classList.add('hidden');$('photoStudio').close?.();
  clearSavedAdminSession();window.ProductSharing?.close();window.AdminWorkspace?.clear();clearInternalFields();
  internalNoteState=null;if($('editor').elements?.internal_note)$('editor').elements.internal_note.value='';pendingCover=false;window.PhotoStudio?.cancel();adminSecurity={paused:false};session=null;sessionEpoch++;previewEpoch++;items=[];photos=[];editing=null;original=null;creationKey=null;recovering=false;
  for(const id of ['stockTotal','stockCount','stockValue'])$(id).textContent='—';$('stockValueNote').textContent='';stagedUploads.clear();clearMfa();$('authArea').classList.remove('hidden');pendingPreviews=[];editorDirty=false;activeView='all';$('settingsPanel').classList.add('hidden');clearOverview();$('adminHome').classList.add('hidden');$('homePanel').classList.add('hidden');$('cataloguePreview').close?.();$('cataloguePreviewCard').innerHTML='';productWishlistCounts=null;productWishlistLoadedAt=0;$('analyticsPanel').classList.add('hidden');$('analyticsCards').innerHTML='';$('analyticsProducts').innerHTML='';$('retentionStatus').textContent='';analyticsData=null;analyticsChartMetric='visitors';$('analyticsChart').innerHTML='';
@@ -136,7 +148,7 @@ async function request(path,options={}){
  if(epoch!==sessionEpoch)throw Error('Сессия завершена.');
  return data;
 }
-function keepSession(data,fresh=false){if(!data?.access_token||!data.user)throw Error('Не удалось подтвердить вход.');if(fresh||!session)sessionClock.start();session={...data,expires_at:data.expires_at||Date.now()/1000+(data.expires_in||3600)};saveAdminSession()}
+function keepSession(data,fresh=false){if(!data?.access_token||!data.user)throw Error('Не удалось подтвердить вход.');if(fresh||!session){clearSavedAdminSession();sessionClock.start();rememberAdminSession=false}session={...data,expires_at:data.expires_at||Date.now()/1000+(data.expires_in||3600)};saveAdminSession()}
 // This decoded claim controls UI only. Supabase verifies signatures and enforces RLS.
 function sessionAal(){try{return JSON.parse(atob(session.access_token.split('.')[1].replace(/-/g,'+').replace(/_/g,'/'))).aal||'aal1'}catch{return 'aal1'}}
 async function currentAuthUser(){
@@ -157,7 +169,7 @@ async function enableMfaProtection(){
  await request('/rest/v1/rpc/enforce_store_mfa',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});adminSecurity={...adminSecurity,paused:false};
 }
 async function enterWorkspace(){
- saveAdminSession();await touchAdminSession(true);
+ await touchAdminSession(true);
  $('pendingAccess').classList.add('hidden');
  const security=await request('/rest/v1/rpc/store_admin_security_status',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});adminSecurity={paused:security?.paused===true,pending:security?.pending===true,owner:security?.access_role==='owner'};
  if(!adminSecurity.pending){const admins=await request(`/rest/v1/store_admins?select=user_id&user_id=eq.${encodeURIComponent(session.user.id)}`);if(!admins.length){endSession();throw Error('У этого аккаунта нет доступа к управлению магазином.')}}
@@ -177,7 +189,7 @@ async function enterWorkspace(){
  $('securityBtn').classList.toggle('hidden',!MFA_ENROLLMENT_ENABLED);
  if(mfaPaused()){$('securityState').textContent='Двухфакторная проверка временно отключена. Подтверди код из приложения, чтобы включить её.';$('securityBtn').textContent='Включить двухфакторную проверку';}
  if(!MFA_ENROLLMENT_ENABLED&&!verified.length)$('securityState').textContent='';
- await load();$('login').reset();$('confirmEmail').reset();$('login').classList.add('hidden');$('confirmEmail').classList.add('hidden');$('workspace').classList.remove('hidden');$('authArea').classList.add('hidden');selectView('home',true);window.AdminWorkspace?.loadTeam();status('');refreshOverview();loadProductWishlistCounts();updateStockSummary('force');
+ await load();rememberAdminSession=true;saveAdminSession();$('login').reset();$('confirmEmail').reset();$('login').classList.add('hidden');$('confirmEmail').classList.add('hidden');$('workspace').classList.remove('hidden');$('authArea').classList.add('hidden');selectView('home',true);window.AdminWorkspace?.loadTeam();status('');refreshOverview();loadProductWishlistCounts();updateStockSummary('force');
 }
 $('login').onsubmit=async e=>{e.preventDefault();if(busy)return;const b=e.submitter,epoch=sessionEpoch;b.disabled=true;busy=true;try{
  status('');$('status').classList.add('admin-loading');$('status').innerHTML='<span class="admin-loading-content"><span class="loading-brand" aria-hidden="true"><span class="admin-logo">J.P</span><img class="loading-paw" src="images/brand-paw.webp" alt=""><span class="loading-signature">BY VASYA</span></span><span class="loading-caption">Загружаем управление магазином…</span><span class="loading-track" aria-hidden="true"></span></span>';
@@ -614,10 +626,17 @@ $('shareEditorProduct').onclick=()=>shareAdminProduct(original);
 $('previewCatalogue').onclick=()=>{const f=$('editor').elements;openCataloguePreview({original_price:f.original_price?.value||null,on_commission:f.on_commission?.checked===true,product_condition:f.product_condition?.value||'new',wear_condition:f.product_condition?.value==='pre_owned'?(f.wear_condition?.value||null):null,brand:editorBrand(f),name:f.name.value,size:f.size.value,price:f.price.value||null,currency:'EUR',available:f.available.checked,reserved:f.reserved.checked,fulfillment_status:f.fulfillment_status.value},photos[0]||pendingPreviews[0]?.src)};
 
 async function restoreAdminSession(){
- clearSavedAdminSession();
+ clearLegacyAdminSession();
  const callback=new URLSearchParams(location.hash?.slice(1)||'');
- if(!['invite','recovery'].includes(callback.get('type'))||!callback.get('access_token'))return;
- const access=callback.get('access_token'),refresh=callback.get('refresh_token'),previous=session;
+ if(!['invite','recovery'].includes(callback.get('type'))||!callback.get('access_token')){
+  const saved=readSavedAdminSession();if(!saved){clearSavedAdminSession();return}
+  busy=true;status('Восстанавливаем вход…');
+  try{sessionClock.start(saved.limits);session=saved.session;rememberAdminSession=true;await enterWorkspace()}
+  catch(error){if([400,401,403].includes(error.httpStatus))endSession();status('Не удалось восстановить вход: '+error.message)}
+  finally{busy=false}
+  return;
+ }
+ const access=callback.get('access_token'),refresh=callback.get('refresh_token'),previous=session||readSavedAdminSession()?.session;
  if(typeof history!=='undefined')history.replaceState(null,'',location.pathname+location.search);
  try{
   if(!refresh)throw Error('Ссылка не содержит сессию. Запросите новую ссылку.');
@@ -625,7 +644,7 @@ async function restoreAdminSession(){
   if(!user?.id||!user.email)throw Error('Не удалось проверить аккаунт ссылки.');
   if(previous&&previous.user.id!==user.id)throw Error('Ссылка относится к другому аккаунту. Сначала выйдите из текущего аккаунта.');
   if(typeof confirm!=='function'||!confirm(`Открыть приглашение или восстановление для ${user.email}? Продолжайте, только если это ваш аккаунт.`))return;
-  recovering=true;keepSession({access_token:access,refresh_token:refresh,user,expires_in:Number(callback.get('expires_in'))||3600},true);await enterWorkspace();
+  clearSavedAdminSession();recovering=true;keepSession({access_token:access,refresh_token:refresh,user,expires_in:Number(callback.get('expires_in'))||3600},true);await enterWorkspace();
  }catch(error){if(!previous)endSession();status('Не удалось завершить подтверждение: '+error.message)}
 }
 const adminSessionReady=restoreAdminSession();

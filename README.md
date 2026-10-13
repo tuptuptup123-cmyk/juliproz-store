@@ -14,7 +14,7 @@ Every product has a link `https://t.me/JuliProzBot/shop?startapp=p_<id>`. The ap
 
 Open `/admin.html`. Sign in using an authorized Supabase Authentication account. Add or edit brand, name, category, size, price, currency, description and availability. Upload multiple JPG, PNG or WebP images up to 6 MB each, select a cover, or add existing image URLs. Remove a listing from availability without deleting its record or changing its ID.
 
-Sessions are kept only in memory. Supabase RLS validates every read/write; hiding the admin UI is not an authorization mechanism. A publishable key in `config.js` is expected; do not place database passwords, service-role keys or bot tokens in browser files.
+Completed admin logins survive page reloads in the current tab using `sessionStorage`. Reload revalidates the server session, membership, MFA policy and user identity before showing inventory. Original session deadlines are preserved; manual logout and expiration clear the saved login. Supabase RLS validates every read/write; hiding the admin UI is not an authorization mechanism. A publishable key in `config.js` is expected; do not place database passwords, service-role keys or bot tokens in browser files.
 
 ### One-time Supabase setup
 
@@ -31,7 +31,7 @@ Apply SQL in order: `setup.sql`, `catalog-hardening.sql`, then `catalog-reliabil
 
 The editor updates only changed fields and requires the original revision to match. A concurrent change produces a conflict instead of overwriting inventory. New-card retries reconcile the same creation key. Upload retries reuse object paths, decode and resize images to WebP, preserving transparency and discarding metadata. Removed gallery links do not delete shared stored files; automatic storage deletion is deliberately not enabled.
 
-Password recovery uses Supabase's recovery email and a new-password form (minimum 12 characters). Sessions are memory-only, concurrent refreshes share one request, and a failed refresh closes the workspace. Network calls time out after 20 seconds. The admin page disallows framing and caching; the storefront retains Telegram framing support.
+Password recovery uses Supabase's recovery email and a new-password form (minimum 12 characters). Incomplete MFA, recovery and pending-approval logins stay in memory. Completed logins persist only tokens, user ID and deadlines in the current tab; profile data and MFA secrets are not saved. Concurrent refreshes share one request; rejected credentials close the workspace, while transient network failures preserve the login for retry. Network calls time out after 20 seconds. The admin page disallows framing and caching; the storefront retains Telegram framing support.
 
 Validation: `node tests/store.test.cjs` and `node --test tests/swipe.test.cjs`.
 
