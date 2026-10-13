@@ -111,10 +111,10 @@ CREATE FUNCTION public.store_analytics_retention_health() RETURNS jsonb LANGUAGE
 REVOKE ALL ON FUNCTION public.store_analytics_retention_health() FROM PUBLIC,anon,authenticated,service_role;
 GRANT EXECUTE ON FUNCTION public.store_analytics_retention_health() TO authenticated;
 
--- pg_net has no application callers. Keep the extension available for project
--- maintenance but remove anonymous/user SQL access to its network operations.
-REVOKE USAGE ON SCHEMA net FROM PUBLIC,anon,authenticated;
-REVOKE EXECUTE ON ALL FUNCTIONS IN SCHEMA net FROM PUBLIC,anon,authenticated;
+-- pg_net has no application callers or queued work. Its objects belong to
+-- supabase_admin, so application-role REVOKE cannot remove those owner grants.
+-- Remove the unused extension using the documented supported operation.
+DROP EXTENSION IF EXISTS pg_net;
 NOTIFY pgrst,'reload schema';
 
 CREATE OR REPLACE FUNCTION public.store_analytics_ingest(p_event_id uuid, p_visitor uuid, p_session uuid, p_event text, p_product bigint, p_page text, p_fingerprint text)

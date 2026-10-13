@@ -61,9 +61,10 @@ BEGIN
  BEGIN PERFORM public.store_analytics_gateway_ingest('wrong',gen_random_uuid(),visitor,recent_session,'visit',null,null,fingerprint);RAISE EXCEPTION 'Gateway accepted wrong secret';EXCEPTION WHEN insufficient_privilege THEN NULL;END;
  IF NOT public.store_analytics_gateway_ingest(secret,gen_random_uuid(),visitor,recent_session,'visit',null,null,fingerprint) THEN RAISE EXCEPTION 'Gateway rejected valid event';END IF;
  IF public.store_analytics_gateway_ingest(secret,gen_random_uuid(),visitor,recent_session,'invented',null,null,fingerprint) THEN RAISE EXCEPTION 'Gateway accepted invalid event';END IF;
+ RESET ROLE;
  IF has_function_privilege('anon','public.store_analytics_ingest(uuid,uuid,uuid,text,bigint,text,text)','execute') THEN RAISE EXCEPTION 'Direct ingestion exposed';END IF;
  IF has_table_privilege('anon','store_private.analytics_gateway_secret','select') OR has_table_privilege('authenticated','store_private.admin_session_activity','update') THEN RAISE EXCEPTION 'Private state exposed';END IF;
- IF has_function_privilege('authenticated','store_private.purge_analytics_history()','execute') OR has_schema_privilege('anon','net','usage') THEN RAISE EXCEPTION 'Privileged maintenance exposed';END IF;
+ IF has_function_privilege('authenticated','store_private.purge_analytics_history()','execute') OR exists(select 1 from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname='net' and p.proname like 'http_%' and has_function_privilege('anon',p.oid,'execute')) THEN RAISE EXCEPTION 'Privileged maintenance exposed';END IF;
  RESET ROLE;
  RAISE EXCEPTION 'fixtures rolled back' USING ERRCODE='JP001';
  EXCEPTION WHEN SQLSTATE 'JP001' THEN NULL;
