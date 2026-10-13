@@ -209,3 +209,5 @@ input:focus,textarea:focus,select:focus{border-color:#aaa;box-shadow:0 0 0 3px #
 }
 @media(prefers-reduced-motion:reduce){.loading-signature{animation:none;transform:none;opacity:1}#status.admin-loading .loading-track:after{animation:none;width:100%}}
 body.reduce-motion .loading-signature{animation:none;transform:none;opacity:1}
+
+#productNavigation.is-collapsed .nav-disclosure-inner{visibility:hidden;pointer-events:none}
