@@ -801,7 +801,6 @@ body.product-modal-open{overflow:hidden}
  .bottom-nav.is-website-navigation::-webkit-scrollbar{display:none}
  .bottom-nav.is-website-navigation button[data-tab]{flex:0 0 60px;width:60px}
  .bottom-nav.is-website-navigation small{font-size:10.5px}
- .bottom-nav.is-website-navigation button::before{width:44px}
  .web-home-links{grid-template-columns:1fr;gap:12px}
  .web-page-intro{padding:16px 12px 22px}.web-about-copy{padding:0 12px}
 }
