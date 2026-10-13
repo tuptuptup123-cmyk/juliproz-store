@@ -96,3 +96,70 @@ img.product-framed{padding:0;object-fit:contain;transform-origin:center;box-sizi
 #staffRegistration label{display:grid;gap:8px;margin:16px 0}#staffRegistration>button{margin-top:12px}
 @media(max-width:600px){.history-entry,.team-member{padding:16px}.history-change{grid-template-columns:1fr}.team-member{align-items:flex-start;flex-direction:column}.history-filters{align-items:stretch}.history-filters label{min-width:100%;}.history-entry-heading{align-items:flex-start}.history-meta{line-height:1.6}}
 .analytics-table-wrap{overflow-x:auto;margin:16px 0 28px;max-width:100%}.analytics-table{width:100%;border-collapse:collapse;font-size:14px}.analytics-table th,.analytics-table td{padding:12px;text-align:left;border-bottom:1px solid #ddd;vertical-align:top}.analytics-table th{font-weight:600;white-space:nowrap}.analytics-table td:not(:first-child){font-variant-numeric:tabular-nums}.analytics-table small{display:block;color:#666}.analytics-details h3{margin-top:28px}
+
+/* Current shop design and top navigation for the private workspace. */
+:root{--bg:#fff;--surface:#fff;--ink:#202020;--muted:#777;--line:#e7e7e7;--card:#f6f6f6;--brand-blue:#202020;--brand-pink:#e1c6d7}
+body{font-family:Roboto,"Helvetica Neue",Arial,sans-serif;font-weight:300;background:#fff}
+button,input,textarea,select{font-family:inherit}button{font-weight:400;border-radius:10px}
+button:hover{background:#f6f6f6;border-color:#ccc}
+.primary{background:var(--brand-pink);color:var(--ink);border-color:#d3b6c8}
+.primary:hover{background:#d8b7cd;border-color:#bd94ad}
+h1,h2{color:var(--ink)}
+.admin-header{height:auto;min-height:64px;padding:12px 32px;background:#fff;color:var(--ink);border-bottom:1px solid var(--line);overflow:visible}
+.admin-workspace-title{font-size:13px;color:var(--muted);letter-spacing:.04em}
+.admin-header .home-link{color:var(--ink);border-color:var(--line);margin:0 auto 0 0}
+.admin-header .home-link[aria-current=page]{background:#f6f6f6}
+.admin-header .header-menu{display:none}
+.admin-header .store-link{display:inline-flex;align-items:center;gap:6px;color:var(--ink);border-color:var(--line);border-radius:10px}
+.admin-app{min-height:calc(100svh - 64px)}
+#workspace{display:block}
+#adminSidebar{display:block;width:100%;height:auto;min-height:0;position:static;padding:18px 32px;border:0;border-bottom:1px solid var(--line);background:#fff;overflow:visible}
+#adminSidebar nav{display:flex;flex-wrap:wrap;align-items:center;gap:8px;max-width:1652px;margin:0 auto}
+#adminSidebar .nav-item{width:auto;flex:0 0 auto;margin:0;min-height:44px;padding:10px 14px;font-size:13px;gap:8px;border-radius:10px;border:1px solid transparent}
+#adminSidebar .nav-item svg{display:none}
+#adminSidebar .nav-item.active{background:#f6f6f6;color:var(--ink);border-color:var(--line)}
+#adminSidebar .nav-item:hover{background:#f6f6f6}
+#adminSidebar .add-product{width:auto;margin:0 0 0 auto;min-height:44px;padding:10px 18px;font-size:13px;border-radius:10px}
+#adminSidebar .logout{color:var(--muted)}
+#productNavigation{order:10;flex-basis:100%;width:100%;margin:0}
+#productNavigation .nav-disclosure-inner{display:flex;flex-wrap:wrap;gap:6px;padding-top:12px}
+#productNavigation .nav-child{padding:8px 12px;min-height:40px;font-size:12px;border:1px solid var(--line);background:#fff}
+#productNavigation .nav-child.active{background:#f6f6f6;border-color:#bbb}
+#productNavigation.is-collapsed .nav-disclosure-inner{padding-top:0}
+.workspace-main{max-width:1716px;padding:32px;margin:0 auto}
+#status{background:#f6f6f6;position:static}
+.stock-summary,.form-card,.stat,.analytics-details,.history-entry,.team-member,.auth-card{border-color:var(--line);border-radius:12px;box-shadow:none;background:#fff}
+.stock-value>strong,.stock,.order,.reserved,.concealed{color:var(--ink)}
+.stock,.order,.reserved,.concealed,.step-number,.studio-auto{background:#f6f6f6}
+.online-dot{background:#202020;box-shadow:0 0 0 3px #20202010}
+input:not([type=checkbox]),textarea,select{background:#fff;border-radius:10px}
+input:focus,textarea:focus,select:focus{border-color:#aaa;box-shadow:0 0 0 3px #20202008}
+#inventory{grid-template-columns:repeat(auto-fill,minmax(235px,1fr));gap:24px}
+#inventory article{border:0;border-radius:0;padding:0 0 16px;box-shadow:none;background:#fff}
+#inventory article:hover{border-color:transparent;box-shadow:none}
+.product-thumb{background:#f6f6f6;border-radius:18px;aspect-ratio:4/5}
+.product-title{padding:16px 0 4px}.product-title strong{text-transform:none;letter-spacing:0;font-size:13px;font-weight:500}
+.product-title p{font-size:15px;font-weight:300}.product-size,.product-price,.product-status,.product-wishlist{padding-left:0;padding-right:0}
+.row-actions button[data-edit],.row-actions .reserve-action,.row-actions button[data-toggle]{color:var(--ink);border-color:var(--line);background:#fff}
+.card-actions summary,.row-actions button{border-radius:10px}
+.product-wishlist>span:first-child,.catalogue-preview-heart{color:#c66b95}
+#topNewProduct{display:none}
+#profilePanel .form-card{max-width:600px;margin:20px 0}#profilePanel form label{display:grid;gap:8px;margin:16px 0}
+.auth-area{margin-top:48px}.auth-intro h1{font-weight:400}.empty-state::after{content:none}
+.loading-brand,.auth-brand,.wordmark,.sidebar-caption,.sidebar-signature{display:none}
+@media(max-width:1100px){#adminSidebar .add-product{margin-left:0}.workspace-main{padding:26px 24px}}
+@media(max-width:700px){
+ .admin-header{padding:12px 16px;gap:10px;flex-wrap:wrap;min-height:58px}
+ .admin-workspace-title{font-size:11px}.admin-header .home-link{font-size:11px;margin-left:0}
+ .admin-header .header-actions .store-link{display:inline-flex;font-size:11px;padding:9px 10px}
+ #adminSidebar{padding:14px 16px}#adminSidebar nav{gap:6px}
+ #adminSidebar .nav-item{font-size:12px;padding:9px 10px}#adminSidebar .add-product{font-size:12px;padding:10px 14px}
+ .workspace-main{padding:24px 16px}.product-thumb{padding:24px}
+ #inventory{grid-template-columns:repeat(2,minmax(0,1fr));gap:22px 14px}
+ .product-title p{font-size:14px}.product-title small{font-size:10px}
+ .row-actions{grid-template-columns:1fr 1fr}.row-actions button{white-space:normal}
+ .auth-card{border-radius:12px}.stock-summary{padding:18px}
+}
+@media(max-width:380px){#inventory{grid-template-columns:minmax(0,1fr)}}
+
+.history-entry-heading span,.history-meta,.history-change span,.team-member small{color:var(--muted)}
