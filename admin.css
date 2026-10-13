@@ -164,28 +164,32 @@ input:focus,textarea:focus,select:focus{border-color:#aaa;box-shadow:0 0 0 3px #
 
 .history-entry-heading span,.history-meta,.history-change span,.team-member small{color:var(--muted)}
 
-/* One shared roof for navigation; small original shop logo. */
-.unified-admin-header{display:flex;align-items:flex-start;gap:24px;padding:20px 32px;background:#fff;border-bottom:1px solid var(--line)}
-.admin-mini-brand{position:relative;flex:0 0 70px;width:70px;height:64px;margin-top:3px}
-.admin-mini-brand>span{position:absolute;left:0;bottom:1px;font:500 42px/1 "Playfair Display",Georgia,serif;color:#202020;letter-spacing:-.03em}
-.admin-mini-brand>img{position:absolute;left:29px;top:-9px;width:54px;height:39px;object-fit:contain}
-.admin-mini-brand>small{position:absolute;left:39px;bottom:4px;font:400 6px/1.2 Roboto,Arial,sans-serif;white-space:nowrap}
-.unified-admin-header #adminSidebar{flex:1;min-width:0;width:auto;padding:0;border:0;background:transparent}
-.unified-admin-header #adminSidebar nav{gap:5px}
-.unified-admin-header #adminSidebar .home-link{margin:0;border-radius:10px;color:var(--ink)}
+/* One aligned navigation row with the original shop mark. */
+.unified-admin-header{display:flex;align-items:flex-start;gap:24px;padding:32px 32px 18px;background:#fff;border-bottom:1px solid var(--line);flex-wrap:nowrap}
+.admin-mini-brand{position:relative;flex:0 0 82px;width:82px;height:44px;margin:0}
+.admin-mini-brand>span{position:absolute;left:0;bottom:0;font:500 32px/1 "Playfair Display",Georgia,serif;color:#202020;letter-spacing:-.03em}
+.admin-mini-brand>img{position:absolute;left:30px;top:-7px;width:52px;height:35px;object-fit:contain;pointer-events:none}
+.admin-mini-brand>small{position:absolute;left:45px;bottom:3px;font:400 6px/1.2 Roboto,Arial,sans-serif;white-space:nowrap}
+.unified-admin-header #adminSidebar{flex:1;min-width:0;width:0;padding:0;border:0;background:transparent;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:thin;scrollbar-color:var(--line) transparent}
+.unified-admin-header #adminSidebar nav{display:grid;grid-template-columns:max-content max-content max-content max-content minmax(max-content,1fr) max-content max-content;align-items:center;gap:0 6px;width:100%;min-width:max-content;margin:0}
+.unified-admin-header #adminSidebar .nav-item,.unified-admin-header #adminSidebar .store-link,.unified-admin-header #adminSidebar .add-product{height:44px;min-height:44px;margin:0;padding:10px 12px;font-size:12px;white-space:nowrap}
+.unified-admin-header #adminSidebar .add-product{justify-self:end;padding:10px 16px}
+.unified-admin-header #adminSidebar .home-link{border-radius:10px;color:var(--ink)}
 .unified-admin-header #adminSidebar .home-link[aria-current=page]{background:#f6f6f6;border-color:var(--line)}
-.unified-admin-header #adminSidebar .store-link{display:inline-flex;align-items:center;min-height:44px;padding:10px 12px;font-size:12px;border:1px solid var(--line);border-radius:10px;margin:0;text-decoration:none}
-.unified-admin-header #adminSidebar .nav-item{padding:10px 12px;font-size:12px}
+.unified-admin-header #adminSidebar .store-link{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:10px;text-decoration:none}
+.unified-admin-header #productNavigation{grid-column:1/-1;grid-row:2;order:0;width:100%;min-width:0}
+.unified-admin-header #productNavigation .nav-disclosure-inner{padding-top:16px;flex-wrap:nowrap}
+.unified-admin-header #productNavigation.is-collapsed .nav-disclosure-inner{padding-top:0}
 .settings-navigation{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:26px;padding-bottom:16px;border-bottom:1px solid var(--line)}
 .settings-navigation .nav-item{width:auto;margin:0;padding:10px 14px;border:1px solid var(--line);font-size:13px}
 .settings-navigation .nav-item.active{background:#f6f6f6;color:var(--ink);border-color:#bbb}
-@media(max-width:1000px){.unified-admin-header{gap:18px;padding:18px 24px}}
+@media(max-width:1000px){.unified-admin-header{gap:18px;padding:30px 24px 18px}}
 @media(max-width:700px){
- .unified-admin-header{display:block;padding:16px}
- .admin-mini-brand{width:70px;height:54px;margin:0 0 14px}
- .unified-admin-header #adminSidebar{padding:0}
- .unified-admin-header #adminSidebar .nav-item{font-size:12px;padding:9px 10px}
- .unified-admin-header #adminSidebar .add-product{min-height:44px}
+ .unified-admin-header{display:flex;gap:14px;padding:28px 16px 16px;flex-wrap:nowrap}
+ .admin-mini-brand{flex-basis:72px;width:72px;height:44px;margin:0}
+ .admin-mini-brand>span{font-size:30px}
+ .admin-mini-brand>img{left:27px;width:45px;height:32px;top:-5px}
+ .admin-mini-brand>small{left:42px;font-size:5px}
  .settings-navigation{gap:6px}.settings-navigation .nav-item{font-size:12px;padding:9px 10px}
 }
 /* A visible, light loader with the shop's falling BY VASYA signature. */
