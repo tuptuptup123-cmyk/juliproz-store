@@ -334,3 +334,5 @@ body.reduce-motion .loading-signature{animation:none;transform:none;opacity:1}
  .analytics-data>summary>span{display:block;margin:4px 0 0 16px}
  .analytics-data-content{padding:0 14px 12px}
 }
+
+@media(max-width:700px){.analytics-line-chart text{font-size:20px}.analytics-line-chart{height:160px}}
