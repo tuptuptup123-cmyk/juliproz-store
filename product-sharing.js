@@ -15,7 +15,11 @@
  function inTelegram(){
   const app=root.Telegram?.WebApp;
   // The SDK also loads on the website, where initData is empty and platform is unknown.
-  return Boolean(app&&(typeof app.initData==='string'&&app.initData.length>0||typeof app.platform==='string'&&app.platform!==''&&app.platform!=='unknown'));
+  if(app&&(typeof app.initData==='string'&&app.initData.length>0||typeof app.platform==='string'&&app.platform!==''&&app.platform!=='unknown'))return true;
+  // Telegram launch parameters are available even while its async SDK is loading.
+  // This chooses a public link format only; it is never used for authentication.
+  const platform=new URLSearchParams(root.location?.hash?.slice(1)||'').get('tgWebAppPlatform');
+  return Boolean(platform&&platform!=='unknown');
  }
  let dialog=null,current=null,opener=null,epoch=0;
  function close(){if(dialog?.open)dialog.close();current=null;epoch++}

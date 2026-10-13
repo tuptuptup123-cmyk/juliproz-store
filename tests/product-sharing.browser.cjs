@@ -41,6 +41,10 @@ async function prepare(page,telegram){
    await page.keyboard.press('Escape');await dialog.waitFor({state:'hidden'});assert.equal(await page.locator('#productModal').isVisible(),true);assert.equal(await page.locator('[data-action=share]').evaluate(e=>e===document.activeElement),true);
    await page.goto(origin+'/?product=301');await page.locator('[data-size="XXL"][aria-pressed=true]').waitFor();
    await page.goto(origin+'/?startapp=p_397');await page.locator('[data-color-id="397"][aria-pressed=true]').waitFor();await page.locator('[data-action=share]').click();assert.match(await page.locator('#productShareUrl').inputValue(),telegram?/startapp=p_397$/:/product=397$/);
+   if(telegram){
+    await page.keyboard.press('Escape');await page.evaluate(()=>{window.Telegram=undefined;history.replaceState(null,'',location.pathname+location.search+'#tgWebAppPlatform=ios')});
+    await page.locator('[data-action=share]').click();assert.equal(await page.locator('#productShareUrl').inputValue(),'https://t.me/JuliProzBot/shop?startapp=p_397','Telegram launch keeps its link when the async SDK is unavailable');
+   }
    assert.deepEqual(errors,[]);await page.close();console.log(`PASS ${width} ${telegram?'Telegram':'website'}: source-aware copy/share, exact size/color links, clipboard denial, keyboard and layout`);
   }
   for(const width of [320,1280]){
