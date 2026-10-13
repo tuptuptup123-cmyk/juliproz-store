@@ -55,6 +55,42 @@ const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 function status(s){$('status').textContent=s; if(s)$('status').scrollIntoView({block:'nearest'})}
 const ADMIN_FIELDS='id,created_at,brand,name,category,size,price,currency,image_url,available,fulfillment_status,gender,description,photos,revision,creation_key,reserved,product_condition,stock_quantities,on_commission,original_price,wear_condition';
 let sessionEpoch=0,refreshPromise=null,original=null,creationKey=null;
+// A monotonic floor prevents a backwards device-clock change from extending a session.
+const sessionWallStart=Date.now(),sessionMonoStart=typeof performance!=='undefined'?performance.now():0;
+const sessionClock=window.AdminSessionClock.create(()=>Math.max(Date.now(),sessionWallStart+(typeof performance!=='undefined'?performance.now()-sessionMonoStart:0)));
+let activityPromise=null;
+function expireAdminSession(){
+ const token=session?.access_token;endSession();
+ status('Время входа истекло. Войди заново. Несохранённые изменения не отправлены.');
+ if(token)fetchJSON('/auth/v1/logout?scope=local',{method:'POST'},token).catch(()=>{});
+}
+function checkAdminSession(){
+ const state=sessionClock.state();
+ if(session&&state.expired){expireAdminSession();return false}
+ const banner=$('sessionWarning');if(banner){banner.classList.toggle('hidden',!session||!state.warning);if(session&&state.warning){$('sessionWarningText').textContent=state.absolute?'Скоро закончится 12-часовой срок входа. Сохрани изменения и войди заново.':'Скоро завершим вход из-за бездействия. Нажми «Продолжить работу», чтобы остаться.';$('continueSession').classList.toggle('hidden',state.absolute)}}
+ return true;
+}
+async function touchAdminSession(force=false){
+ if(!session||!checkAdminSession())throw Error('Сессия завершена. Войди заново.');
+ if(activityPromise)return activityPromise;
+ if(!force&&!sessionClock.due())return;
+ const epoch=sessionEpoch,sentAt=sessionClock.sent();
+ const pending=(async()=>{
+  try{const data=await request('/rest/v1/rpc/touch_store_admin_session',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});
+   if(epoch!==sessionEpoch)return;if(!sessionClock.accept(data,sentAt))expireAdminSession();else checkAdminSession();
+  }catch(error){if(epoch===sessionEpoch){if([401,403].includes(error.httpStatus)){expireAdminSession();error.message='Сессия завершена или у аккаунта нет доступа. Войди заново.'}else sessionClock.retry()}throw error}
+  finally{if(activityPromise===pending)activityPromise=null}
+ })();activityPromise=pending;return pending;
+}
+function recordAdminActivity(event){
+ if(!event.isTrusted||document.visibilityState==='hidden'||!session||!checkAdminSession())return;
+ if(sessionClock.activity())touchAdminSession().catch(()=>{});
+}
+for(const type of ['pointerdown','keydown','input','wheel','touchstart'])document.addEventListener(type,recordAdminActivity,{capture:true,passive:true});
+window.setInterval?.(()=>{if(session&&checkAdminSession())touchAdminSession().catch(()=>{})},15000);
+document.addEventListener('visibilitychange',checkAdminSession);
+window.addEventListener('focus',checkAdminSession);
+$('continueSession').onclick=()=>{if(session&&checkAdminSession()){sessionClock.activity();touchAdminSession(true).catch(()=>{})}};
 const stagedUploads=new Map();
 let mfaFactorId=null,mfaMode=null,mfaEnrollment=null,recovering=false;
 function clearMfa(){
@@ -63,9 +99,10 @@ function clearMfa(){
  $('mfaVerify').reset();$('mfaQr').removeAttribute?.('src');$('mfaSecret').textContent='';$('mfaFactor').innerHTML='';
 }
 function endSession(){
+ sessionClock.clear();activityPromise=null;$('sessionWarning').classList.add('hidden');$('photoStudio').close?.();
  clearSavedAdminSession();window.AdminWorkspace?.clear();clearInternalFields();
  internalNoteState=null;if($('editor').elements?.internal_note)$('editor').elements.internal_note.value='';pendingCover=false;window.PhotoStudio?.cancel();adminSecurity={paused:false};session=null;sessionEpoch++;previewEpoch++;items=[];photos=[];editing=null;original=null;creationKey=null;recovering=false;
- for(const id of ['stockTotal','stockCount','stockValue'])$(id).textContent='—';$('stockValueNote').textContent='';stagedUploads.clear();clearMfa();$('authArea').classList.remove('hidden');pendingPreviews=[];editorDirty=false;activeView='all';$('settingsPanel').classList.add('hidden');clearOverview();$('adminHome').classList.add('hidden');$('homePanel').classList.add('hidden');$('cataloguePreview').close?.();$('cataloguePreviewCard').innerHTML='';productWishlistCounts=null;productWishlistLoadedAt=0;$('analyticsPanel').classList.add('hidden');$('analyticsCards').innerHTML='';$('analyticsProducts').innerHTML='';analyticsData=null;analyticsChartMetric='visitors';$('analyticsChart').innerHTML='';
+ for(const id of ['stockTotal','stockCount','stockValue'])$(id).textContent='—';$('stockValueNote').textContent='';stagedUploads.clear();clearMfa();$('authArea').classList.remove('hidden');pendingPreviews=[];editorDirty=false;activeView='all';$('settingsPanel').classList.add('hidden');clearOverview();$('adminHome').classList.add('hidden');$('homePanel').classList.add('hidden');$('cataloguePreview').close?.();$('cataloguePreviewCard').innerHTML='';productWishlistCounts=null;productWishlistLoadedAt=0;$('analyticsPanel').classList.add('hidden');$('analyticsCards').innerHTML='';$('analyticsProducts').innerHTML='';$('retentionStatus').textContent='';analyticsData=null;analyticsChartMetric='visitors';$('analyticsChart').innerHTML='';
  for(const id of ['editor','login','confirmEmail','newPassword'])$(id).reset();
  for(const id of ['workspace','editor','confirmEmail','newPassword','pendingAccess'])$(id).classList.add('hidden');
  $('login').classList.remove('hidden');$('inventory').innerHTML='';$('photos').innerHTML='';$('adminSearch').value='';$('photoUrl').value='';$('uploads').value='';
@@ -82,7 +119,7 @@ async function request(path,options={}){
  const publicAuth=/^\/auth\/v1\/(token|recover|verify)/.test(path);
  if(publicAuth)return fetchJSON(path,options);
  const epoch=sessionEpoch;
- if(!session)throw Error('Сессия завершена. Войди заново.');
+ if(!session||!checkAdminSession())throw Error('Сессия завершена. Войди заново.');
  if(session.expires_at<Date.now()/1000+60){
   if(!refreshPromise){
    const refresh=async()=>{
@@ -99,7 +136,7 @@ async function request(path,options={}){
  if(epoch!==sessionEpoch)throw Error('Сессия завершена.');
  return data;
 }
-function keepSession(data){if(!data?.access_token||!data.user)throw Error('Не удалось подтвердить вход.');session={...data,expires_at:data.expires_at||Date.now()/1000+(data.expires_in||3600)};saveAdminSession()}
+function keepSession(data,fresh=false){if(!data?.access_token||!data.user)throw Error('Не удалось подтвердить вход.');if(fresh||!session)sessionClock.start();session={...data,expires_at:data.expires_at||Date.now()/1000+(data.expires_in||3600)};saveAdminSession()}
 // This decoded claim controls UI only. Supabase verifies signatures and enforces RLS.
 function sessionAal(){try{return JSON.parse(atob(session.access_token.split('.')[1].replace(/-/g,'+').replace(/_/g,'/'))).aal||'aal1'}catch{return 'aal1'}}
 async function currentAuthUser(){
@@ -120,7 +157,7 @@ async function enableMfaProtection(){
  await request('/rest/v1/rpc/enforce_store_mfa',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});adminSecurity={...adminSecurity,paused:false};
 }
 async function enterWorkspace(){
- saveAdminSession();
+ saveAdminSession();await touchAdminSession(true);
  $('pendingAccess').classList.add('hidden');
  const security=await request('/rest/v1/rpc/store_admin_security_status',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});adminSecurity={paused:security?.paused===true,pending:security?.pending===true,owner:security?.access_role==='owner'};
  if(!adminSecurity.pending){const admins=await request(`/rest/v1/store_admins?select=user_id&user_id=eq.${encodeURIComponent(session.user.id)}`);if(!admins.length){endSession();throw Error('У этого аккаунта нет доступа к управлению магазином.')}}
@@ -145,7 +182,7 @@ async function enterWorkspace(){
 $('login').onsubmit=async e=>{e.preventDefault();if(busy)return;const b=e.submitter,epoch=sessionEpoch;b.disabled=true;busy=true;try{
  status('');$('status').classList.add('admin-loading');$('status').innerHTML='<span class="admin-loading-content"><span class="loading-brand" aria-hidden="true"><span class="admin-logo">J.P</span><img class="loading-paw" src="images/brand-paw.webp" alt=""><span class="loading-signature">BY VASYA</span></span><span class="loading-caption">Загружаем управление магазином…</span><span class="loading-track" aria-hidden="true"></span></span>';
  const data=await request('/auth/v1/token?grant_type=password',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:e.target.email.value.trim(),password:e.target.password.value})});
- if(epoch!==sessionEpoch)return;keepSession(data);await enterWorkspace();
+ if(epoch!==sessionEpoch)return;keepSession(data,true);await enterWorkspace();
 }catch(err){if(epoch===sessionEpoch||!session)status(err.message)}finally{$('status').classList.remove('admin-loading');if($('status').querySelector?.('.loading-brand'))status('');busy=false;b.disabled=false;e.target.password.value=''}};
 $('recover').onclick=async()=>{
  if(busy)return;
@@ -161,7 +198,7 @@ $('confirmEmail').onsubmit=async e=>{
   const type=link.searchParams.get('type');if(!['recovery'].includes(type))throw Error('Неподдерживаемая ссылка подтверждения.');
   const token=link.searchParams.get('token');e.target.confirmation.value='';
   const data=await request('/auth/v1/verify',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token_hash:token,type})});
-  if(epoch!==sessionEpoch)return;keepSession(data);
+  if(epoch!==sessionEpoch)return;keepSession(data,true);
   recovering=type==='recovery';await enterWorkspace();
  }catch(err){if(epoch===sessionEpoch||!session)status(err.message)}finally{busy=false;b.disabled=false}
 };
@@ -478,6 +515,7 @@ async function loadAnalytics(){
   $('analyticsStatus').textContent=`Обновлено ${new Date().toLocaleTimeString('ru-RU')}. Добавления и удаления — количество действий за период.`;
   try{const limited=await request('/rest/v1/rpc/store_analytics_health',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});if(epoch!==sessionEpoch)return;if(limited===true)$('analyticsStatus').textContent+=' Сбор приближается к защитным лимитам или достиг их: данные могут быть неполными.'}catch{if(epoch===sessionEpoch&&session)$('analyticsStatus').textContent+=' Статус лимитов недоступен.'}
   try{const botLimited=await request('/rest/v1/rpc/store_bot_health',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});if(epoch!==sessionEpoch)return;if(botLimited===true)$('analyticsStatus').textContent+=' Бот приближается к защитным лимитам или достиг их.'}catch{if(epoch===sessionEpoch&&session)$('analyticsStatus').textContent+=' Статус лимитов бота недоступен.'}
+  try{const retention=await request('/rest/v1/rpc/store_analytics_retention_health',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});if(epoch!==sessionEpoch)return;$('retentionStatus').textContent=retention?.healthy===true?'Данные старше 90 дней удаляются ежедневно. Очистка работает.':'Нужно проверить автоматическую очистку старой статистики.'}catch{if(epoch===sessionEpoch&&session)$('retentionStatus').textContent='Статус автоматической очистки недоступен.'}
  }catch(e){if(epoch===sessionEpoch)$('analyticsStatus').textContent='Не удалось получить статистику. Попробуйте обновить.'}
  finally{analyticsBusy=false;$('analyticsDays').disabled=false;$('refreshAnalytics').disabled=false}
 }
@@ -573,7 +611,7 @@ async function restoreAdminSession(){
   if(!user?.id||!user.email)throw Error('Не удалось проверить аккаунт ссылки.');
   if(previous&&previous.user.id!==user.id)throw Error('Ссылка относится к другому аккаунту. Сначала выйдите из текущего аккаунта.');
   if(typeof confirm!=='function'||!confirm(`Открыть приглашение или восстановление для ${user.email}? Продолжайте, только если это ваш аккаунт.`))return;
-  recovering=true;keepSession({access_token:access,refresh_token:refresh,user,expires_in:Number(callback.get('expires_in'))||3600});await enterWorkspace();
+  recovering=true;keepSession({access_token:access,refresh_token:refresh,user,expires_in:Number(callback.get('expires_in'))||3600},true);await enterWorkspace();
  }catch(error){if(!previous)endSession();status('Не удалось завершить подтверждение: '+error.message)}
 }
 const adminSessionReady=restoreAdminSession();

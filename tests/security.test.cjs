@@ -20,6 +20,7 @@ function setup(fetch,mfaEnrollmentEnabled=true,sessionStorage,localStorage){
  const context=vm.createContext({confirm:()=>true,sessionStorage,localStorage,document:{getElementById:get,querySelectorAll:()=>[],addEventListener(){}},window:{addEventListener(){},STORE_CONFIG:{url:'https://test.supabase.co',key:'public',mfaEnrollmentEnabled}},fetch,URL,URLSearchParams,atob,AbortController,setTimeout,clearTimeout,structuredClone,crypto,location:{search:''},safeProductImage:()=>true});
  get('editor').elements=Object.fromEntries(['brand','name','size','price','currency','available','fulfillment_status'].map(k=>[k,node()]));
  vm.runInContext(fs.readFileSync(__dirname+'/../product-pricing.js','utf8'),context);
+ vm.runInContext(fs.readFileSync(__dirname+'/../admin-session.js','utf8'),context);
  vm.runInContext(fs.readFileSync(__dirname+'/../admin.js','utf8'),context);
  get('mfaVerify').code=node();
  return {get,run:code=>vm.runInContext(code,context),seed:s=>vm.runInContext('keepSession('+JSON.stringify(s)+')',context)};
@@ -28,6 +29,7 @@ function api({factors=[],verification=session('aal2',[factor]),activateError=fal
  const calls=[];
  return {calls,fetch:async(path,options={})=>{
   calls.push({path,options});
+  if(path.includes('/rpc/touch_store_admin_session')){const t=Date.now();return response({server_now:new Date(t).toISOString(),expires_at:new Date(t+43200000).toISOString(),idle_expires_at:new Date(t+1800000).toISOString()})}
   if(path.includes('/rpc/store_admin_security_status'))return response({paused,pending,access_role:pending?null:'owner'});
   if(path.includes('/store_admins'))return response(pending?[]:[{user_id:'owner'}]);
   if(path.endsWith('/auth/v1/user'))return response(user(factors));
@@ -96,7 +98,7 @@ test('email recovery for MFA account requires second factor before changing pass
  assert.equal(a.calls.some(c=>c.path.includes('/products')),false);
 });
 test('unknown user and forged account response cannot enter workspace',async()=>{
- const h=setup(async path=>path.includes('/store_admins')?response([{user_id:'owner'}]):response({id:'wrong'}));h.seed(session());
+ const good=api();const h=setup(async path=>path.endsWith('/auth/v1/user')?response({id:'wrong'}):good.fetch(path));h.seed(session());
  await assert.rejects(h.run('enterWorkspace()'),/проверить аккаунт/);assert.equal(h.run('session'),null);
 });
 
