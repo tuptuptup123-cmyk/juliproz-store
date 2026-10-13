@@ -16,6 +16,14 @@ const server=http.createServer((req,res)=>{let file=path.join(root,decodeURIComp
   // Freeze the fetched catalogue so concurrent admin inserts cannot change counts mid-test.
   await page.route('**/rest/v1/products?**',route=>{const q=new URL(route.request().url()).searchParams,id=q.get('id');let rows=live;if(id?.startsWith('eq.'))rows=rows.filter(p=>String(p.id)===id.slice(3));else if(id?.startsWith('in.(')){const ids=id.slice(4,-1).split(',');rows=rows.filter(p=>ids.includes(String(p.id)))}const offset=Number(q.get('offset')||0),limit=Number(q.get('limit')||rows.length);return route.fulfill({json:rows.slice(offset,offset+limit)})});
   await page.addInitScript(()=>localStorage.setItem('jpAnalyticsConsent','declined'));await page.goto('http://127.0.0.1:8765/',{waitUntil:'domcontentloaded'});await page.locator('.product').first().waitFor();await page.evaluate(()=>document.fonts.ready);
+  assert.deepEqual(await page.locator('.bottom-nav [data-tab]:visible').evaluateAll(bs=>bs.map(b=>b.dataset.tab)),['home','catalog','favorites','cart','sell','services','about']);
+  await page.locator('.bottom-nav [data-tab=home]').click();assert.equal(await page.locator('#webHomePage').isVisible(),true);assert.equal(await page.locator('#grid').isHidden(),true);await page.screenshot({path:out+'/'+name+'-website-home.png',fullPage:false});
+  await page.locator('.bottom-nav [data-tab=about]').click();assert.equal(await page.locator('#webAboutPage').isVisible(),true);assert.equal(await page.locator('#webHomePage').isHidden(),true);assert.equal(await page.locator('.catalog-head').isHidden(),true);
+  await page.locator('.bottom-nav [data-tab=catalog]').click();assert.equal(await page.locator('#webAboutPage').isHidden(),true);assert.equal(await page.locator('#grid').isVisible(),true);
+  await page.evaluate(()=>{window.__webSdk=window.Telegram;window.Telegram={WebApp:{platform:'tdesktop',initData:'synthetic-launch',ready(){},expand(){}}};initializeTelegram()});
+  assert.deepEqual(await page.locator('.bottom-nav [data-tab]:visible').evaluateAll(bs=>bs.map(b=>b.dataset.tab)),['catalog','favorites','cart','sell','services']);
+  await page.evaluate(()=>setTab('home'));assert.equal(await page.locator('#webHomePage').isHidden(),true);
+  await page.evaluate(()=>{window.Telegram=window.__webSdk;initializeTelegram()});assert.equal(await page.locator('.bottom-nav [data-tab=home]').isVisible(),true);
   // Check the drop, final signature placement, and accessible static fallback.
   await page.locator('.brand-signature').evaluate(el=>{const animation=el.getAnimations().find(a=>a.animationName==='vasya-rope-drop');if(!animation)throw Error('Missing signature entrance');animation.pause();animation.currentTime=350+2400*.44});
   await page.screenshot({path:out+'/'+name+'-vasya-drop.png',fullPage:false});
