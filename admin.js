@@ -65,7 +65,7 @@ function clearMfa(){
 function endSession(){
  clearSavedAdminSession();window.AdminWorkspace?.clear();clearInternalFields();
  internalNoteState=null;if($('editor').elements?.internal_note)$('editor').elements.internal_note.value='';pendingCover=false;window.PhotoStudio?.cancel();adminSecurity={paused:false};session=null;sessionEpoch++;previewEpoch++;items=[];photos=[];editing=null;original=null;creationKey=null;recovering=false;
- for(const id of ['stockTotal','stockCount','stockValue'])$(id).textContent='—';$('stockValueNote').textContent='';stagedUploads.clear();clearMfa();$('authArea').classList.remove('hidden');pendingPreviews=[];editorDirty=false;activeView='all';$('settingsPanel').classList.add('hidden');clearOverview();$('adminHome').classList.add('hidden');$('homePanel').classList.add('hidden');$('cataloguePreview').close?.();$('cataloguePreviewCard').innerHTML='';productWishlistCounts=null;productWishlistLoadedAt=0;$('analyticsPanel').classList.add('hidden');$('analyticsCards').innerHTML='';$('analyticsProducts').innerHTML='';
+ for(const id of ['stockTotal','stockCount','stockValue'])$(id).textContent='—';$('stockValueNote').textContent='';stagedUploads.clear();clearMfa();$('authArea').classList.remove('hidden');pendingPreviews=[];editorDirty=false;activeView='all';$('settingsPanel').classList.add('hidden');clearOverview();$('adminHome').classList.add('hidden');$('homePanel').classList.add('hidden');$('cataloguePreview').close?.();$('cataloguePreviewCard').innerHTML='';productWishlistCounts=null;productWishlistLoadedAt=0;$('analyticsPanel').classList.add('hidden');$('analyticsCards').innerHTML='';$('analyticsProducts').innerHTML='';analyticsData=null;analyticsChartMetric='visitors';$('analyticsChart').innerHTML='';
  for(const id of ['editor','login','confirmEmail','newPassword'])$(id).reset();
  for(const id of ['workspace','editor','confirmEmail','newPassword','pendingAccess'])$(id).classList.add('hidden');
  $('login').classList.remove('hidden');$('inventory').innerHTML='';$('photos').innerHTML='';$('adminSearch').value='';$('photoUrl').value='';$('uploads').value='';
@@ -467,13 +467,13 @@ $('styleExistingPhotos').onclick=async()=>{
  }catch(e){if(epoch===previewEpoch)status(`${e.message} Исходные фото сохранены — попробуйте ещё раз.`)}
  finally{busy=false;$('editorFields').disabled=false;$('save').disabled=false;$('photoProcessingStatus').textContent='';renderPhotos()}
 };
-let analyticsBusy=false;
+let analyticsBusy=false,analyticsData=null,analyticsChartMetric='visitors';
 async function loadAnalytics(){
  if(analyticsBusy||!session)return;analyticsBusy=true;const epoch=sessionEpoch;$('analyticsDays').disabled=true;$('refreshAnalytics').disabled=true;$('analyticsStatus').textContent='Загружаем статистику…';
  try{const data=await request('/rest/v1/rpc/store_analytics_summary',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({p_days:Number($('analyticsDays').value)})});if(epoch!==sessionEpoch)return;
   updateOverview(data,Number($('analyticsDays').value)===7);
   const report=window.AnalyticsReport.render(data);
-  $('analyticsCards').innerHTML=report.cards;
+  analyticsData=data;$('analyticsCards').innerHTML=report.cards;renderAnalyticsChart();
   $('analyticsProducts').innerHTML=report.details;
   $('analyticsStatus').textContent=`Обновлено ${new Date().toLocaleTimeString('ru-RU')}. Добавления и удаления — количество действий за период.`;
   try{const limited=await request('/rest/v1/rpc/store_analytics_health',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});if(epoch!==sessionEpoch)return;if(limited===true)$('analyticsStatus').textContent+=' Сбор приближается к защитным лимитам или достиг их: данные могут быть неполными.'}catch{if(epoch===sessionEpoch&&session)$('analyticsStatus').textContent+=' Статус лимитов недоступен.'}
@@ -481,6 +481,8 @@ async function loadAnalytics(){
  }catch(e){if(epoch===sessionEpoch)$('analyticsStatus').textContent='Не удалось получить статистику. Попробуйте обновить.'}
  finally{analyticsBusy=false;$('analyticsDays').disabled=false;$('refreshAnalytics').disabled=false}
 }
+function renderAnalyticsChart(){if(!analyticsData)return;$('analyticsChart').innerHTML=window.AnalyticsReport.chart(analyticsData,analyticsChartMetric);document.querySelectorAll('[data-chart-metric]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.chartMetric===analyticsChartMetric)))}
+$('analyticsChartControls').addEventListener('click',e=>{const b=e.target.closest('[data-chart-metric]');if(!b)return;analyticsChartMetric=b.dataset.chartMetric;renderAnalyticsChart()});
 $('refreshAnalytics').onclick=loadAnalytics;$('analyticsDays').onchange=loadAnalytics;
 
 // Preferences affect this admin device only; they never change public store settings.
