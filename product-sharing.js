@@ -46,7 +46,7 @@
    const url=action==='telegram'?data.telegram:action==='manager'?data.manager:null;if(!url)return;
    try{
     if(inTelegram()&&root.Telegram?.WebApp?.openTelegramLink)root.Telegram.WebApp.openTelegramLink(url);
-    else {const link=document.createElement('a');link.href=url;link.target='_blank';link.rel='noopener noreferrer';link.click()}
+    else {const link=document.createElement('a');link.href=url;link.target='_blank';link.rel='noopener noreferrer';link.hidden=true;dialog.append(link);link.click();link.remove()}
     if(action==='manager')root.StoreAnalytics?.track('manager_product',data.id);
     status.textContent=action==='telegram'?'Выберите получателя и отправьте сообщение в Telegram.':'Отправьте подготовленное сообщение менеджеру в Telegram.';
    }catch{status.textContent='Не удалось открыть Telegram. Скопируйте ссылку ниже.'}
