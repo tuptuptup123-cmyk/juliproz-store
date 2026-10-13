@@ -156,11 +156,52 @@ test('legacy browser tokens are discarded without automatic login or private API
  const h=setup(async path=>{calls.push(path);return response({})},true,tab,local);
  await h.run('adminSessionReady');assert.equal(h.run('session'),null);assert.equal(local.getItem('jpAdminSessionV1'),null);assert.equal(tab.getItem('jpAdminSessionV1'),null);assert.deepEqual(calls,[]);
 });
-test('login and refresh credentials remain only in memory, including recovery sessions',async()=>{
+test('incomplete login and recovery credentials remain only in memory',async()=>{
  const local=tabStorage(),tab=tabStorage(),h=setup(async()=>response(session('aal2',[factor])),true,tab,local);
  h.seed(session('aal2',[factor]));h.run('recovering=true;saveAdminSession()');
  assert.equal(h.run('session.refresh_token'),'synthetic-refresh');assert.equal(local.getItem('jpAdminSessionV1'),null);assert.equal(tab.getItem('jpAdminSessionV1'),null);
+ assert.equal(tab.getItem('jpAdminReloadSessionV1'),null);
  const reopened=setup(async()=>{throw Error('Unexpected auto-login')},true,tab,local);await reopened.run('adminSessionReady');assert.equal(reopened.run('session'),null);
+});
+const reloadKey='jpAdminReloadSessionV1';
+test('completed MFA login survives reload and validates server identity without storing profile data',async()=>{
+ const local=tabStorage(),tab=tabStorage(),a=api({factors:[factor]}),h=setup(a.fetch,true,tab,local);
+ h.seed(session('aal2',[factor]));await h.run('enterWorkspace()');const saved=JSON.parse(tab.getItem(reloadKey));
+ assert.equal(saved.session.user.id,'owner');assert.deepEqual(Object.keys(saved.session.user),['id']);assert.equal(local.getItem(reloadKey),null);
+ const b=api({factors:[factor]}),reopened=setup(b.fetch,true,tab,local);await reopened.run('adminSessionReady');
+ assert.equal(reopened.get('workspace').classList.contains('hidden'),false);assert.equal(reopened.run('sessionAal()'),'aal2');
+ assert.equal(reopened.run('sessionClock.snapshot().absolute'),saved.limits.absolute);assert.ok(b.calls.some(c=>c.path.endsWith('/auth/v1/user')));
+ await reopened.get('logout').onclick();assert.equal(tab.getItem(reloadKey),null);
+ const loggedOut=setup(async()=>{throw Error('Unexpected login')},true,tab,local);await loggedOut.run('adminSessionReady');assert.equal(loggedOut.run('session'),null);
+});
+test('expired or malformed saved sessions never request private data',async()=>{
+ for(const limits of [{absolute:Date.now()+43200000,idle:Date.now()-1},{absolute:Date.now()+43200001+60000,idle:Date.now()+1800000},{}]){
+  const tab=tabStorage();tab.setItem(reloadKey,JSON.stringify({session:{...session('aal2',[factor]),expires_at:Date.now()/1000+3600},limits}));
+  const calls=[],h=setup(async path=>{calls.push(path);return response({})},true,tab,tabStorage());await h.run('adminSessionReady');
+  assert.equal(h.run('session'),null);assert.equal(tab.getItem(reloadKey),null);assert.deepEqual(calls,[]);
+ }
+});
+test('reload refreshes rotated credentials, rejects revoked access, and preserves login on network failure',async()=>{
+ for(const failure of [null,401,'offline']){
+  const local=tabStorage(),tab=tabStorage(),a=api({factors:[factor]}),h=setup(a.fetch,true,tab,local);
+  h.seed(session('aal2',[factor]));await h.run('enterWorkspace()');h.run('session.expires_at=1;saveAdminSession()');let refreshes=0;
+  const reopened=setup(async(path,options)=>{
+   if(path.includes('grant_type=refresh_token')){refreshes++;if(failure==='offline')throw TypeError('offline');if(failure)return response({message:'revoked'},failure);return response({...session('aal2',[factor]),refresh_token:'rotated-refresh'})}
+   return a.fetch(path,options);
+  },true,tab,local);await reopened.run('adminSessionReady');assert.equal(refreshes,1);
+  if(failure===401){assert.equal(reopened.run('session'),null);assert.equal(tab.getItem(reloadKey),null)}
+  else if(failure==='offline'){assert.ok(tab.getItem(reloadKey));assert.match(reopened.get('status').textContent,/offline/)}
+  else{assert.equal(reopened.get('workspace').classList.contains('hidden'),false);assert.equal(JSON.parse(tab.getItem(reloadKey)).session.refresh_token,'rotated-refresh')}
+ }
+});
+test('storage denial leaves ordinary login usable and pending access is not persisted',async()=>{
+ const denied={getItem(){throw Error('denied')},setItem(){throw Error('denied')},removeItem(){throw Error('denied')}};
+ const a=api({factors:[factor]}),h=setup(a.fetch,true,denied,denied);h.seed(session('aal2',[factor]));await h.run('enterWorkspace()');assert.equal(h.get('workspace').classList.contains('hidden'),false);
+ const tab=tabStorage(),pending=setup(api({factors:[factor],pending:true}).fetch,true,tab,tabStorage());pending.seed(session('aal2',[factor]));await pending.run('enterWorkspace()');assert.equal(tab.getItem(reloadKey),null);
+});
+test('starting a fresh login clears the previous completed login until MFA succeeds',async()=>{
+ const tab=tabStorage(),a=api({factors:[factor]}),h=setup(a.fetch,true,tab,tabStorage());h.seed(session('aal2',[factor]));await h.run('enterWorkspace()');assert.ok(tab.getItem(reloadKey));
+ h.run('keepSession('+JSON.stringify(session('aal1',[factor]))+',true)');await h.run('enterWorkspace()');assert.equal(tab.getItem(reloadKey),null);assert.equal(h.get('workspace').classList.contains('hidden'),true);
 });
 test('expired in-memory session refreshes once and still validates server identity',async()=>{
  const a=api({factors:[factor]});let refreshes=0;

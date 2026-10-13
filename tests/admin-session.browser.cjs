@@ -2,33 +2,37 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict'),fs=r
 const root=path.resolve(__dirname,'..'),types={'.html':'text/html','.js':'text/javascript','.css':'text/css','.webp':'image/webp','.woff':'font/woff'};
 const server=http.createServer((req,res)=>{const file=path.resolve(root,'.'+new URL(req.url,'http://localhost').pathname);if(!file.startsWith(root+path.sep))return res.writeHead(403).end();fs.readFile(file,(err,data)=>{res.writeHead(err?404:200,{'Content-Type':types[path.extname(file)]||'application/octet-stream'});res.end(err?'Missing':data)})});
 (async()=>{await new Promise(r=>server.listen(8782,r));const browser=await chromium.launch({args:['--no-sandbox']});try{
- const page=await browser.newPage();let touches=0,refreshes=0,signouts=0,sessionStart=0;const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ const page=await browser.newPage();let touches=0,refreshes=0,signouts=0,passwordLogins=0,sessionStart=0;const errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.clock.install({time:new Date('2026-10-13T09:00:00Z')});await page.clock.pauseAt(new Date('2026-10-13T09:00:01Z'));
  await page.route('https://**/*',async route=>{
   const url=new URL(route.request().url());if(url.hostname!=='qhgzzhgxwpcctafpzjid.supabase.co')return route.fulfill({status:404,body:''});
-  const now=await page.evaluate(()=>Date.now()),user={id:'synthetic-owner',email:'synthetic@example.invalid',factors:[]};
-  if(url.pathname==='/auth/v1/token'){if(url.searchParams.get('grant_type')==='refresh_token')refreshes++;else sessionStart=now;return route.fulfill({json:{access_token:'synthetic-token',refresh_token:'synthetic-refresh',expires_at:now/1000+3600,user}})}
+  const now=await page.evaluate(()=>Date.now()),user={id:'synthetic-owner',email:'synthetic@example.invalid',factors:[{id:'synthetic-factor',status:'verified',factor_type:'totp'}]};
+  if(url.pathname==='/auth/v1/token'){if(url.searchParams.get('grant_type')==='refresh_token')refreshes++;else{sessionStart=now;passwordLogins++}return route.fulfill({json:{access_token:`synthetic.${Buffer.from(JSON.stringify({aal:'aal2'})).toString('base64url')}.synthetic`,refresh_token:'synthetic-refresh',expires_at:now/1000+3600,user}})}
   if(url.pathname==='/auth/v1/logout'){signouts++;return route.fulfill({status:204})}
   if(url.pathname==='/auth/v1/user')return route.fulfill({json:user});
   if(url.pathname.endsWith('touch_store_admin_session')){touches++;return route.fulfill({json:{server_now:new Date(now).toISOString(),expires_at:new Date(sessionStart+43200000).toISOString(),idle_expires_at:new Date(Math.min(sessionStart+43200000,now+1800000)).toISOString()}})}
-  if(url.pathname.endsWith('store_admin_security_status'))return route.fulfill({json:{paused:true,access_role:'owner'}});
+  if(url.pathname.endsWith('store_admin_security_status'))return route.fulfill({json:{paused:false,access_role:'owner'}});
   if(url.pathname==='/rest/v1/store_admins')return route.fulfill({json:[{user_id:user.id}]});
   if(url.pathname==='/rest/v1/products')return route.fulfill({json:[{id:1,brand:'Private',name:'Hidden fixture',available:false,price:100,currency:'EUR',photos:[]}]});
   return route.fulfill({json:{counts:{},healthy:true}});
  });
  await page.goto('http://localhost:8782/admin.html');
  const login=async()=>{await page.locator('#login [name=email]').fill('synthetic@example.invalid');await page.locator('#login [name=password]').fill('synthetic-password');await page.locator('#login button[type=submit]').click();await page.locator('#workspace').waitFor();await page.waitForFunction(()=>!activityPromise&&!overviewBusy)};
- await login();assert.equal(touches,1);
- await page.clock.fastForward(28*60000);await page.locator('#sessionWarning').waitFor();await page.waitForFunction(()=>!overviewBusy);assert.equal(touches,1,'background overview cannot touch activity');
- await page.evaluate(()=>document.dispatchEvent(new Event('keydown')));assert.equal(touches,1,'script-generated input cannot extend the UI session');
- await page.locator('#continueSession').click();await page.waitForFunction(()=>!activityPromise);assert.equal(touches,2);assert.equal(await page.locator('#sessionWarning').isHidden(),true);
- await page.clock.fastForward(29*60000);await page.locator('#sessionWarning').waitFor();assert.equal(touches,2,'stale queued activity after sleep cannot extend a session');await page.clock.fastForward(60000);await page.locator('#login').waitFor();
- assert.equal(await page.locator('#workspace').isHidden(),true);assert.equal(await page.evaluate(()=>session),null);assert.equal(await page.locator('#inventory').innerText(),'');assert.equal(touches,2);assert.equal(refreshes,0);
+ await login();assert.equal(touches,1);const deadline=await page.evaluate(()=>sessionClock.snapshot().absolute);
+ for(let i=0;i<2;i++){await page.reload();await page.locator('#workspace').waitFor();await page.waitForFunction(()=>!busy&&!activityPromise&&!overviewBusy);assert.equal(await page.locator('#mfaPanel').isHidden(),true);assert.equal(await page.evaluate(()=>sessionClock.snapshot().absolute),deadline)}
+ assert.equal(passwordLogins,1,'reload must not require another login');assert.equal(touches,3);
+ await page.clock.fastForward(28*60000);await page.locator('#sessionWarning').waitFor();await page.waitForFunction(()=>!overviewBusy);assert.equal(touches,3,'background overview cannot touch activity');
+ await page.evaluate(()=>document.dispatchEvent(new Event('keydown')));assert.equal(touches,3,'script-generated input cannot extend the UI session');
+ await page.locator('#continueSession').click();await page.waitForFunction(()=>!activityPromise);assert.equal(touches,4);assert.equal(await page.locator('#sessionWarning').isHidden(),true);
+ await page.clock.fastForward(29*60000);await page.locator('#sessionWarning').waitFor();assert.equal(touches,4,'stale queued activity after sleep cannot extend a session');await page.clock.fastForward(60000);await page.locator('#login').waitFor();
+ assert.equal(await page.locator('#workspace').isHidden(),true);assert.equal(await page.evaluate(()=>session),null);assert.equal(await page.locator('#inventory').innerText(),'');assert.equal(touches,4);assert.equal(refreshes,0);
  await page.waitForFunction(()=>document.getElementById('status').textContent.includes('Время входа истекло'));assert.equal(signouts,1);
+ await page.reload();await page.waitForFunction(()=>!busy);assert.equal(await page.locator('#workspace').isHidden(),true);assert.equal(await page.evaluate(()=>sessionStorage.getItem('jpAdminReloadSessionV1')),null);assert.equal(touches,4,'reload cannot revive an expired session');
  await login();const initialTouches=touches;
  for(let i=0;i<35;i++){await page.clock.fastForward(20*60000);await page.keyboard.press('Tab');await page.waitForFunction(()=>!activityPromise&&!overviewBusy)}
  assert.ok(touches>=initialTouches+35);assert.ok(refreshes>0,'active session can refresh tokens');
  await page.clock.fastForward(19*60000);await page.locator('#sessionWarning').waitFor();assert.match(await page.locator('#sessionWarningText').innerText(),/12-часовой/);assert.equal(await page.locator('#continueSession').isHidden(),true);
- await page.clock.fastForward(60000);await page.locator('#login').waitFor();assert.equal(await page.evaluate(()=>session),null);assert.deepEqual(errors,[]);
- console.log('PASS actual login, idle warning/continue, background and synthetic events, token refresh, private data clearing, exact 30m/12h logout');
+ await page.clock.fastForward(60000);await page.locator('#login').waitFor();assert.equal(await page.evaluate(()=>session),null);
+ await login();await page.locator('#logout').click();await page.locator('#login').waitFor();await page.reload();await page.waitForFunction(()=>!busy);assert.equal(await page.locator('#workspace').isHidden(),true);assert.equal(await page.evaluate(()=>sessionStorage.getItem('jpAdminReloadSessionV1')),null);assert.deepEqual(errors,[]);
+ console.log('PASS repeated authenticated reload without password/MFA, preserved deadlines, idle warning/continue, token refresh, private data clearing, exact 30m/12h logout and manual logout then reload');
 }finally{await browser.close();server.close()}})().catch(error=>{console.error(error);server.close();process.exitCode=1});

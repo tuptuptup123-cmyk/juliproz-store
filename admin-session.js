@@ -4,7 +4,8 @@
  function create(now=()=>Date.now()){
   let started=false,absolute=0,idle=0,dirty=false,dirtyAt=0,lastSent=0;
   return {
-   start(){const t=now();started=true;absolute=t+MAX;idle=t+IDLE;dirty=false;lastSent=0},
+   start(saved){const t=now(),max=saved?.absolute??t+MAX,end=saved?.idle??t+IDLE;if(![max,end].every(Number.isFinite)||max<=t||end<=t||max>t+MAX||end>t+IDLE||end>max)throw Error('Время входа истекло. Войди заново.');started=true;absolute=max;idle=end;dirty=false;dirtyAt=0;lastSent=0},
+   snapshot(){return {absolute,idle}},
    clear(){started=false;dirty=false},
    state(){const t=now(),remaining=Math.min(absolute,idle)-t;return {started,expired:started&&remaining<=0,warning:started&&remaining>0&&remaining<=WARNING,absolute:started&&absolute<=idle,remaining}},
    activity(){if(!started||this.state().expired)return false;dirty=true;dirtyAt=now();return true},
