@@ -1,7 +1,7 @@
 (() => {
  'use strict';
  const config=window.STORE_CONFIG;if(!config)return;
- let consent=null,visitor=null,session=null,sent=0;const recent=new Map();
+ let consent=null,visitor=null,session=null,sent=0,withdrawnReference=null;const recent=new Map();
  // Load Vercel's same-origin collectors only after the visitor opts in.
  let vercelStarted=false;
  const publicHosts=new Set(['juliproz.com','www.juliproz.com','juliproz-store.vercel.app']);
@@ -20,8 +20,8 @@
  }
  const uuid=()=>crypto.randomUUID(),valid=x=>/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(x||'');
  function identity(storage,key){try{let id=storage.getItem(key);if(!valid(id)){id=uuid();storage.setItem(key,id)}return id}catch{return uuid()}}
- function forget(){try{localStorage.removeItem('jpAnalyticsVisitor');sessionStorage.removeItem('jpAnalyticsSession')}catch{}visitor=null;session=null;recent.clear();sent=0}
- function showChoices(){document.getElementById('analyticsConsent')?.classList.remove('hidden');document.getElementById('analyticsAccept')?.focus()}
+ function forget(){if(valid(visitor))withdrawnReference=visitor;try{localStorage.removeItem('jpAnalyticsVisitor');sessionStorage.removeItem('jpAnalyticsSession')}catch{}visitor=null;session=null;recent.clear();sent=0}
+ function showChoices(){const ref=visitor||withdrawnReference,node=document.getElementById('analyticsDeletionReference');if(node){node.textContent=ref?`Код для запроса удаления ранее отправленной статистики: ${ref}. Сохраните его перед закрытием страницы и передайте менеджеру.`:'';node.classList.toggle('hidden',!ref)}document.getElementById('analyticsConsent')?.classList.remove('hidden');document.getElementById('analyticsAccept')?.focus()}
  function setConsent(value){
   consent=value===true;try{localStorage.setItem('jpAnalyticsConsent',consent?'accepted':'declined')}catch{}
   document.getElementById('analyticsConsent')?.classList.add('hidden');

@@ -5,15 +5,15 @@ test('invite API requires bearer auth, owner gate and valid input before any ema
  const s=setup();assert.equal((await s.run({Authorization:'Bearer synthetic-user',Origin:'https://evil.invalid'})).status,403);assert.equal(s.calls.length,0);
  assert.equal((await s.run({Authorization:'Bearer synthetic-user'},{email:'',name:''})).status,400);
 });
-test('invites use server credentials only for the auth invite, user identity for grants',async()=>{
+test('invites use server credentials only for email and never automatically grant membership',async()=>{
  const s=setup(),r=await s.run({Authorization:'Bearer synthetic-owner'},{email:' Staff@example.invalid ',name:'Staff',actor_id:'forged'});assert.equal(r.status,200);
  const invitation=s.calls.find(c=>c.url.includes('/invite?'));assert.ok(invitation);assert.equal(invitation.o.headers.Authorization,'Bearer synthetic-server-only');assert.deepEqual(JSON.parse(invitation.o.body),{email:'staff@example.invalid'});
- const grant=s.calls.find(c=>c.url.includes('add_workspace_admin'));assert.equal(grant.o.headers.Authorization,'Bearer synthetic-owner');assert.deepEqual(JSON.parse(grant.o.body),{p_email:'staff@example.invalid',p_name:'Staff'});
+ const team=s.calls.find(c=>c.url.includes('store_workspace_team'));assert.equal(team.o.headers.Authorization,'Bearer synthetic-owner');assert.deepEqual(JSON.parse(team.o.body),{});assert.equal(s.calls.some(c=>c.url.includes('add_workspace_admin')),false);
  assert.doesNotMatch(await r.text(),/synthetic-server-only/);assert.equal(r.headers.get('Cache-Control'),'no-store');
 });
 test('failed invite never grants membership and partial failures give safe retry instructions',async()=>{
  const s=setup({invite:429}),r=await s.run({Authorization:'Bearer synthetic-owner'});assert.equal(r.status,429);assert.equal(s.calls.some(c=>c.url.includes('add_workspace_admin')),false);
- const p=setup({grant:403}),response=await p.run({Authorization:'Bearer synthetic-owner'});assert.equal(response.status,409);assert.match((await response.json()).message,/Приглашение отправлено.*существующий аккаунт/);
+ const p=setup({grant:403}),response=await p.run({Authorization:'Bearer synthetic-owner'});assert.equal(response.status,409);assert.match((await response.json()).message,/Приглашение отправлено.*подтвердить отдельно/);
 });
 test('invitation preflight and responses allow the owned custom domains',async()=>{
  for(const Origin of ['https://admin.juliproz.com']){

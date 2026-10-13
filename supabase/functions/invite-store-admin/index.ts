@@ -23,8 +23,8 @@ Deno.serve(async req=>{
   if(!gate.ok){const e=await gate.json().catch(()=>({}));return reply(gate.status,{message:e.message||'Не удалось проверить право приглашения'})}
   const invite=await fetch(base+'/auth/v1/invite?redirect_to='+encodeURIComponent(allowedOrigin+'/admin.html'),{method:'POST',headers:{apikey:secret,Authorization:'Bearer '+secret,'Content-Type':'application/json'},body:JSON.stringify({email}),signal:AbortSignal.timeout(10000)});
   if(!invite.ok)return reply(invite.status===429?429:400,{message:invite.status===429?'Лимит отправки писем. Попробуйте позже.':'Не удалось отправить приглашение. Если аккаунт уже существует, используйте добавление существующего аккаунта.'});
-  const grant=await fetch(base+'/rest/v1/rpc/store_add_workspace_admin',{method:'POST',headers,body:JSON.stringify({p_email:email,p_name:name}),signal:AbortSignal.timeout(8000)});
-  if(!grant.ok)return reply(409,{message:'Приглашение отправлено, но доступ не добавлен. Повторите через «Добавить существующий аккаунт».'});
-  return reply(200,await grant.json());
+  const team=await fetch(base+'/rest/v1/rpc/store_workspace_team',{method:'POST',headers,body:'{}',signal:AbortSignal.timeout(8000)});
+  if(!team.ok)return reply(409,{message:'Приглашение отправлено. Обновите список команды; доступ нужно подтвердить отдельно после настройки MFA.'});
+  return reply(200,{...await team.json(),invitation_sent:true});
  }catch{return reply(503,{message:'Сервер не ответил. Если письмо уже пришло, используйте «Добавить существующий аккаунт». Иначе повторите позже.'})}
 });

@@ -488,7 +488,7 @@ async function checkoutCart(){
     if(reserved){status.textContent='В корзине есть товар на брони. Удалите его или дождитесь снятия брони — оформить заказ сейчас нельзя.';return}
     if(unavailable){status.textContent='Некоторые товары или размеры больше недоступны. Удалите их или выберите другой размер в карточке.';return}
     if(changed){status.textContent='Цена или наличие изменились. Корзина обновлена — проверьте итог и нажмите «Оформить» ещё раз.';return}
-    const text='Привет! Хочу заказать:\n\n'+[...new Set(cart.map(row=>productLink(cartProduct(row))))].join('\n');
+    const text='Привет! Хочу заказать:\n\n'+cart.map(row=>`${productLink(cartProduct(row))}\n${ProductSizes.variantLabel(cartProduct(row))}: ${row.size||'уточнить'} · Количество: ${row.quantity}`).join('\n\n');
     if(text.length>3500){status.textContent='Заказ слишком большой для одного сообщения. Разделите его на несколько заказов.';return}
     if(telegramLink(`https://t.me/juliproz?text=${encodeURIComponent(text)}`)){window.StoreAnalytics?.track('checkout_open');status.textContent='Заказ подготовлен. Отправьте сообщение менеджеру в Telegram.';}else status.textContent='Telegram уже открывался. Подождите несколько секунд перед повторным оформлением.';
   }catch{status.textContent='Не удалось проверить наличие. Корзина сохранена — попробуйте ещё раз.'}finally{checkoutBusy=false;renderCart()}
