@@ -3,8 +3,8 @@
  let team=null,teamRequest=0,historyRequest=0,historyCursor=null,historyRows=[],historyBusy=false;
  const labels={brand:'Бренд',name:'Название',category:'Категория',size:'Размеры / варианты',price:'Цена',currency:'Валюта',image_url:'Обложка',photos:'Фотографии',available:'В продаже',reserved:'Бронь',fulfillment_status:'Наличие',gender:'Раздел',description:'Описание',product_condition:'Состояние',stock_quantities:'Остатки',on_commission:'Комиссия',original_price:'Цена до скидки',wear_condition:'Следы носки',note:'Внутренняя заметка',location:'Где находится',custodian:'У кого находится',display_name:'Имя администратора',access_role:'Роль'};
  const rpc=(name,body={})=>request('/rest/v1/rpc/'+name,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
- function hidePanels(){$('historyPanel').classList.add('hidden');$('teamPanel').classList.add('hidden')}
- function clear(){team=null;teamRequest++;historyRequest++;historyCursor=null;historyRows=[];historyBusy=false;hidePanels();for(const id of ['historyList','teamMembers','currentAdminProfile','profileEmail','teamStatus','historyStatus'])$(id).textContent='';$('historyActor').innerHTML='<option value="">Все администраторы</option>';$('historyProduct').value='';$('profileForm').reset();$('addAdminForm').reset();$('addAdminForm').classList.add('hidden')}
+ function hidePanels(){$('profilePanel').classList.add('hidden');$('historyPanel').classList.add('hidden');$('teamPanel').classList.add('hidden')}
+ function clear(){team=null;teamRequest++;historyRequest++;historyCursor=null;historyRows=[];historyBusy=false;hidePanels();for(const id of ['historyList','teamMembers','currentAdminProfile','profileEmail','teamStatus','profileStatus','historyStatus'])$(id).textContent='';$('historyActor').innerHTML='<option value="">Все администраторы</option>';$('historyProduct').value='';$('profileForm').reset();$('addAdminForm').reset();$('addAdminForm').classList.add('hidden')}
  function applyTeam(data){
   if(!data||!Array.isArray(data.members)||data.current_user_id!==session?.user?.id)throw Error('Не удалось проверить профиль');
   team=data;const me=data.members.find(m=>m.user_id===data.current_user_id);if(!me)throw Error('Нет доступа к команде');
@@ -15,8 +15,8 @@
   const selected=$('historyActor').value;$('historyActor').innerHTML='<option value="">Все администраторы</option>'+data.members.map(m=>`<option value="${esc(m.user_id)}">${esc(m.display_name||m.email)}</option>`).join('');$('historyActor').value=selected;window.AdminSelects?.sync();
  }
  async function loadTeam(){
-  if(!session)return;const id=++teamRequest,epoch=sessionEpoch;$('teamStatus').textContent='Загружаем профили…';
-  try{const data=await rpc('store_workspace_team');if(id!==teamRequest||epoch!==sessionEpoch)return;applyTeam(data);$('teamStatus').textContent=''}catch(e){if(id===teamRequest&&epoch===sessionEpoch)$('teamStatus').textContent='Не удалось загрузить команду: '+e.message}
+  if(!session)return;const id=++teamRequest,epoch=sessionEpoch;$('teamStatus').textContent='Загружаем профили…';$('profileStatus').textContent=activeView==='profile'?'Загружаем профиль…':'';
+  try{const data=await rpc('store_workspace_team');if(id!==teamRequest||epoch!==sessionEpoch)return;applyTeam(data);$('teamStatus').textContent='';$('profileStatus').textContent=''}catch(e){if(id===teamRequest&&epoch===sessionEpoch){$('teamStatus').textContent='Не удалось загрузить команду: '+e.message;$('profileStatus').textContent='Не удалось загрузить профиль: '+e.message}}
  }
  function valueText(value){if(value==null||value==='')return '—';if(typeof value==='boolean')return value?'Да':'Нет';if(typeof value==='object')return JSON.stringify(value,null,2);return String(value)}
  function renderHistory(){
@@ -34,9 +34,9 @@
   }catch(e){if(id===historyRequest&&epoch===sessionEpoch)$('historyStatus').textContent='Не удалось загрузить историю: '+e.message}
   finally{if(id===historyRequest){historyBusy=false;$('moreHistory').disabled=false}}
  }
- function onView(view){hidePanels();if(view==='history'){$('historyPanel').classList.remove('hidden');loadHistory()}if(view==='team'){$('teamPanel').classList.remove('hidden');loadTeam()}}
+ function onView(view){hidePanels();if(view==='profile'){$('profilePanel').classList.remove('hidden');loadTeam()}if(view==='history'){$('historyPanel').classList.remove('hidden');loadHistory()}if(view==='team'){$('teamPanel').classList.remove('hidden');loadTeam()}}
  async function mutateTeam(button,task){if(busy)return;busy=true;button.disabled=true;const epoch=sessionEpoch;
-  try{const result=await task();if(epoch!==sessionEpoch)return;applyTeam(result);$('teamStatus').textContent='Сохранено.'}catch(e){if(epoch===sessionEpoch)$('teamStatus').textContent=e.message}finally{busy=false;button.disabled=false}
+  try{const result=await task();if(epoch!==sessionEpoch)return;applyTeam(result);$('teamStatus').textContent='Сохранено.';$('profileStatus').textContent='Сохранено.'}catch(e){if(epoch===sessionEpoch){$('teamStatus').textContent=e.message;$('profileStatus').textContent=e.message}}finally{busy=false;button.disabled=false}
  }
  $('profileForm').onsubmit=e=>{e.preventDefault();const name=e.target.elements.display_name.value.trim();if(!name)return;mutateTeam(e.submitter,()=>rpc('store_save_workspace_profile',{p_name:name}))};
  $('addAdminForm').onsubmit=e=>{e.preventDefault();const email=e.target.elements.email.value.trim(),name=e.target.elements.display_name.value.trim();if(!email||!name)return;if(!confirm(`Предоставить ${name} (${email}) доступ ко всем товарам и внутренней информации магазина?`))return;mutateTeam(e.submitter,async()=>{const result=e.submitter.value==='existing'?await rpc('store_add_workspace_admin',{p_email:email,p_name:name}):await request('/functions/v1/invite-store-admin',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,name})});if(session)e.target.reset();return result})};
