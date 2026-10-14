@@ -80,11 +80,12 @@ function stockLabel(p,size=null){if(p?.available===false||p?.reserved||onOrder(p
 const availabilityLabel=p=>p?.reserved?'На брони':onOrder(p)?'Под заказ':ProductSizes.stockUnits(p)===0?'Нет в наличии':'В наличии';
 const deliveryLabel=p=>onOrder(p)?'10–14 рабочих дней':'7–10 рабочих дней';
 const statusLabels={in_stock:'В наличии',on_order:'Под заказ'};
-function productLink(p){return `https://t.me/JuliProzBot/shop?startapp=p_${encodeURIComponent(String(p.id))}`}
+function productLink(p){if(window.SiteLanguage?.language==='en'&&!isTelegramStore())return `https://www.juliproz.com/?product=${encodeURIComponent(String(p.id))}&lang=en`;return `https://t.me/JuliProzBot/shop?startapp=p_${encodeURIComponent(String(p.id))}`}
 const CATALOG_FIELDS='id,created_at,brand,name,category,size,price,currency,image_url,available,fulfillment_status,gender,description,photos,reserved,product_condition,stock_quantities,on_commission,original_price,wear_condition';
 function photosOf(p){return [...new Set([p.image_url,p.image,...(Array.isArray(p.photos)?p.photos:[])].filter(safeProductImage))]}
 const telegramOpenTimes=new Map();
 function telegramLink(url){
+  if(window.SiteLanguage?.language==='en'){const target=new URL(url);if(target.searchParams.has('text'))target.searchParams.set('text',window.SiteLanguage.text(target.searchParams.get('text')));url=target.href;}
   if(Date.now()-(telegramOpenTimes.get(url)??-Infinity)<5000)return false;
   if(window.Telegram?.WebApp?.openTelegramLink) Telegram.WebApp.openTelegramLink(url);else window.open(url,"_blank","noopener");telegramOpenTimes.set(url,Date.now());if(telegramOpenTimes.size>50)telegramOpenTimes.delete(telegramOpenTimes.keys().next().value);return true;}
 
@@ -104,6 +105,7 @@ function isTelegramStore(){
  return Boolean(launch.get('tgWebAppData')||launch.get('tgWebAppVersion')||(launch.get('tgWebAppPlatform')&&launch.get('tgWebAppPlatform')!=='unknown'));
 }
 function syncWebNavigation(){
+ window.SiteLanguage?.sync();
  const web=!isTelegramStore();
  document.querySelectorAll('.bottom-nav .web-only').forEach(b=>b.classList.toggle('hidden',!web));
  document.querySelector('.bottom-nav')?.classList.toggle('is-website-navigation',web);
@@ -121,7 +123,7 @@ let currentFilter=null,tempValue=null;
 
 function money(p){
   if(p.price==null||p.price===''||!['EUR','€'].includes(p.currency||'EUR'))return '';
-  const n=window.ProductPricing.amount(p.price,p.currency);return n==null?'':'€ '+new Intl.NumberFormat('ru-RU',{maximumFractionDigits:0}).format(n);
+  const n=window.ProductPricing.amount(p.price,p.currency);return n==null?'':'€ '+new Intl.NumberFormat(window.SiteLanguage?.language==='en'?'en-GB':'ru-RU',{maximumFractionDigits:0}).format(n);
 }
 function priceMarkup(p){if(!['EUR','€'].includes(p.currency||'EUR'))return 'Цена по запросу';return window.ProductPricing.markup(p,money,esc,{showPercentage:false})||'Цена по запросу'}
 function imageOf(p){return photosOf(p)[0]||""}
@@ -182,7 +184,7 @@ function filtered(){
   const terms=normalize(state.search).split(' ').filter(Boolean);
   return sortProducts(catalogueProducts().filter(p=>{
     if(!matchesContext(p))return false;
-    const text=normalize([p.brand,p.name,p.id,...Object.values(p.variant_ids||{}),p.size,p.color_search,categoryOf(p)].filter(v=>v!=null).join(' '));
+    const text=normalize([p.brand,p.name,p.id,...Object.values(p.variant_ids||{}),p.size,p.color_search,categoryOf(p),window.SiteLanguage?.english(p.name),window.SiteLanguage?.english(categoryOf(p))].filter(v=>v!=null).join(' '));
     return terms.every(term=>text.includes(term));
   }));
 }
@@ -750,3 +752,6 @@ if(typeof IntersectionObserver==='function'){
     masthead.classList.toggle('menu-floating',!entry.isIntersecting&&entry.boundingClientRect.top<0);
   },{threshold:0}).observe(masthead);
 }
+
+// Language changes retain filters, bag, wishlist and the selected variant.
+document.addEventListener('site-language-change',()=>{window.SiteLanguage?.apply();});

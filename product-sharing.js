@@ -3,14 +3,16 @@
  function links(product,options={}){
   const id=String(product?.id??'');
   if(!/^(?:[1-9]\d{0,18}|[a-f\d]{8}(?:-[a-f\d]{4}){3}-[a-f\d]{12})$/i.test(id)||product.available===false)return null;
-  const web='https://www.juliproz.com/?product='+encodeURIComponent(id);
+  const english=!options.inTelegram&&(options.language==='en'||root.SiteLanguage?.language==='en');
+  const web='https://www.juliproz.com/?product='+encodeURIComponent(id)+(english?'&lang=en':'');
   const bot='https://t.me/JuliProzBot/shop?startapp=p_'+encodeURIComponent(id);
   const url=options.inTelegram?bot:web;
   // Deliberately select public fields: never serialize admin records or the current URL.
-  const title=String(options.title||[product.brand,product.name].filter(Boolean).join(' — ')||'Вещь JULI.PROZ').slice(0,240);
+  const originalTitle=String(options.title||[product.brand,product.name].filter(Boolean).join(' — ')||'Вещь JULI.PROZ').slice(0,240);
+  const title=english&&root.SiteLanguage?root.SiteLanguage.english(originalTitle):originalTitle;
   const size=String(options.size||'').slice(0,100);
-  const text=title+(size?'\nРазмер / вариант: '+size:'')+'\nАртикул: '+id;
-  return {id,title,url,web,bot,telegram:'https://t.me/share/url?url='+encodeURIComponent(url)+'&text='+encodeURIComponent(text),manager:'https://t.me/juliproz?text='+encodeURIComponent('Здравствуйте! Хочу уточнить по этой вещи:\n'+text+'\n'+url)};
+  const text=title+(size?(english?'\nSize / option: ':'\nРазмер / вариант: ')+size:'')+(english?'\nReference: ':'\nАртикул: ')+id;
+  return {id,title,url,web,bot,telegram:'https://t.me/share/url?url='+encodeURIComponent(url)+'&text='+encodeURIComponent(text),manager:'https://t.me/juliproz?text='+encodeURIComponent((english?'Hello! I would like to ask about this piece:\n':'Здравствуйте! Хочу уточнить по этой вещи:\n')+text+'\n'+url)};
  }
  function inTelegram(){
   const app=root.Telegram?.WebApp;
@@ -26,7 +28,7 @@
  function create(){
   dialog=document.createElement('dialog');dialog.id='productShareDialog';dialog.className='product-share-dialog';
   dialog.setAttribute('aria-labelledby','productShareTitle');
-  dialog.innerHTML='<div class="product-share-heading"><h2 id="productShareTitle">Поделиться вещью</h2><button type="button" data-share-close aria-label="Закрыть">✕</button></div><p class="product-share-name"></p><div class="product-share-actions"><button type="button" data-share-action="telegram">Отправить в Telegram <span aria-hidden="true">↗</span></button><button type="button" data-share-action="manager">Написать менеджеру <span aria-hidden="true">↗</span></button></div><label class="product-share-label" for="productShareUrl">Ссылка на вещь на сайте</label><input id="productShareUrl" readonly type="url"><button type="button" class="product-share-copy" data-share-action="copy">Скопировать ссылку</button><p class="product-share-status" role="status" aria-live="polite"></p>';
+  dialog.innerHTML='<div class="product-share-heading"><h2 id="productShareTitle">Поделиться вещью</h2><button type="button" data-share-close aria-label="Закрыть">✕</button></div><p class="product-share-name"></p><div class="product-share-actions"><button type="button" data-share-action="telegram">Отправить в Telegram <svg class="inline-arrow" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg></button><button type="button" data-share-action="manager">Написать менеджеру <svg class="inline-arrow" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg></button></div><label class="product-share-label" for="productShareUrl">Ссылка на вещь на сайте</label><input id="productShareUrl" readonly type="url"><button type="button" class="product-share-copy" data-share-action="copy">Скопировать ссылку</button><p class="product-share-status" role="status" aria-live="polite"></p>';
   document.body.append(dialog);
   dialog.addEventListener('keydown',e=>{
    e.stopPropagation(); // Do not trigger the underlying product's Escape/Tab handlers.
