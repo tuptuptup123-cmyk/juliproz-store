@@ -274,8 +274,9 @@ function setCatalogMenu(open){
   const finish=()=>{
     menu.classList.add('hidden');menu.classList.remove('is-closing');menuCloseTimer=null;
     if(document.body?.style)document.body.style.overflow='';
-    document.querySelector('main')?.toggleAttribute?.('inert',false);
-    document.querySelector('.brand')?.toggleAttribute?.('inert',false);
+    const productOpen=!document.getElementById('productModal').classList.contains('hidden');
+    document.querySelector('main')?.toggleAttribute?.('inert',productOpen);
+    document.querySelector('.brand')?.toggleAttribute?.('inert',productOpen);
     document.querySelector('.bottom-nav')?.toggleAttribute?.('inert',false);
     document.getElementById('productModal').toggleAttribute?.('inert',false);
     document.getElementById(document.getElementById('productModal').classList.contains('hidden')?'openCatalogMenu':'openProductMenu').focus?.();
@@ -543,13 +544,19 @@ function hideProductModal(){
  const modal=document.getElementById('productModal'),nav=modal.querySelector?.('.bottom-nav');
  if(nav&&productNavHome){productNavHome.replaceWith(nav);productNavHome=null}
  modal.classList.add('hidden');
+ const menuOpen=!document.getElementById('catalogMenu').classList.contains('hidden');
+ document.querySelector('main')?.toggleAttribute?.('inert',menuOpen);
+ document.querySelector('.brand')?.toggleAttribute?.('inert',menuOpen);
 }
 function showProductModal(){
  document.body?.classList?.add('product-modal-open');
  const modal=document.getElementById('productModal');if(modal.classList.contains('hidden'))productReturnFocus=document.activeElement;
  const nav=document.querySelector('.bottom-nav');
  if(nav?.before&&document.createComment&&!modal.contains(nav)){productNavHome=document.createComment('bottom navigation');nav.before(productNavHome);modal.appendChild(nav)}
- modal.classList.remove('hidden');document.getElementById('backProduct').focus?.();
+ modal.classList.remove('hidden');
+ document.querySelector('main')?.toggleAttribute?.('inert',true);
+ document.querySelector('.brand')?.toggleAttribute?.('inert',true);
+ document.getElementById('backProduct').focus?.();
 }
 function closeProductModal(){navigationRevision++;selectedProduct=null;selectedSize=null;hideProductModal();productReturnFocus?.focus?.();productReturnFocus=null}
 document.addEventListener('keydown',e=>{
