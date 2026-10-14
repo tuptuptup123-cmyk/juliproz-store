@@ -33,7 +33,7 @@ let browser;
   await fits(page,'RU home '+width);await page.screenshot({path:out+`/design-ru-home-${width}.png`,fullPage:true});
   await page.locator('.masthead-inner [data-site-language=en]').click();assert.equal(await page.locator('html').getAttribute('lang'),'en');await english(page);await fits(page,'EN home '+width);
   const box=await page.locator('.masthead-inner .language-switch').boundingBox(),logo=await page.locator('.brand-lockup').boundingBox();assert.ok(box.y+box.height<=logo.y+1||box.x>=logo.x+logo.width||box.x+box.width<=logo.x,'Language control does not cover the logo');
-  if(width>=900){const shop=await page.locator('.home-shop-link').boundingBox(),course=await page.locator('.brand .buyer-education-card').boundingBox();assert.ok(Math.abs(shop.y+shop.height/2-course.y-course.height/2)<2,'Shop and course align on desktop')}
+  if(width>=900){const shop=await page.locator('.home-shop-link').boundingBox(),course=await page.locator('.brand .buyer-education-card').boundingBox();assert.ok(Math.abs(shop.y+shop.height/2-course.y-course.height/2)<2,'Shop and course align on desktop: '+JSON.stringify({width,shop,course}))}
   await page.screenshot({path:out+`/design-en-home-${width}.png`,fullPage:true});
   for(const tab of ['sell','services','about','favorites','cart']){
    await page.locator(`.bottom-nav [data-tab=${tab}]`).click();await english(page);await fits(page,`EN ${tab} ${width}`);await page.screenshot({path:out+`/design-en-${tab}-${width}.png`,fullPage:true});

@@ -987,7 +987,7 @@ html[lang=en] .home-shop-link{width:210px}
 .information-notice-heading,.information-education-copy,.sell-method,.cart-item-info{min-width:0}
 .information-notice h2,.information-education-copy>span,.sell-method h2{overflow-wrap:break-word}
 @media(min-width:900px) and (max-width:1100px){
- .brand.is-home-page .home-shop-link{top:calc(50% + 22px);transform:translateY(-50%)}
+ .brand.is-home-page .home-shop-link{position:relative;top:22px;left:auto;transform:none}
 }
 @media(max-width:899px){
  .language-switch button{min-width:42px;min-height:36px}
