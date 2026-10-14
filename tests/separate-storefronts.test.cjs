@@ -42,7 +42,7 @@ test('ordinary website visits, admin and already separated pages never redirect'
 });
 test('mini-app proxy is constrained and bot webhook remains at its established URL',()=>{
  const web=JSON.parse(fs.readFileSync(path.join(root,'vercel.json'))),bot=JSON.parse(fs.readFileSync(path.join(root,'apps/telegram/vercel.json')));
- assert.deepEqual(web.rewrites,[{source:'/telegram/:path*',destination:'https://app.juliproz.com/:path*'}]);
+ assert.deepEqual(web.rewrites,[{source:'/telegram/',destination:'https://app.juliproz.com/index.html'},{source:'/telegram/:path*',destination:'https://app.juliproz.com/:path*'}]);
  assert.deepEqual(bot.rewrites.map(r=>r.source),['/api/catalog','/api/analytics']);
  const {WEBHOOK_URL,SHOP_URL}=require('../server/telegram.cjs');assert.equal(WEBHOOK_URL,'https://juliproz-store.vercel.app/api/telegram');
  // SHOP_URL is indirectly covered by the command response tests.

@@ -56,6 +56,10 @@
   "outputDirectory": "dist",
   "rewrites": [
     {
+      "source": "/telegram/",
+      "destination": "https://app.juliproz.com/index.html"
+    },
+    {
       "source": "/telegram/:path*",
       "destination": "https://app.juliproz.com/:path*"
     }
