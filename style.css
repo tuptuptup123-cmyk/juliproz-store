@@ -805,72 +805,43 @@ body.product-modal-open{overflow:hidden}
  .web-page-intro{padding:16px 12px 22px}.web-about-copy{padding:0 12px}
 }
 
-/* The website home explains the buyer service using the shop typography. */
-#webHomePage .web-page-intro{padding-bottom:36px}
-#webHomePage .web-page-intro p{max-width:610px}
-.buyer-service-story{padding:26px 24px 0;border-top:1px solid var(--line)}
-.buyer-service-story>h2,.buyer-service-process>h2{font:400 28px/1.3 "Playfair Display",Georgia,serif;letter-spacing:-.02em;margin:0 0 24px}
-.buyer-service-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px 36px}
-.buyer-service-grid article{min-width:0;padding:0 0 20px;border-bottom:1px solid var(--line)}
-.buyer-service-grid h3{font:400 22px/1.3 "Playfair Display",Georgia,serif;margin:0 0 12px}
-.buyer-service-grid p,.buyer-service-process p{font-size:14px;line-height:1.8;color:var(--muted);margin:0}
-.buyer-service-process{padding:34px 24px 12px;text-align:center}
-.buyer-service-process>h2{margin-bottom:16px}
-.buyer-service-process p{max-width:600px;margin:auto}
-.buyer-service-process a{text-decoration:none;color:var(--ink)}
-@media(max-width:600px){
- .buyer-service-story{padding:24px 12px 0}
- .buyer-service-grid{grid-template-columns:1fr;gap:22px}
- .buyer-service-story>h2,.buyer-service-process>h2{font-size:26px}
- .buyer-service-process{padding:28px 12px 10px}
- #webHomePage h1{font-size:clamp(28px,7vw,38px)}
-}
-
-/* Square education destination on the website home. */
-.buyer-education-card{display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;gap:16px;width:min(100%,340px);aspect-ratio:1;margin:32px auto;padding:30px;border:1px solid var(--line);border-radius:24px;background:#f5f5f5;color:var(--ink);text-decoration:none;transition:background .2s,border-color .2s}
-.buyer-education-eyebrow{font-size:10px;letter-spacing:.14em;color:var(--muted)}
-.buyer-education-card h2{font:400 32px/1.2 "Playfair Display",Georgia,serif;letter-spacing:-.02em;margin:0}
-.buyer-education-card p{font-size:13px;line-height:1.7;color:var(--muted);margin:0;max-width:260px}
-.buyer-education-link{display:flex;justify-content:space-between;gap:20px;width:100%;padding-top:16px;border-top:1px solid #ddd;font-size:13px}
-.buyer-education-link>span{font-size:20px;line-height:1}
-@media(hover:hover) and (pointer:fine){.buyer-education-card:hover{background:#faf7f9;border-color:#d7c5d0}}
-.buyer-education-card:focus-visible{outline:2px solid #202020;outline-offset:4px}
-@media(max-width:360px){.buyer-education-card{padding:25px;gap:12px}.buyer-education-card h2{font-size:29px}}
-
-
-/* Centre the original logo; keep the wide Home introduction and service list. */
-.brand.is-home-page .masthead-inner{display:flex;justify-content:center;min-height:136px;padding:36px 0 24px;gap:0}
-.brand.is-home-page .brand-lockup{left:0;position:relative;width:120px;flex:0 0 120px;animation:none}
-.brand.is-home-page .logo{font-size:50px;line-height:1;text-align:left;width:fit-content}
-.brand.is-home-page .brand-signature{left:62px;bottom:4px;font-size:9px;animation:none;transform:none;opacity:1}
-.brand.is-home-page .brand-signature::before{display:none}
-.brand.is-home-page .brand-paw{left:calc(50% - 24px);right:auto;top:17px;width:84px;height:56px;transform:none;animation:none}
-.brand.is-home-page.is-grabbing .brand-lockup,.brand.is-home-page.is-grabbing .brand-paw{animation:none}
-#webHomePage{max-width:1240px;padding:16px 0 32px;display:grid;grid-template-columns:minmax(0,1fr) 240px;gap:0 48px}
-#webHomePage .web-page-intro{grid-column:1;grid-row:1;padding:16px 0 40px;text-align:left}
-#webHomePage h1{font-size:clamp(36px,5.2vw,76px);line-height:1.12;max-width:1120px;margin:20px 0 24px}
+/* The introductory home uses the same animated masthead as the other pages. */
+#webHomePage{max-width:1360px;padding:20px 0 40px;display:grid;grid-template-columns:minmax(0,.95fr) minmax(0,1.15fr);align-items:center;gap:48px}
+#webHomePage .web-page-intro{padding:0;text-align:left;min-width:0}
+#webHomePage h1{font-size:clamp(36px,4.1vw,62px);line-height:1.14;margin:0 0 26px;text-wrap:balance}
 #webHomePage h1 span{white-space:nowrap}
-#webHomePage .web-page-intro p{max-width:670px;margin:0;font-size:16px}
-#webHomePage .buyer-service-story{grid-column:1/-1;padding:30px 0 0}
-#webHomePage .buyer-service-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:26px 24px}
-#webHomePage .buyer-service-grid h3{font-size:23px}
-#webHomePage .buyer-education-card{grid-column:2;grid-row:1;align-self:center;justify-self:end;width:240px;aspect-ratio:auto;min-height:180px;margin:0 0 30px;padding:20px;border-radius:16px;gap:15px;background:#fff}
-#webHomePage .buyer-education-logo{display:block;width:100%;height:auto;object-fit:contain;clip-path:inset(2px 0)}
-#webHomePage .buyer-education-card h2{font:500 16px/1.4 Roboto,Arial,sans-serif;letter-spacing:0}
-#webHomePage .buyer-education-link{font-size:11px;padding-top:12px}
+#webHomePage .web-page-intro p{max-width:560px;margin:0;font-size:15px;line-height:1.8}
+#webHomePage .web-page-intro .home-services-summary{margin-top:22px}
+.home-photographs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:start;gap:18px;min-width:0}
+.home-photographs img{display:block;width:100%;height:auto;aspect-ratio:2/3;object-fit:contain}
+/* The course stays at the top right, separate from the introduction. */
+.brand:not(.is-home-page) .buyer-education-card{display:none}
+.buyer-education-card{position:absolute;z-index:4;top:18px;right:0;display:flex;flex-direction:column;gap:10px;width:184px;padding:14px;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);text-align:left;text-decoration:none;transition:border-color .2s}
+.buyer-education-logo{display:block;width:100%;height:auto;object-fit:contain;clip-path:inset(2px 0)}
+.buyer-education-title{color:var(--ink);display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;font:400 13px/1.4 Roboto,Arial,sans-serif}
+.buyer-education-title>span{font-size:17px;line-height:1}
+.buyer-education-card:focus-visible{outline:2px solid var(--ink);outline-offset:4px}
+@media(hover:hover) and (pointer:fine){.buyer-education-card:hover{border-color:var(--ink)}}
+.brand.is-home-page.is-grabbing .brand-paw{animation:jp-paw-grab 1.6s var(--motion-ease) both}
 @media(max-width:1000px){
- #webHomePage{grid-template-columns:minmax(0,1fr) 210px;column-gap:28px}
- #webHomePage h1{font-size:clamp(36px,5.2vw,58px)}
- #webHomePage .buyer-education-card{width:210px;padding:17px}
- #webHomePage .buyer-service-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ #webHomePage{gap:30px;grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+ #webHomePage h1{font-size:clamp(32px,4.2vw,42px)}
+ .home-photographs{gap:12px}
 }
-@media(max-width:700px){
- .brand.is-home-page .masthead-inner{min-height:120px;padding:32px 0 24px}
- #webHomePage{grid-template-columns:minmax(0,1fr);gap:0;padding-top:8px}
- #webHomePage .web-page-intro{padding:8px 0 28px}
- #webHomePage h1{font-size:clamp(34px,8.6vw,48px);margin:18px 0 20px}
- #webHomePage .web-page-intro p{font-size:14px}
- #webHomePage .buyer-education-card{grid-column:1;grid-row:2;justify-self:start;width:220px;min-height:0;margin:0 0 28px;padding:18px}
- #webHomePage .buyer-service-story{padding:25px 0 0}
- #webHomePage .buyer-service-grid{grid-template-columns:1fr;gap:22px}
+@media(max-width:899px){
+ #webHomePage{grid-template-columns:minmax(0,1fr);gap:28px;padding-top:8px}
+ #webHomePage h1{font-size:clamp(34px,6vw,48px);max-width:650px;margin-bottom:20px}
+ #webHomePage .web-page-intro p{max-width:650px;font-size:14px}
+ .home-photographs{gap:16px}
+}
+@media(max-width:600px){
+ .brand.is-home-page .masthead-inner{min-height:220px;padding:108px 0 28px}
+ .brand.is-home-page .masthead-inner .brand-paw{top:74px}
+ .buyer-education-card{top:10px;width:132px;padding:10px;gap:7px;border-radius:10px}
+ .buyer-education-title{font-size:10px;gap:4px}
+ .buyer-education-title>span{font-size:14px}
+ #webHomePage{gap:24px;padding:0 0 24px}
+ #webHomePage h1{font-size:clamp(30px,8.1vw,43px)}
+ #webHomePage .web-page-intro .home-services-summary{margin-top:16px}
+ .home-photographs{gap:10px}
 }
