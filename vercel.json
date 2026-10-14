@@ -53,5 +53,18 @@
     }
   ],
   "buildCommand": "node scripts/prepare-photo-runtime.cjs && node scripts/configure-telegram.cjs && node scripts/build-public.cjs",
-  "outputDirectory": "dist"
+  "outputDirectory": "dist",
+  "rewrites": [
+    {
+      "source": "/telegram/:path*",
+      "destination": "https://app.juliproz.com/:path*"
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/telegram",
+      "destination": "/telegram/",
+      "permanent": false
+    }
+  ]
 }

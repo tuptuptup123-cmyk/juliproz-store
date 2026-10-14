@@ -15,6 +15,7 @@
   return {id,title,url,web,bot,telegram:'https://t.me/share/url?url='+encodeURIComponent(url)+'&text='+encodeURIComponent(text),manager:'https://t.me/juliproz?text='+encodeURIComponent((english?'Hello! I would like to ask about this piece:\n':'Здравствуйте! Хочу уточнить по этой вещи:\n')+text+'\n'+url)};
  }
  function inTelegram(){
+  if(root.document?.documentElement?.dataset?.storefront==='telegram')return true;
   const app=root.Telegram?.WebApp;
   // The SDK also loads on the website, where initData is empty and platform is unknown.
   if(app&&(typeof app.initData==='string'&&app.initData.length>0||typeof app.platform==='string'&&app.platform!==''&&app.platform!=='unknown'))return true;
