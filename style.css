@@ -816,7 +816,7 @@ body.product-modal-open{overflow:hidden}
 .home-photographs img{display:block;width:100%;height:auto;aspect-ratio:2/3;object-fit:contain}
 /* The course stays at the top right, separate from the introduction. */
 .brand:not(.is-home-page) .buyer-education-card{display:none}
-.buyer-education-card{position:absolute;z-index:4;top:18px;right:0;display:flex;align-items:center;width:320px;min-height:72px;border:1px solid #111;border-radius:5px;overflow:hidden;background:#fff;color:var(--ink);text-align:left;text-decoration:none}
+.buyer-education-card{position:absolute;z-index:4;top:calc(50% + 22px);right:0;transform:translateY(-50%);display:flex;align-items:center;width:320px;min-height:72px;border:1px solid #111;border-radius:5px;overflow:hidden;background:#fff;color:var(--ink);text-align:left;text-decoration:none}
 .buyer-education-logo-frame{position:relative;display:block;flex:0 0 96px;width:96px;height:28px;margin:0 12px;overflow:hidden}
 .buyer-education-logo{position:absolute;display:block;width:138px;max-width:none;height:auto;left:-14px;top:-13px}
 .buyer-education-title{align-self:stretch;background:#111;color:#fff;display:flex;flex:1;align-items:center;justify-content:space-between;gap:8px;padding:14px;white-space:nowrap;font:400 14px/1.35 Roboto,Arial,sans-serif;transition:background .2s}
@@ -838,7 +838,7 @@ body.product-modal-open{overflow:hidden}
 @media(max-width:600px){
  .brand.is-home-page .masthead-inner{min-height:220px;padding:108px 0 28px}
  .brand.is-home-page .masthead-inner .brand-paw{top:74px}
- .buyer-education-card{top:10px;width:280px;min-height:64px}
+ .buyer-education-card{top:10px;transform:none;width:280px;min-height:64px}
  .buyer-education-logo-frame{flex-basis:76px;width:76px;height:24px;margin:0 10px}
  .buyer-education-logo{width:110px;left:-11px;top:-10px}
  .buyer-education-title{padding:10px 14px;font-size:13px;gap:6px}
