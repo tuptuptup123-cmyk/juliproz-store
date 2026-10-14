@@ -3,7 +3,7 @@
  'use strict';
  const copy=root.SiteTranslations||{ui:{},products:{}},key='jpWebsiteLanguageV1';
  const categories={'Аксессуары':'Accessories','Ароматические свечи':'Scented candles','Благовония':'Incense','Брюки':'Trousers','Головной убор':'Hats','Джинсы':'Jeans','Духи':'Fragrances','Жилеты':'Vests','Зип-худи':'Zip hoodies','Кардиганы':'Cardigans','Костюмы':'Suits & sets','Купальники':'Swimwear','Куртки':'Jackets','Леггинсы':'Leggings','Лонгсливы':'Long-sleeve tops','Майки':'Tank tops','Обувь':'Shoes','Очки':'Eyewear','Перчатки':'Gloves','Поло':'Polo shirts','Рубашки':'Shirts','Свитеры':'Knitwear','Свитшоты':'Sweatshirts','Спортивная одежда':'Activewear','Сумки':'Bags','Техника':'Electronics','Украшения':'Jewellery','Футболки':'T-shirts','Худи':'Hoodies','Часы':'Watches','Шорты':'Shorts'};
- const labels={'размер':'size','размеры':'sizes','цвет':'colour','цвета':'colours','длина':'length','Длина':'Length','Цвет':'Colour','Цвета':'Colours','уточнить':'please confirm','уточняйте':'please ask','Состояние':'Condition','Доставка':'Delivery','Срок доставки':'Delivery time','Статус':'Availability','Артикул':'Reference','Открыть':'View','Размер / вариант':'Size / option','Выбран цвет':'Selected colour'};
+ const labels={'размер':'size','размеры':'sizes','цвет':'colour','цвета':'colours','длина':'length','Длина':'Length','Цвет':'Colour','Цвета':'Colours','уточнить':'please confirm','уточняйте':'please ask','Состояние':'Condition','Доставка':'Delivery','Срок доставки':'Delivery time','Статус':'Availability','Артикул':'Reference','Открыть':'View','Размер / вариант':'Size / option','Выбран цвет':'Selected colour','на брони':'reserved','нет в наличии':'out of stock','Вес':'Weight','Высота':'Height','Ширина':'Width','Верх':'Top','низ':'bottom','см':'cm','г':'g'};
  const normal=s=>String(s??'').replace(/\s+/g,' ').trim();
  let language='ru',preferred='ru',observer=null;
  const fragments={...copy.products,...copy.ui,...categories,...labels};
@@ -18,6 +18,7 @@
   if(!s)return raw;
   const exact=copy.ui[s]??copy.products[s]??categories[s]??labels[s];
   if(exact!==undefined)return raw.replace(raw.trim(),exact);
+  if(raw.includes('\n'))return raw.split('\n').map(english).join('\n');
   let match;
   if((match=s.match(/^В каталоге (\d+) товар(?:а|ов)?$/)))return `${match[1]} ${match[1]==='1'?'piece':'pieces'} in the collection`;
   if((match=s.match(/^(\d+) (?:вещь|вещи|вещей)$/)))return `${match[1]} ${match[1]==='1'?'item':'items'}`;
@@ -35,7 +36,6 @@
   if((match=s.match(/^(Размер|Размеры|Цвет|Цвета|Длина|Выбран цвет|Состояние|Статус|Артикул|Количество|Размер \/ вариант):\s*(.+)$/)))return `${english(match[1])}: ${english(match[2])}`;
   if((match=s.match(/^(Ремни|Мячи|Головные уборы|Косметички): (.+)$/)))return `${({'Ремни':'Belts','Мячи':'Balls','Головные уборы':'Hats','Косметички':'Toiletry bags'})[match[1]]}: ${match[2].replace(/ см$/, ' cm')}`;
   if(s.includes(' · '))return s.split(' · ').map(english).join(' · ');
-  if(raw.includes('\n'))return raw.split('\n').map(english).join('\n');
   // Product model names and sizes remain verbatim; only known Russian copy is replaced.
   let result=raw;
   result=result.replace('Здравствуйте! Меня интересует ', 'Hello! I am interested in ');

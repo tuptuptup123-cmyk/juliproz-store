@@ -960,6 +960,7 @@ body:has(#catalogAntiScam[open]){overflow:hidden}
  .bottom-nav.is-website-navigation button[data-tab]{width:100%;min-width:0;flex:initial}
  .bottom-nav.is-website-navigation button::before{width:min(44px,calc(100% - 6px))}
  .bottom-nav.is-website-navigation small{font-size:10px;letter-spacing:-.02em}
+ .bottom-nav.is-website-navigation .cart-badge{left:auto;right:calc(50% - 18px)}
  .bottom-nav.is-website-navigation .nav-label-full{display:none}
  .bottom-nav.is-website-navigation .nav-label-short{display:inline}
 }
