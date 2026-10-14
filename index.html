@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#f5f7fb" />
   <title>J.P Store</title>
   <link rel="stylesheet" href="fonts.css?v=20261010-light-cyrillic" />
-  <link rel="stylesheet" href="style.css?v=20261014-information" />
+  <link rel="stylesheet" href="style.css?v=20261014-information-design" />
   <link rel="preconnect" href="https://qhgzzhgxwpcctafpzjid.supabase.co" crossorigin>
   <script async id="telegramSdk" src="https://telegram.org/js/telegram-web-app.js?v=20261013-contact-detail-20261012-brand-order"></script>
 <link rel="stylesheet" href="product-sharing.css?v=20261013-share"></head>
@@ -53,18 +53,19 @@
     <section id="webAboutPage" class="web-page information-page hidden" aria-labelledby="webAboutTitle">
       <header class="web-page-intro"><h1 id="webAboutTitle">Информация</h1></header>
       <div class="web-about-copy">
-        <h2 id="informationSocialTitle">Наши соцсети</h2>
-        <nav class="information-links" aria-labelledby="informationSocialTitle">
-          <a href="https://www.instagram.com/juli.proz/" target="_blank" rel="noopener"><span>Instagram · Юля<small>@juli.proz</small></span><span aria-hidden="true">↗</span></a>
-          <a href="https://t.me/juli_proz" target="_blank" rel="noopener"><span>Telegram · основной канал<small>@juli_proz</small></span><span aria-hidden="true">↗</span></a>
-          <a href="https://t.me/julisaleclub" target="_blank" rel="noopener"><span>Telegram · скидки и приватные сейлы<small>@julisaleclub</small></span><span aria-hidden="true">↗</span></a>
-          <a href="https://t.me/vasyavkosmose" target="_blank" rel="noopener"><span>Telegram · канал Васи<small>@vasyavkosmose</small></span><span aria-hidden="true">↗</span></a>
-          <a href="https://t.me/juliproz" target="_blank" rel="noopener"><span>Telegram · связаться с нами<small>@juliproz</small></span><span aria-hidden="true">↗</span></a>
-        </nav>
         <aside class="information-notice" aria-labelledby="informationSafetyTitle">
-          <h2 id="informationSafetyTitle">Осторожно, мошенники</h2>
-          <p>Мошенники могут создавать похожие аккаунты и использовать наши фотографии. Переходите в наши соцсети по ссылкам на этой странице и внимательно проверяйте имя пользователя перед оплатой. Если сомневаетесь, напишите нам через контакт выше.</p>
+          <span class="information-shield" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 8 3v6c0 5-8 9-8 9s-8-4-8-9V6Z"/><path d="m8 12 3 3 5-6"/></svg></span>
+          <div class="information-notice-heading"><span class="information-kicker">ANTI SCAM</span><h2 id="informationSafetyTitle">Остерегайтесь <br>мошенников</h2></div>
+          <p>Мошенники могут копировать наши фото и создавать похожие аккаунты. Переходите по ссылкам ниже и проверяйте имя пользователя перед оплатой. Если сомневаетесь — свяжитесь с нами.</p>
         </aside>
+        <h2 class="information-social-title" id="informationSocialTitle">Наши соцсети</h2>
+        <nav class="information-links" aria-labelledby="informationSocialTitle">
+          <a class="information-link" href="https://www.instagram.com/juli.proz/" target="_blank" rel="noopener"><span class="information-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".8" fill="currentColor" stroke="none"/></svg></span><span class="information-link-copy"><span>Instagram · Юля</span><small>@juli.proz</small></span><span class="information-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg></span></a>
+          <a class="information-link" href="https://t.me/juli_proz" target="_blank" rel="noopener"><span class="information-icon"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m21.6 3.4-3.2 16.1c-.2 1-1 1.2-1.8.7l-4.8-3.5-2.3 2.2c-.3.3-.5.5-1 .5l.3-4.9 8.9-8c.4-.4-.1-.6-.6-.2L6.1 13.2l-4.7-1.5c-1-.3-1.1-1 .2-1.5L20 3c.8-.3 1.8.2 1.6.4Z"/></svg></span><span class="information-link-copy"><span>Основной Telegram-канал</span><small>@juli_proz</small></span><span class="information-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg></span></a>
+          <a class="information-link" href="https://t.me/julisaleclub" target="_blank" rel="noopener"><span class="information-icon"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m21.6 3.4-3.2 16.1c-.2 1-1 1.2-1.8.7l-4.8-3.5-2.3 2.2c-.3.3-.5.5-1 .5l.3-4.9 8.9-8c.4-.4-.1-.6-.6-.2L6.1 13.2l-4.7-1.5c-1-.3-1.1-1 .2-1.5L20 3c.8-.3 1.8.2 1.6.4Z"/></svg></span><span class="information-link-copy"><span>Скидки и приватные сейлы</span><small>@julisaleclub</small></span><span class="information-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg></span></a>
+          <a class="information-link" href="https://t.me/vasyavkosmose" target="_blank" rel="noopener"><span class="information-icon"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m21.6 3.4-3.2 16.1c-.2 1-1 1.2-1.8.7l-4.8-3.5-2.3 2.2c-.3.3-.5.5-1 .5l.3-4.9 8.9-8c.4-.4-.1-.6-.6-.2L6.1 13.2l-4.7-1.5c-1-.3-1.1-1 .2-1.5L20 3c.8-.3 1.8.2 1.6.4Z"/></svg></span><span class="information-link-copy"><span>Telegram · канал Васи</span><small>@vasyavkosmose</small></span><span class="information-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg></span></a>
+          <a class="information-link information-contact" href="https://t.me/juliproz" target="_blank" rel="noopener"><span class="information-icon"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m21.6 3.4-3.2 16.1c-.2 1-1 1.2-1.8.7l-4.8-3.5-2.3 2.2c-.3.3-.5.5-1 .5l.3-4.9 8.9-8c.4-.4-.1-.6-.6-.2L6.1 13.2l-4.7-1.5c-1-.3-1.1-1 .2-1.5L20 3c.8-.3 1.8.2 1.6.4Z"/></svg></span><span class="information-link-copy"><span>Связаться с нами</span><small>@juliproz</small></span><span class="information-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg></span></a>
+        </nav>
       </div>
     </section>
     <p id="filterSummary" class="filter-summary hidden" aria-live="polite"></p>
