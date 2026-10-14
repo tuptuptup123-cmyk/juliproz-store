@@ -28,7 +28,7 @@ async function prepare(page,telegram){
  try{
   for(const width of [320,1280])for(const telegram of [false,true]){
    const page=await browser.newPage({viewport:{width,height:900}}),errors=[];page.on('pageerror',e=>errors.push(e.message));await prepare(page,telegram);
-   await page.goto(origin+'/');await page.locator('[data-id="302"]').waitFor();await page.locator('[data-id="302"]').click();await page.locator('[data-size="XXL"]').click();
+   await page.goto(origin+'/?tab=catalog');await page.locator('[data-id="302"]').waitFor();await page.locator('[data-id="302"]').click();await page.locator('[data-size="XXL"]').click();
    await page.locator('[data-action=share]').click();const dialog=page.locator('#productShareDialog');await dialog.waitFor();
    const expected=telegram?'https://t.me/JuliProzBot/shop?startapp=p_301':'https://www.juliproz.com/?product=301';
    assert.equal(await page.locator('#productShareUrl').inputValue(),expected);

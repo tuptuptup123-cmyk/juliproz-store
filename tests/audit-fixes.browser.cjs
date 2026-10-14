@@ -7,7 +7,7 @@ let releaseSdk,releaseCatalog,holdCatalog=false;
 const sdkGate=new Promise(r=>releaseSdk=r),catalogGate=new Promise(r=>releaseCatalog=r);
 await startupPage.route('https://telegram.org/**',async route=>{await sdkGate;return route.fulfill({contentType:'text/javascript',body:"window.Telegram={WebApp:{initDataUnsafe:{},ready(){window.__sdkReady=(window.__sdkReady||0)+1},expand(){}}}"})});
 await startupPage.route('**/rest/v1/products?**',async route=>{if(holdCatalog)await catalogGate;return route.fulfill({json:holdCatalog?[]:[{id:100,brand:'Brand',name:'Fast catalogue',available:true,price:80,original_price:100,currency:'EUR'}]})});
-await startupPage.goto('http://localhost:8778/',{waitUntil:'domcontentloaded'});
+await startupPage.goto('http://localhost:8778/?tab=catalog',{waitUntil:'domcontentloaded'});
 await startupPage.locator('[data-id="100"]').waitFor({timeout:3000});assert.equal(await startupPage.evaluate(()=>window.__sdkReady||0),0);
 await startupPage.locator('#openCatalogMenu').click();await startupPage.locator('.sale-menu-chip').click();assert.equal(await startupPage.locator('.sale-menu-chip').getAttribute('aria-pressed'),'true');assert.equal(await startupPage.locator('[data-id="100"]').count(),1);assert.match(await startupPage.locator('#filterSummary').textContent(),/SALE/);await startupPage.locator('.sale-menu-chip').click();assert.equal(await startupPage.locator('.sale-menu-chip').getAttribute('aria-pressed'),'false');assert.equal(await startupPage.locator('.card-sale-badge').textContent(),'SALE');assert.equal(await startupPage.locator('.masthead-controls [data-sale]').count(),0);await startupPage.locator('#closeCatalogMenu').click();releaseSdk();await startupPage.waitForFunction(()=>window.__sdkReady===1);
 holdCatalog=true;await startupPage.reload({waitUntil:'domcontentloaded'});await startupPage.locator('[data-id="100"]').waitFor({timeout:3000});
@@ -19,7 +19,7 @@ for(const width of [390,1280]){
  await page.route('**/api/analytics',r=>{events.push(r.request().postDataJSON());return r.fulfill({status:202,json:{accepted:true}})});
  await page.route('**/rest/v1/product_admin_notes?**',r=>r.fulfill({json:[]}));
  await page.route('**/rest/v1/products?**',r=>r.fulfill({json:[{id:1,brand:'Gucci',name:'Hoodie',size:'38,40',description:'Материал: хлопок\n<script>unsafe</script>',price:100,currency:'EUR',available:true,fulfillment_status:'in_stock',photos:[]}]}));
- await page.goto('http://localhost:8778/');await page.locator('.product-open').waitFor();assert.equal(events.length,0);assert.equal(await page.evaluate(()=>localStorage.getItem('jpAnalyticsVisitor')),null);await page.locator('#analyticsDecline').click();
+ await page.goto('http://localhost:8778/?tab=catalog');await page.locator('.product-open').waitFor();assert.equal(events.length,0);assert.equal(await page.evaluate(()=>localStorage.getItem('jpAnalyticsVisitor')),null);await page.locator('#analyticsDecline').click();
  await page.locator('#toggleSearch').click();
  await page.locator('#search').fill('  гуччи 38 hoodie  ');assert.equal(await page.locator('.product').count(),1);
  await page.locator('#search').fill('Gucci 99');assert.equal(await page.locator('.product').count(),0);

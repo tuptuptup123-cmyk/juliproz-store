@@ -15,7 +15,7 @@ const server=http.createServer((req,res)=>{let file=path.join(root,decodeURIComp
   await page.route('https://juliproz-store.vercel.app/images/**',route=>{const file=path.resolve(root,'.'+new URL(route.request().url()).pathname);return file.startsWith(root+path.sep)&&fs.existsSync(file)?route.fulfill({contentType:types[path.extname(file)]||'application/octet-stream',body:fs.readFileSync(file)}):route.continue()});
   // Freeze the fetched catalogue so concurrent admin inserts cannot change counts mid-test.
   await page.route('**/rest/v1/products?**',route=>{const q=new URL(route.request().url()).searchParams,id=q.get('id');let rows=live;if(id?.startsWith('eq.'))rows=rows.filter(p=>String(p.id)===id.slice(3));else if(id?.startsWith('in.(')){const ids=id.slice(4,-1).split(',');rows=rows.filter(p=>ids.includes(String(p.id)))}const offset=Number(q.get('offset')||0),limit=Number(q.get('limit')||rows.length);return route.fulfill({json:rows.slice(offset,offset+limit)})});
-  await page.addInitScript(()=>localStorage.setItem('jpAnalyticsConsent','declined'));await page.goto('http://127.0.0.1:8765/',{waitUntil:'domcontentloaded'});await page.locator('.product').first().waitFor();await page.evaluate(()=>document.fonts.ready);
+  await page.addInitScript(()=>localStorage.setItem('jpAnalyticsConsent','declined'));await page.goto('http://127.0.0.1:8765/?tab=catalog',{waitUntil:'domcontentloaded'});await page.locator('.product').first().waitFor();await page.evaluate(()=>document.fonts.ready);
   assert.deepEqual(await page.locator('.bottom-nav [data-tab]:visible').evaluateAll(bs=>bs.map(b=>b.dataset.tab)),['home','catalog','favorites','cart','sell','services','about']);
   await page.locator('.bottom-nav [data-tab=home]').click();assert.equal(await page.locator('#webHomePage').isVisible(),true);assert.equal(await page.locator('#grid').isHidden(),true);await page.screenshot({path:out+'/'+name+'-website-home.png',fullPage:false});
   await page.locator('.bottom-nav [data-tab=about]').click();assert.equal(await page.locator('#webAboutPage').isVisible(),true);assert.equal(await page.locator('#webHomePage').isHidden(),true);assert.equal(await page.locator('.catalog-head').isHidden(),true);
@@ -24,6 +24,13 @@ const server=http.createServer((req,res)=>{let file=path.join(root,decodeURIComp
   assert.deepEqual(await page.locator('.bottom-nav [data-tab]:visible').evaluateAll(bs=>bs.map(b=>b.dataset.tab)),['catalog','favorites','cart','sell','services']);
   await page.evaluate(()=>setTab('home'));assert.equal(await page.locator('#webHomePage').isHidden(),true);
   await page.evaluate(()=>{window.Telegram=window.__webSdk;initializeTelegram()});assert.equal(await page.locator('.bottom-nav [data-tab=home]').isVisible(),true);
+  await page.goto('http://127.0.0.1:8765/',{waitUntil:'domcontentloaded'});await page.locator('#webHomePage').waitFor();
+  assert.equal(await page.evaluate(()=>state.tab),'home');assert.equal(await page.locator('.bottom-nav [data-tab=home]').getAttribute('aria-current'),'page');assert.equal(await page.locator('#grid').isHidden(),true);
+  assert.equal(await page.locator('#webHomePage .web-home-links').count(),0);assert.equal(await page.locator('#webHomePage .web-page-intro').evaluate(e=>getComputedStyle(e).textAlign),'left');
+  const course=await page.locator('.buyer-education-card').boundingBox();assert.ok(course.width<=181&&Math.abs(course.width-course.height)<2,'Education card is a small square');
+  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+  await page.emulateMedia({reducedMotion:'reduce'});await page.screenshot({path:out+'/'+name+'-home-first.png',fullPage:true});await page.emulateMedia({reducedMotion:'no-preference'});
+  await page.goto('http://127.0.0.1:8765/?tab=catalog',{waitUntil:'domcontentloaded'});await page.locator('.product').first().waitFor();await page.evaluate(()=>document.fonts.ready);
   // Check the drop, final signature placement, and accessible static fallback.
   await page.locator('.brand-signature').evaluate(el=>{const animation=el.getAnimations().find(a=>a.animationName==='vasya-rope-drop');if(!animation)throw Error('Missing signature entrance');animation.pause();animation.currentTime=350+2400*.44});
   await page.screenshot({path:out+'/'+name+'-vasya-drop.png',fullPage:false});

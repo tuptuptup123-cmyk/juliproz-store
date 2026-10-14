@@ -107,10 +107,15 @@ function syncWebNavigation(){
  const web=!isTelegramStore();
  document.querySelectorAll('.bottom-nav .web-only').forEach(b=>b.classList.toggle('hidden',!web));
  document.querySelector('.bottom-nav')?.classList.toggle('is-website-navigation',web);
- if(!web&&['home','about'].includes(state.tab))setTab('catalog');
+ if(!web&&['home','about'].includes(state.tab)){const untouched=navigationRevision===0;setTab('catalog');if(untouched)navigationRevision=0;}
 }
 
-let state={sort:"brand",sale:false,product_condition:null,gender:null,fulfillment_status:null,category:null,brand:null,size:null,search:"",favorites:new Set((()=>{try{return JSON.parse(localStorage.getItem("jpFav")||"[]").map(String)}catch{return []}})()),tab:"catalog"};
+function initialStoreTab(){
+ const params=new URLSearchParams(location.search);
+ const linked=params.has('product')||params.get('startapp')?.startsWith('p_')||params.get('tgWebAppStartParam')?.startsWith('p_')||window.Telegram?.WebApp?.initDataUnsafe?.start_param?.startsWith('p_');
+ return isTelegramStore()||linked||params.get('tab')==='catalog'?'catalog':'home';
+}
+let state={sort:"brand",sale:false,product_condition:null,gender:null,fulfillment_status:null,category:null,brand:null,size:null,search:"",favorites:new Set((()=>{try{return JSON.parse(localStorage.getItem("jpFav")||"[]").map(String)}catch{return []}})()),tab:initialStoreTab()};
 const grid=document.getElementById("grid"),count=document.getElementById("count"),sheet=document.getElementById("sheet"),options=document.getElementById("sheetOptions");
 let currentFilter=null,tempValue=null;
 
@@ -217,6 +222,8 @@ function renderCatalogueRows(rows,empty){
   catalogueObserver.observe(catalogueMore);
 }
 function render(){
+  document.querySelectorAll('.bottom-nav [data-tab]').forEach(b=>{const active=b.dataset.tab===state.tab;b.classList.toggle('active',active);b.setAttribute('aria-current',active?'page':'false')});
+  document.querySelector(".brand")?.classList.toggle("is-home-page",state.tab==="home");
   const inCart=state.tab==="cart",inSell=state.tab==="sell",inServices=state.tab==="services",inHome=state.tab==="home",inAbout=state.tab==="about",inWebPage=inHome||inAbout;
   document.getElementById("webHomePage").classList.toggle("hidden",!inHome);
   document.getElementById("webAboutPage").classList.toggle("hidden",!inAbout);
@@ -670,7 +677,8 @@ function initializeTelegram(){
 document.addEventListener('load',e=>{if(e.target.id==='telegramSdk')initializeTelegram()},true);
 initializeTelegram();
 const cachedCatalogue=readCatalogueCache();
-if(cachedCatalogue){products=cachedCatalogue;render()}
+if(cachedCatalogue)products=cachedCatalogue;
+render();
 loadProducts(Boolean(cachedCatalogue));
 
 // Retry transient image failures once per URL, then show an explicit status.
