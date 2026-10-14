@@ -136,7 +136,9 @@ const fixtures=[
    assert.equal(floating.height,68);assert.equal(floating.radius,'24px');assert.equal(floating.background,'rgb(255, 255, 255)');
    assert.ok(floating.left>=12&&floating.right<=width-12,'Floating panel keeps side insets');
    const oval=await page.locator('.bottom-nav button.active').evaluate(e=>({width:getComputedStyle(e,'::before').width,height:getComputedStyle(e,'::before').height,background:getComputedStyle(e,'::before').backgroundColor}));
-   assert.deepEqual(oval,{width:'48px',height:'29px',background:'rgb(237, 237, 237)'});
+   assert.equal(oval.height,'29px');assert.equal(oval.background,'rgb(237, 237, 237)');
+   if(width<900){assert.ok(parseFloat(oval.width)>=32&&parseFloat(oval.width)<=nav[0].width,'Mobile selection marker fits its navigation column');}
+   else assert.equal(oval.width,'48px');
    assert.ok(nav.every(n=>Math.abs(n.width-nav[0].width)<1),'Navigation columns are equal');
   }
   assert.equal(await page.locator('.services-page .sell-paw').count(),0,'Services keeps only the main J.P paw');

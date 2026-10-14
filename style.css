@@ -932,3 +932,38 @@ body:has(#catalogAntiScam[open]){overflow:hidden}
  .anti-scam-dialog{padding:28px 24px}.anti-scam-dialog h2{font-size:29px}
 }
 @media(prefers-reduced-motion:reduce){.anti-scam-dialog[open]{animation:none}}
+
+/* Mobile home: a centered brand, one shop action, and education below the photos. */
+.home-mobile-shop,.home-mobile-education,.nav-label-short{display:none}
+@media(max-width:899px){
+ .brand.is-home-page .buyer-education-card,.brand.is-home-page .home-shop-link{display:none}
+ .brand.is-home-page .masthead-inner{min-height:140px;padding:28px 0;grid-template-columns:minmax(0,1fr);gap:0}
+ .brand.is-home-page .masthead-inner .brand-lockup{grid-column:1;grid-row:1;left:0;width:120px;justify-self:center}
+ .brand.is-home-page .masthead-inner .logo{font-size:50px;text-align:left;width:fit-content}
+ .brand.is-home-page .masthead-inner .brand-signature{left:64px;bottom:4px;font-size:10px}
+ .brand.is-home-page .masthead-inner .brand-paw{right:calc(50% - 56px);top:-6px;width:84px;height:85px;transform:none}
+ #webHomePage{gap:22px;padding-top:0}
+ #webHomePage h1{font-size:clamp(29px,7.7vw,40px);line-height:1.16;margin-bottom:20px}
+ #webHomePage h1 span{white-space:normal}
+ .home-mobile-shop{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:50px;width:100%;padding:14px 18px;margin:0 0 22px;border-radius:12px;font-size:14px;font-weight:400}
+ .home-mobile-shop:focus-visible{outline:2px solid #7894b6;outline-offset:4px}
+ #webHomePage .web-page-intro p{font-size:14px;line-height:1.7}
+ #webHomePage .web-page-intro .home-services-summary{margin-top:16px}
+ .home-photographs{gap:10px}
+ .home-social-links{justify-self:center;gap:18px;margin-top:-10px}
+ .home-mobile-education{position:static;display:flex;grid-column:1;transform:none;width:100%;max-width:440px;justify-self:center;min-height:76px;margin-top:-6px;border-radius:8px}
+ .home-mobile-education .buyer-education-logo-frame{flex-basis:96px;width:96px;height:28px;margin:0 12px}
+ .home-mobile-education .buyer-education-logo{width:138px;left:-14px;top:-13px}
+ .home-mobile-education .buyer-education-title{min-width:0;padding:14px 16px;font-size:14px;white-space:normal}
+ /* Every destination stays visible; Telegram retains its five-item navigation. */
+ .bottom-nav.is-website-navigation{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));width:calc(100% - 24px);max-width:672px;overflow:visible;justify-content:normal}
+ .bottom-nav.is-website-navigation button[data-tab]{width:100%;min-width:0;flex:initial}
+ .bottom-nav.is-website-navigation button::before{width:min(44px,calc(100% - 6px))}
+ .bottom-nav.is-website-navigation small{font-size:10px;letter-spacing:-.02em}
+ .bottom-nav.is-website-navigation .nav-label-full{display:none}
+ .bottom-nav.is-website-navigation .nav-label-short{display:inline}
+}
+@media(max-width:360px){
+ .bottom-nav.is-website-navigation small{font-size:9px}
+ .home-mobile-education .buyer-education-title{padding:12px;font-size:13px}
+}
