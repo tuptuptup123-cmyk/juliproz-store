@@ -994,6 +994,9 @@ html[lang=en] #webHomePage h1{font-size:clamp(34px,3.7vw,56px);line-height:1.14}
  .product-toolbar{gap:8px;padding-left:16px;padding-right:16px}
  .product-toolbar>.language-switch{margin-right:0}
  .product-toolbar>.catalog-menu-button{min-width:76px;padding:0 8px}
+ .detail-actions{gap:8px}
+ .detail-actions .icon-action,.detail-actions .detail-wishlist{width:44px;flex:0 0 44px;min-height:48px;padding:10px}
+ .detail-actions .purchase-action{padding:12px 16px;gap:10px;font-size:14px}
  .catalog-head{column-gap:10px;row-gap:8px;flex-wrap:wrap}
  .catalog-head #count{flex:1 1 120px;font-size:12px}
  .catalog-head .reset{min-height:44px}
