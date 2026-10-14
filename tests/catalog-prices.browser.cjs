@@ -22,7 +22,7 @@ const fixtures=[
   const page=await browser.newPage({viewport:{width,height:1000},reducedMotion:'reduce'});const errors=[];page.on('pageerror',e=>errors.push(e.message));
   await page.route('**/rest/v1/products?**',r=>r.fulfill({json:fixtures}));
   await page.addInitScript(()=>localStorage.setItem('jpAnalyticsConsent','declined'));
-  await page.goto('http://127.0.0.1:'+server.address().port+'/?tab=catalog',{waitUntil:'domcontentloaded'});
+  await page.addInitScript(()=>localStorage.setItem('jpAntiScamSeenV1','1'));await page.goto('http://127.0.0.1:'+server.address().port+'/?tab=catalog',{waitUntil:'domcontentloaded'});
   await page.locator('.product').nth(7).waitFor();await page.evaluate(()=>document.fonts.ready);
   const surfaces=await page.locator('body,.brand,.menu-panel,.menu-header,.bottom-nav').evaluateAll(es=>es.map(e=>getComputedStyle(e).backgroundColor));
   assert.ok(surfaces.every(c=>c==='rgb(255, 255, 255)'),'Storefront surfaces are white');
@@ -178,7 +178,7 @@ const fixtures=[
   let directReads=0;
   await page.route('**/api/catalog',r=>width===390?r.fulfill({json:many}):r.fulfill({status:503,json:{error:'unavailable'}}));
   await page.route('**/rest/v1/products?**',r=>{directReads++;return r.fulfill({json:many})});
-  await page.goto('http://127.0.0.1:'+server.address().port+'/?tab=catalog',{waitUntil:'domcontentloaded'});
+  await page.addInitScript(()=>localStorage.setItem('jpAntiScamSeenV1','1'));await page.goto('http://127.0.0.1:'+server.address().port+'/?tab=catalog',{waitUntil:'domcontentloaded'});
   await page.locator('.product').first().waitFor();
   assert.equal(await page.locator('.product').count(),24,'First paint mounts one batch');
   assert.equal(directReads,width===390?0:1,'Shared cache avoids direct reads and failures fall back');
@@ -209,7 +209,7 @@ const fixtures=[
    const file=path.join(root,new URL(r.request().url()).pathname);
    return fs.existsSync(file)?r.fulfill({body:fs.readFileSync(file),contentType:types[path.extname(file)]||'image/webp'}):r.continue();
   });
-  await page.goto('http://127.0.0.1:'+server.address().port+'/?tab=catalog',{waitUntil:'domcontentloaded'});
+  await page.addInitScript(()=>localStorage.setItem('jpAntiScamSeenV1','1'));await page.goto('http://127.0.0.1:'+server.address().port+'/?tab=catalog',{waitUntil:'domcontentloaded'});
   await page.locator('.product').first().waitFor();await page.locator('#openCatalogMenu').click();
   await page.locator('[data-sale]').click();await page.locator('#showMenuProducts').click();
   await page.locator('.product .sale-price').first().waitFor();

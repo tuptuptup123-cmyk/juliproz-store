@@ -901,3 +901,34 @@ body.product-modal-open{overflow:hidden}
  .brand.is-home-page .masthead-inner{min-height:240px;padding:108px 0 48px}
  .home-shop-link{position:absolute;top:auto;bottom:10px;left:0;width:184px;min-height:44px;padding:10px 16px;font-size:13px}
 }
+
+/* Education destination and first-visit catalogue notice. */
+.information-education{display:grid;grid-template-columns:180px minmax(0,1fr) 44px;align-items:center;gap:30px;margin-top:18px;min-height:156px;padding:26px 30px;border:1px solid #e7d7e0;border-radius:18px;background:#f1e4ec;color:var(--ink);text-decoration:none}
+.information-education-logo{display:flex;align-items:center;justify-content:center;width:180px;padding:14px;background:#fff;border-radius:10px}
+.information-education-logo img{display:block;width:100%;height:auto}
+.information-education-copy{display:grid;gap:10px;min-width:0}
+.information-education-copy small{font-size:10px;letter-spacing:.16em;font-weight:500;color:#765466}
+.information-education-copy>span{font:400 clamp(23px,3vw,32px)/1.2 "Playfair Display",Georgia,serif}
+.information-education-arrow{display:flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;background:#fff}
+.information-education-arrow svg{width:23px;height:23px}
+.information-education:focus-visible{outline:2px solid #7b4d61;outline-offset:4px}
+.anti-scam-dialog{position:fixed;inset:0;width:calc(100% - 32px);max-width:500px;max-height:calc(100svh - 40px);margin:auto;padding:34px;border:1px solid #ecd8e2;border-radius:24px;background:#f8eff3;color:var(--ink);box-shadow:0 20px 80px #24151e2b;overflow:auto;overscroll-behavior:contain}
+.anti-scam-dialog[open]{animation:anti-scam-arrive .32s cubic-bezier(.2,.7,.2,1) both}
+.anti-scam-dialog::backdrop{background:#19121940;backdrop-filter:blur(3px)}
+.anti-scam-close{position:absolute;top:12px;right:12px;display:flex;align-items:center;justify-content:center;width:44px;height:44px;padding:0;border:0;border-radius:50%;background:transparent;cursor:pointer}
+.anti-scam-symbol{display:flex;align-items:center;justify-content:center;width:60px;height:60px;margin-bottom:24px;border-radius:16px;background:#efdae5;color:#7b4d61}
+.anti-scam-symbol svg{width:34px;height:34px}
+.anti-scam-dialog h2{font:400 32px/1.15 "Playfair Display",Georgia,serif;letter-spacing:-.02em;margin:12px 0 18px}
+.anti-scam-dialog p{font-size:14px;font-weight:300;line-height:1.8;color:#51454a;margin:0 0 16px}
+.anti-scam-contact{display:inline-block;font-size:13px;line-height:1.6;color:#654351;text-underline-offset:4px}
+.anti-scam-acknowledge{display:flex;align-items:center;justify-content:space-between;gap:20px;width:100%;min-height:50px;margin-top:28px;padding:14px 18px;border:0;border-radius:12px;background:#e8cbd9;color:#282026;font-size:14px;font-weight:400;cursor:pointer}
+.anti-scam-dialog button:focus-visible,.anti-scam-contact:focus-visible{outline:2px solid #7b4d61;outline-offset:3px}
+body:has(#catalogAntiScam[open]){overflow:hidden}
+@keyframes anti-scam-arrive{from{opacity:0;transform:translateY(24px) scale(.98)}to{opacity:1;transform:none}}
+@media(max-width:600px){
+ .information-education{grid-template-columns:minmax(0,1fr) 40px;gap:20px;padding:24px;min-height:0}
+ .information-education-logo{grid-column:1/-1;width:152px;padding:10px}
+ .information-education-arrow{width:40px;height:40px}
+ .anti-scam-dialog{padding:28px 24px}.anti-scam-dialog h2{font-size:29px}
+}
+@media(prefers-reduced-motion:reduce){.anti-scam-dialog[open]{animation:none}}
