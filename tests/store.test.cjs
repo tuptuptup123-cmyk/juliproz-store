@@ -3,7 +3,7 @@ const fs=require('node:fs');
 const vm=require('node:vm');
 const crypto=require('node:crypto');
 function element(){return {innerHTML:'',textContent:'',value:'',disabled:false,dataset:{},children:[],files:[],classList:{add(){},remove(){},toggle(){},contains(){return false}},addEventListener(){},focus(){},setAttribute(){},scrollIntoView(){},reset(){}}}
-function setup(file,fetch,query=''){
+function setup(file,fetch,query='?tab=catalog'){
  const nodes=new Map();const get=id=>{if(!nodes.has(id))nodes.set(id,element());return nodes.get(id)};
  const document={getElementById:get,querySelectorAll:()=>[],querySelector:()=>element(),addEventListener(){}};
  const links=[];const window={addEventListener(){},STORE_CONFIG:{url:'https://test.supabase.co',key:'publishable'},Telegram:{WebApp:{ready(){},expand(){},openTelegramLink:u=>links.push(u),initDataUnsafe:{}}}};
