@@ -856,3 +856,13 @@ body.product-modal-open{overflow:hidden}
 .home-social-card:focus-visible{outline:2px solid var(--ink);outline-offset:4px}
 @media(hover:hover) and (pointer:fine){.home-social-card:hover{opacity:.6}}
 @media(max-width:899px){.home-social-links{grid-column:1}}
+
+/* A direct entrance to the catalogue uses the shared pink checkout styling. */
+.brand:not(.is-home-page) .home-shop-link{display:none}
+.home-shop-link{position:absolute;z-index:4;top:18px;right:0;display:flex;align-items:center;justify-content:space-between;gap:18px;width:190px;min-height:48px;padding:12px 18px;font-size:14px;font-weight:400;cursor:pointer}
+.home-shop-link .inline-arrow{flex:0 0 18px}
+.home-shop-link:focus-visible{outline:2px solid #7894b6;outline-offset:4px}
+@media(max-width:600px){
+ .brand.is-home-page .masthead-inner{min-height:240px;padding:108px 0 48px}
+ .home-shop-link{top:auto;bottom:10px;width:184px;min-height:44px;padding:10px 16px;font-size:13px}
+}
