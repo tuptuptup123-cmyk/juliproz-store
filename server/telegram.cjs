@@ -4,9 +4,9 @@ const { createHmac, timingSafeEqual } = require('node:crypto');
 const { createDistributedGuard } = require('./telegram-limit.cjs');
 
 const BOT_USERNAME = 'JuliProzBot';
-const SHOP_URL = 'https://juliproz-store.vercel.app/';
+const SHOP_URL = 'https://juliproz-store.vercel.app/telegram/';
 const MANAGER_URL = 'https://t.me/juliproz';
-const WEBHOOK_URL = `${SHOP_URL}api/telegram`;
+const WEBHOOK_URL = 'https://juliproz-store.vercel.app/api/telegram';
 const MAX_BODY_BYTES = 128 * 1024;
 
 const WELCOME = 'JULI.PROZ 🤍\n\nВаш доступ к миру люкса.\n\nВещи в наличии, поиск и выкуп под ваш запрос.';

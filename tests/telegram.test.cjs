@@ -36,7 +36,7 @@ test('start creates a private greeting with four menu sections and a real Mini A
   assert.equal(result.body.method, 'sendMessage');
   assert.equal(result.body.chat_id, 42);
   assert.equal(result.body.text, WELCOME);
-  assert.equal(result.body.reply_markup.inline_keyboard[0][0].web_app.url, 'https://juliproz-store.vercel.app/');
+  assert.equal(result.body.reply_markup.inline_keyboard[0][0].web_app.url, 'https://juliproz-store.vercel.app/telegram/');
   assert.deepEqual(result.body.reply_markup.inline_keyboard.map(r => r[0].text), ['Магазин', 'Выкуп и комиссия', 'Услуги', 'О нас']);
   assert.equal(result.body.reply_markup.inline_keyboard[1][0].callback_data, 'jp:sell');
   assert.equal(result.headers['Cache-Control'], 'no-store');

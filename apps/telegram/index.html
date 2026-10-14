@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="ru" data-storefront="telegram">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#f5f7fb" />
+  <title>JULI.PROZ — Telegram Store</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="stylesheet" href="fonts.css?v=20261010-light-cyrillic" />
+  <link rel="stylesheet" href="style.css?v=20261014-telegram-split" />
+  <link rel="preconnect" href="https://qhgzzhgxwpcctafpzjid.supabase.co" crossorigin>
+  <script async id="telegramSdk" src="https://telegram.org/js/telegram-web-app.js?v=20261013-contact-detail-20261012-brand-order"></script>
+<link rel="stylesheet" href="product-sharing.css?v=20261014-telegram-split"></head>
+<body>
+    <header class="brand">
+      <div class="masthead-inner">
+        
+        <div class="catalog-toolbar masthead-controls">
+    <button id="openCatalogMenu" class="catalog-menu-button" type="button" aria-expanded="false" aria-controls="catalogMenu"><span class="menu-icon" aria-hidden="true"><span></span><span></span><span></span></span>Меню<span id="menuBadge" class="menu-badge hidden">0</span></button>
+    <button id="toggleSearch" class="search-toggle" type="button" aria-label="Поиск по каталогу" aria-expanded="false" aria-controls="catalogSearch"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg></button>
+        </div>
+        <div class="brand-lockup"><div class="logo">J.P</div><span class="brand-signature">BY VASYA</span></div>
+        <button id="brandPaw" class="brand-paw" type="button" aria-label="Оживить лапу J.P"><img src="images/brand-paw.webp" alt="" width="1536" height="1024" /></button>
+    <section id="catalogSearch" class="search-wrap hidden">
+      <span>⌕</span>
+      <input id="search" aria-label="Поиск по каталогу" placeholder="Поиск по каталогу..." autocomplete="off" />
+    </section>
+      </div>
+    </header>
+  <main class="app">
+    <p id="filterSummary" class="filter-summary hidden" aria-live="polite"></p>
+    <section class="filters hidden" aria-hidden="true">
+      <button data-filter="category">Категория</button>
+      <button data-filter="brand">Бренд</button>
+      <button data-filter="size">Размер</button>
+      <button data-filter="fulfillment_status">Наличие</button>
+    </section>
+
+    <section class="catalog-head">
+      <span id="count">Загружаем наличие…</span>
+      <div class="catalog-sort" id="catalogSortWrap">
+        <button id="catalogSort" class="sort-toggle" type="button" aria-label="Сортировка товаров: По брендам" aria-expanded="false" aria-controls="catalogSortOptions" data-value="brand"><svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><path d="M2 5h16M5 10h10M8 15h4"/></svg><span id="catalogSortLabel">Сортировка</span><span class="sort-chevron" aria-hidden="true">⌄</span></button>
+        <div id="catalogSortOptions" class="sort-options hidden" role="group" aria-label="Сортировка товаров">
+          <span class="sort-options-title">Сортировка</span>
+          <button type="button" data-sort="brand" aria-pressed="true">По брендам<span aria-hidden="true">✓</span></button>
+          <button type="button" data-sort="newest" aria-pressed="false">Сначала новые<span aria-hidden="true">✓</span></button>
+          <button type="button" data-sort="price_asc" aria-pressed="false">Дешевле<span aria-hidden="true">✓</span></button>
+          <button type="button" data-sort="price_desc" aria-pressed="false">Дороже<span aria-hidden="true">✓</span></button>
+          <button type="button" data-sort="discount" aria-pressed="false">Сначала большая скидка<span aria-hidden="true">✓</span></button>
+        </div>
+      </div>
+      <button id="reset" class="reset" aria-label="Сбросить фильтры">Сбросить</button>
+    <p id="sortStatus" class="sort-status" role="status" aria-live="polite"></p></section>
+
+    <section id="grid" class="grid"></section>
+    <section id="cartPage" class="cart-page hidden" aria-labelledby="cartTitle"><h1 id="cartTitle">Корзина</h1><div id="cartContent"></div><p id="cartStatus" role="status" aria-live="polite"></p></section>
+    <section id="sellPage" class="sell-page hidden" aria-labelledby="sellTitle">
+      <header class="sell-intro"><h1 id="sellTitle">Дайте вашей вещи новую историю</h1><p>Хотите продать одежду, обувь, сумку или аксессуар? Предложите их нам — рассмотрим выкуп или продажу через наш магазин.</p></header>
+      <div class="sell-methods"><article class="sell-method"><h2>Выкуп</h2><p>Мы покупаем вещь у вас. Стоимость согласуем после оценки фотографий и состояния.</p></article><article class="sell-method"><h2>На комиссию</h2><p>Размещаем вещь в нашем магазине и помогаем найти покупателя. Комиссию и условия согласуем заранее.</p></article></div>
+      <section class="sell-checklist" aria-labelledby="sellPrepare"><h2 id="sellPrepare">Что прислать</h2><ul><li>Фотографии вещи и деталей</li><li>Бренд, модель и размер</li><li>Описание состояния</li><li>Желаемую цену</li></ul></section>
+      <button id="offerItem" class="sell-offer" type="button">Предложить вещь <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg></button><p class="sell-footnote">Напишите менеджеру — обсудим подходящий вариант.</p>
+    </section>
+    <section id="servicesPage" class="sell-page services-page hidden" aria-labelledby="servicesTitle">
+      <header class="sell-intro"><h1 id="servicesTitle">Услуги</h1><p>Поможем выкупить нужную вещь, проверить её подлинность, подобрать ателье и организовать профессиональный уход. Работаем с вашими вещами по всему миру.</p></header>
+      <div class="sell-methods"><article class="sell-method service-card"><h2>Аутентификация</h2><p>Организуем онлайн- и офлайн-аутентификацию через проверенных партнёров. Отправьте фотографии, бренд и модель — подберём подходящий формат проверки, согласуем стоимость и сроки.</p><button type="button" class="service-contact" data-service="authentication">Проверить вещь <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg></button></article><article class="sell-method service-card"><h2>Ателье и уход</h2><p>Через проверенных партнёров организуем:</p><ul class="service-list"><li>Работы ателье для ваших вещей</li><li>Спа и уход для сумок</li><li>Полировку и обслуживание часов</li></ul><p>Пришлите фотографии и опишите запрос — согласуем возможность работы, стоимость и сроки.</p><button type="button" class="service-contact" data-service="atelier">Обсудить уход <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg></button></article></div>
+      <p class="sell-footnote">Все условия согласуем с вами до начала работы.</p>
+    </section>
+  </main>
+
+
+  <div id="catalogMenu" class="catalog-menu hidden">
+    <button class="menu-backdrop" id="menuBackdrop" type="button" aria-label="Закрыть меню каталога" tabindex="-1"></button>
+    <section class="menu-panel" role="dialog" aria-modal="true" aria-label="Меню каталога">
+      <header class="menu-header"><div class="menu-brand" aria-label="J.P"><span class="menu-logo">J.P</span><img class="menu-paw" src="images/brand-paw.webp" alt="" width="1536" height="1024" /></div><button id="closeCatalogMenu" class="menu-close" type="button" aria-label="Закрыть меню каталога"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path d="M5 5L19 19M19 5L5 19" fill="none" stroke="currentColor" stroke-width="2"/></svg></button></header>
+      <div class="menu-scroll">
+        <h3 class="menu-section-label">Для кого</h3>
+    <section class="audience-tabs" aria-label="Раздел каталога">
+      <button type="button" data-gender="" aria-pressed="true">Все</button>
+      <button type="button" data-gender="women" aria-pressed="false">Женское</button>
+      <button type="button" data-gender="men" aria-pressed="false">Мужское</button>
+    </section>
+        <section class="hot-brands" aria-label="Популярные бренды"><h3 class="menu-section-label">HOT ITEMS</h3><div class="hot-brand-options"><button type="button" data-hot-brand="Hermès" aria-pressed="false"><img class="hot-brand-icon birkin-icon" src="images/brands/hermes-birkin.png" width="48" height="48" alt="" aria-hidden="true"><span>Hermès</span></button><button type="button" data-hot-brand="Chrome Hearts" aria-pressed="false"><img class="hot-brand-icon chrome-horseshoe-icon" src="images/brands/chrome-hearts-horseshoe.png" width="48" height="48" alt="" aria-hidden="true"><span>Chrome Hearts</span></button></div></section>
+        <button type="button" class="sale-chip sale-menu-chip sale-category" data-sale aria-pressed="false"><span class="sale-category-title">SALE<small>Все вещи со скидкой</small></span><span class="sale-category-arrow" aria-hidden="true"><svg class="inline-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg></span></button>
+        <div id="menuGroups" class="menu-groups"></div><div class="privacy-links"><a href="privacy.html" target="_blank" rel="noopener">Конфиденциальность <svg class="inline-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg></a><button id="analyticsPreferences" type="button">Настройки статистики</button></div>
+      </div>
+      <footer class="menu-footer"><button id="showMenuProducts" class="primary" type="button">Показать товары</button><button id="resetMenu" class="menu-reset" type="button">Сбросить выбор</button></footer>
+    </section>
+  </div>
+
+  <nav class="bottom-nav">
+    <button class="active" data-tab="catalog" aria-current="page" aria-label="Каталог"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7M5 9v12h14V9"/></svg><small>Каталог</small></button>
+    <button data-tab="favorites" aria-label="Виш-лист"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"/></svg><small>Виш-лист</small></button>
+    <button data-tab="cart" aria-label="Корзина"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 3h3l3 12h10l3-9H6"/><path d="M8 15l-1 3h12"/><circle cx="9" cy="21" r="1"/><circle cx="18" cy="21" r="1"/></svg><small>Корзина <span id="cartBadge" class="cart-badge hidden">0</span></small></button>
+    <button data-tab="sell" aria-label="Продать вещь"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3h8l10 10-8 8L3 11Z"/><circle cx="7.5" cy="7.5" r="1"/></svg><small>Продать</small></button>
+    <button data-tab="services" aria-label="Услуги"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 8 3v6c0 5-8 9-8 9s-8-4-8-9V6Z"/><path d="m8 12 3 3 5-6"/></svg><small>Услуги</small></button>
+  </nav>
+
+  <div id="sheet" class="sheet hidden">
+    <div class="sheet-card">
+      <div class="sheet-top"><h2 id="sheetTitle">Фильтр</h2><button id="closeSheet" aria-label="Закрыть">×</button></div>
+      <div id="sheetOptions" class="options"></div>
+      <button id="applyFilter" class="primary">Применить</button>
+    </div>
+  </div>
+
+  <div id="productModal" class="product-modal hidden" role="dialog" aria-modal="true" aria-label="Карточка товара" tabindex="-1">
+    <header class="product-toolbar">
+      
+      <button id="backProduct" class="back" aria-label="Вернуться в каталог">‹</button>
+      <button id="openProductMenu" class="catalog-menu-button" type="button" aria-expanded="false" aria-controls="catalogMenu"><span class="menu-icon" aria-hidden="true"><span></span><span></span><span></span></span>Меню</button>
+    </header>
+    <div id="productContent"></div>
+  </div>
+
+  <dialog id="catalogAntiScam" class="anti-scam-dialog" aria-labelledby="catalogAntiScamTitle" aria-describedby="catalogAntiScamCopy">
+    <button id="closeAntiScam" class="anti-scam-close" type="button" aria-label="Закрыть предупреждение"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
+    <span class="anti-scam-symbol" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 8 3v6c0 5-8 9-8 9s-8-4-8-9V6Z"/><path d="m8 12 3 3 5-6"/></svg></span>
+    <span class="information-kicker">ANTI SCAM</span>
+    <h2 id="catalogAntiScamTitle">Остерегайтесь мошенников</h2>
+    <p id="catalogAntiScamCopy">Мошенники могут копировать наши фото и создавать похожие аккаунты. Проверяйте имя пользователя перед оплатой и переходите к нам только по ссылкам из нашего магазина.</p>
+    <a class="anti-scam-contact" href="https://t.me/juliproz" target="_blank" rel="noopener">Наш контакт: @juliproz <svg class="inline-arrow" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg></a>
+    <button id="acknowledgeAntiScam" class="anti-scam-acknowledge" type="button" autofocus>Ознакомиться <span aria-hidden="true">✓</span></button>
+  </dialog>
+  <section id="analyticsConsent" class="analytics-consent hidden" aria-label="Настройки статистики"><p>Разрешить статистику посещений? Это помогает улучшать магазин. Корзина и виш-лист работают при любом выборе. <a href="privacy.html" target="_blank" rel="noopener">Подробнее <svg class="inline-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg></a></p><div><p id="analyticsDeletionReference" class="hidden" role="status"></p><button id="analyticsAccept" type="button">Разрешить</button><button id="analyticsDecline" type="button">Без статистики</button></div></section>
+  <div class="nav-paw-layer" aria-hidden="true"><img id="moneyPaw" class="money-paw" src="images/money-paw-v1.webp" alt="" width="1024" height="1536" /><img id="navPaw" class="nav-paw" src="images/brand-paw.webp" alt="" aria-hidden="true" width="1536" height="1024" /></div>
+  <script defer src="config.js?v=20261011-shared-cache"></script>
+  <script defer src="image-policy.js"></script><script defer src="product-framing.js?v=20261012-consistent-margins"></script>
+  <script defer src="catalog-taxonomy.js?v=20261012-full-audit"></script><script defer src="product-sizes.js?v=20261012-full-audit"></script><script defer src="analytics.js?v=20261013-trusted-gateway"></script><script defer src="product-pricing.js?v=20261010-precise-discounts"></script><script defer src="product-sharing.js?v=20261014-telegram-split"></script><script defer src="app.js?v=20261014-telegram-split"></script>
+  <script defer src="catalog-notice.js?v=20261014-once"></script>
+</body>
+</html>
