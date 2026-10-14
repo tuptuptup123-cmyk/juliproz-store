@@ -1000,6 +1000,6 @@ html[lang=en] #webHomePage h1{font-size:clamp(34px,3.7vw,56px);line-height:1.14}
  .catalog-head{column-gap:10px;row-gap:8px;flex-wrap:wrap}
  .catalog-head #count{flex:1 1 120px;font-size:12px}
  .catalog-head .reset{min-height:44px}
- .product-share-dialog #productShareUrl{font-size:16px}
+ .product-share-dialog input#productShareUrl{font-size:16px}
  .anti-scam-dialog{max-height:calc(100dvh - 32px)}
 }
