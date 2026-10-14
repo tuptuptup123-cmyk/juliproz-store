@@ -941,7 +941,7 @@ body:has(#catalogAntiScam[open]){overflow:hidden}
  .brand.is-home-page .masthead-inner .brand-lockup{grid-column:1;grid-row:1;left:0;width:120px;justify-self:center}
  .brand.is-home-page .masthead-inner .logo{font-size:50px;text-align:left;width:fit-content}
  .brand.is-home-page .masthead-inner .brand-signature{left:64px;bottom:4px;font-size:10px}
- .brand.is-home-page .masthead-inner .brand-paw{right:calc(50% - 56px);top:-6px;width:84px;height:85px;transform:none;animation:none}
+ .brand.is-home-page .masthead-inner .brand-paw{right:calc(50% - 56px);top:-6px;width:84px;height:85px;transform:none}
  #webHomePage{gap:22px;padding-top:0}
  #webHomePage h1{font-size:clamp(29px,7.7vw,40px);line-height:1.16;margin-bottom:20px}
  #webHomePage h1 span{white-space:normal}
