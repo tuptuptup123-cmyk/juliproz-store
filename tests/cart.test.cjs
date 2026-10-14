@@ -1,7 +1,7 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
 const nodes=new Map(),saved=new Map();const get=id=>{if(!nodes.has(id))nodes.set(id,{innerHTML:'',textContent:'',value:'',classList:{add(){},remove(){},toggle(){},contains(){return false}},addEventListener(type,handler){this[type]=handler},setAttribute(){}});return nodes.get(id)};
 let rows=[],fail=false,links=[];
-const managerDraft=rows=>'Привет! Хочу заказать:\n\n'+rows.map(([id,size,quantity])=>`https://t.me/JuliProzBot/shop?startapp=p_${id}\nРазмер: ${size||'уточнить'} · Количество: ${quantity}`).join('\n\n');
+const managerDraft=rows=>'Привет! Хочу заказать:\n\n'+rows.map(([id,size,quantity])=>`https://www.juliproz.com/?product=${id}\nРазмер: ${size||'уточнить'} · Количество: ${quantity}`).join('\n\n');
 const context=vm.createContext({ProductSizes:require('../product-sizes.js'),safeProductImage:()=>false,window:{STORE_CONFIG:{url:'https://test.invalid',key:'public'},open:u=>links.push(u),addEventListener(){}},document:{getElementById:get,querySelectorAll:()=>[],querySelector:()=>null,addEventListener(){}},localStorage:{getItem:k=>saved.get(k)||null,setItem:(k,v)=>saved.set(k,v)},location:{search:''},URLSearchParams,AbortSignal,setTimeout,fetch:async()=>{if(fail)throw Error();return {ok:true,json:async()=>rows}}});
 vm.runInContext(fs.readFileSync(__dirname+'/../product-pricing.js','utf8'),context);
  vm.runInContext(fs.readFileSync(__dirname+'/../app.js','utf8'),context);const run=s=>vm.runInContext(s,context);

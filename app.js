@@ -80,7 +80,7 @@ function stockLabel(p,size=null){if(p?.available===false||p?.reserved||onOrder(p
 const availabilityLabel=p=>p?.reserved?'На брони':onOrder(p)?'Под заказ':ProductSizes.stockUnits(p)===0?'Нет в наличии':'В наличии';
 const deliveryLabel=p=>onOrder(p)?'10–14 рабочих дней':'7–10 рабочих дней';
 const statusLabels={in_stock:'В наличии',on_order:'Под заказ'};
-function productLink(p){if(window.SiteLanguage?.language==='en'&&!isTelegramStore())return `https://www.juliproz.com/?product=${encodeURIComponent(String(p.id))}&lang=en`;return `https://t.me/JuliProzBot/shop?startapp=p_${encodeURIComponent(String(p.id))}`}
+function productLink(p){const id=encodeURIComponent(String(p.id));return isTelegramStore()?`https://t.me/JuliProzBot/shop?startapp=p_${id}`:`https://www.juliproz.com/?product=${id}${window.SiteLanguage?.language==='en'?'&lang=en':''}`}
 const CATALOG_FIELDS='id,created_at,brand,name,category,size,price,currency,image_url,available,fulfillment_status,gender,description,photos,reserved,product_condition,stock_quantities,on_commission,original_price,wear_condition';
 function photosOf(p){return [...new Set([p.image_url,p.image,...(Array.isArray(p.photos)?p.photos:[])].filter(safeProductImage))]}
 const telegramOpenTimes=new Map();

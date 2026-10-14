@@ -16,3 +16,13 @@ test('English sharing uses an English website URL but Telegram always keeps its 
  const web=sharing.links(product,{language:'en',size:'40'});assert.equal(web.url,'https://www.juliproz.com/?product=99001&lang=en');assert.match(new URL(web.manager).searchParams.get('text'),/^Hello!/);assert.match(new URL(web.telegram).searchParams.get('text'),/Size \/ option: 40/);
  const bot=sharing.links(product,{language:'en',inTelegram:true,size:'40'});assert.equal(bot.url,'https://t.me/JuliProzBot/shop?startapp=p_99001');assert.match(new URL(bot.manager).searchParams.get('text'),/^Здравствуйте!/);assert.doesNotMatch(bot.url,/lang=/);
 });
+
+test('English share drafts translate colour variants without changing the canonical product link',()=>{
+ const c=language();vm.runInContext(fs.readFileSync(path.join(__dirname,'..','product-sharing.js'),'utf8'),c);
+ const product={id:45,brand:'Gucci',name:'Кроссовки',available:true};
+ const en=c.ProductSharing.links(product,{language:'en',size:'Розовый'});
+ assert.match(new URL(en.manager).searchParams.get('text'),/Size \/ option: Pink/);
+ assert.doesNotMatch(new URL(en.manager).searchParams.get('text'),/[А-Яа-яЁё]/);
+ const bot=c.ProductSharing.links(product,{inTelegram:true,language:'en',size:'Розовый'});
+ assert.match(new URL(bot.manager).searchParams.get('text'),/Размер \/ вариант: Розовый/);
+});

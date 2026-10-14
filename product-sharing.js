@@ -10,7 +10,8 @@
   // Deliberately select public fields: never serialize admin records or the current URL.
   const originalTitle=String(options.title||[product.brand,product.name].filter(Boolean).join(' — ')||'Вещь JULI.PROZ').slice(0,240);
   const title=english&&root.SiteLanguage?root.SiteLanguage.english(originalTitle):originalTitle;
-  const size=String(options.size||'').slice(0,100);
+  const originalSize=String(options.size||'').slice(0,100);
+  const size=english&&root.SiteLanguage?root.SiteLanguage.english(originalSize):originalSize;
   const text=title+(size?(english?'\nSize / option: ':'\nРазмер / вариант: ')+size:'')+(english?'\nReference: ':'\nАртикул: ')+id;
   return {id,title,url,web,bot,telegram:'https://t.me/share/url?url='+encodeURIComponent(url)+'&text='+encodeURIComponent(text),manager:'https://t.me/juliproz?text='+encodeURIComponent((english?'Hello! I would like to ask about this piece:\n':'Здравствуйте! Хочу уточнить по этой вещи:\n')+text+'\n'+url)};
  }
