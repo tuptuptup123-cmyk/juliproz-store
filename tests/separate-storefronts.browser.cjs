@@ -25,6 +25,7 @@ let browser;
   const context=await browser.newContext({viewport:{width,height:900},reducedMotion:'reduce'});await setup(context);
   const page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
   await page.goto('https://www.juliproz.com/?lang=en');await page.locator('#webHomePage').waitFor();assert.equal(await page.locator('html').getAttribute('lang'),'en');
+  await page.locator('.masthead-inner [data-site-language=ru]').click();await page.locator('.masthead-inner [data-site-language=en]').click();
   await page.evaluate(p=>{
    localStorage.setItem('jpFav',JSON.stringify([String(p.id)]));
    localStorage.setItem('jpCart',JSON.stringify([{id:String(p.id),size:'40',quantity:1,product:p}]));
