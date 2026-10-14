@@ -806,7 +806,7 @@ body.product-modal-open{overflow:hidden}
 }
 
 /* The introductory home uses the same animated masthead as the other pages. */
-#webHomePage{max-width:1360px;padding:20px 0 40px;display:grid;grid-template-columns:minmax(0,.95fr) minmax(0,1.15fr);align-items:center;gap:48px}
+#webHomePage{max-width:1440px;padding:20px 0 40px;display:grid;grid-template-columns:minmax(0,.95fr) minmax(0,1.15fr);align-items:center;gap:48px}
 #webHomePage .web-page-intro{padding:0;text-align:left;min-width:0}
 #webHomePage h1{font-size:clamp(36px,4.1vw,62px);line-height:1.14;margin:0 0 26px;text-wrap:balance}
 #webHomePage h1 span{white-space:nowrap}
@@ -845,3 +845,14 @@ body.product-modal-open{overflow:hidden}
  #webHomePage .web-page-intro .home-services-summary{margin-top:16px}
  .home-photographs{gap:10px}
 }
+
+/* Compact social links align with the photographs at the bottom right. */
+#webHomePage{row-gap:22px}
+.home-social-links{grid-column:2;justify-self:end;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;width:min(100%,340px)}
+.home-social-card{display:flex;align-items:center;gap:10px;min-width:0;min-height:48px;padding:12px 16px;border:1px solid var(--line);border-radius:999px;background:#f5f5f5;color:var(--ink);font:300 13px/1.4 Roboto,Arial,sans-serif;text-decoration:none;transition:background .2s,border-color .2s}
+.home-social-icon{width:20px;height:20px;flex:0 0 20px}
+.home-social-card .inline-arrow{width:14px;height:14px;flex:0 0 14px;margin-left:auto}
+.home-social-card:focus-visible{outline:2px solid var(--ink);outline-offset:4px}
+@media(hover:hover) and (pointer:fine){.home-social-card:hover{background:#ededed;border-color:#bcbcbc}}
+@media(max-width:899px){.home-social-links{grid-column:1}}
+@media(max-width:600px){.home-social-links{gap:10px}.home-social-card{padding:12px;gap:8px;font-size:12px}}
