@@ -15,7 +15,7 @@ let browser;
   await context.route('https://telegram.org/**',r=>r.abort());
   await context.route('**/api/catalog',r=>r.fulfill({json:products}));
   await context.route('**/rest/v1/products?**',r=>r.fulfill({json:products}));
-  await context.addInitScript(()=>localStorage.setItem('jpAnalyticsConsent','declined'));
+  await context.addInitScript(()=>{localStorage.setItem('jpAnalyticsConsent','declined');window.auditOpenedLinks=[];window.open=url=>{window.auditOpenedLinks.push(url);return null}});
  }
  async function fits(page,name){
   const result=await page.evaluate(()=>({width:innerWidth,scroll:document.documentElement.scrollWidth,nav:[...document.querySelectorAll('.bottom-nav [data-tab]')].filter(b=>b.getClientRects().length).map(b=>{const r=b.getBoundingClientRect(),small=b.querySelector('small');return {tab:b.dataset.tab,left:r.left,right:r.right,label:small.scrollWidth-small.clientWidth}})}));
@@ -45,13 +45,34 @@ let browser;
   await page.locator('.masthead-inner [data-site-language=ru]').click();assert.equal(await page.evaluate(()=>state.category),'Обувь');assert.match(await page.locator('#count').innerText(),/В каталоге/);
   await page.locator('.masthead-inner [data-site-language=en]').click();await page.locator('#toggleSearch').click();await page.locator('#search').fill('sneakers');await page.locator('.product[data-id="99001"]').waitFor();assert.equal(await page.locator('.product').count(),1,'English search finds Russian catalogue records');
   await page.locator('.product[data-id="99001"] .product-open').click();await page.locator('[data-size="40"]').click();await english(page,'#productModal');await fits(page,'EN detail '+width);
+  assert.equal(await page.locator('main').getAttribute('inert'),'');assert.equal(await page.locator('.brand').getAttribute('inert'),'');
+  await page.locator('#openProductMenu').click();await page.locator('#closeCatalogMenu').click();
+  assert.equal(await page.locator('main').getAttribute('inert'),'','Closing filters keeps the background inactive while the product is open');
+
   await page.locator('[data-action=wishlist]').click();await page.locator('[data-action=add-cart]').click();await page.locator('.product-toolbar [data-site-language=ru]').click();assert.equal(await page.evaluate(()=>selectedSize),'40');assert.equal(await page.evaluate(()=>cart.length),1);assert.equal(await page.evaluate(()=>state.favorites.has('99001')),true);
   await page.locator('.product-toolbar [data-site-language=en]').click();await english(page,'#productModal');await page.screenshot({path:out+`/design-en-product-${width}.png`,fullPage:false});
   await page.locator('[data-action=share]').click();await english(page,'#productShareDialog');assert.match(await page.locator('#productShareUrl').inputValue(),/product=99001&lang=en$/);if(width<=600)assert.ok(await page.locator('#productShareUrl').evaluate(e=>parseFloat(getComputedStyle(e).fontSize)>=16),'Mobile input avoids focus zoom');await page.screenshot({path:out+`/design-en-share-${width}.png`});await page.locator('[data-share-close]').click();
-  await page.locator('.bottom-nav [data-tab=cart]').click();await english(page,'#cartPage');await fits(page,'EN full bag '+width);await page.screenshot({path:out+`/design-en-bag-${width}.png`,fullPage:true});
+  await page.locator('.bottom-nav [data-tab=cart]').click();await english(page,'#cartPage');await fits(page,'EN full bag '+width);assert.equal(await page.locator('main').getAttribute('inert'),null);assert.equal(await page.locator('.brand').getAttribute('inert'),null);await page.screenshot({path:out+`/design-en-bag-${width}.png`,fullPage:true});
+  await page.locator('[data-cart-action=checkout]').click();await page.waitForFunction(()=>window.auditOpenedLinks.length===1);
+  const enDraft=new URL(await page.evaluate(()=>window.auditOpenedLinks[0])).searchParams.get('text');
+  assert.match(enDraft,/^Hello!/);assert.match(enDraft,/https:\/\/www\.juliproz\.com\/\?product=99001&lang=en/);assert.doesNotMatch(enDraft,/[А-Яа-яЁё]/);
+  await page.locator('.masthead-inner [data-site-language=ru]').click();await page.locator('[data-cart-action=checkout]').click();await page.waitForFunction(()=>window.auditOpenedLinks.length===2);
+  const ruDraft=new URL(await page.evaluate(()=>window.auditOpenedLinks[1])).searchParams.get('text');assert.match(ruDraft,/https:\/\/www\.juliproz\.com\/\?product=99001\n/);assert.doesNotMatch(ruDraft,/JuliProzBot|lang=en/);
+  await page.locator('.masthead-inner [data-site-language=en]').click();
+
   await page.reload();assert.equal(await page.locator('html').getAttribute('lang'),'en');assert.equal(await page.evaluate(()=>cart.length),1);assert.equal(await page.evaluate(()=>state.favorites.has('99001')),true);
   await page.goto(origin+'/privacy.html?lang=en');await english(page);await fits(page,'EN privacy '+width);
   assert.deepEqual(errors,[]);await context.close();console.log(width+' PASS RU/EN design, translations, filters, English search, size, wishlist, bag, share, persistence and privacy');
+ }
+ for(const [width,height] of [[320,568],[390,667],[844,390]]){
+  const context=await browser.newContext({viewport:{width,height},reducedMotion:'reduce'});await prepare(context);const page=await context.newPage();
+  await page.goto(origin+'/?lang=en');await page.locator('[data-web-section=catalog]:visible').first().click();await page.locator('#catalogAntiScam').waitFor();
+  const notice=await page.locator('#catalogAntiScam').boundingBox();assert.ok(notice.x>=0&&notice.y>=0&&notice.x+notice.width<=width+1&&notice.y+notice.height<=height+1,'Anti Scam fits short screen '+width+'x'+height);
+  await page.locator('#acknowledgeAntiScam').click();await page.locator('#openCatalogMenu').click();await english(page,'#catalogMenu');await page.locator('#showMenuProducts').click();
+  await page.locator('.product[data-id="99001"] .product-open').click();await page.locator('[data-size="40"]').click();await page.locator('[data-action=add-cart]').click();await fits(page,'Short screen product '+width+'x'+height);
+  await page.locator('[data-action=share]').click();await english(page,'#productShareDialog');await page.screenshot({path:out+`/audit-short-share-${width}x${height}.png`});await page.locator('[data-share-close]').click();
+  await page.locator('.bottom-nav [data-tab=cart]').click();await fits(page,'Short screen bag '+width+'x'+height);await page.screenshot({path:out+`/audit-short-bag-${width}x${height}.png`,fullPage:true});
+  await context.close();console.log(width+'x'+height+' PASS short portrait/landscape notice, filters, selected size, add to bag, share and navigation');
  }
  for(const mode of ['sdk','launch','late-sdk','blocked-storage']){
   const context=await browser.newContext({viewport:{width:390,height:844},reducedMotion:'reduce'});await prepare(context);

@@ -80,7 +80,7 @@ function stockLabel(p,size=null){if(p?.available===false||p?.reserved||onOrder(p
 const availabilityLabel=p=>p?.reserved?'На брони':onOrder(p)?'Под заказ':ProductSizes.stockUnits(p)===0?'Нет в наличии':'В наличии';
 const deliveryLabel=p=>onOrder(p)?'10–14 рабочих дней':'7–10 рабочих дней';
 const statusLabels={in_stock:'В наличии',on_order:'Под заказ'};
-function productLink(p){if(window.SiteLanguage?.language==='en'&&!isTelegramStore())return `https://www.juliproz.com/?product=${encodeURIComponent(String(p.id))}&lang=en`;return `https://t.me/JuliProzBot/shop?startapp=p_${encodeURIComponent(String(p.id))}`}
+function productLink(p){const id=encodeURIComponent(String(p.id));return isTelegramStore()?`https://t.me/JuliProzBot/shop?startapp=p_${id}`:`https://www.juliproz.com/?product=${id}${window.SiteLanguage?.language==='en'?'&lang=en':''}`}
 const CATALOG_FIELDS='id,created_at,brand,name,category,size,price,currency,image_url,available,fulfillment_status,gender,description,photos,reserved,product_condition,stock_quantities,on_commission,original_price,wear_condition';
 function photosOf(p){return [...new Set([p.image_url,p.image,...(Array.isArray(p.photos)?p.photos:[])].filter(safeProductImage))]}
 const telegramOpenTimes=new Map();
@@ -288,8 +288,9 @@ function setCatalogMenu(open){
   const finish=()=>{
     menu.classList.add('hidden');menu.classList.remove('is-closing');menuCloseTimer=null;
     if(document.body?.style)document.body.style.overflow='';
-    document.querySelector('main')?.toggleAttribute?.('inert',false);
-    document.querySelector('.brand')?.toggleAttribute?.('inert',false);
+    const productOpen=!document.getElementById('productModal').classList.contains('hidden');
+    document.querySelector('main')?.toggleAttribute?.('inert',productOpen);
+    document.querySelector('.brand')?.toggleAttribute?.('inert',productOpen);
     document.querySelector('.bottom-nav')?.toggleAttribute?.('inert',false);
     document.getElementById('productModal').toggleAttribute?.('inert',false);
     document.getElementById(document.getElementById('productModal').classList.contains('hidden')?'openCatalogMenu':'openProductMenu').focus?.();
@@ -557,13 +558,19 @@ function hideProductModal(){
  const modal=document.getElementById('productModal'),nav=modal.querySelector?.('.bottom-nav');
  if(nav&&productNavHome){productNavHome.replaceWith(nav);productNavHome=null}
  modal.classList.add('hidden');
+ const menuOpen=!document.getElementById('catalogMenu').classList.contains('hidden');
+ document.querySelector('main')?.toggleAttribute?.('inert',menuOpen);
+ document.querySelector('.brand')?.toggleAttribute?.('inert',menuOpen);
 }
 function showProductModal(){
  document.body?.classList?.add('product-modal-open');
  const modal=document.getElementById('productModal');if(modal.classList.contains('hidden'))productReturnFocus=document.activeElement;
  const nav=document.querySelector('.bottom-nav');
  if(nav?.before&&document.createComment&&!modal.contains(nav)){productNavHome=document.createComment('bottom navigation');nav.before(productNavHome);modal.appendChild(nav)}
- modal.classList.remove('hidden');document.getElementById('backProduct').focus?.();
+ modal.classList.remove('hidden');
+ document.querySelector('main')?.toggleAttribute?.('inert',true);
+ document.querySelector('.brand')?.toggleAttribute?.('inert',true);
+ document.getElementById('backProduct').focus?.();
 }
 function closeProductModal(){navigationRevision++;selectedProduct=null;selectedSize=null;hideProductModal();productReturnFocus?.focus?.();productReturnFocus=null}
 document.addEventListener('keydown',e=>{
