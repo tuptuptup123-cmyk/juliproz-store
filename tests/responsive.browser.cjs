@@ -19,6 +19,7 @@ const server=http.createServer((req,res)=>{let file=path.join(root,decodeURIComp
   assert.deepEqual(await page.locator('.bottom-nav [data-tab]:visible').evaluateAll(bs=>bs.map(b=>b.dataset.tab)),['home','catalog','favorites','cart','sell','services','about']);
   await page.locator('.bottom-nav [data-tab=home]').click();assert.equal(await page.locator('#webHomePage').isVisible(),true);assert.equal(await page.locator('#grid').isHidden(),true);await page.screenshot({path:out+'/'+name+'-website-home.png',fullPage:false});
   await page.locator('.bottom-nav [data-tab=about]').click();assert.equal(await page.locator('#webAboutPage').isVisible(),true);assert.equal(await page.locator('#webHomePage').isHidden(),true);assert.equal(await page.locator('.catalog-head').isHidden(),true);
+  await page.screenshot({path:out+'/'+name+'-information.png',fullPage:true});
   await page.locator('.bottom-nav [data-tab=catalog]').click();assert.equal(await page.locator('#webAboutPage').isHidden(),true);assert.equal(await page.locator('#grid').isVisible(),true);
   await page.evaluate(()=>{window.__webSdk=window.Telegram;window.Telegram={WebApp:{platform:'tdesktop',initData:'synthetic-launch',ready(){},expand(){}}};initializeTelegram()});
   assert.deepEqual(await page.locator('.bottom-nav [data-tab]:visible').evaluateAll(bs=>bs.map(b=>b.dataset.tab)),['catalog','favorites','cart','sell','services']);
