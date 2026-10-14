@@ -960,10 +960,50 @@ body:has(#catalogAntiScam[open]){overflow:hidden}
  .bottom-nav.is-website-navigation button[data-tab]{width:100%;min-width:0;flex:initial}
  .bottom-nav.is-website-navigation button::before{width:min(44px,calc(100% - 6px))}
  .bottom-nav.is-website-navigation small{font-size:10px;letter-spacing:-.02em}
+ .bottom-nav.is-website-navigation .cart-badge{left:auto;right:calc(50% - 18px)}
  .bottom-nav.is-website-navigation .nav-label-full{display:none}
  .bottom-nav.is-website-navigation .nav-label-short{display:inline}
 }
 @media(max-width:360px){
  .bottom-nav.is-website-navigation small{font-size:9px}
  .home-mobile-education .buyer-education-title{padding:12px;font-size:13px}
+}
+
+/* Website language controls share the quiet black, white and blush palette. */
+.language-switch{display:inline-flex;align-items:center;gap:2px;padding:3px;border:1px solid #e8e5e6;border-radius:999px;background:#fff;color:#202020;flex:none}
+.language-switch[hidden]{display:none!important}
+.language-switch button{display:grid;place-items:center;min-width:40px;min-height:36px;padding:6px 9px;border:0;border-radius:999px;background:transparent;color:#666;font:400 11px/1 Roboto,Arial,sans-serif;letter-spacing:.04em;cursor:pointer}
+.language-switch button[aria-pressed=true]{background:#f1e4ec;color:#2c2228}
+.language-switch button:focus-visible{outline:2px solid #7b4d61;outline-offset:2px}
+.masthead-inner>.language-switch{position:absolute;z-index:6;right:0;top:8px}
+.product-toolbar>.language-switch{order:1;margin-left:auto;margin-right:8px}
+.product-toolbar>.back{order:0}.product-toolbar>.catalog-menu-button{order:2}
+.privacy-content>.language-switch{display:flex;width:fit-content;margin-left:auto}
+.buyer-education-title{white-space:normal}.buyer-education-title>.inline-arrow{flex-shrink:0}
+.buyer-education-title>span:first-child{max-width:150px}
+html[lang=en] #webHomePage h1{font-size:clamp(34px,3.7vw,56px);line-height:1.14}
+html[lang=en] .home-shop-link{width:210px}
+.catalog-head #count{min-width:0;line-height:1.5}
+.information-notice-heading,.information-education-copy,.sell-method,.cart-item-info{min-width:0}
+.information-notice h2,.information-education-copy>span,.sell-method h2{overflow-wrap:break-word}
+@media(min-width:900px) and (max-width:1100px){
+ .brand.is-home-page .home-shop-link{position:relative;top:22px;left:auto;transform:none}
+}
+@media(max-width:899px){
+ .language-switch button{min-width:42px;min-height:36px}
+ html[lang=en] #webHomePage h1{font-size:clamp(29px,7.7vw,40px)}
+}
+@media(max-width:600px){
+ .masthead-inner>.language-switch{top:0}
+ .product-toolbar{gap:8px;padding-left:16px;padding-right:16px}
+ .product-toolbar>.language-switch{margin-right:0}
+ .product-toolbar>.catalog-menu-button{min-width:76px;padding:0 8px}
+ .detail-actions{gap:8px}
+ .detail-actions .icon-action,.detail-actions .detail-wishlist{width:44px;flex:0 0 44px;min-height:48px;padding:10px}
+ .detail-actions .purchase-action{padding:12px 16px;gap:10px;font-size:14px}
+ .catalog-head{column-gap:10px;row-gap:8px;flex-wrap:wrap}
+ .catalog-head #count{flex:1 1 120px;font-size:12px}
+ .catalog-head .reset{min-height:44px}
+ .product-share-dialog input#productShareUrl{font-size:16px}
+ .anti-scam-dialog{max-height:calc(100dvh - 32px)}
 }
