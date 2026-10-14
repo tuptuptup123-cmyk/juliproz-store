@@ -33,6 +33,7 @@ let browser;
   await fits(page,'RU home '+width);await page.screenshot({path:out+`/design-ru-home-${width}.png`,fullPage:true});
   await page.locator('.masthead-inner [data-site-language=en]').click();assert.equal(await page.locator('html').getAttribute('lang'),'en');await english(page);await fits(page,'EN home '+width);
   const box=await page.locator('.masthead-inner .language-switch').boundingBox(),logo=await page.locator('.brand-lockup').boundingBox();assert.ok(box.y+box.height<=logo.y+1||box.x>=logo.x+logo.width||box.x+box.width<=logo.x,'Language control does not cover the logo');
+  if(width>=900){const shop=await page.locator('.home-shop-link').boundingBox(),course=await page.locator('.brand .buyer-education-card').boundingBox();assert.ok(Math.abs(shop.y+shop.height/2-course.y-course.height/2)<2,'Shop and course align on desktop')}
   await page.screenshot({path:out+`/design-en-home-${width}.png`,fullPage:true});
   for(const tab of ['sell','services','about','favorites','cart']){
    await page.locator(`.bottom-nav [data-tab=${tab}]`).click();await english(page);await fits(page,`EN ${tab} ${width}`);await page.screenshot({path:out+`/design-en-${tab}-${width}.png`,fullPage:true});
@@ -46,7 +47,7 @@ let browser;
   await page.locator('.product[data-id="99001"] .product-open').click();await page.locator('[data-size="40"]').click();await english(page,'#productModal');await fits(page,'EN detail '+width);
   await page.locator('[data-action=wishlist]').click();await page.locator('[data-action=add-cart]').click();await page.locator('.product-toolbar [data-site-language=ru]').click();assert.equal(await page.evaluate(()=>selectedSize),'40');assert.equal(await page.evaluate(()=>cart.length),1);assert.equal(await page.evaluate(()=>state.favorites.has('99001')),true);
   await page.locator('.product-toolbar [data-site-language=en]').click();await english(page,'#productModal');await page.screenshot({path:out+`/design-en-product-${width}.png`,fullPage:false});
-  await page.locator('[data-action=share]').click();await english(page,'#productShareDialog');assert.match(await page.locator('#productShareUrl').inputValue(),/product=99001&lang=en$/);await page.screenshot({path:out+`/design-en-share-${width}.png`});await page.locator('[data-share-close]').click();
+  await page.locator('[data-action=share]').click();await english(page,'#productShareDialog');assert.match(await page.locator('#productShareUrl').inputValue(),/product=99001&lang=en$/);if(width<=600)assert.ok(await page.locator('#productShareUrl').evaluate(e=>parseFloat(getComputedStyle(e).fontSize)>=16),'Mobile input avoids focus zoom');await page.screenshot({path:out+`/design-en-share-${width}.png`});await page.locator('[data-share-close]').click();
   await page.locator('.bottom-nav [data-tab=cart]').click();await english(page,'#cartPage');await fits(page,'EN full bag '+width);await page.screenshot({path:out+`/design-en-bag-${width}.png`,fullPage:true});
   await page.reload();assert.equal(await page.locator('html').getAttribute('lang'),'en');assert.equal(await page.evaluate(()=>cart.length),1);assert.equal(await page.evaluate(()=>state.favorites.has('99001')),true);
   await page.goto(origin+'/privacy.html?lang=en');await english(page);await fits(page,'EN privacy '+width);

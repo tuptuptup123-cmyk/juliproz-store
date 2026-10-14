@@ -982,9 +982,13 @@ body:has(#catalogAntiScam[open]){overflow:hidden}
 .buyer-education-title{white-space:normal}.buyer-education-title>.inline-arrow{flex-shrink:0}
 .buyer-education-title>span:first-child{max-width:150px}
 html[lang=en] #webHomePage h1{font-size:clamp(34px,3.7vw,56px);line-height:1.14}
+html[lang=en] .home-shop-link{width:210px}
 .catalog-head #count{min-width:0;line-height:1.5}
 .information-notice-heading,.information-education-copy,.sell-method,.cart-item-info{min-width:0}
 .information-notice h2,.information-education-copy>span,.sell-method h2{overflow-wrap:break-word}
+@media(min-width:900px) and (max-width:1100px){
+ .brand.is-home-page .home-shop-link{top:calc(50% + 22px);transform:translateY(-50%)}
+}
 @media(max-width:899px){
  .language-switch button{min-width:42px;min-height:36px}
  html[lang=en] #webHomePage h1{font-size:clamp(29px,7.7vw,40px)}
