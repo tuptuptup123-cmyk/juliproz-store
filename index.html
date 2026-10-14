@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#f5f7fb" />
   <title>J.P Store</title>
   <link rel="stylesheet" href="fonts.css?v=20261010-light-cyrillic" />
-  <link rel="stylesheet" href="style.css?v=20261014-my-store-edge" />
+  <link rel="stylesheet" href="style.css?v=20261014-information" />
   <link rel="preconnect" href="https://qhgzzhgxwpcctafpzjid.supabase.co" crossorigin>
   <script async id="telegramSdk" src="https://telegram.org/js/telegram-web-app.js?v=20261013-contact-detail-20261012-brand-order"></script>
 <link rel="stylesheet" href="product-sharing.css?v=20261013-share"></head>
@@ -50,7 +50,23 @@
         </a>
       </nav>
     </section>
-<section id="webAboutPage" class="web-page hidden" aria-labelledby="webAboutTitle"><header class="web-page-intro"><span class="web-eyebrow">JULI.PROZ · НАША КОМАНДА</span><h1 id="webAboutTitle">О нас</h1><p>Мы — команда байеров, которая ищет, выкупает и доставляет люксовые вещи по всему миру. Работаем с бутиками, аутлетами, приватными сейлами и винтажными коллекциями.</p></header><div class="web-about-copy"><h2>От находки до вашей двери</h2><p>В каталоге собраны вещи из нашего наличия и позиции под заказ. Если нужной модели, цвета или размера нет, напишите нам — поможем с поиском.</p><h2>Наши соцсети</h2><a href="https://www.instagram.com/juli.proz/" target="_blank" rel="noopener">Instagram · Юля <span aria-hidden="true">↗</span></a><a href="https://t.me/juli_proz" target="_blank" rel="noopener">Telegram · основной канал <span aria-hidden="true">↗</span></a><a href="https://t.me/julisaleclub" target="_blank" rel="noopener">Telegram · скидки и приватные сейлы <span aria-hidden="true">↗</span></a><a href="https://t.me/vasyavkosmose" target="_blank" rel="noopener">Telegram · канал Васи <span aria-hidden="true">↗</span></a><h2>На связи</h2><a href="https://t.me/juliproz" target="_blank" rel="noopener">Telegram · связаться с нами <span aria-hidden="true">↗</span></a><button class="web-page-action" type="button" data-web-section="catalog">Посмотреть коллекцию <span aria-hidden="true">↗</span></button></div></section>
+    <section id="webAboutPage" class="web-page information-page hidden" aria-labelledby="webAboutTitle">
+      <header class="web-page-intro"><h1 id="webAboutTitle">Информация</h1></header>
+      <div class="web-about-copy">
+        <h2 id="informationSocialTitle">Наши соцсети</h2>
+        <nav class="information-links" aria-labelledby="informationSocialTitle">
+          <a href="https://www.instagram.com/juli.proz/" target="_blank" rel="noopener"><span>Instagram · Юля<small>@juli.proz</small></span><span aria-hidden="true">↗</span></a>
+          <a href="https://t.me/juli_proz" target="_blank" rel="noopener"><span>Telegram · основной канал<small>@juli_proz</small></span><span aria-hidden="true">↗</span></a>
+          <a href="https://t.me/julisaleclub" target="_blank" rel="noopener"><span>Telegram · скидки и приватные сейлы<small>@julisaleclub</small></span><span aria-hidden="true">↗</span></a>
+          <a href="https://t.me/vasyavkosmose" target="_blank" rel="noopener"><span>Telegram · канал Васи<small>@vasyavkosmose</small></span><span aria-hidden="true">↗</span></a>
+          <a href="https://t.me/juliproz" target="_blank" rel="noopener"><span>Telegram · связаться с нами<small>@juliproz</small></span><span aria-hidden="true">↗</span></a>
+        </nav>
+        <aside class="information-notice" aria-labelledby="informationSafetyTitle">
+          <h2 id="informationSafetyTitle">Осторожно, мошенники</h2>
+          <p>Мошенники могут создавать похожие аккаунты и использовать наши фотографии. Переходите в наши соцсети по ссылкам на этой странице и внимательно проверяйте имя пользователя перед оплатой. Если сомневаетесь, напишите нам через контакт выше.</p>
+        </aside>
+      </div>
+    </section>
     <p id="filterSummary" class="filter-summary hidden" aria-live="polite"></p>
     <section class="filters hidden" aria-hidden="true">
       <button data-filter="category">Категория</button>
@@ -117,7 +133,7 @@
     <button data-tab="cart" aria-label="Корзина"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 3h3l3 12h10l3-9H6"/><path d="M8 15l-1 3h12"/><circle cx="9" cy="21" r="1"/><circle cx="18" cy="21" r="1"/></svg><small>Корзина <span id="cartBadge" class="cart-badge hidden">0</span></small></button>
     <button data-tab="sell" aria-label="Продать вещь"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3h8l10 10-8 8L3 11Z"/><circle cx="7.5" cy="7.5" r="1"/></svg><small>Продать</small></button>
     <button data-tab="services" aria-label="Услуги"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 8 3v6c0 5-8 9-8 9s-8-4-8-9V6Z"/><path d="m8 12 3 3 5-6"/></svg><small>Услуги</small></button>
-  <button class="web-only hidden" data-tab="about" type="button" aria-label="О нас"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7h.01"/></svg><small>О нас</small></button>
+  <button class="web-only hidden" data-tab="about" type="button" aria-label="Информация"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7h.01"/></svg><small>Информация</small></button>
   </nav>
 
   <div id="sheet" class="sheet hidden">
