@@ -103,3 +103,13 @@ One admin serves both storefronts. Statistics defaults to **Website** and can sw
 The existing consent-based collector sends a fixed storefront channel. The gateway enforces the dedicated bot origin, namespaces sessions by channel and retains shared ingestion limits. Legacy same-origin `/telegram/` launches identify the Telegram storefront explicitly. Old clients without a channel remain in the legacy archive; historical rows are never guessed or relabelled. Bot chat commands and message contents are not collected.
 
 Apply `supabase/migrations/20261015030634_analytics_storefront_channels.sql` before releasing the gateway and admin. Old RPC signatures remain compatible during rollout. The private analytics tables retain admin-only RLS and the existing 90-day retention. Run `supabase/analytics-channel-probes.sql` inside a rolled-back transaction to verify channel isolation, replay safety and access checks.
+
+### Manager upload schedule
+
+The private admin has a daily rotation: one approved manager per day, with a target of ten new product cards. Calendar days use `Europe/Kyiv`, matching the supplied team timetable. The initial rotation contains current non-owner admin accounts, ordered by display name; owners can edit its order from a chosen current/future date or replace one day's manager. Older rotation versions remain intact. A day replacement does not advance or shift the underlying rotation.
+
+Counts come from the existing server-side product INSERT audit, never a browser counter. Editing does not count again; duplicate insert log records are deduplicated. Deleted cards are listed separately and excluded from the target; hidden and sold cards retain their credit. System uploads have no manager attribution. Monthly totals include uploads outside assigned duty, while daily completion uses only the assigned manager. Cards predating available creation audit cannot be attributed retroactively.
+
+Migration `20261015102752_manager_upload_schedule.sql` adds private RLS-protected schedule tables, guarded RPCs and an upload index. Reads require active membership/session/MFA; changes require the owner's second factor and revision checks. No raw product audit payloads or employee notes are returned by these RPCs. The original July sheet remains unchanged; its ambiguous historical date grid is not imported.
+
+Run `supabase/upload-schedule-probes.sql` for rollback-only synthetic permission, attribution, date boundary and concurrency checks. `tests/admin-schedule.browser.cjs` covers owner/staff controls, mobile layouts, replacements, queue order, private cleanup and load failures.
