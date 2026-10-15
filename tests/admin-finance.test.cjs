@@ -1,0 +1,6 @@
+const {test}=require('node:test'),assert=require('node:assert/strict');
+const {amount,margin,balance}=require('../admin-finance.js');
+test('unknown amounts remain unknown, while an explicit zero is valid',()=>{assert.equal(amount(''),null);assert.equal(amount(null),null);assert.equal(amount('  '),null);assert.equal(amount('0'),0);assert.equal(amount('1000'),1000);for(const n of ['NaN','Infinity',-1,1.5,1000000000])assert.throws(()=>amount(n))});
+test('commission income subtracts the full owner obligation rather than paid cash only',()=>{assert.equal(margin({on_commission:true,amount:2000,owner_due:1400,owner_paid:500,purchase_cost:1,expenses:100}),500);assert.equal(margin({on_commission:true,amount:2000,owner_due:null,expenses:0}),null)});
+test('profit preserves missing costs and real losses',()=>{assert.equal(margin({amount:100,purchase_cost:null,expenses:0}),null);assert.equal(margin({amount:100,purchase_cost:70,expenses:null}),null);assert.equal(margin({amount:100,purchase_cost:120,expenses:0}),-20)});
+test('client balance distinguishes an unknown payment from an unpaid order',()=>{assert.equal(balance({amount:1000,received:null}),null);assert.equal(balance({amount:1000,received:0}),1000);assert.equal(balance({amount:1000,received:300}),700)});
