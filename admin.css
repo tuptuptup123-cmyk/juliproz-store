@@ -250,7 +250,7 @@ body.reduce-motion .loading-signature{animation:none;transform:none;opacity:1}
 .analytics-toolbar label{width:130px}
 .analytics-toolbar .admin-select-trigger{min-height:44px;border-radius:10px;font-size:12px}
 .analytics-toolbar>button{font-size:12px}
-#analyticsStatus{margin:-10px 0 18px;min-height:18px}
+#analyticsStatus{margin:8px 0 18px;min-height:18px}
 #analyticsPanel .stats-grid{grid-template-columns:repeat(6,minmax(0,1fr));gap:0;margin-bottom:20px;border:1px solid var(--line);border-radius:14px;overflow:hidden}
 #analyticsPanel .stat{padding:18px;border:0;border-right:1px solid var(--line);border-radius:0}
 #analyticsPanel .stat:last-child{border:0}

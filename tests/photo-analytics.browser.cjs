@@ -19,6 +19,7 @@ for(const width of [390,1280]){
   await page.locator(`[data-analytics-channel=${channel}]`).click();await page.locator('#refreshAnalytics:not([disabled])').waitFor();
   assert.equal(await page.locator(`[data-analytics-channel=${channel}]`).getAttribute('aria-pressed'),'true');assert.equal(await page.locator('#analyticsCards .stat').nth(1).locator('strong').innerText(),visitors);
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+  const retention=await page.locator('#retentionStatus').boundingBox(),status=await page.locator('#analyticsStatus').boundingBox();assert.ok(status.y>=retention.y+retention.height,'Report status does not overlap the retention note');
   if(channel==='telegram')await page.screenshot({path:path.join(process.env.QA_OUTPUT||'/tmp','analytics-bot-'+width+'.png'),fullPage:true});
  }
  assert.deepEqual(channels,['website','website','telegram','legacy','website']);
