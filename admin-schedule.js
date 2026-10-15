@@ -44,7 +44,7 @@
   $('scheduleDayNote').value=d.note;$('scheduleDayReset').classList.toggle('hidden',!d.is_override);
   $('scheduleManagerFilter').innerHTML=managerOptions('Все менеджеры');$('scheduleManagerFilter').value='';
   $('schedulePastNote').classList.toggle('hidden',d.day>=data.today);
-  window.AdminSelects?.sync();loadItems();
+  window.AdminSelects?.sync();return loadItems();
  }
  function renderQueue(){
   $('scheduleQueue').innerHTML=queue.map((r,i)=>`<li><label><input type="checkbox" data-queue-id="${esc(r.id)}" ${r.included?'checked':''}><span>${esc(r.name)}</span></label><div><button type="button" data-queue-move="${i}" data-direction="-1" aria-label="${esc(r.name)}: выше" ${i===0?'disabled':''}>↑</button><button type="button" data-queue-move="${i}" data-direction="1" aria-label="${esc(r.name)}: ниже" ${i===queue.length-1?'disabled':''}>↓</button></div></li>`).join('');
@@ -79,7 +79,7 @@
   finally{mutating=false;button.disabled=false;}
  }
  function onView(view){hide();if(view==='schedule'){$('schedulePanel').classList.remove('hidden');load();}}
- $('scheduleCalendar').onclick=e=>{const b=e.target.closest('[data-schedule-day]');if(!b||mutating||!mayDiscard())return;selected=b.dataset.scheduleDay;dirty=false;renderCalendar();renderDay();$('scheduleDayTitle').focus({preventScroll:true});$('scheduleDayTitle').scrollIntoView({behavior:'auto',block:'start'});};
+ $('scheduleCalendar').onclick=async e=>{const b=e.target.closest('[data-schedule-day]');if(!b||mutating||!mayDiscard())return;const day=b.dataset.scheduleDay,epoch=sessionEpoch;selected=day;dirty=false;renderCalendar();await renderDay();if(epoch!==sessionEpoch||selected!==day||activeView!=='schedule')return;requestAnimationFrame(()=>{if(epoch!==sessionEpoch||selected!==day||activeView!=='schedule')return;$('scheduleDayTitle').focus({preventScroll:true});$('scheduleDayTitle').scrollIntoView({behavior:'instant',block:'start'});});};
  for(const [id,delta] of [['schedulePrevious',-1],['scheduleNext',1]])$(id).onclick=()=>{if(loading||mutating||!mayDiscard())return;month=shiftMonth(month||monthOf(new Date().toISOString().slice(0,10)),delta);selected=null;load()};
  $('scheduleGoToday').onclick=()=>{if(mutating||!mayDiscard())return;month=null;selected=null;load()};
  $('scheduleRefresh').onclick=()=>{if(mayDiscard())load()};
