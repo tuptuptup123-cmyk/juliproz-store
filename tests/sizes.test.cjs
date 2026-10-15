@@ -56,7 +56,7 @@ run("products=[{id:51,product_condition:'pre_owned',on_commission:true,photos:[]
  assert.equal(run("displayName({brand:'Gucci',name:'Кроссовки Gucci Rhyton'})"),'Кроссовки  Rhyton');
  run('products=[{id:5,brand:"Hermès",name:"Кроссовки Эрмес",size:"43.5",photos:[]}];state.gender=null;state.fulfillment_status=null;state.category=null;state.size=null;render();openProduct(5)');
  assert.match(node('grid').innerHTML,/Размер: 43.5/);assert.match(node('productContent').innerHTML,/Размер: <strong>43.5/);assert.doesNotMatch(node('grid').innerHTML,/Кроссовки Эрмес/);
- const admin=fs.readFileSync(root+'/admin.js','utf8');assert.match(admin,/fulfillment_status:f\.fulfillment_status\.value/);assert.match(admin,/fulfillment_status.value=p\?\.fulfillment_status==='on_order'/);assert.match(admin,/available:!p.available/);
+ const admin=fs.readFileSync(root+'/admin.js','utf8');assert.match(admin,/fulfillment_status:f\.fulfillment_status\.value/);assert.match(admin,/fulfillment_status.value=p\?\.fulfillment_status==='on_order'/);assert.match(admin,/archive_status:button.dataset.hide/);
  run('products=[{id:257,brand:"Dyson",name:"Щетка CameraJet",category:"Техника",size:"розовый; Синий",available:true,price:850,currency:"EUR",stock_quantities:{"розовый":3,"Синий":2}}];state.category=null;state.size=null;render();openProduct(257)');
  assert.match(node('grid').innerHTML,/Цвета: розовый · Синий/);
  assert.doesNotMatch(node('grid').innerHTML,/Размеры: розовый/);
