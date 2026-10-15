@@ -27,7 +27,7 @@ let browser;
    const walker=document.createTreeWalker(el,NodeFilter.SHOW_TEXT),bad=[];while(walker.nextNode()){const n=walker.currentNode;if(/[А-Яа-яЁё]/.test(n.textContent)&&n.parentElement.getClientRects().length&&!n.parentElement.closest('script,style,[hidden],.hidden,[inert],[data-no-translate]'))bad.push(n.textContent.trim())}return bad;
   });assert.deepEqual(leftovers,[],'Visible English copy must be complete');
  }
- for(const width of [320,390,768,1024,1440]){
+ for(const width of [320,390,768,900,1024,1440]){
   const context=await browser.newContext({viewport:{width,height:900},reducedMotion:'reduce'});await prepare(context);const page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
   await page.goto(origin);await page.locator('#webHomePage').waitFor();await page.evaluate(()=>document.fonts.ready);
   await fits(page,'RU home '+width);await page.screenshot({path:out+`/design-ru-home-${width}.png`,fullPage:true});
@@ -36,6 +36,7 @@ let browser;
   if(width>=900){const shop=await page.locator('.home-shop-link').boundingBox(),course=await page.locator('.brand .buyer-education-card').boundingBox();assert.ok(Math.abs(shop.y+shop.height/2-course.y-course.height/2)<2,'Shop and course align on desktop: '+JSON.stringify({width,shop,course}))}
   const actions=page.locator(width>=900?'.home-shop-actions':'.home-mobile-shop-actions'),shopAction=await actions.locator('button').boundingBox(),socials=actions.locator('.home-social-card');
   assert.equal(await page.locator('.home-social-card:visible').count(),2);
+  if(width>=900){const group=await actions.boundingBox(),mark=await page.locator('.brand-lockup').boundingBox(),course=await page.locator('.brand .buyer-education-card').boundingBox();const separate=(a,b)=>a.x+a.width<=b.x||b.x+b.width<=a.x||a.y+a.height<=b.y||b.y+b.height<=a.y;assert.ok(separate(group,mark)&&separate(group,course),'Homepage actions do not overlap the logo or course at '+width)}
   assert.equal(await socials.nth(0).getAttribute('href'),'https://www.instagram.com/juli.proz/');assert.equal(await socials.nth(1).getAttribute('href'),'https://t.me/juli_proz');
   for(const social of await socials.all()){assert.equal(await social.locator('svg').evaluate(e=>getComputedStyle(e).color),'rgb(0, 0, 0)','Social icons contrast with the white header');const box=await social.boundingBox();assert.ok(box.x>=shopAction.x+shopAction.width&&box.width>=44&&box.height>=44&&Math.abs(box.y+box.height/2-shopAction.y-shopAction.height/2)<2,'Social buttons sit beside the shop action at '+width)}
   await page.screenshot({path:out+`/design-en-home-${width}.png`,fullPage:true});

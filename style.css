@@ -997,3 +997,10 @@ html[lang=en] .home-shop-link{width:210px}
  .product-share-dialog input#productShareUrl{font-size:16px}
  .anti-scam-dialog{max-height:calc(100dvh - 32px)}
 }
+
+/* Narrow desktop: keep the two action groups clear of the centered brand. */
+@media(min-width:900px) and (max-width:1023px){
+ .brand.is-home-page .masthead-inner{min-height:260px;padding:32px 0 112px}
+ .brand.is-home-page .home-shop-actions{position:absolute;top:auto;bottom:20px;left:0}
+ .brand.is-home-page .buyer-education-card{top:auto;bottom:8px;transform:none}
+}
