@@ -65,7 +65,7 @@
   if(el.matches('script,style,noscript,textarea,[data-no-translate]')||el.closest('[data-no-translate]'))return;
   if(el.matches('a[data-manager-link]'))el.setAttribute('href',managerLink());
   if(el.matches('[data-manager-handle]')){const label=language==='en'?'WhatsApp':'@juliproz';if(el.textContent!==label)el.textContent=label;}
-  if(el.matches('[data-manager-platform]'))el.hidden=el.dataset.managerPlatform!==(language==='en'?'whatsapp':'telegram');
+  if(el.matches('[data-manager-platform]'))el.toggleAttribute('hidden',el.dataset.managerPlatform!==(language==='en'?'whatsapp':'telegram'));
   const saved=attrs.get(el)||{};
   for(const name of attributes){
    if(!el.hasAttribute(name))continue;
