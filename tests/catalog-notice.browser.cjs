@@ -22,9 +22,9 @@ let browser;
    assert.equal(await page.locator('.brand .buyer-education-card').isVisible(),false);
    assert.equal(await page.locator('.home-shop-link').isVisible(),false);
    assert.ok(await page.evaluate(()=>{
-    const title=document.getElementById('webHomeTitle').getBoundingClientRect(),shop=document.querySelector('.home-mobile-shop').getBoundingClientRect(),photos=document.querySelector('.home-photographs').getBoundingClientRect(),course=document.querySelector('.home-mobile-education').getBoundingClientRect();
-    return shop.top>=title.bottom&&shop.width>=title.width-1&&course.top>=photos.bottom&&document.querySelector('.brand').getBoundingClientRect().height<=160;
-   }),'Mobile home keeps the logo compact, shop below title and education below photos');
+    const title=document.getElementById('webHomeTitle').getBoundingClientRect(),shop=document.querySelector('.home-mobile-shop').getBoundingClientRect(),social=document.querySelector('.home-mobile-shop-actions .home-social-links').getBoundingClientRect(),photos=document.querySelector('.home-photographs').getBoundingClientRect(),course=document.querySelector('.home-mobile-education').getBoundingClientRect();
+    return shop.top>=title.bottom&&social.left>=shop.right&&Math.abs(social.top+social.height/2-shop.top-shop.height/2)<2&&course.top>=photos.bottom&&document.querySelector('.brand').getBoundingClientRect().height<=160;
+   }),'Mobile home keeps the logo compact, shop and socials below title and education below photos');
    assert.ok(await page.locator('.bottom-nav').evaluate(nav=>{
     const bounds=nav.getBoundingClientRect(),buttons=[...nav.querySelectorAll('[data-tab]')].filter(b=>!b.classList.contains('hidden'));
     return buttons.length===7&&nav.scrollWidth<=nav.clientWidth&&buttons.every(b=>{const r=b.getBoundingClientRect(),label=b.querySelector('small');return r.left>=bounds.left&&r.right<=bounds.right&&label.scrollWidth<=label.clientWidth;});
