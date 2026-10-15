@@ -999,8 +999,11 @@ html[lang=en] .home-shop-link{width:210px}
 }
 
 /* Narrow desktop: keep the two action groups clear of the centered brand. */
-@media(min-width:900px) and (max-width:1023px){
+@media(min-width:900px) and (max-width:1199px){
  .brand.is-home-page .masthead-inner{min-height:260px;padding:32px 0 112px}
  .brand.is-home-page .home-shop-actions{position:absolute;top:auto;bottom:20px;left:0}
  .brand.is-home-page .buyer-education-card{top:auto;bottom:8px;transform:none}
 }
+
+[data-manager-platform][hidden]{display:none!important}
+@media(max-width:359px){.home-mobile-shop-actions{gap:6px}.home-mobile-shop-actions .home-mobile-shop{padding:12px 8px;gap:4px;font-size:13px}.home-mobile-shop-actions .home-mobile-shop .inline-arrow{width:16px;height:16px}}

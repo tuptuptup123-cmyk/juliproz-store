@@ -26,3 +26,18 @@ test('English share drafts translate colour variants without changing the canoni
  const bot=c.ProductSharing.links(product,{inTelegram:true,language:'en',size:'Розовый'});
  assert.match(new URL(bot.manager).searchParams.get('text'),/Размер \/ вариант: Розовый/);
 });
+
+
+test('manager destination follows website language and never overrides a Telegram launch',()=>{
+ const c=language(),draft='Привет! Хочу заказать:\n\nhttps://www.juliproz.com/?product=45&lang=en\nРазмер: S · Количество: 2';
+ assert.equal(c.SiteLanguage.managerLink('',{language:'en'}),'https://wa.me/message/LX6SBE3QCQXKG1');
+ const link=new URL(c.SiteLanguage.managerLink(draft,{language:'en'}));assert.equal(link.origin+link.pathname,'https://wa.me/971585394347');assert.match(link.searchParams.get('text'),/Size: S · Quantity: 2/);assert.doesNotMatch(link.searchParams.get('text'),/[А-Яа-яЁё]/);
+ assert.equal(new URL(c.SiteLanguage.managerLink(draft,{language:'ru'})).hostname,'t.me');
+ assert.equal(new URL(c.SiteLanguage.managerLink(draft,{language:'en',inTelegram:true})).hostname,'t.me');
+ for(const launch of [{Telegram:{WebApp:{platform:'ios'}}},{location:{hash:'#tgWebAppPlatform=ios'}},{document:{documentElement:{dataset:{storefront:'telegram'}}}}]){
+  Object.assign(c,launch);assert.equal(new URL(c.SiteLanguage.managerLink(draft,{language:'en'})).hostname,'t.me');delete c.Telegram;delete c.location;delete c.document;
+ }
+ vm.runInContext(fs.readFileSync(path.join(__dirname,'..','product-sharing.js'),'utf8'),c);
+ const shared=c.ProductSharing.links({id:45,brand:'Gucci',name:'Кроссовки'},{language:'en',size:'Розовый'});assert.equal(new URL(shared.manager).hostname,'wa.me');assert.match(new URL(shared.manager).searchParams.get('text'),/Size \/ option: Pink/);
+ assert.equal(new URL(c.ProductSharing.links({id:45},{language:'en',inTelegram:true}).manager).hostname,'t.me');
+});

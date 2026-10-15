@@ -10,6 +10,7 @@
  const fragmentKeys=Object.keys(fragments).sort((a,b)=>b.length-a.length);
  const nodes=new WeakMap(),attrs=new WeakMap();
  function telegram(){
+  if(root.document?.documentElement?.dataset?.storefront==='telegram')return true;
   const app=root.Telegram?.WebApp,hash=new URLSearchParams(root.location?.hash?.slice(1)||'');
   return Boolean(app&&((typeof app.initData==='string'&&app.initData.length)||(app.platform&&app.platform!=='unknown'))||hash.get('tgWebAppData')||hash.get('tgWebAppVersion')||(hash.get('tgWebAppPlatform')&&hash.get('tgWebAppPlatform')!=='unknown'));
  }
@@ -47,6 +48,14 @@
   return result;
  }
  function text(value){return language==='en'?english(value):String(value??'')}
+ // The phone destination is resolved from the owner's WhatsApp Business short link.
+ // Number-based click-to-chat links preserve the product/order draft.
+ function managerLink(message='',options={}){
+  const whatsapp=!options.inTelegram&&!telegram()&&(options.language||language)==='en';
+  const url=new URL(whatsapp?(message?'https://wa.me/971585394347':'https://wa.me/message/LX6SBE3QCQXKG1'):'https://t.me/juliproz');
+  if(message)url.searchParams.set('text',whatsapp?english(message):String(message));
+  return url.href;
+ }
  function rememberText(node){
   const current=node.nodeValue,old=nodes.get(node),source=old&&old.result===current?old.source:current,result=text(source);
   nodes.set(node,{source,result});if(current!==result)node.nodeValue=result;
@@ -54,6 +63,9 @@
  const attributes=['aria-label','title','placeholder','alt'];
  function element(el){
   if(el.matches('script,style,noscript,textarea,[data-no-translate]')||el.closest('[data-no-translate]'))return;
+  if(el.matches('a[data-manager-link]'))el.setAttribute('href',managerLink());
+  if(el.matches('[data-manager-handle]')){const label=language==='en'?'WhatsApp':'@juliproz';if(el.textContent!==label)el.textContent=label;}
+  if(el.matches('[data-manager-platform]'))el.hidden=el.dataset.managerPlatform!==(language==='en'?'whatsapp':'telegram');
   const saved=attrs.get(el)||{};
   for(const name of attributes){
    if(!el.hasAttribute(name))continue;
@@ -96,7 +108,7 @@
   document.addEventListener('load',event=>{if(event.target.id==='telegramSdk')sync()},true);
   root.addEventListener('storage',event=>{if(event.key===key){preferred=event.newValue==='en'?'en':'ru';sync();apply()}});
  }
- root.SiteLanguage={text,english,set,sync,apply,get language(){return language},isTelegram:telegram};
+ root.SiteLanguage={text,english,managerLink,set,sync,apply,get language(){return language},isTelegram:telegram};
  if(typeof module==='object'&&module.exports)module.exports=root.SiteLanguage;
  if(typeof document!=='undefined')start();
 })(typeof window==='object'?window:globalThis);

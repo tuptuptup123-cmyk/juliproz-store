@@ -83,11 +83,11 @@ const statusLabels={in_stock:'В наличии',on_order:'Под заказ'};
 function productLink(p){const id=encodeURIComponent(String(p.id));return isTelegramStore()?`https://t.me/JuliProzBot/shop?startapp=p_${id}`:`https://www.juliproz.com/?product=${id}${window.SiteLanguage?.language==='en'?'&lang=en':''}`}
 const CATALOG_FIELDS='id,created_at,brand,name,category,size,price,currency,image_url,available,fulfillment_status,gender,description,photos,reserved,product_condition,stock_quantities,on_commission,original_price,wear_condition';
 function photosOf(p){return [...new Set([p.image_url,p.image,...(Array.isArray(p.photos)?p.photos:[])].filter(safeProductImage))]}
-const telegramOpenTimes=new Map();
-function telegramLink(url){
-  if(window.SiteLanguage?.language==='en'){const target=new URL(url);if(target.searchParams.has('text'))target.searchParams.set('text',window.SiteLanguage.text(target.searchParams.get('text')));url=target.href;}
-  if(Date.now()-(telegramOpenTimes.get(url)??-Infinity)<5000)return false;
-  if(window.Telegram?.WebApp?.openTelegramLink) Telegram.WebApp.openTelegramLink(url);else window.open(url,"_blank","noopener");telegramOpenTimes.set(url,Date.now());if(telegramOpenTimes.size>50)telegramOpenTimes.delete(telegramOpenTimes.keys().next().value);return true;}
+const managerOpenTimes=new Map();
+function openManager(text=''){
+  const url=window.SiteLanguage?.managerLink?window.SiteLanguage.managerLink(text,{inTelegram:isTelegramStore()}):'https://t.me/juliproz'+(text?'?text='+encodeURIComponent(text):'');
+  if(Date.now()-(managerOpenTimes.get(url)??-Infinity)<5000)return false;
+  if(isTelegramStore()&&window.Telegram?.WebApp?.openTelegramLink) Telegram.WebApp.openTelegramLink(url);else window.open(url,"_blank","noopener");managerOpenTimes.set(url,Date.now());if(managerOpenTimes.size>50)managerOpenTimes.delete(managerOpenTimes.keys().next().value);return true;}
 
 function shareSelectedProduct(){
   if(!selectedProduct)return;
@@ -524,7 +524,7 @@ async function checkoutCart(){
     if(changed){status.textContent='Цена или наличие изменились. Корзина обновлена — проверьте итог и нажмите «Оформить» ещё раз.';return}
     const text='Привет! Хочу заказать:\n\n'+cart.map(row=>`${productLink(cartProduct(row))}\n${ProductSizes.variantLabel(cartProduct(row))}: ${row.size||'уточнить'} · Количество: ${row.quantity}`).join('\n\n');
     if(text.length>3500){status.textContent='Заказ слишком большой для одного сообщения. Разделите его на несколько заказов.';return}
-    if(telegramLink(`https://t.me/juliproz?text=${encodeURIComponent(text)}`)){window.StoreAnalytics?.track('checkout_open');status.textContent='Заказ подготовлен. Отправьте сообщение менеджеру в Telegram.';}else status.textContent='Telegram уже открывался. Подождите несколько секунд перед повторным оформлением.';
+    if(openManager(text)){window.StoreAnalytics?.track('checkout_open');status.textContent='Заказ подготовлен. Отправьте сообщение менеджеру в Telegram.';}else status.textContent='Telegram уже открывался. Подождите несколько секунд перед повторным оформлением.';
   }catch{status.textContent='Не удалось проверить наличие. Корзина сохранена — попробуйте ещё раз.'}finally{checkoutBusy=false;renderCart()}
 }
 const cartMutationTimes=new Map();
@@ -618,11 +618,11 @@ function openProduct(id,linked=false){
 document.getElementById("backProduct").onclick=closeProductModal;
 document.querySelectorAll('[data-service]').forEach(b=>b.onclick=()=>{
   const text=b.dataset.service==='authentication'?'Здравствуйте! Хочу организовать аутентификацию вещи через ваших партнёров. Подскажите онлайн- и офлайн-варианты, стоимость и сроки.':'Здравствуйте! Хочу обратиться в ателье или обсудить спа для сумки, полировку или обслуживание часов через ваших партнёров. Пришлю фотографии и описание запроса.';
-  if(telegramLink('https://t.me/juliproz?text='+encodeURIComponent(text)))window.StoreAnalytics?.track(b.dataset.service==='authentication'?'manager_authentication':'manager_atelier');
+  if(openManager(text))window.StoreAnalytics?.track(b.dataset.service==='authentication'?'manager_authentication':'manager_atelier');
 });
 document.getElementById('offerItem').onclick=()=>{
   const text='Здравствуйте! Хочу предложить вещь для выкупа или продажи на комиссии через ваш магазин.';
-  if(telegramLink('https://t.me/juliproz?text='+encodeURIComponent(text)))window.StoreAnalytics?.track('manager_sell');
+  if(openManager(text))window.StoreAnalytics?.track('manager_sell');
 };
 document.querySelectorAll('[data-web-section]').forEach(b=>b.onclick=()=>setTab(b.dataset.webSection));
 document.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>{setTab(b.dataset.tab);pressNavWithPaw(b)});
@@ -662,7 +662,7 @@ async function contactUnchecked(p,requestedNavigation,event=null,sourceProduct=n
   if(p&&currentSizes.length>1&&!requestedSize){document.getElementById("shareStatus").textContent="Размеры изменились. Откройте карточку заново и выберите размер.";loadProducts(true);return}
   const size=requestedSize||(currentSizes.length===1?currentSizes[0]:null);
   const text=p?.id!=null?`Здравствуйте! Меня интересует ${p.brand||""} ${p.name||""}${size?`, ${variantLabel(p)} ${size}`:""}.\nСтатус: ${availabilityLabel(p)}\nАртикул: ${p.id}\n${productLink(p)}`:"";
-  if(telegramLink(`https://t.me/juliproz${text?`?text=${encodeURIComponent(text)}`:""}`))window.StoreAnalytics?.track(event||(p?.id!=null?"manager_product":"manager_general"),p?.id??sourceProduct);
+  if(openManager(text))window.StoreAnalytics?.track(event||(p?.id!=null?"manager_product":"manager_general"),p?.id??sourceProduct);
 }
 document.getElementById("productContent").addEventListener("click",e=>{const colorButton=e.target.closest('[data-color-id]');if(colorButton&&selectedProduct){const group=colorGroupFor(selectedProduct.id),id=colorButton.dataset.colorId;if(group?.members.some(x=>x.option.id===id)){const scroll=document.getElementById('productModal').scrollTop;openProduct(id,true);document.getElementById('productModal').scrollTop=scroll;document.querySelector(`[data-color-id="${id}"]`)?.focus?.()}return}const related=e.target.closest("[data-related]");if(related){openProduct(related.dataset.related);return}const sizeButton=e.target.closest('[data-size]');if(sizeButton&&selectedProduct&&sizesOf(selectedProduct).includes(sizeButton.dataset.size)){selectedSize=sizeButton.dataset.size;document.querySelectorAll('[data-size]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.size===selectedSize)));document.getElementById('sizeHint').textContent=`Выбран ${variantLabel(selectedProduct)} ${selectedSize}`;document.getElementById('detailStock').textContent=stockLabel(selectedProduct,selectedSize);}const action=e.target.closest("[data-action]")?.dataset.action;if(action==="share")shareSelectedProduct();if(action==="add-cart")addToCart();if(action==="wishlist")toggleWishlist(selectedProduct?.id);if(action==="open-cart")setTab("cart");if(action==="contact")contact(selectedProduct);if(action==="sourcing")contact(null,"manager_search_product",selectedProduct?.id);const b=e.target.closest("[data-photo]");if(b){const img=document.querySelector(".hero img");if(img){img.hidden=false;img.src=b.dataset.photo;img.parentElement.querySelector(".image-fallback")?.remove()}}});
 let telegramInitialized=false;
@@ -762,3 +762,5 @@ if(typeof IntersectionObserver==='function'){
 
 // Language changes retain filters, bag, wishlist and the selected variant.
 document.addEventListener('site-language-change',()=>{window.SiteLanguage?.apply();});
+
+document.addEventListener("click",event=>{if(event.target.closest('a[data-contact-event="manager_general"]'))window.StoreAnalytics?.track("manager_general")});

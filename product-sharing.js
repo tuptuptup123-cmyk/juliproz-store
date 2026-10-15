@@ -13,7 +13,9 @@
   const originalSize=String(options.size||'').slice(0,100);
   const size=english&&root.SiteLanguage?root.SiteLanguage.english(originalSize):originalSize;
   const text=title+(size?(english?'\nSize / option: ':'\nРазмер / вариант: ')+size:'')+(english?'\nReference: ':'\nАртикул: ')+id;
-  return {id,title,url,web,bot,telegram:'https://t.me/share/url?url='+encodeURIComponent(url)+'&text='+encodeURIComponent(text),manager:'https://t.me/juliproz?text='+encodeURIComponent((english?'Hello! I would like to ask about this piece:\n':'Здравствуйте! Хочу уточнить по этой вещи:\n')+text+'\n'+url)};
+  const message=(english?'Hello! I would like to ask about this piece:\n':'Здравствуйте! Хочу уточнить по этой вещи:\n')+text+'\n'+url;
+  const manager=root.SiteLanguage?.managerLink?root.SiteLanguage.managerLink(message,{language:english?'en':'ru',inTelegram:options.inTelegram}):'https://t.me/juliproz?text='+encodeURIComponent(message);
+  return {id,title,url,web,bot,telegram:'https://t.me/share/url?url='+encodeURIComponent(url)+'&text='+encodeURIComponent(text),manager};
  }
  function inTelegram(){
   if(root.document?.documentElement?.dataset?.storefront==='telegram')return true;
@@ -57,7 +59,7 @@
     else {const link=document.createElement('a');link.href=url;link.target='_blank';link.rel='noopener noreferrer';link.hidden=true;dialog.append(link);link.click();link.remove()}
     if(action==='manager')root.StoreAnalytics?.track('manager_product',data.id);
     status.textContent=action==='telegram'?'Выберите получателя и отправьте сообщение в Telegram.':'Отправьте подготовленное сообщение менеджеру в Telegram.';
-   }catch{status.textContent='Не удалось открыть Telegram. Скопируйте ссылку ниже.'}
+   }catch{status.textContent=action==='manager'?'Не удалось открыть чат. Скопируйте ссылку ниже.':'Не удалось открыть Telegram. Скопируйте ссылку ниже.'}
   });
  }
  function open(product,options={}){
