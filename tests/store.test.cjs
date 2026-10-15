@@ -44,7 +44,7 @@ const response=(body,status=200)=>({ok:status<400,status,json:async()=>body});
  admin.context.legacyPriceProduct={...inventory[0],price:624.9,original_price:899.7};admin.run('edit(legacyPriceProduct)');assert.equal(Number(fields.price.value),625);assert.equal(Number(fields.original_price.value),900);
  fields.price_on_request.checked=true;await admin.get('editor').onsubmit({preventDefault(){},target:{elements:fields}});assert.equal(inventory[0].price,null);assert.equal(inventory[0].original_price,null);
  await admin.get('inventory').onclick({target:{dataset:{toggle:'10'},disabled:false}});assert.equal(inventory[0].available,false);
- assert.match(admin.get('status').textContent,/перемещён в проданные/);assert.equal(inventory[0].reserved,false);assert.equal(admin.run("matchesView(items[0],'hidden')"),true);assert.equal(admin.run("matchesView(items[0],'in_stock')"),false);
+ assert.match(admin.get('status').textContent,/скрыт с витрины/);assert.equal(inventory[0].reserved,false);assert.equal(admin.run("matchesView(items[0],'hidden')"),true);assert.equal(admin.run("matchesView(items[0],'in_stock')"),false);
  await admin.get('inventory').onclick({target:{dataset:{reserve:'10'},disabled:false}});assert.equal(inventory[0].reserved,false);assert.match(admin.get('status').textContent,/Сначала верните/);
  await admin.get('inventory').onclick({target:{dataset:{toggle:'10'},disabled:false}});assert.equal(inventory[0].available,true);
  await admin.get('inventory').onclick({target:{dataset:{reserve:'10'},disabled:false}});assert.equal(inventory[0].reserved,true);

@@ -1,7 +1,7 @@
 name: Responsive catalogue checks
 on:
   pull_request:
-    paths: ['apps/telegram/**', 'scripts/build-telegram.cjs', 'telegram-entry.js', 'app.js', 'site-language.js', '*translations.js', 'admin.js', 'admin-session.js', 'admin-workspace.js', '*.css', '*.html', 'product-sizes.js', 'product-sharing.js', 'analytics.js', 'photo-studio.js', 'tests/*.browser.cjs', 'tests/admin-action-helper.cjs', '.github/workflows/responsive.yml']
+    paths: ['apps/telegram/**', 'scripts/build-telegram.cjs', 'telegram-entry.js', 'app.js', 'site-language.js', '*translations.js', 'admin.js', 'admin-session.js', 'admin-workspace.js', 'admin-sales.js', '*.css', '*.html', 'product-sizes.js', 'product-sharing.js', 'analytics.js', 'photo-studio.js', 'tests/*.browser.cjs', 'tests/admin-action-helper.cjs', '.github/workflows/responsive.yml']
 permissions:
   contents: read
 jobs:
@@ -25,6 +25,7 @@ jobs:
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" node tests/admin-mfa.browser.cjs
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" node tests/admin-session.browser.cjs
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" QA_OUTPUT="$RUNNER_TEMP/jp-qa" node tests/admin-workspace.browser.cjs
+      - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" QA_OUTPUT="$RUNNER_TEMP/jp-qa" node tests/admin-sales.browser.cjs
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" QA_OUTPUT="$RUNNER_TEMP/jp-qa" node tests/light-shadow.browser.cjs
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" QA_OUTPUT="$RUNNER_TEMP/jp-qa" node tests/catalog-prices.browser.cjs
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
