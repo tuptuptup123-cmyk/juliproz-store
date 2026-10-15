@@ -11,7 +11,7 @@ run("selectedSize='40';addToCart();addToCart();selectedSize='41';addToCart();ope
 await run('checkoutCart()');assert.equal(links.length,1);
 assert.equal(new URL(links[0]).searchParams.get('text'),managerDraft([[1,'40',1],[1,'41',1],[2,'',1]]));
 await run('checkoutCart()');assert.equal(links.length,1);assert.match(get('cartStatus').textContent,/Подождите/);
-rows[0]={...rows[0],price:120};await run('checkoutCart()');assert.equal(links.length,1);assert.match(get('cartStatus').textContent,/изменились/);assert.equal(run('cartTotals().totals[0].price'),440);run('telegramOpenTimes.clear()');await run('checkoutCart()');assert.equal(links.length,2);
+rows[0]={...rows[0],price:120};await run('checkoutCart()');assert.equal(links.length,1);assert.match(get('cartStatus').textContent,/изменились/);assert.equal(run('cartTotals().totals[0].price'),440);run('managerOpenTimes.clear()');await run('checkoutCart()');assert.equal(links.length,2);
 rows[0]={...rows[0],size:'40'};await run('checkoutCart()');assert.equal(links.length,2);assert.match(get('cartStatus').textContent,/недоступны/);
 fail=true;await run('checkoutCart()');assert.equal(links.length,2);assert.equal(run('checkoutBusy'),false);assert.match(get('cartStatus').textContent,/Не удалось/);
 run("toggleWishlist(2);state.tab='favorites';state.category='Обувь';state.search='не найдено'");assert.equal(run('filtered().length'),1);assert.equal(run('filtered()[0].id'),2);assert.equal(JSON.parse(saved.get('jpFav'))[0],'2');
@@ -75,7 +75,7 @@ assert.equal(run('cart[0].product.price'),625);assert.equal(run('cart[0].product
 assert.equal(JSON.parse(saved.get('jpCart'))[0].product.price,625);assert.equal(run("money({price:624.5,currency:'EUR'})"),'€ 625');assert.equal(run("money({price:null,currency:'EUR'})"),'');assert.equal(run("money({price:-0.1,currency:'EUR'})"),'');
 const beforeRounded=links.length;await run('checkoutCart()');assert.equal(links.length,beforeRounded+1);
 const roundedDraft=new URL(links.at(-1)).searchParams.get('text');assert.equal(roundedDraft,managerDraft([[801,'',2],[802,'',3],[803,'',1],[804,'',1]]));
-rows[0]={...rows[0],price:624.6};run('telegramOpenTimes.clear()');await run('checkoutCart()');assert.equal(links.length,beforeRounded+2);assert.doesNotMatch(get('cartStatus').textContent,/изменились/);
+rows[0]={...rows[0],price:624.6};run('managerOpenTimes.clear()');await run('checkoutCart()');assert.equal(links.length,beforeRounded+2);assert.doesNotMatch(get('cartStatus').textContent,/изменились/);
 rows[0]={...rows[0],price:625.6};await run('checkoutCart()');assert.equal(links.length,beforeRounded+2);assert.match(get('cartStatus').textContent,/изменились/);assert.equal(run('cartTotals().totals[0].price'),1624);assert.equal(run('cart[0].product.price'),626);
 saved.set('jpCart',JSON.stringify([{id:801,size:'',quantity:2,product:{price:624.9,original_price:899.7,currency:'EUR'}}]));run('products=[];cart=readCart()');assert.equal(run('cart[0].product.price'),625);assert.equal(run('cart[0].product.original_price'),900);assert.equal(run('cartTotals().totals[0].price'),1250);
 // Manager messages retain canonical links, variant and quantity per cart row, without prices.

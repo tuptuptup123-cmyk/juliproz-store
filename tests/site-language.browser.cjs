@@ -15,7 +15,7 @@ let browser;
   await context.route('https://telegram.org/**',r=>r.abort());
   await context.route('**/api/catalog',r=>r.fulfill({json:products}));
   await context.route('**/rest/v1/products?**',r=>r.fulfill({json:products}));
-  await context.addInitScript(()=>{localStorage.setItem('jpAnalyticsConsent','declined');window.auditOpenedLinks=[];window.open=url=>{window.auditOpenedLinks.push(url);return null}});
+  await context.addInitScript(()=>{localStorage.setItem('jpAnalyticsConsent','declined');window.auditOpenedLinks=[];window.auditOpenedTargets=[];window.open=(url,target)=>{window.auditOpenedLinks.push(url);window.auditOpenedTargets.push(target);return null};document.addEventListener('click',event=>{const link=event.target.closest('a');if(link&&new URL(link.href).hostname==='wa.me'){event.preventDefault();window.auditOpenedLinks.push(link.href)}},true)});
  }
  async function fits(page,name){
   const result=await page.evaluate(()=>({width:innerWidth,scroll:document.documentElement.scrollWidth,nav:[...document.querySelectorAll('.bottom-nav [data-tab]')].filter(b=>b.getClientRects().length).map(b=>{const r=b.getBoundingClientRect(),small=b.querySelector('small');return {tab:b.dataset.tab,left:r.left,right:r.right,label:small.scrollWidth-small.clientWidth}})}));
@@ -35,15 +35,21 @@ let browser;
   const box=await page.locator('.masthead-inner .language-switch').boundingBox(),logo=await page.locator('.brand-lockup').boundingBox();assert.ok(box.y+box.height<=logo.y+1||box.x>=logo.x+logo.width||box.x+box.width<=logo.x,'Language control does not cover the logo');
   if(width>=900){const shop=await page.locator('.home-shop-link').boundingBox(),course=await page.locator('.brand .buyer-education-card').boundingBox();assert.ok(Math.abs(shop.y+shop.height/2-course.y-course.height/2)<2,'Shop and course align on desktop: '+JSON.stringify({width,shop,course}))}
   const actions=page.locator(width>=900?'.home-shop-actions':'.home-mobile-shop-actions'),shopAction=await actions.locator('button').boundingBox(),socials=actions.locator('.home-social-card');
-  assert.equal(await page.locator('.home-social-card:visible').count(),2);
+  assert.equal(await page.locator('.home-social-card:visible').count(),3);
   if(width>=900){const group=await actions.boundingBox(),mark=await page.locator('.brand-lockup').boundingBox(),course=await page.locator('.brand .buyer-education-card').boundingBox();const separate=(a,b)=>a.x+a.width<=b.x||b.x+b.width<=a.x||a.y+a.height<=b.y||b.y+b.height<=a.y;assert.ok(separate(group,mark)&&separate(group,course),'Homepage actions do not overlap the logo or course at '+width)}
-  assert.equal(await socials.nth(0).getAttribute('href'),'https://www.instagram.com/juli.proz/');assert.equal(await socials.nth(1).getAttribute('href'),'https://t.me/juli_proz');
+  assert.equal(await socials.nth(0).getAttribute('href'),'https://www.instagram.com/juli.proz/');assert.equal(await socials.nth(1).getAttribute('href'),'https://t.me/juli_proz');assert.equal(await socials.nth(2).getAttribute('href'),'https://wa.me/message/LX6SBE3QCQXKG1');
   for(const social of await socials.all()){assert.equal(await social.locator('svg').evaluate(e=>getComputedStyle(e).color),'rgb(0, 0, 0)','Social icons contrast with the white header');const box=await social.boundingBox();assert.ok(box.x>=shopAction.x+shopAction.width&&box.width>=44&&box.height>=44&&Math.abs(box.y+box.height/2-shopAction.y-shopAction.height/2)<2,'Social buttons sit beside the shop action at '+width)}
   await page.screenshot({path:out+`/design-en-home-${width}.png`,fullPage:true});
   for(const tab of ['sell','services','about','favorites','cart']){
-   await page.locator(`.bottom-nav [data-tab=${tab}]`).click();await english(page);await fits(page,`EN ${tab} ${width}`);await page.screenshot({path:out+`/design-en-${tab}-${width}.png`,fullPage:true});
+   await page.locator(`.bottom-nav [data-tab=${tab}]`).click();
+   if(tab==='sell'||tab==='services'){
+    for(const button of await page.locator(tab==='sell'?'#offerItem':'[data-service]').all()){await button.click();const link=new URL(await page.evaluate(()=>window.auditOpenedLinks.at(-1)));assert.equal(link.origin+link.pathname,'https://wa.me/971585394347');assert.match(link.searchParams.get('text'),/^Hello!/);assert.doesNotMatch(link.searchParams.get('text'),/[А-Яа-яЁё]/)}
+    await page.evaluate(()=>{window.auditOpenedLinks=[]});
+   }
+   if(tab==='about'){assert.equal(await page.locator('.information-contact').getAttribute('href'),'https://wa.me/message/LX6SBE3QCQXKG1');assert.equal(await page.locator('[data-manager-handle]').innerText(),'WhatsApp');assert.equal(await page.locator('[data-manager-platform=whatsapp]').isVisible(),true)}
+   await english(page);await fits(page,`EN ${tab} ${width}`);await page.screenshot({path:out+`/design-en-${tab}-${width}.png`,fullPage:true});
   }
-  await page.locator('.bottom-nav [data-tab=catalog]').click();await page.locator('#catalogAntiScam').waitFor();await english(page,'#catalogAntiScam');
+  await page.locator('.bottom-nav [data-tab=catalog]').click();await page.locator('#catalogAntiScam').waitFor();await english(page,'#catalogAntiScam');assert.equal(await page.locator('.anti-scam-contact').getAttribute('href'),'https://wa.me/message/LX6SBE3QCQXKG1');
   assert.ok(await page.locator('#catalogAntiScam').evaluate(e=>{const r=e.getBoundingClientRect();return r.left>=0&&r.right<=innerWidth&&r.top>=0&&r.bottom<=innerHeight&&e.scrollWidth<=e.clientWidth}));
   await page.screenshot({path:out+`/design-en-notice-${width}.png`});await page.locator('#acknowledgeAntiScam').click();await page.locator('.product').first().waitFor();await english(page);await fits(page,'EN catalogue '+width);
   await page.locator('#openCatalogMenu').click();await english(page,'#catalogMenu');await page.locator('[data-menu-type=category][data-menu-value="Обувь"]').click();await page.locator('#showMenuProducts').click();assert.equal(await page.evaluate(()=>state.category),'Обувь');
@@ -56,17 +62,19 @@ let browser;
 
   await page.locator('[data-action=wishlist]').click();await page.locator('[data-action=add-cart]').click();await page.locator('.product-toolbar [data-site-language=ru]').click();assert.equal(await page.evaluate(()=>selectedSize),'40');assert.equal(await page.evaluate(()=>cart.length),1);assert.equal(await page.evaluate(()=>state.favorites.has('99001')),true);
   await page.locator('.product-toolbar [data-site-language=en]').click();await english(page,'#productModal');await page.screenshot({path:out+`/design-en-product-${width}.png`,fullPage:false});
-  await page.locator('[data-action=share]').click();await english(page,'#productShareDialog');assert.match(await page.locator('#productShareUrl').inputValue(),/product=99001&lang=en$/);if(width<=600)assert.ok(await page.locator('#productShareUrl').evaluate(e=>parseFloat(getComputedStyle(e).fontSize)>=16),'Mobile input avoids focus zoom');await page.screenshot({path:out+`/design-en-share-${width}.png`});await page.locator('[data-share-close]').click();
+  await page.locator('[data-action=share]').click();await english(page,'#productShareDialog');assert.match(await page.locator('#productShareUrl').inputValue(),/product=99001&lang=en$/);if(width<=600)assert.ok(await page.locator('#productShareUrl').evaluate(e=>parseFloat(getComputedStyle(e).fontSize)>=16),'Mobile input avoids focus zoom');await page.screenshot({path:out+`/design-en-share-${width}.png`});
+  await page.locator('[data-share-action=manager]').click();const shared=new URL(await page.evaluate(()=>window.auditOpenedLinks.at(-1)));assert.equal(shared.origin+shared.pathname,'https://wa.me/971585394347');assert.match(shared.searchParams.get('text'),/product=99001&lang=en/);assert.match(shared.searchParams.get('text'),/Size \/ option: 40/);assert.doesNotMatch(shared.searchParams.get('text'),/[А-Яа-яЁё]/);await page.locator('[data-share-close]').click();
+  await page.locator('[data-action=sourcing]').click();assert.equal(await page.evaluate(()=>window.auditOpenedLinks.at(-1)),'https://wa.me/message/LX6SBE3QCQXKG1');await page.evaluate(()=>{window.auditOpenedLinks=[]});
   await page.locator('.bottom-nav [data-tab=cart]').click();await english(page,'#cartPage');await fits(page,'EN full bag '+width);assert.equal(await page.locator('main').getAttribute('inert'),null);assert.equal(await page.locator('.brand').getAttribute('inert'),null);await page.screenshot({path:out+`/design-en-bag-${width}.png`,fullPage:true});
   await page.locator('[data-cart-action=checkout]').click();await page.waitForFunction(()=>window.auditOpenedLinks.length===1);
-  const enDraft=new URL(await page.evaluate(()=>window.auditOpenedLinks[0])).searchParams.get('text');
+  const enLink=new URL(await page.evaluate(()=>window.auditOpenedLinks[0]));assert.equal(enLink.origin+enLink.pathname,'https://wa.me/971585394347');assert.equal(await page.evaluate(()=>window.auditOpenedTargets.at(-1)),'_self','Async WhatsApp checkout avoids popup blockers on mobile');const enDraft=enLink.searchParams.get('text');assert.match(await page.locator('.checkout-note').innerText(),/WhatsApp/);
   assert.match(enDraft,/^Hello!/);assert.match(enDraft,/https:\/\/www\.juliproz\.com\/\?product=99001&lang=en/);assert.doesNotMatch(enDraft,/[А-Яа-яЁё]/);
   await page.locator('.masthead-inner [data-site-language=ru]').click();await page.locator('[data-cart-action=checkout]').click();await page.waitForFunction(()=>window.auditOpenedLinks.length===2);
-  const ruDraft=new URL(await page.evaluate(()=>window.auditOpenedLinks[1])).searchParams.get('text');assert.match(ruDraft,/https:\/\/www\.juliproz\.com\/\?product=99001\n/);assert.doesNotMatch(ruDraft,/JuliProzBot|lang=en/);
+  const ruLink=new URL(await page.evaluate(()=>window.auditOpenedLinks[1]));assert.equal(ruLink.origin+ruLink.pathname,'https://t.me/juliproz');assert.match(await page.locator('.checkout-note').innerText(),/Telegram/);assert.equal(await page.locator('.information-contact').getAttribute('href'),'https://t.me/juliproz');const ruDraft=ruLink.searchParams.get('text');assert.match(ruDraft,/https:\/\/www\.juliproz\.com\/\?product=99001\n/);assert.doesNotMatch(ruDraft,/JuliProzBot|lang=en/);
   await page.locator('.masthead-inner [data-site-language=en]').click();
 
   await page.reload();assert.equal(await page.locator('html').getAttribute('lang'),'en');assert.equal(await page.evaluate(()=>cart.length),1);assert.equal(await page.evaluate(()=>state.favorites.has('99001')),true);
-  await page.goto(origin+'/privacy.html?lang=en');await english(page);await fits(page,'EN privacy '+width);
+  await page.goto(origin+'/privacy.html?lang=en');await english(page);await fits(page,'EN privacy '+width);assert.equal(await page.locator('[data-manager-link]').getAttribute('href'),'https://wa.me/message/LX6SBE3QCQXKG1');await page.locator('[data-site-language=ru]').click();assert.equal(await page.locator('[data-manager-link]').getAttribute('href'),'https://t.me/juliproz');
   assert.deepEqual(errors,[]);await context.close();console.log(width+' PASS RU/EN design, translations, filters, English search, size, wishlist, bag, share, persistence and privacy');
  }
  for(const [width,height] of [[320,568],[390,667],[844,390]]){
