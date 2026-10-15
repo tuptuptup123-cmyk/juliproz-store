@@ -37,7 +37,7 @@ let browser;
   const actions=page.locator(width>=900?'.home-shop-actions':'.home-mobile-shop-actions'),shopAction=await actions.locator('button').boundingBox(),socials=actions.locator('.home-social-card');
   assert.equal(await page.locator('.home-social-card:visible').count(),2);
   assert.equal(await socials.nth(0).getAttribute('href'),'https://www.instagram.com/juli.proz/');assert.equal(await socials.nth(1).getAttribute('href'),'https://t.me/juli_proz');
-  for(const social of await socials.all()){const box=await social.boundingBox();assert.ok(box.x>=shopAction.x+shopAction.width&&box.width>=44&&box.height>=44&&Math.abs(box.y+box.height/2-shopAction.y-shopAction.height/2)<2,'Social buttons sit beside the shop action at '+width)}
+  for(const social of await socials.all()){assert.equal(await social.locator('svg').evaluate(e=>getComputedStyle(e).color),'rgb(0, 0, 0)','Social icons contrast with the white header');const box=await social.boundingBox();assert.ok(box.x>=shopAction.x+shopAction.width&&box.width>=44&&box.height>=44&&Math.abs(box.y+box.height/2-shopAction.y-shopAction.height/2)<2,'Social buttons sit beside the shop action at '+width)}
   await page.screenshot({path:out+`/design-en-home-${width}.png`,fullPage:true});
   for(const tab of ['sell','services','about','favorites','cart']){
    await page.locator(`.bottom-nav [data-tab=${tab}]`).click();await english(page);await fits(page,`EN ${tab} ${width}`);await page.screenshot({path:out+`/design-en-${tab}-${width}.png`,fullPage:true});
