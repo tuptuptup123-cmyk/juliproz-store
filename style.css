@@ -880,27 +880,18 @@ body.product-modal-open{overflow:hidden}
  .home-photographs{gap:10px}
 }
 
-/* Compact social links align with the photographs at the bottom right. */
-#webHomePage{row-gap:22px}
-.home-social-links{grid-column:2;justify-self:end;display:flex;gap:12px}
-.home-social-card{display:flex;align-items:center;justify-content:center;width:44px;height:44px;color:#000;text-decoration:none;transition:opacity .2s}
-.home-social-icon{display:block;width:24px;height:24px;flex:0 0 24px}
-.home-social-card:focus-visible{outline:2px solid var(--ink);outline-offset:4px}
-@media(hover:hover) and (pointer:fine){.home-social-card:hover{opacity:.6}}
-@media(max-width:899px){.home-social-links{grid-column:1}}
-
-/* A direct entrance to the catalogue uses the shared pink checkout styling. */
-.brand:not(.is-home-page) .home-shop-link{display:none}
-.home-shop-link{position:relative;grid-column:1;grid-row:1;justify-self:start;align-self:center;z-index:4;top:22px;display:flex;align-items:center;justify-content:space-between;gap:18px;width:190px;min-height:48px;padding:12px 18px;font-size:14px;font-weight:400;cursor:pointer}
+/* Shop and social links form one action row on each homepage layout. */
+.home-shop-actions{position:relative;grid-column:1;grid-row:1;justify-self:start;align-self:center;top:22px;z-index:4;display:flex;align-items:center;gap:12px;min-width:0}
+.brand:not(.is-home-page) .home-shop-actions{display:none}
+.home-social-links{display:flex;align-items:center;gap:4px;flex:none}
+.home-social-card{display:flex;align-items:center;justify-content:center;width:44px;height:44px;border:1px solid #e8e5e6;border-radius:12px;background:#fff;color:#000;text-decoration:none;transition:background .2s}
+.home-social-icon{display:block;width:22px;height:22px;flex:0 0 22px}
+.home-social-card:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+@media(hover:hover) and (pointer:fine){.home-social-card:hover{background:#f1e4ec}}
+.home-shop-link{display:flex;align-items:center;justify-content:space-between;gap:18px;width:190px;min-height:48px;padding:12px 18px;font-size:14px;font-weight:400;cursor:pointer}
 .home-shop-link .inline-arrow{flex:0 0 18px}
 .home-shop-link:focus-visible{outline:2px solid #7894b6;outline-offset:4px}
-@media(min-width:601px) and (max-width:1100px){
- .home-shop-link{position:absolute;top:0;left:0}
-}
-@media(max-width:600px){
- .brand.is-home-page .masthead-inner{min-height:240px;padding:108px 0 48px}
- .home-shop-link{position:absolute;top:auto;bottom:10px;left:0;width:184px;min-height:44px;padding:10px 16px;font-size:13px}
-}
+.home-mobile-shop-actions{display:none}
 
 /* Education destination and first-visit catalogue notice. */
 .information-education{display:grid;grid-template-columns:180px minmax(0,1fr) 44px;align-items:center;gap:30px;margin-top:18px;min-height:156px;padding:26px 30px;border:1px solid #e7d7e0;border-radius:18px;background:#f1e4ec;color:var(--ink);text-decoration:none}
@@ -936,7 +927,7 @@ body:has(#catalogAntiScam[open]){overflow:hidden}
 /* Mobile home: a centered brand, one shop action, and education below the photos. */
 .home-mobile-shop,.home-mobile-education,.nav-label-short{display:none}
 @media(max-width:899px){
- .brand.is-home-page .buyer-education-card,.brand.is-home-page .home-shop-link{display:none}
+ .brand.is-home-page .buyer-education-card,.brand.is-home-page .home-shop-actions{display:none}
  .brand.is-home-page .masthead-inner{min-height:140px;padding:28px 0;grid-template-columns:minmax(0,1fr);gap:0}
  .brand.is-home-page .masthead-inner .brand-lockup{grid-column:1;grid-row:1;left:0;width:120px;justify-self:center}
  .brand.is-home-page .masthead-inner .logo{font-size:50px;text-align:left;width:fit-content}
@@ -950,7 +941,9 @@ body:has(#catalogAntiScam[open]){overflow:hidden}
  #webHomePage .web-page-intro p{font-size:14px;line-height:1.7}
  #webHomePage .web-page-intro .home-services-summary{margin-top:16px}
  .home-photographs{gap:10px}
- .home-social-links{justify-self:center;gap:18px;margin-top:-10px}
+ .home-mobile-shop-actions{display:flex;align-items:center;gap:10px;margin-bottom:22px;max-width:440px}
+ .home-mobile-shop-actions .home-mobile-shop{flex:1;min-width:0;width:auto;margin:0;padding:14px 12px;gap:8px}
+ .home-mobile-shop .inline-arrow{flex:none}
  .home-mobile-education{position:static;display:flex;grid-column:1;transform:none;width:100%;max-width:440px;justify-self:center;min-height:76px;margin-top:-6px;border-radius:8px}
  .home-mobile-education .buyer-education-logo-frame{flex-basis:96px;width:96px;height:28px;margin:0 12px}
  .home-mobile-education .buyer-education-logo{width:138px;left:-14px;top:-13px}
@@ -986,9 +979,6 @@ html[lang=en] .home-shop-link{width:210px}
 .catalog-head #count{min-width:0;line-height:1.5}
 .information-notice-heading,.information-education-copy,.sell-method,.cart-item-info{min-width:0}
 .information-notice h2,.information-education-copy>span,.sell-method h2{overflow-wrap:break-word}
-@media(min-width:900px) and (max-width:1100px){
- .brand.is-home-page .home-shop-link{position:relative;top:22px;left:auto;transform:none}
-}
 @media(max-width:899px){
  .language-switch button{min-width:42px;min-height:36px}
  html[lang=en] #webHomePage h1{font-size:clamp(29px,7.7vw,40px)}

@@ -31,3 +31,13 @@ test('upstream malformed responses and outages fail closed without exposing cred
   const r=await invoke(createHandler(env,request));assert.equal(r.statusCode,503);assert.deepEqual(r.body,{error:'unavailable'});
  }
 });
+
+test('storefront channels isolate sessions and cannot be relabelled by the dedicated bot origin',async()=>{
+ const calls=[],handler=createHandler(env,async(u,o)=>{calls.push(JSON.parse(o.body));return Response.json(true)}),base=event();
+ for(const [origin,channel] of [['https://www.juliproz.com','website'],['https://www.juliproz.com','telegram'],['https://app.juliproz.com','website'],['https://www.juliproz.com',undefined]])assert.equal((await invoke(handler,{origin,body:{...base,channel}})).statusCode,202);
+ assert.deepEqual(calls.map(c=>c.p_channel),['website','telegram','telegram','legacy']);
+ assert.notEqual(calls[0].p_session,calls[1].p_session);assert.equal(calls[1].p_session,calls[2].p_session);assert.notEqual(calls[3].p_session,calls[0].p_session);
+ assert.ok(calls.every(c=>/^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-a[a-f0-9]{3}-[a-f0-9]{12}$/.test(c.p_session)&&c.p_visitor===base.visitor_id));
+ for(const channel of ['all','legacy','invalid',{},1])assert.equal((await invoke(handler,{body:{...base,channel}})).statusCode,400);
+ assert.equal(calls.length,4);
+});

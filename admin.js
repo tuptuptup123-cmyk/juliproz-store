@@ -525,11 +525,11 @@ $('styleExistingPhotos').onclick=async()=>{
  }catch(e){if(epoch===previewEpoch)status(`${e.message} Исходные фото сохранены — попробуйте ещё раз.`)}
  finally{busy=false;$('editorFields').disabled=false;$('save').disabled=false;$('photoProcessingStatus').textContent='';renderPhotos()}
 };
-let analyticsBusy=false,analyticsData=null,analyticsChartMetric='visitors';
+let analyticsBusy=false,analyticsData=null,analyticsChartMetric='visitors',analyticsChannel='website';
+const analyticsChannelNotes={website:'Сайт: посещения и действия на juliproz.com.',telegram:'Бот: посещения и действия в магазине Telegram. Команды и переписка в чате сюда не входят.',legacy:'Архив: общие события до разделения каналов. Их источник не был сохранён, поэтому они не включаются в отчёты сайта и бота.'};
 async function loadAnalytics(){
- if(analyticsBusy||!session)return;analyticsBusy=true;const epoch=sessionEpoch;$('analyticsDays').disabled=true;$('refreshAnalytics').disabled=true;$('analyticsStatus').textContent='Загружаем статистику…';
- try{const data=await request('/rest/v1/rpc/store_analytics_summary',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({p_days:Number($('analyticsDays').value)})});if(epoch!==sessionEpoch)return;
-  updateOverview(data,Number($('analyticsDays').value)===7);
+ if(analyticsBusy||!session)return;analyticsBusy=true;const epoch=sessionEpoch;const channel=analyticsChannel;document.querySelectorAll('[data-analytics-channel]').forEach(b=>b.disabled=true);$('analyticsChannelNote').textContent=analyticsChannelNotes[channel];analyticsData=null;$('analyticsCards').innerHTML='';$('analyticsProducts').innerHTML='';$('analyticsChart').innerHTML='';$('analyticsDays').disabled=true;$('refreshAnalytics').disabled=true;$('analyticsStatus').textContent='Загружаем статистику…';
+ try{const data=await request('/rest/v1/rpc/store_analytics_summary',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({p_days:Number($('analyticsDays').value),p_channel:channel})});if(epoch!==sessionEpoch)return;
   const report=window.AnalyticsReport.render(data);
   analyticsData=data;$('analyticsCards').innerHTML=report.cards;renderAnalyticsChart();
   $('analyticsProducts').innerHTML=report.details;
@@ -538,11 +538,12 @@ async function loadAnalytics(){
   try{const botLimited=await request('/rest/v1/rpc/store_bot_health',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});if(epoch!==sessionEpoch)return;if(botLimited===true)$('analyticsStatus').textContent+=' Бот приближается к защитным лимитам или достиг их.'}catch{if(epoch===sessionEpoch&&session)$('analyticsStatus').textContent+=' Статус лимитов бота недоступен.'}
   try{const retention=await request('/rest/v1/rpc/store_analytics_retention_health',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});if(epoch!==sessionEpoch)return;$('retentionStatus').textContent=retention?.healthy===true?'Данные старше 90 дней удаляются ежедневно. Очистка работает.':'Нужно проверить автоматическую очистку старой статистики.'}catch{if(epoch===sessionEpoch&&session)$('retentionStatus').textContent='Статус автоматической очистки недоступен.'}
  }catch(e){if(epoch===sessionEpoch)$('analyticsStatus').textContent='Не удалось получить статистику. Попробуйте обновить.'}
- finally{analyticsBusy=false;$('analyticsDays').disabled=false;$('refreshAnalytics').disabled=false}
+ finally{analyticsBusy=false;document.querySelectorAll('[data-analytics-channel]').forEach(b=>b.disabled=false);$('analyticsDays').disabled=false;$('refreshAnalytics').disabled=false}
 }
 function renderAnalyticsChart(){if(!analyticsData)return;$('analyticsChart').innerHTML=window.AnalyticsReport.chart(analyticsData,analyticsChartMetric);document.querySelectorAll('[data-chart-metric]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.chartMetric===analyticsChartMetric)))}
 $('analyticsChartControls').addEventListener('click',e=>{const b=e.target.closest('[data-chart-metric]');if(!b)return;analyticsChartMetric=b.dataset.chartMetric;renderAnalyticsChart()});
 $('refreshAnalytics').onclick=loadAnalytics;$('analyticsDays').onchange=loadAnalytics;
+$('analyticsChannels').addEventListener('click',e=>{const b=e.target.closest('[data-analytics-channel]');if(!b||analyticsBusy||!session||!Object.hasOwn(analyticsChannelNotes,b.dataset.analyticsChannel)||b.dataset.analyticsChannel===analyticsChannel)return;analyticsChannel=b.dataset.analyticsChannel;document.querySelectorAll('[data-analytics-channel]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.analyticsChannel===analyticsChannel)));loadAnalytics()});
 
 // Preferences affect this admin device only; they never change public store settings.
 function applyAdminPreferences(){

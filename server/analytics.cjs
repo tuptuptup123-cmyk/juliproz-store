@@ -1,5 +1,5 @@
 'use strict';
-const {createHmac}=require('node:crypto');
+const {createHmac,createHash}=require('node:crypto');
 const {isIP}=require('node:net');
 const config=require('../config.js');
 const ORIGIN='https://qhgzzhgxwpcctafpzjid.supabase.co';
@@ -20,7 +20,7 @@ async function readBody(req){
  for await(const chunk of req){bytes+=Buffer.byteLength(chunk);if(bytes>2048)throw Object.assign(Error(),{status:413});chunks.push(Buffer.from(chunk))}
  return JSON.parse(Buffer.concat(chunks).toString('utf8'));
 }
-function validEvent(b){return b&&typeof b==='object'&&!Array.isArray(b)&&uuid.test(b.event_id)&&uuid.test(b.visitor_id)&&uuid.test(b.session_id)&&events.has(b.event)&&(b.product_id==null||Number.isSafeInteger(b.product_id)&&b.product_id>0)&&(b.page==null||['catalog','wishlist','cart'].includes(b.page))}
+function validEvent(b){return b&&typeof b==='object'&&!Array.isArray(b)&&uuid.test(b.event_id)&&uuid.test(b.visitor_id)&&uuid.test(b.session_id)&&events.has(b.event)&&(b.channel==null||['website','telegram'].includes(b.channel))&&(b.product_id==null||Number.isSafeInteger(b.product_id)&&b.product_id>0)&&(b.page==null||['catalog','wishlist','cart'].includes(b.page))}
 function createHandler(env=process.env,request=fetch,now=()=>new Date()){
  return async(req,res)=>{
   const origin=req.headers.origin;
@@ -36,11 +36,16 @@ function createHandler(env=process.env,request=fetch,now=()=>new Date()){
   if(typeof secret!=='string'||!/^[a-f0-9]{64}$/.test(secret)||!ip)return reply(503,{error:'unavailable'});
   try{
    const b=await readBody(req);if(!validEvent(b))return reply(400,{error:'event'});
+   // The dedicated bot origin wins over client hints. Legacy /telegram/ shares the website origin.
+   const channel=origin==='https://app.juliproz.com'?'telegram':b.channel||'legacy';
+   // Namespace sessions by channel, including cached clients and same-origin Telegram entries.
+   const digest=createHash('sha256').update(`juliproz:analytics-session:v1:${channel}:${b.session_id}`).digest('hex');
+   const session=`${digest.slice(0,8)}-${digest.slice(8,12)}-4${digest.slice(13,16)}-a${digest.slice(17,20)}-${digest.slice(20,32)}`;
    const fingerprint=createHmac('sha256',secret).update(`juliproz:analytics-ip:v1:${now().toISOString().slice(0,10)}:${ip}`).digest('hex');
    const response=await request(`${ORIGIN}/rest/v1/rpc/store_analytics_gateway_ingest`,{
     method:'POST',redirect:'error',signal:AbortSignal.timeout(5000),
     headers:{apikey:config.key,'Content-Type':'application/json'},
-    body:JSON.stringify({p_secret:secret,p_event_id:b.event_id,p_visitor:b.visitor_id,p_session:b.session_id,p_event:b.event,p_product:b.product_id??null,p_page:b.page??null,p_fingerprint:fingerprint})
+    body:JSON.stringify({p_secret:secret,p_event_id:b.event_id,p_visitor:b.visitor_id,p_session:session,p_event:b.event,p_product:b.product_id??null,p_page:b.page??null,p_fingerprint:fingerprint,p_channel:channel})
    });
    if(!response.ok)return reply(503,{error:'unavailable'});
    let accepted;try{accepted=await response.json()}catch{return reply(503,{error:'unavailable'})}if(typeof accepted!=='boolean')return reply(503,{error:'unavailable'});

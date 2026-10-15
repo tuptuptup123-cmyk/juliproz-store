@@ -95,3 +95,11 @@ Checkout drafts retain each selected variant and its quantity alongside the cano
 Telegram local admission now precedes shared admission and refunds local reservations on refusal/outage. UTC daily caps are 100 messages or 500 callbacks per chat, in addition to existing global caps. Many-account attacks can still exhaust global availability. The obsolete exchange-rate endpoint returns 410 without contacting an external service. Historical import Edge functions are source-controlled 403 stubs; the retired upload function returns 410.
 
 Current regression probes: `supabase/audit-security-probes.sql`. Legacy MFA probes describe the earlier enrollment policy and are not the current acceptance check. Do not run historic setup/rollback scripts against an installed production database as routine maintenance.
+
+### Separate storefront analytics
+
+One admin serves both storefronts. Statistics defaults to **Website** and can switch to **Bot** (the Telegram shop) or the unclassified legacy archive. The period, cards, chart, contact breakdown and product rankings use the selected channel. The compact home overview remains labelled as all channels.
+
+The existing consent-based collector sends a fixed storefront channel. The gateway enforces the dedicated bot origin, namespaces sessions by channel and retains shared ingestion limits. Legacy same-origin `/telegram/` launches identify the Telegram storefront explicitly. Old clients without a channel remain in the legacy archive; historical rows are never guessed or relabelled. Bot chat commands and message contents are not collected.
+
+Apply `supabase/migrations/20261015030237_analytics_storefront_channels.sql` before releasing the gateway and admin. Old RPC signatures remain compatible during rollout. The private analytics tables retain admin-only RLS and the existing 90-day retention. Run `supabase/analytics-channel-probes.sql` inside a rolled-back transaction to verify channel isolation, replay safety and access checks.
