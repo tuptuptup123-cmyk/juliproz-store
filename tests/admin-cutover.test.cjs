@@ -12,6 +12,6 @@ test('legacy admin navigation survives unavailable browser storage',()=>{
 test('public build serves a transition instead of privileged admin code',()=>{
  execFileSync(process.execPath,['scripts/build-public.cjs'],{cwd:root});const out=path.join(root,'dist');
  const html=fs.readFileSync(path.join(out,'admin.html'),'utf8');assert.match(html,/src="admin-redirect.js"/);assert.doesNotMatch(html,/id="login"|src="admin.js/);
- for(const file of ['admin.js','admin-workspace.js','admin-selects.js','admin.css','photo-worker.js'])assert.equal(fs.existsSync(path.join(out,file)),false,file);
+ for(const file of ['admin.js','admin-workspace.js','admin-schedule.js','admin-selects.js','admin.css','photo-worker.js'])assert.equal(fs.existsSync(path.join(out,file)),false,file);
  assert.ok(fs.existsSync(path.join(out,'app.js')));assert.ok(fs.existsSync(path.join(out,'admin-redirect.js')));
 });
