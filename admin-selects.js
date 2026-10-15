@@ -6,7 +6,8 @@
  function sync(menu){
   const selected=menu.select.selectedOptions[0];menu.text.textContent=selected?.textContent||'';
   menu.button.setAttribute('aria-label',`${menu.label}: ${menu.text.textContent}`);
-  const options=[...menu.select.options];menu.list.replaceChildren();
+  const options=[...menu.select.options],signature=JSON.stringify(options.map(o=>[o.value,o.textContent,o.selected,o.disabled]));
+  if(menu.signature===signature)return;menu.signature=signature;menu.list.replaceChildren();
   options.forEach(option=>{const item=document.createElement('button');item.type='button';item.className='admin-select-option';item.setAttribute('role','option');item.setAttribute('aria-selected',String(option.selected));item.disabled=option.disabled;item.textContent=option.textContent;item.dataset.value=option.value;item.onclick=()=>{menu.select.value=option.value;menu.select.dispatchEvent(new Event('change',{bubbles:true}));sync(menu);close(menu,true)};menu.list.append(item)});
  }
  function open(menu,last=false){closeAll(menu);sync(menu);menu.panel.hidden=false;menu.button.setAttribute('aria-expanded','true');const choices=[...menu.list.children].filter(n=>!n.disabled);const selected=choices.find(n=>n.getAttribute('aria-selected')==='true');(last?choices.at(-1):selected||choices[0])?.focus()}

@@ -402,3 +402,5 @@ dialog.sale-dialog{width:min(580px,calc(100vw - 24px));max-width:580px;max-heigh
 .editor-preview-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
 .editor-preview-actions #previewCatalogue,.editor-preview-actions #shareEditorProduct{width:auto;margin:0;border-radius:10px;font-size:12px}
 @media(max-width:700px){.editor-actions{padding:16px}.editor-actions .row-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.editor-actions .row-actions button{white-space:normal;padding:10px 8px}.editor-preview-actions{display:grid;grid-template-columns:minmax(0,1fr)}.editor-preview-actions button{width:100%}}
+
+.inventory-more{display:block;min-width:220px;margin:28px auto 8px}
