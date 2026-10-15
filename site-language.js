@@ -52,9 +52,8 @@
  // Number-based click-to-chat links preserve the product/order draft.
  function managerLink(message='',options={}){
   const whatsapp=!options.inTelegram&&!telegram()&&(options.language||language)==='en';
-  const url=new URL(whatsapp?(message?'https://wa.me/971585394347':'https://wa.me/message/LX6SBE3QCQXKG1'):'https://t.me/juliproz');
-  if(message)url.searchParams.set('text',whatsapp?english(message):String(message));
-  return url.href;
+  const url=whatsapp?(message?'https://wa.me/971585394347':'https://wa.me/message/LX6SBE3QCQXKG1'):'https://t.me/juliproz';
+  return url+(message?'?text='+encodeURIComponent(whatsapp?english(message):String(message)):'');
  }
  function rememberText(node){
   const current=node.nodeValue,old=nodes.get(node),source=old&&old.result===current?old.source:current,result=text(source);
