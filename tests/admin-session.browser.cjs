@@ -31,7 +31,7 @@ const KEY='jpAdminSession30dV1',DAY=86400000,URL_ADMIN='http://localhost:8782/ad
  assert.equal(await p.evaluate(key=>sessionStorage.getItem(key),KEY),null);
  for(let i=0;i<2;i++){await p.reload();await p.locator('#workspace').waitFor();await settled(p);assert.equal(await p.evaluate(()=>sessionClock.snapshot().absolute),deadline)}
  const beforeSleep=touches;
- await p.clock.fastForward(29*DAY);await settled(p);assert.equal(await p.locator('#workspace').isVisible(),true);assert.equal(await p.locator('#sessionWarning').isHidden(),true);assert.equal(touches,beforeSleep,'background checks cannot touch activity');
+ for(let day=0;day<29;day++){await p.clock.fastForward(DAY);await settled(p)}assert.equal(await p.locator('#workspace').isVisible(),true);assert.equal(await p.locator('#sessionWarning').isHidden(),true);assert.equal(touches,beforeSleep,'background checks cannot touch activity');
  const reopenTime=await p.evaluate(()=>Date.now()),state=await c.storageState();await c.close();
  c=await context(state);p=await page(c,reopenTime);await p.locator('#workspace').waitFor();await settled(p);
  assert.equal(passwordLogins,1,'reopening browser after 29 days requires no password');assert.ok(refreshes>0,'expired access token refreshes on reopen');assert.equal(await p.locator('#mfaPanel').isHidden(),true);assert.equal(await p.evaluate(()=>sessionClock.snapshot().absolute),deadline);
