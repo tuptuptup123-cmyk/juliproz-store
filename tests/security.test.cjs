@@ -292,7 +292,7 @@ test('internal location and custodian are available on non-commission items and 
 
 test('invitation callback removes URL tokens, validates identity and requires MFA before workspace',async()=>{
  const a=api({factors:[factor]}),h=setup(a.fetch);h.run("location.hash='#type=invite&access_token=synthetic-token&refresh_token=synthetic-refresh&expires_in=3600';location.pathname='/admin.html';location.search='';globalThis.history={replaceState:(a,b,p)=>{location.hash='';globalThis.cleanCallbackPath=p}};");
- await h.run('restoreAdminSession()');assert.equal(h.run('location.hash'),'');assert.equal(h.run('cleanCallbackPath'),'/admin.html');assert.equal(h.run('recovering'),true);assert.equal(h.get('mfaPanel').classList.contains('hidden'),false);assert.equal(h.get('workspace').classList.contains('hidden'),true);assert.equal(a.calls.some(c=>c.path.includes('/products')),false);
+ await h.run('restoreAdminSession()');assert.equal(h.run('session'),null);assert.equal(h.get('emailLinkIdentity').textContent,'owner@example.invalid');assert.equal(h.get('login').classList.contains('hidden'),true);await h.get('acceptEmailLink').onclick();assert.equal(h.run('location.hash'),'');assert.equal(h.run('cleanCallbackPath'),'/admin.html');assert.equal(h.run('recovering'),true);assert.equal(h.get('mfaPanel').classList.contains('hidden'),false);assert.equal(h.get('workspace').classList.contains('hidden'),true);assert.equal(a.calls.some(c=>c.path.includes('/products')),false);
 });
 
 test('recovery requests the isolated admin callback explicitly',async()=>{
@@ -309,8 +309,43 @@ test('callback for another account cannot replace the current in-memory session'
  await h.run('restoreAdminSession()');assert.equal(h.run('session.user.id'),'owner');assert.match(h.get('status').textContent,/другому аккаунту/);assert.equal(h.run('location.hash'),'');
 });
 test('callback identity requires explicit acceptance before adopting credentials',async()=>{
- const a=api(),h=setup(a.fetch);h.run("confirm=()=>false;location.hash='#type=invite&access_token=synthetic&refresh_token=synthetic-refresh';globalThis.history={replaceState:()=>{location.hash=''}}");
+ const a=api(),h=setup(a.fetch);h.run("confirm=()=>{throw Error('Native confirmation must not be used')};location.hash='#type=invite&access_token=synthetic&refresh_token=synthetic-refresh';globalThis.history={replaceState:()=>{location.hash=''}}");
  await h.run('restoreAdminSession()');assert.equal(h.run('session'),null);assert.equal(a.calls.some(c=>c.path.includes('/products')),false);assert.equal(h.run('location.hash'),'');
+});
+
+test('new invitation creates a password before MFA and never persists unfinished access',async()=>{
+ const local=tabStorage(),a=api({pending:true}),h=setup(a.fetch,true,tabStorage(),local);
+ h.run("location.hash='#type=invite&access_token=synthetic&refresh_token=synthetic-refresh';globalThis.history={replaceState:()=>{location.hash=''}}");
+ await h.run('restoreAdminSession()');await h.get('acceptEmailLink').onclick();
+ assert.equal(h.get('newPassword').classList.contains('hidden'),false);assert.equal(h.get('login').classList.contains('hidden'),true);assert.equal(h.get('mfaPanel').classList.contains('hidden'),true);
+ assert.ok(!a.calls.some(c=>c.path.endsWith('/auth/v1/factors')||c.path.includes('/products?')));assert.equal(local.getItem(reloadKey),null);
+ h.get('newPassword').password={value:'synthetic-password'};await h.get('newPassword').onsubmit({preventDefault(){},submitter:node(),target:h.get('newPassword')});
+ assert.equal(h.run('recovering'),false);assert.equal(h.run('mfaMode'),'enroll');assert.equal(h.get('login').classList.contains('hidden'),true);assert.equal(h.get('newPassword').classList.contains('hidden'),true);
+ assert.equal(local.getItem(reloadKey),null);assert.ok(a.calls.some(c=>c.options.method==='PUT'));assert.equal(h.run('emailLinkState'),null);
+});
+test('email callback validation and accepted setup retry transient failures without losing credentials',async()=>{
+ const a=api({pending:true});let userFailure=true,setupFailure=true;
+ const h=setup(async(path,options)=>{
+  if(path.endsWith('/auth/v1/user')&&userFailure)return response({message:'offline'},503);
+  if(path.includes('/touch_store_admin_session')&&setupFailure)return response({message:'offline'},503);
+  return a.fetch(path,options);
+ });
+ h.run("location.hash='#type=invite&access_token=synthetic&refresh_token=synthetic-refresh';globalThis.history={replaceState:()=>{location.hash=''}}");
+ await h.run('restoreAdminSession()');assert.equal(h.run('session'),null);assert.equal(h.get('retryEmailLink').classList.contains('hidden'),false);assert.equal(h.get('login').classList.contains('hidden'),true);
+ userFailure=false;await h.get('retryEmailLink').onclick();await h.get('acceptEmailLink').onclick();assert.equal(h.get('retryEmailLink').classList.contains('hidden'),false);
+ setupFailure=false;await h.get('retryEmailLink').onclick();assert.equal(h.get('newPassword').classList.contains('hidden'),false);assert.equal(h.run('emailLinkState'),null);
+});
+test('expired and incomplete email links show renewal instead of a silent password login',async()=>{
+ for(const hash of ['#error=access_denied&error_code=otp_expired','#type=invite&access_token=synthetic','#type=recovery']){
+  const a=api(),h=setup(a.fetch);h.run('location.hash='+JSON.stringify(hash)+";globalThis.history={replaceState:()=>{location.hash=''}}");
+  await h.run('restoreAdminSession()');assert.equal(h.get('renewEmailLink').classList.contains('hidden'),false);assert.equal(h.get('login').classList.contains('hidden'),true);assert.equal(h.run('location.hash'),'');assert.equal(h.run('session'),null);assert.equal(a.calls.length,0);
+  await h.get('cancelEmailLink').onclick();assert.equal(h.get('login').classList.contains('hidden'),false);assert.equal(h.get('emailLink').classList.contains('hidden'),true);
+ }
+});
+test('cancelling a verified invitation adopts no session and clears its identity',async()=>{
+ const a=api(),h=setup(a.fetch);h.run("location.hash='#type=invite&access_token=synthetic&refresh_token=synthetic-refresh';globalThis.history={replaceState:()=>{location.hash=''}}");
+ await h.run('restoreAdminSession()');await h.get('cancelEmailLink').onclick();
+ assert.equal(h.run('session'),null);assert.equal(h.run('emailLinkState'),null);assert.equal(h.get('emailLinkIdentity').textContent,'');assert.equal(a.calls.length,1);
 });
 
 test('pending invitation can enroll MFA without membership or private inventory access',async()=>{
