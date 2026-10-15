@@ -25,7 +25,7 @@ for(const width of [390,1280]){
  assert.deepEqual(channels,['website','website','telegram','legacy','website']);
  await page.locator('#analyticsDays').selectOption('30');await page.locator('#refreshAnalytics:not([disabled])').waitFor();assert.equal(channels.at(-1),'website');
 
- await page.locator('#productsMenuToggle').click();await page.locator('#productNavigation [data-view=all]').click();await page.evaluate(()=>edit({id:42,brand:'Gucci',name:'Фото',image_url:'https://juliproz-store.vercel.app/images/test-photo.png',photos:['https://juliproz-store.vercel.app/images/test-photo-2.png']}));
+ await page.locator('#adminHome').click();await page.locator('#productNavigation [data-view=all]').click();await page.evaluate(()=>edit({id:42,brand:'Gucci',name:'Фото',image_url:'https://juliproz-store.vercel.app/images/test-photo.png',photos:['https://juliproz-store.vercel.app/images/test-photo-2.png']}));
  const png=await page.evaluate(()=>{const c=document.createElement('canvas');c.width=400;c.height=300;const ctx=c.getContext('2d');ctx.fillStyle='white';ctx.fillRect(0,0,400,300);ctx.fillStyle='#224466';ctx.fillRect(100,50,200,200);return c.toDataURL('image/png').split(',')[1]});
  await page.route('**/images/test-photo*.png',r=>r.fulfill({contentType:'image/png',body:Buffer.from(png,'base64')}));
  // First fetch fails: the entire original gallery stays available.
