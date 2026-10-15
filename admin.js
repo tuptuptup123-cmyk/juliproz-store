@@ -117,14 +117,25 @@ document.addEventListener('visibilitychange',checkAdminSession);
 window.addEventListener('focus',checkAdminSession);
 $('continueSession').onclick=()=>{if(session&&checkAdminSession()){sessionClock.activity();touchAdminSession(true).catch(()=>{})}};
 const stagedUploads=new Map();
-let mfaFactorId=null,mfaMode=null,mfaEnrollment=null,recovering=false;
+let mfaFactorId=null,mfaMode=null,mfaEnrollment=null,recovering=false,emailFlowType=null,emailLinkState=null;
+function showAuthStep(id){
+ $('authArea').classList.remove('hidden');$('workspace').classList.add('hidden');
+ for(const panel of ['sessionRestore','login','confirmEmail','newPassword','pendingAccess','mfaPanel','emailLink'])$(panel).classList.toggle('hidden',panel!==id);
+}
+function clearEmailLink(){emailLinkState=null;$('emailLinkIdentity').textContent='';$('renewEmailLink').reset();$('emailLink').classList.add('hidden')}
+function showPasswordSetup(){
+ clearMfa();showAuthStep('newPassword');
+ $('newPasswordTitle').textContent=emailFlowType==='invite'?'Создайте пароль':'Новый пароль';
+ $('newPasswordMessage').textContent=emailFlowType==='invite'?'Придумай пароль для следующих входов — минимум 12 символов. Затем настроим защиту аккаунта.':'Минимум 12 символов. Этот пароль понадобится для следующих входов.';
+ status('');
+}
 function clearMfa(){
  mfaFactorId=null;mfaMode=null;mfaEnrollment=null;
  $('mfaPanel').classList.add('hidden');$('mfaSetup').classList.add('hidden');$('mfaChoice').classList.add('hidden');
  $('mfaVerify').reset();$('mfaQr').onload=null;$('mfaQr').onerror=null;$('mfaQr').removeAttribute?.('src');$('mfaQr').classList.add('hidden');$('mfaQrError').classList.add('hidden');$('mfaSecret').textContent='';$('mfaFactor').innerHTML='';
 }
 function endSession(clearSaved=true){
- sessionClock.clear();rememberAdminSession=false;restorePending=false;activityPromise=null;$('sessionWarning').classList.add('hidden');$('photoStudio').close?.();
+ sessionClock.clear();rememberAdminSession=false;restorePending=false;activityPromise=null;emailFlowType=null;clearEmailLink();$('sessionWarning').classList.add('hidden');$('photoStudio').close?.();
  if(clearSaved)clearSavedAdminSession();persistedAdminSession=false;persistedRefreshToken=null;window.ProductSharing?.close();window.AdminWorkspace?.clear();window.AdminSales?.clear();window.AdminSchedule?.clear();clearInternalFields();
  internalNoteState=null;if($('editor').elements?.internal_note)$('editor').elements.internal_note.value='';pendingCover=false;window.PhotoStudio?.cancel();adminSecurity={paused:false};session=null;sessionEpoch++;previewEpoch++;items=[];photos=[];editing=null;original=null;creationKey=null;recovering=false;
  for(const id of ['stockTotal','stockCount','stockValue'])$(id).textContent='—';$('stockValueNote').textContent='';stagedUploads.clear();$('editorProductActions').innerHTML='';clearMfa();$('authArea').classList.remove('hidden');pendingPreviews=[];editorDirty=false;activeView='all';$('settingsPanel').classList.add('hidden');clearOverview();$('adminHome').classList.add('hidden');$('homePanel').classList.add('hidden');$('cataloguePreview').close?.();$('cataloguePreviewCard').innerHTML='';productWishlistCounts=null;productWishlistLoadedAt=0;$('analyticsPanel').classList.add('hidden');$('analyticsCards').innerHTML='';$('analyticsProducts').innerHTML='';$('retentionStatus').textContent='';analyticsData=null;analyticsChartMetric='visitors';$('analyticsChart').innerHTML='';
@@ -176,7 +187,7 @@ function showMfaChallenge(factors){
  clearMfa();mfaMode='challenge';mfaFactorId=factors[0].id;
  $('mfaFactor').innerHTML=factors.map(f=>`<option value="${esc(f.id)}">${esc(f.friendly_name||'Приложение-аутентификатор')}</option>`).join('');
  $('mfaFactor').value=mfaFactorId;$('mfaChoice').classList.toggle('hidden',factors.length<2);
- $('authArea').classList.remove('hidden');$('workspace').classList.add('hidden');$('login').classList.add('hidden');$('confirmEmail').classList.add('hidden');$('newPassword').classList.add('hidden');
+ showAuthStep('mfaPanel');
  $('mfaInfo').textContent='Введи шестизначный код из своего приложения-аутентификатора.';$('mfaPanel').classList.remove('hidden');status('');
 }
 async function enableMfaProtection(){
@@ -190,6 +201,7 @@ async function enterWorkspace(){
  const security=await request('/rest/v1/rpc/store_admin_security_status',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});adminSecurity={paused:security?.paused===true,pending:security?.pending===true,owner:security?.access_role==='owner'};
  if(!adminSecurity.pending){const admins=await request(`/rest/v1/store_admins?select=user_id&user_id=eq.${encodeURIComponent(session.user.id)}`);if(!admins.length){endSession();throw Error('У этого аккаунта нет доступа к управлению магазином.')}}
  const user=await currentAuthUser(),verified=(user.factors||[]).filter(f=>f.status==='verified');
+ if(recovering&&emailFlowType==='invite'&&!verified.length){showPasswordSetup();return}
  if(verified.length&&sessionAal()!=='aal2'&&!mfaPaused()){
   const totp=verified.filter(f=>f.factor_type==='totp');
   if(!totp.length){endSession();throw Error('Для этого аккаунта нужен поддерживаемый TOTP-фактор. Обратись к владельцу проекта.')}
@@ -198,7 +210,7 @@ async function enterWorkspace(){
  if(!verified.length&&!mfaPaused()&&sessionAal()!=='aal2'){if(!MFA_ENROLLMENT_ENABLED)throw Error('Подключение второго фактора недоступно. Обратись к владельцу проекта.');await prepareMfaEnrollment();return}
  if(sessionAal()==='aal2'&&verified.length)await enableMfaProtection();
  clearMfa();
- if(recovering){$('login').classList.add('hidden');$('confirmEmail').classList.add('hidden');$('workspace').classList.add('hidden');$('newPassword').classList.remove('hidden');status('Установи новый пароль.');return}
+ if(recovering){showPasswordSetup();return}
  if(adminSecurity.pending){$('login').classList.add('hidden');$('confirmEmail').classList.add('hidden');$('workspace').classList.add('hidden');$('authArea').classList.remove('hidden');$('pendingAccess').classList.remove('hidden');status('Почта и второй фактор подтверждены. Владелец должен отдельно подтвердить доступ.');return}
  $('securityState').textContent=verified.length?'Вход защищён кодом из приложения.':'Подключи код из приложения, чтобы защитить управление магазином.';
  $('securityBtn').textContent=verified.length?'Добавить запасной аутентификатор':'Настроить защиту входа';
@@ -217,17 +229,19 @@ $('recover').onclick=async()=>{
  const email=$('login').email.value.trim();if(!email){status('Введи Email для восстановления пароля.');return}
  const b=$('recover'),epoch=sessionEpoch;b.disabled=true;busy=true;try{await request('/auth/v1/recover?redirect_to='+encodeURIComponent('https://admin.juliproz.com/admin.html'),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email})});if(epoch!==sessionEpoch)return;$('confirmEmail').classList.remove('hidden');status('Если аккаунт существует, письмо для восстановления отправлено.')}catch(err){if(epoch===sessionEpoch)status(err.message)}finally{busy=false;b.disabled=false}
 };
-$('newPassword').onsubmit=async e=>{e.preventDefault();if(busy)return;const b=e.submitter;b.disabled=true;busy=true;try{const password=e.target.password.value;if(password.length<12)throw Error('Пароль должен содержать минимум 12 символов.');await request('/auth/v1/user',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({password})});recovering=false;$('newPassword').reset();$('newPassword').classList.add('hidden');await enterWorkspace()}catch(err){status(err.message)}finally{busy=false;b.disabled=false;e.target.password.value=''}};
+$('newPassword').onsubmit=async e=>{e.preventDefault();if(busy)return;const b=e.submitter;b.disabled=true;busy=true;try{const password=e.target.password.value;if(password.length<12)throw Error('Пароль должен содержать минимум 12 символов.');await request('/auth/v1/user',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({password})});recovering=false;emailFlowType=null;await enterWorkspace();$('newPassword').reset();$('newPassword').classList.add('hidden')}catch(err){status(err.message)}finally{busy=false;b.disabled=false;e.target.password.value=''}};
 $('confirmEmail').onsubmit=async e=>{
  e.preventDefault();if(busy)return;const b=e.submitter,epoch=sessionEpoch;b.disabled=true;busy=true;
  try{
   const link=new URL(e.target.confirmation.value.trim());
   if(link.origin!==url||link.pathname!=='/auth/v1/verify'||!link.searchParams.get('token'))throw Error('Вставь ссылку подтверждения именно из письма Supabase.');
-  const type=link.searchParams.get('type');if(!['recovery'].includes(type))throw Error('Неподдерживаемая ссылка подтверждения.');
+  const type=link.searchParams.get('type');if(!['invite','recovery'].includes(type))throw Error('Неподдерживаемая ссылка подтверждения.');
   const token=link.searchParams.get('token');e.target.confirmation.value='';
   const data=await request('/auth/v1/verify',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token_hash:token,type})});
-  if(epoch!==sessionEpoch)return;keepSession(data,true);
-  recovering=type==='recovery';await enterWorkspace();
+  if(epoch!==sessionEpoch)return;
+  if(!data?.access_token||!data.refresh_token)throw Error('Не удалось подтвердить ссылку.');
+  emailLinkState={type,access_token:data.access_token,refresh_token:data.refresh_token,expires_at:data.expires_at||Date.now()/1000+(data.expires_in||3600)};
+  busy=false;await validateEmailLink();
  }catch(err){if(epoch===sessionEpoch||!session)status(err.message)}finally{busy=false;b.disabled=false}
 };
 async function load(){const rows=[];for(let offset=0;;offset+=500){const page=await request(`/rest/v1/products?select=${ADMIN_FIELDS}&order=created_at.desc,id.desc&limit=500&offset=${offset}`);rows.push(...page);if(page.length<500)break}items=rows;render()}
@@ -534,7 +548,7 @@ async function prepareMfaEnrollment(){
   if(source)qr.src=source;else qr.onerror();
   $('mfaSecret').textContent=factor.totp.secret;
   $('mfaInfo').textContent='Добавь этот QR-код в Google Authenticator, 1Password или другое приложение-аутентификатор. Если открываешь админку на этом же телефоне, добавь ключ ниже вручную и выбери код по времени. Затем введи шестизначный код из приложения — код из письма сюда не подходит. Сохрани доступ к аутентификатору.';
-  $('authArea').classList.remove('hidden');$('mfaSetup').classList.remove('hidden');$('mfaPanel').classList.remove('hidden');$('workspace').classList.add('hidden');status('');
+  showAuthStep('mfaPanel');$('mfaSetup').classList.remove('hidden');status('');
 }
 $('securityBtn').onclick=async()=>{
  if(!MFA_ENROLLMENT_ENABLED)return;
@@ -679,11 +693,64 @@ function shareAdminProduct(p){
 $('shareEditorProduct').onclick=()=>shareAdminProduct(original);
 $('previewCatalogue').onclick=()=>{const f=$('editor').elements;openCataloguePreview({original_price:f.original_price?.value||null,on_commission:f.on_commission?.checked===true,product_condition:f.product_condition?.value||'new',wear_condition:f.product_condition?.value==='pre_owned'?(f.wear_condition?.value||null):null,brand:editorBrand(f),name:f.name.value,size:f.size.value,price:f.price.value||null,currency:'EUR',available:f.available.checked,reserved:f.reserved.checked,fulfillment_status:f.fulfillment_status.value},photos[0]||pendingPreviews[0]?.src)};
 
+// Email-link credentials stay in memory until the verified identity is accepted.
+// Never persist an unfinished invitation or replace another account implicitly.
+function showEmailLinkProblem(message,renew=false){
+ showAuthStep('emailLink');$('emailLinkTitle').textContent='Не удалось открыть ссылку';
+ $('emailLinkMessage').textContent=message;$('emailLinkIdentity').textContent='';
+ $('acceptEmailLink').classList.add('hidden');$('retryEmailLink').classList.toggle('hidden',renew||!emailLinkState);
+ $('renewEmailLink').classList.toggle('hidden',!renew);status(message);
+}
+async function validateEmailLink(){
+ const link=emailLinkState;if(!link||busy)return;busy=true;
+ showAuthStep('emailLink');$('emailLinkTitle').textContent=link.type==='invite'?'Проверяем приглашение…':'Проверяем ссылку…';
+ $('emailLinkMessage').textContent='Подтверждаем аккаунт из письма.';$('emailLinkIdentity').textContent='';
+ for(const id of ['acceptEmailLink','retryEmailLink','renewEmailLink'])$(id).classList.add('hidden');status('');
+ try{
+  const user=await fetchJSON('/auth/v1/user',{},link.access_token);if(emailLinkState!==link)return;
+  if(!user?.id||!user.email)throw Error('Не удалось проверить аккаунт ссылки.');
+  const previous=session||readSavedAdminSession()?.session;
+  if(previous&&previous.user.id!==user.id){clearEmailLink();showEmailLinkProblem('Ссылка относится к другому аккаунту. Сначала выйдите из текущего аккаунта.');return}
+  link.user=user;$('emailLinkTitle').textContent=link.type==='invite'?'Приглашение в магазин':'Восстановление доступа';
+  $('emailLinkIdentity').textContent=user.email;
+  $('emailLinkMessage').textContent=link.type==='invite'?'Продолжи, если это твоя почта. Создадим пароль и настроим защиту входа.':'Продолжи, если это твоя почта, чтобы установить новый пароль.';
+  $('acceptEmailLink').textContent=link.type==='invite'?'Принять приглашение':'Продолжить';$('acceptEmailLink').classList.remove('hidden');
+ }catch(error){if(emailLinkState===link){const expired=[400,401,403].includes(error.httpStatus);if(expired)clearEmailLink();showEmailLinkProblem(expired?'Ссылка уже использована или срок действия истёк. Получи новую ссылку на почту.':'Не удалось проверить ссылку. Проверь соединение и повтори попытку.',expired)}}
+ finally{busy=false}
+}
+async function acceptEmailLink(){
+ const link=emailLinkState;if(!link?.user||busy)return;busy=true;$('acceptEmailLink').disabled=true;status('');
+ try{
+  const previous=session||readSavedAdminSession()?.session;
+  if(!link.adopted&&previous&&previous.user.id!==link.user.id)throw Error('Ссылка относится к другому аккаунту. Сначала выйдите из текущего аккаунта.');
+  if(!link.adopted){recovering=true;emailFlowType=link.type;keepSession({access_token:link.access_token,refresh_token:link.refresh_token,expires_at:link.expires_at,user:link.user},true);link.adopted=true}
+  await enterWorkspace();clearEmailLink();
+ }catch(error){if(emailLinkState===link)showEmailLinkProblem('Не удалось продолжить: '+error.message);else status(error.message)}
+ finally{busy=false;$('acceptEmailLink').disabled=false}
+}
+$('acceptEmailLink').onclick=acceptEmailLink;
+$('retryEmailLink').onclick=()=>emailLinkState?.adopted?acceptEmailLink():validateEmailLink();
+$('cancelEmailLink').onclick=async()=>{if(busy)return;const adopted=emailLinkState?.adopted;clearEmailLink();if(adopted)endSession();else await restoreAdminSession();status('')};
+$('renewEmailLink').onsubmit=async e=>{
+ e.preventDefault();if(busy)return;const b=e.submitter,epoch=sessionEpoch;busy=true;b.disabled=true;
+ try{
+  await fetchJSON('/auth/v1/recover?redirect_to='+encodeURIComponent('https://admin.juliproz.com/admin.html'),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:e.target.email.value.trim()})});
+  if(epoch!==sessionEpoch)return;$('emailLinkTitle').textContent='Проверь почту';$('emailLinkMessage').textContent='Если аккаунт существует, новая ссылка отправлена. Открой последнее письмо, чтобы завершить настройку входа.';status('');
+ }catch(error){if(epoch===sessionEpoch)status(error.message)}finally{busy=false;b.disabled=false}
+};
 async function restoreAdminSession(){
  if(busy)return;
  clearLegacyAdminSession();
  const callback=new URLSearchParams(location.hash?.slice(1)||'');
- if(!['invite','recovery'].includes(callback.get('type'))||!callback.get('access_token')){
+ if(callback.has('access_token')||callback.has('refresh_token')||callback.has('error')||callback.has('error_code')||['invite','recovery'].includes(callback.get('type'))){
+  if(typeof history!=='undefined')history.replaceState(null,'',location.pathname+location.search);
+  clearEmailLink();
+  if(callback.has('error')||callback.has('error_code')||!['invite','recovery'].includes(callback.get('type'))||!callback.get('access_token')||!callback.get('refresh_token')){
+   showEmailLinkProblem('Ссылка уже использована, неполная или срок её действия истёк. Получи новую ссылку на почту.',true);return;
+  }
+  emailLinkState={type:callback.get('type'),access_token:callback.get('access_token'),refresh_token:callback.get('refresh_token'),expires_at:Date.now()/1000+(Number(callback.get('expires_in'))||3600)};
+  await validateEmailLink();return;
+ }
   const saved=readSavedAdminSession();
   if(!saved){if(session)endSession();else{clearSavedAdminSession();restorePending=false;$('sessionRestore').classList.add('hidden');$('login').classList.remove('hidden')}return}
   busy=true;restorePending=true;status('');
@@ -697,18 +764,6 @@ async function restoreAdminSession(){
   }
   finally{busy=false}
   return;
- }
- $('sessionRestore').classList.add('hidden');$('login').classList.remove('hidden');
- const access=callback.get('access_token'),refresh=callback.get('refresh_token'),previous=session||readSavedAdminSession()?.session;
- if(typeof history!=='undefined')history.replaceState(null,'',location.pathname+location.search);
- try{
-  if(!refresh)throw Error('Ссылка не содержит сессию. Запросите новую ссылку.');
-  const user=await fetchJSON('/auth/v1/user',{},access);
-  if(!user?.id||!user.email)throw Error('Не удалось проверить аккаунт ссылки.');
-  if(previous&&previous.user.id!==user.id)throw Error('Ссылка относится к другому аккаунту. Сначала выйдите из текущего аккаунта.');
-  if(typeof confirm!=='function'||!confirm(`Открыть приглашение или восстановление для ${user.email}? Продолжайте, только если это ваш аккаунт.`))return;
-  clearSavedAdminSession();recovering=true;keepSession({access_token:access,refresh_token:refresh,user,expires_in:Number(callback.get('expires_in'))||3600},true);await enterWorkspace();
- }catch(error){if(!previous)endSession();status('Не удалось завершить подтверждение: '+error.message)}
 }
 $('retrySessionRestore').onclick=()=>restoreAdminSession();
 $('cancelSessionRestore').onclick=()=>{if(!busy){endSession();status('')}};

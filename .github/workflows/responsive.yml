@@ -26,6 +26,7 @@ jobs:
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" QA_OUTPUT="$RUNNER_TEMP/jp-qa" node tests/site-language.browser.cjs
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" QA_OUTPUT="$RUNNER_TEMP/jp-qa" node tests/catalog-notice.browser.cjs
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" node tests/product-sharing.browser.cjs
+      - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" node tests/admin-invitation.browser.cjs
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" node tests/admin-mfa.browser.cjs
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" node tests/admin-session.browser.cjs
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" node tests/admin-reload.browser.cjs
