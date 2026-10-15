@@ -27,8 +27,8 @@ let adminSecurity={paused:false,pending:false};
 const mfaPaused=()=>adminSecurity.paused===true;
 const MFA_ENROLLMENT_ENABLED=window.STORE_CONFIG.mfaEnrollmentEnabled===true;
 const $=id=>document.getElementById(id);
-const ADMIN_SESSION_KEY='jpAdminReloadSessionV1';
-let rememberAdminSession=false,restorePending=false;
+const ADMIN_SESSION_KEY='jpAdminSession30dV1';
+let rememberAdminSession=false,restorePending=false,persistedAdminSession=false,persistedRefreshToken=null;
 let session=null,items=[],editing=null,photos=[],busy=false;
 function stockSummary(rows){const stock=rows.filter(p=>p.available&&p.fulfillment_status!=='on_order');let total=0,unpriced=0,unconverted=0,count=0;for(const p of stock){const units=typeof ProductSizes!=='undefined'?ProductSizes.stockUnits(p):1;count+=units;if(!units)continue;if(window.ProductPricing.amount(p.price,p.currency)==null){unpriced++;continue}if(!['EUR','€'].includes(p.currency||'EUR')){unconverted++;continue}total+=window.ProductPricing.amount(p.price,p.currency)*units}return {count,total,unpriced,unconverted}}
 function setStockNumber(id,value,animate=false){
@@ -45,19 +45,33 @@ function setStockNumber(id,value,animate=false){
 }
 function updateStockSummary(animate=!$('workspace').classList.contains('hidden')){const s=stockSummary(items);setStockNumber('stockTotal',String(items.length),animate);setStockNumber('stockCount',String(s.count),animate);setStockNumber('stockValue',(s.unconverted?'от ':'')+new Intl.NumberFormat('ru-RU',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(s.total),animate);$('stockValueNote').textContent=[s.unpriced?'Без цены: '+s.unpriced:'',s.unconverted?'Требуют проверки цены: '+s.unconverted:''].filter(Boolean).join(' · ')}
 
-// Only completed logins survive a reload in this tab. Server access checks still run.
-function clearLegacyAdminSession(){try{localStorage.removeItem('jpAdminSessionV1')}catch{}try{sessionStorage.removeItem('jpAdminSessionV1')}catch{}}
+// Only completed logins persist. Server membership, MFA and session checks still run.
+function clearLegacyAdminSession(){for(const key of ['jpAdminSessionV1','jpAdminReloadSessionV1']){try{localStorage.removeItem(key)}catch{}try{sessionStorage.removeItem(key)}catch{}}}
 function readSavedAdminSession(){
- try{const saved=JSON.parse(sessionStorage.getItem(ADMIN_SESSION_KEY)||'null'),s=saved?.session,t=Date.now(),limits=saved?.limits;
+ let raw;try{raw=localStorage.getItem(ADMIN_SESSION_KEY)}catch{return undefined}
+ try{const saved=JSON.parse(raw||'null'),s=saved?.session,t=Date.now(),limits=saved?.limits;
   if(!s||typeof s.access_token!=='string'||!s.access_token||typeof s.refresh_token!=='string'||!s.refresh_token||typeof s.user?.id!=='string'||!s.user.id||!Number.isFinite(s.expires_at)||!limits||![limits.absolute,limits.idle].every(Number.isFinite)||limits.absolute<=t||limits.absolute>t+window.AdminSessionClock.MAX||limits.idle<=t||limits.idle>t+window.AdminSessionClock.IDLE||limits.idle>limits.absolute)return null;
   return saved;
  }catch{return null}
 }
-function clearSavedAdminSession(){clearLegacyAdminSession();try{sessionStorage.removeItem(ADMIN_SESSION_KEY)}catch{}}
+function clearSavedAdminSession(){clearLegacyAdminSession();try{localStorage.removeItem(ADMIN_SESSION_KEY)}catch{}persistedAdminSession=false;persistedRefreshToken=null}
+function adminSessionId(s){try{return JSON.parse(atob(s.access_token.split('.')[1].replace(/-/g,'+').replace(/_/g,'/'))).session_id||null}catch{return null}}
+function syncSavedAdminSession(){
+ if(!session||!rememberAdminSession||!persistedAdminSession)return;
+ const saved=readSavedAdminSession();if(saved===undefined)return;
+ if(!saved||saved.session.user.id!==session.user.id||adminSessionId(saved.session)!==adminSessionId(session)){
+  endSession(false);throw Error('Вход завершён или изменён в другой вкладке. Войди заново.');
+ }
+ if(saved.session.refresh_token!==persistedRefreshToken){
+  session={...saved.session,user:session.user};persistedRefreshToken=saved.session.refresh_token;
+  const limits=sessionClock.snapshot();sessionClock.start({absolute:Math.min(limits.absolute,saved.limits.absolute),idle:Math.min(limits.idle,saved.limits.idle)});
+ }
+}
 function saveAdminSession(){
  if(!session||!rememberAdminSession||recovering||sessionClock.state().expired)return false;
+ syncSavedAdminSession();
  const {access_token,refresh_token,expires_at,user}=session;
- try{sessionStorage.setItem(ADMIN_SESSION_KEY,JSON.stringify({session:{access_token,refresh_token,expires_at,user:{id:user.id}},limits:sessionClock.snapshot()}));return true}catch{return false}
+ try{localStorage.setItem(ADMIN_SESSION_KEY,JSON.stringify({session:{access_token,refresh_token,expires_at,user:{id:user.id}},limits:sessionClock.snapshot()}));persistedAdminSession=true;persistedRefreshToken=refresh_token;return true}catch{return false}
 }
 
 
@@ -79,7 +93,7 @@ function expireAdminSession(){
 function checkAdminSession(){
  const state=sessionClock.state();
  if(session&&state.expired){expireAdminSession();return false}
- const banner=$('sessionWarning');if(banner){banner.classList.toggle('hidden',!session||!state.warning);if(session&&state.warning){$('sessionWarningText').textContent=state.absolute?'Скоро закончится 12-часовой срок входа. Сохрани изменения и войди заново.':'Скоро завершим вход из-за бездействия. Нажми «Продолжить работу», чтобы остаться.';$('continueSession').classList.toggle('hidden',state.absolute)}}
+ const banner=$('sessionWarning');if(banner){banner.classList.toggle('hidden',!session||!state.warning);if(session&&state.warning){$('sessionWarningText').textContent='Скоро закончится 30-дневный срок входа. Сохрани изменения и войди заново.';$('continueSession').classList.add('hidden')}}
  return true;
 }
 async function touchAdminSession(force=false){
@@ -110,9 +124,9 @@ function clearMfa(){
  $('mfaPanel').classList.add('hidden');$('mfaSetup').classList.add('hidden');$('mfaChoice').classList.add('hidden');
  $('mfaVerify').reset();$('mfaQr').onload=null;$('mfaQr').onerror=null;$('mfaQr').removeAttribute?.('src');$('mfaQr').classList.add('hidden');$('mfaQrError').classList.add('hidden');$('mfaSecret').textContent='';$('mfaFactor').innerHTML='';
 }
-function endSession(){
+function endSession(clearSaved=true){
  sessionClock.clear();rememberAdminSession=false;restorePending=false;activityPromise=null;$('sessionWarning').classList.add('hidden');$('photoStudio').close?.();
- clearSavedAdminSession();window.ProductSharing?.close();window.AdminWorkspace?.clear();window.AdminSales?.clear();clearInternalFields();
+ if(clearSaved)clearSavedAdminSession();persistedAdminSession=false;persistedRefreshToken=null;window.ProductSharing?.close();window.AdminWorkspace?.clear();window.AdminSales?.clear();clearInternalFields();
  internalNoteState=null;if($('editor').elements?.internal_note)$('editor').elements.internal_note.value='';pendingCover=false;window.PhotoStudio?.cancel();adminSecurity={paused:false};session=null;sessionEpoch++;previewEpoch++;items=[];photos=[];editing=null;original=null;creationKey=null;recovering=false;
  for(const id of ['stockTotal','stockCount','stockValue'])$(id).textContent='—';$('stockValueNote').textContent='';stagedUploads.clear();clearMfa();$('authArea').classList.remove('hidden');pendingPreviews=[];editorDirty=false;activeView='all';$('settingsPanel').classList.add('hidden');clearOverview();$('adminHome').classList.add('hidden');$('homePanel').classList.add('hidden');$('cataloguePreview').close?.();$('cataloguePreviewCard').innerHTML='';productWishlistCounts=null;productWishlistLoadedAt=0;$('analyticsPanel').classList.add('hidden');$('analyticsCards').innerHTML='';$('analyticsProducts').innerHTML='';$('retentionStatus').textContent='';analyticsData=null;analyticsChartMetric='visitors';$('analyticsChart').innerHTML='';
  for(const id of ['editor','login','confirmEmail','newPassword'])$(id).reset();
@@ -130,12 +144,15 @@ async function fetchJSON(path,options={},token){
 async function request(path,options={}){
  const publicAuth=/^\/auth\/v1\/(token|recover|verify)/.test(path);
  if(publicAuth)return fetchJSON(path,options);
+ syncSavedAdminSession();
  const epoch=sessionEpoch;
  if(!session||!checkAdminSession())throw Error('Сессия завершена. Войди заново.');
  if(session.expires_at<Date.now()/1000+60){
   if(!refreshPromise){
    const refresh=async()=>{
     if(epoch!==sessionEpoch||!session)throw Error('Сессия завершена.');
+    // Another tab may have rotated the token while this tab waited for the lock.
+    syncSavedAdminSession();if(session.expires_at>=Date.now()/1000+60)return;
     const current=session,data=await fetchJSON('/auth/v1/token?grant_type=refresh_token',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({refresh_token:current.refresh_token})});
     if(epoch!==sessionEpoch)throw Error('Сессия завершена.');keepSession(data);
    };
@@ -635,9 +652,9 @@ async function restoreAdminSession(){
   $('authArea').classList.remove('hidden');$('workspace').classList.add('hidden');$('login').classList.add('hidden');$('sessionRestore').classList.remove('hidden');
   $('sessionRestoreMessage').textContent='Проверяем сохранённую сессию.';
   $('retrySessionRestore').classList.add('hidden');$('cancelSessionRestore').classList.add('hidden');
-  try{sessionClock.start(saved.limits);session=saved.session;rememberAdminSession=true;await enterWorkspace();restorePending=false;$('sessionRestore').classList.add('hidden')}
+  try{sessionClock.start(saved.limits);session=saved.session;rememberAdminSession=true;persistedAdminSession=true;persistedRefreshToken=session.refresh_token;await enterWorkspace();restorePending=false;$('sessionRestore').classList.add('hidden')}
   catch(error){
-   if([400,401,403].includes(error.httpStatus)||!session||!checkAdminSession()){endSession();status('Не удалось восстановить вход: '+error.message)}
+   if([400,401,403].includes(error.httpStatus)||!session||!checkAdminSession()){if(session)endSession();status('Не удалось восстановить вход: '+error.message)}
    else{$('sessionRestoreMessage').textContent='Не удалось загрузить админку. Вход сохранён — проверь соединение и повтори попытку.';$('retrySessionRestore').classList.remove('hidden');$('cancelSessionRestore').classList.remove('hidden');status('Не удалось восстановить вход: '+error.message)}
   }
   finally{busy=false}
@@ -661,4 +678,4 @@ window.addEventListener('online',()=>{if(restorePending&&!busy)restoreAdminSessi
 const adminSessionReady=restoreAdminSession();
 $('checkPendingAccess').onclick=async()=>{if(busy||!session)return;busy=true;try{await enterWorkspace()}catch(e){status(e.message)}finally{busy=false}};
 
-window.addEventListener('storage',e=>{if(e.key===ADMIN_SESSION_KEY&&e.newValue===null&&session){endSession();status('Вход завершён в другой вкладке.')}});
+window.addEventListener('storage',e=>{if((e.key===ADMIN_SESSION_KEY||e.key===null)&&session&&rememberAdminSession){try{syncSavedAdminSession()}catch(error){status(error.message)}}});

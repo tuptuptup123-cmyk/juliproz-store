@@ -18,7 +18,7 @@ const server=http.createServer((req,res)=>{const file=path.resolve(root,'.'+new 
    if(url.pathname.endsWith('touch_store_admin_session')){
     if(touchGate)await touchGate;
     if(touchFailure)return route.fulfill({status:touchFailure,json:{message:'Synthetic service unavailable'}});
-    const now=Date.now();return route.fulfill({json:{server_now:new Date(now).toISOString(),expires_at:new Date(sessionStart+43200000).toISOString(),idle_expires_at:new Date(now+1800000).toISOString()}});
+    const now=Date.now();return route.fulfill({json:{server_now:new Date(now).toISOString(),expires_at:new Date(sessionStart+2592000000).toISOString(),idle_expires_at:new Date(sessionStart+2592000000).toISOString()}});
    }
    if(url.pathname.endsWith('store_admin_security_status'))return route.fulfill({json:{paused:false,access_role:'owner'}});
    if(url.pathname==='/rest/v1/store_admins')return route.fulfill({json:[{user_id:user.id}]});
@@ -30,16 +30,16 @@ const server=http.createServer((req,res)=>{const file=path.resolve(root,'.'+new 
   await page.locator('#mfaPanel').waitFor();assert.equal(await page.locator('#workspace').isHidden(),true);
   await page.locator('#mfaVerify [name=code]').fill('123456');await page.locator('#mfaVerify button[type=submit]').click();await page.locator('#workspace').waitFor();await page.waitForFunction(()=>!busy);
   const deadline=await page.evaluate(()=>sessionClock.snapshot().absolute);
-  assert.equal(await page.evaluate(()=>JSON.parse(sessionStorage.getItem('jpAdminReloadSessionV1')).session.refresh_token),'synthetic-aal2-refresh');
+  assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('jpAdminSession30dV1')).session.refresh_token),'synthetic-aal2-refresh');
   let release;touchGate=new Promise(resolve=>release=resolve);
   await page.reload();await page.locator('#sessionRestore').waitFor();assert.equal(await page.locator('#login').isHidden(),true);assert.equal(await page.locator('#workspace').isHidden(),true);
   release();touchGate=null;await page.locator('#workspace').waitFor();
   for(let i=0;i<2;i++){await page.waitForFunction(()=>!busy&&!overviewBusy);await page.reload();await page.locator('#workspace').waitFor();assert.ok(await page.evaluate(deadline=>{const value=sessionClock.snapshot().absolute;return value<=deadline&&value>deadline-2000},deadline),'reload cannot extend the session deadline');assert.equal(await page.locator('#mfaPanel').isHidden(),true)}
   touchFailure=503;await page.waitForFunction(()=>!busy&&!overviewBusy);await page.reload();await page.locator('#retrySessionRestore').waitFor();
-  assert.equal(await page.locator('#login').isHidden(),true);assert.equal(await page.locator('#workspace').isHidden(),true);assert.ok(await page.evaluate(()=>sessionStorage.getItem('jpAdminReloadSessionV1')));
+  assert.equal(await page.locator('#login').isHidden(),true);assert.equal(await page.locator('#workspace').isHidden(),true);assert.ok(await page.evaluate(()=>localStorage.getItem('jpAdminSession30dV1')));
   touchFailure=0;await page.locator('#retrySessionRestore').click();await page.locator('#workspace').waitFor();
   assert.equal(passwordLogins,1);assert.equal(verifications,1);assert.ok(await page.evaluate(deadline=>{const value=sessionClock.snapshot().absolute;return value<=deadline&&value>deadline-2000},deadline),'reload cannot extend the session deadline');
-  touchFailure=403;await page.waitForFunction(()=>!busy&&!overviewBusy);await page.reload();await page.locator('#login').waitFor();assert.equal(await page.locator('#sessionRestore').isHidden(),true);assert.equal(await page.evaluate(()=>sessionStorage.getItem('jpAdminReloadSessionV1')),null);
+  touchFailure=403;await page.waitForFunction(()=>!busy&&!overviewBusy);await page.reload();await page.locator('#login').waitFor();assert.equal(await page.locator('#sessionRestore').isHidden(),true);assert.equal(await page.evaluate(()=>localStorage.getItem('jpAdminSession30dV1')),null);
   assert.deepEqual(errors,[]);
   console.log('PASS password → MFA → repeated reload; no login flash while restoring; 503 → retry without credentials; revoked access clears session');
  }finally{await browser.close();server.close()}
