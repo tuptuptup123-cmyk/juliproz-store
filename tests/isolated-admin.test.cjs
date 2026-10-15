@@ -20,6 +20,16 @@ test('isolated admin build includes its dependencies but excludes public scripts
     assert.equal(fs.existsSync(path.join(out, name)), false, `Unexpected public asset: ${name}`);
   }
   assert.doesNotMatch(html, /telegram\.org|_vercel\/|src="app\.js/);
+  const crypto = require('node:crypto');
+  for (const [, asset, hash] of html.matchAll(/(?:src|href)="(assets\/([a-f0-9]{16})\/[^\"]+)"/g)) {
+    const contents = fs.readFileSync(path.join(out, asset));
+    assert.equal(crypto.createHash('sha256').update(contents).digest('hex').slice(0, 16), hash);
+    if (asset.endsWith('.css')) for (const [, font] of contents.toString().matchAll(/url\(\/(assets\/[^)]+)\)/g)) {
+      assert.ok(fs.existsSync(path.join(out, font)), `Missing hashed font: ${font}`);
+    }
+  }
+  assert.match(html, /src="assets\/[a-f0-9]{16}\/admin\.js"/);
+  assert.doesNotMatch(html, /(?:src|href)="[a-z-]+\.(?:js|css)(?:\?|\")/);
 });
 
 test('isolated origin applies admin security headers to every path and does not configure the bot', () => {
@@ -31,4 +41,6 @@ test('isolated origin applies admin security headers to every path and does not 
   assert.match(headers['Content-Security-Policy'], /script-src 'self';/);
   assert.doesNotMatch(headers['Content-Security-Policy'], /telegram\.org|unsafe-eval/);
   assert.doesNotMatch(config.buildCommand, /configure-telegram|build-public/);
+  const cached = config.headers.filter(rule => rule.headers.some(h => h.key === 'Cache-Control' && h.value.includes('immutable')));
+  assert.deepEqual(cached.map(rule => rule.source), ['/assets/(.*)']);
 });
