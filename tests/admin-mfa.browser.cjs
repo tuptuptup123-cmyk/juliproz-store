@@ -36,7 +36,7 @@ const secret='JBSWY3DPEHPK3PXP'; // public, synthetic fixture
    });
    await page.goto(origin+'/admin.html');
    await page.locator('#login [name=email]').fill('invitee@example.invalid');await page.locator('#login [name=password]').fill('synthetic-password');await page.locator('#login button[type=submit]').click();
-   await page.locator('#mfaPanel').waitFor();assert.equal(await page.locator('#mfaSecret').textContent(),secret);
+   await page.locator('#mfaPanel').waitFor();assert.equal(await page.locator('#login').isHidden(),true);assert.equal(await page.locator('#mfaSecret').textContent(),secret);
    if(kind==='supabase-xml'||kind==='bare-svg'){
     await page.waitForFunction(()=>{const img=document.getElementById('mfaQr');return img.complete&&img.naturalWidth===220&&!img.classList.contains('hidden')});
     assert.equal(await page.locator('#mfaQrError').isHidden(),true);
