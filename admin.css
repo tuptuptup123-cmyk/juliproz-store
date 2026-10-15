@@ -250,7 +250,7 @@ body.reduce-motion .loading-signature{animation:none;transform:none;opacity:1}
 .analytics-toolbar label{width:130px}
 .analytics-toolbar .admin-select-trigger{min-height:44px;border-radius:10px;font-size:12px}
 .analytics-toolbar>button{font-size:12px}
-#analyticsStatus{margin:-10px 0 18px;min-height:18px}
+#analyticsStatus{margin:8px 0 18px;min-height:18px}
 #analyticsPanel .stats-grid{grid-template-columns:repeat(6,minmax(0,1fr));gap:0;margin-bottom:20px;border:1px solid var(--line);border-radius:14px;overflow:hidden}
 #analyticsPanel .stat{padding:18px;border:0;border-right:1px solid var(--line);border-radius:0}
 #analyticsPanel .stat:last-child{border:0}
@@ -338,3 +338,10 @@ body.reduce-motion .loading-signature{animation:none;transform:none;opacity:1}
 @media(max-width:700px){.analytics-line-chart text{font-size:20px}.analytics-line-chart{height:160px}}
 
 .session-warning{position:fixed;z-index:2000;bottom:16px;left:16px;right:16px;max-width:720px;margin:auto;padding:16px 20px;background:#fff5df;color:#3b3025;border:1px solid #cfae72;border-radius:14px;box-shadow:0 8px 30px #0002;display:flex;align-items:center;gap:16px;font-size:14px}.session-warning button{flex-shrink:0}.session-warning.hidden{display:none}@media(max-width:600px){.session-warning{flex-direction:column;align-items:stretch}}
+
+/* One admin, separate storefront reports. */
+.analytics-channel-tabs{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px}
+.analytics-channel-tabs button{min-height:44px;padding:10px 18px;border:1px solid #e6dfe3;border-radius:12px;background:#fff;color:#554c50;font:inherit;cursor:pointer}
+.analytics-channel-tabs button[aria-pressed=true]{background:#f1e4ec;border-color:#d7b9ca;color:#282026}
+.analytics-channel-tabs button:focus-visible{outline:2px solid #7b4d61;outline-offset:3px}
+.analytics-channel-tabs button:disabled{cursor:wait;opacity:.65}
