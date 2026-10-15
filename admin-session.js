@@ -1,6 +1,7 @@
 (function(root){
  'use strict';
- const IDLE=30*60*1000,MAX=12*60*60*1000,WARNING=2*60*1000;
+ // One fixed lifetime from sign-in; inactivity never shortens or extends it.
+ const MAX=30*24*60*60*1000,IDLE=MAX,WARNING=2*60*1000;
  function create(now=()=>Date.now()){
   let started=false,absolute=0,idle=0,dirty=false,dirtyAt=0,lastSent=0;
   return {
