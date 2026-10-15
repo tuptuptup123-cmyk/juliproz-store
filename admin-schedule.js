@@ -79,7 +79,7 @@
   finally{mutating=false;button.disabled=false;}
  }
  function onView(view){hide();if(view==='schedule'){$('schedulePanel').classList.remove('hidden');load();}}
- $('scheduleCalendar').onclick=e=>{const b=e.target.closest('[data-schedule-day]');if(!b||mutating||!mayDiscard())return;selected=b.dataset.scheduleDay;dirty=false;renderCalendar();renderDay();};
+ $('scheduleCalendar').onclick=e=>{const b=e.target.closest('[data-schedule-day]');if(!b||mutating||!mayDiscard())return;selected=b.dataset.scheduleDay;dirty=false;renderCalendar();renderDay();$('scheduleDayTitle').focus({preventScroll:true});$('scheduleDayTitle').scrollIntoView({behavior:'auto',block:'start'});};
  for(const [id,delta] of [['schedulePrevious',-1],['scheduleNext',1]])$(id).onclick=()=>{if(loading||mutating||!mayDiscard())return;month=shiftMonth(month||monthOf(new Date().toISOString().slice(0,10)),delta);selected=null;load()};
  $('scheduleGoToday').onclick=()=>{if(mutating||!mayDiscard())return;month=null;selected=null;load()};
  $('scheduleRefresh').onclick=()=>{if(mayDiscard())load()};
