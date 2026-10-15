@@ -11,10 +11,10 @@
  const today=()=>new Intl.DateTimeFormat('sv-SE',{timeZone:'Europe/Kyiv',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
  const states={active:'В работе',completed:'Завершено',cancelled:'Отменено',linked:'Связано с продажей'};
  const financial=['received','purchase_cost','expenses','owner_due','owner_paid'];
- let group='all',rows=[],commissionRows=[],cursor=null,commissionCursor=null,generation=0,reportRequest=0,portfolioRequest=0,choiceRequest=0,historyRequest=0,reportBusy=false,portfolioBusy=false,draft=null,termsDraft=null,linkDraft=null,choices=[];
+ let reportFilterKey=null,group='all',rows=[],commissionRows=[],cursor=null,commissionCursor=null,generation=0,reportRequest=0,portfolioRequest=0,choiceRequest=0,historyRequest=0,reportBusy=false,portfolioBusy=false,draft=null,termsDraft=null,linkDraft=null,choices=[];
  function resetPeriod(){const t=today(),f=$('financeFilters').elements;f.from.value=t.slice(0,7)+'-01';f.to.value=t}
  function hide(){generation++;reportRequest++;portfolioRequest++;reportBusy=false;portfolioBusy=false;$('financePanel').classList.add('hidden');$('statisticsNavigation').classList.add('hidden')}
- function clear(){hide();draft=null;termsDraft=null;linkDraft=null;choices=[];rows=[];commissionRows=[];cursor=null;commissionCursor=null;choiceRequest++;historyRequest++;group='all';resetPeriod();
+ function clear(){hide();draft=null;termsDraft=null;linkDraft=null;choices=[];rows=[];commissionRows=[];cursor=null;commissionCursor=null;choiceRequest++;historyRequest++;group='all';reportFilterKey=null;resetPeriod();
   for(const id of ['financeDialog','commissionDialog','financeLinkDialog'])$(id).close();
   for(const id of ['financeForm','commissionForm','financeLinkForm'])$(id).reset();
   for(const id of ['financeSummary','financeList','financeCoverage','financeStatus','commissionList','commissionSummary','financeSource','financeCalculation','financeError','financeHistory','commissionProduct','commissionError','financeLinkOrder','financeLinkError','financeSaleChoice'])$(id).textContent='';
@@ -38,8 +38,9 @@
   if(!session||!adminSecurity.owner||more&&reportBusy)return;
   const f=$('financeFilters').elements,from=f.from.value,to=f.to.value;
   if(!from||!to||from>to){$('financeStatus').textContent='Укажите период: начало должно быть не позже окончания.';return}
+  const filterKey=JSON.stringify([from,to,group]);if(more&&filterKey!==reportFilterKey)return loadReport(false);
   const id=++reportRequest,epoch=sessionEpoch,gen=generation;reportBusy=true;$('financeMore').disabled=true;$('financeStatus').textContent='Загружаем финансовый отчёт…';
-  if(!more){rows=[];cursor=null;$('financeList').innerHTML='';$('financeSummary').innerHTML='';$('financeCoverage').textContent='';$('financeMore').classList.add('hidden')}
+  if(!more){reportFilterKey=filterKey;rows=[];cursor=null;$('financeList').innerHTML='';$('financeSummary').innerHTML='';$('financeCoverage').textContent='';$('financeMore').classList.add('hidden')}
   try{const data=await rpc('store_finance_report',{p_from:from,p_to:to,p_group:group,p_before:more?cursor:null});if(id!==reportRequest||epoch!==sessionEpoch||gen!==generation)return;
    if(!data?.summary||!Array.isArray(data.rows))throw Error('Некорректный ответ сервера');
    const page=data.rows.slice(0,30);rows=more?rows.concat(page.filter(e=>!rows.some(old=>old.id===e.id))):page;cursor=page.at(-1)?.id||null;cards(data.summary);renderRows();$('financeMore').classList.toggle('hidden',data.rows.length<=30);
