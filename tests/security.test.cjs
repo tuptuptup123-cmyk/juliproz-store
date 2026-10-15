@@ -194,6 +194,24 @@ test('reload refreshes rotated credentials, rejects revoked access, and preserve
   else{assert.equal(reopened.get('workspace').classList.contains('hidden'),false);assert.equal(JSON.parse(tab.getItem(reloadKey)).session.refresh_token,'rotated-refresh')}
  }
 });
+test('slow restore hides password form and transient failure can retry without another login',async()=>{
+ const tab=tabStorage(),a=api({factors:[factor]}),h=setup(a.fetch,true,tab,tabStorage());
+ h.seed(session('aal2',[factor]));await h.run('enterWorkspace()');
+ const deadline=JSON.parse(tab.getItem(reloadKey)).limits.absolute;let release,offline=true;
+ const gate=new Promise(resolve=>release=resolve);
+ const reopened=setup(async(path,options)=>{await gate;if(offline)throw TypeError('offline');return a.fetch(path,options)},true,tab,tabStorage());
+ assert.equal(reopened.get('login').classList.contains('hidden'),true,'do not display login during restoration');
+ assert.equal(reopened.get('workspace').classList.contains('hidden'),true);
+ release();await reopened.run('adminSessionReady');
+ assert.equal(reopened.get('login').classList.contains('hidden'),true,'network failure is not a logout');
+ assert.equal(reopened.get('sessionRestore').classList.contains('hidden'),false);
+ assert.ok(tab.getItem(reloadKey));offline=false;
+ await reopened.get('retrySessionRestore').onclick();
+ assert.equal(reopened.get('workspace').classList.contains('hidden'),false);
+ assert.equal(reopened.get('sessionRestore').classList.contains('hidden'),true);
+ assert.equal(reopened.run('sessionClock.snapshot().absolute'),deadline);
+ assert.equal(a.calls.some(c=>c.path.includes('grant_type=password')),false);
+});
 test('storage denial leaves ordinary login usable and pending access is not persisted',async()=>{
  const denied={getItem(){throw Error('denied')},setItem(){throw Error('denied')},removeItem(){throw Error('denied')}};
  const a=api({factors:[factor]}),h=setup(a.fetch,true,denied,denied);h.seed(session('aal2',[factor]));await h.run('enterWorkspace()');assert.equal(h.get('workspace').classList.contains('hidden'),false);
@@ -212,7 +230,7 @@ test('expired in-memory session refreshes once and still validates server identi
 test('successful login initializes home while loading blocks user navigation',async()=>{
  const a=api({paused:true}),h=setup(a.fetch);h.seed(session());
  h.run("busy=true;selectView('settings')");assert.equal(h.run('activeView'),'all');
- await h.run('enterWorkspace()');assert.equal(h.run('activeView'),'home');assert.equal(h.get('homePanel').classList.contains('hidden'),false);assert.equal(h.get('inventoryPanel').classList.contains('hidden'),true);
+ await h.run('enterWorkspace()');assert.equal(h.run('activeView'),'all');assert.equal(h.get('homePanel').classList.contains('hidden'),false);assert.equal(h.get('inventoryPanel').classList.contains('hidden'),false);
 });
 test('cancelled card switch preserves the pending cover and photo studio',()=>{
  const h=setup(async()=>response([]));h.run("editorDirty=true;pendingCover=true;confirm=()=>false;window.PhotoStudio={close(){throw Error('Must stay open')}};edit(null)");assert.equal(h.run('pendingCover'),true);assert.equal(h.run('editorDirty'),true);
