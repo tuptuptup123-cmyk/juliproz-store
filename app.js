@@ -87,7 +87,8 @@ const managerOpenTimes=new Map();
 function openManager(text=''){
   const url=window.SiteLanguage?.managerLink?window.SiteLanguage.managerLink(text,{inTelegram:isTelegramStore()}):'https://t.me/juliproz'+(text?'?text='+encodeURIComponent(text):'');
   if(Date.now()-(managerOpenTimes.get(url)??-Infinity)<5000)return false;
-  if(isTelegramStore()&&window.Telegram?.WebApp?.openTelegramLink) Telegram.WebApp.openTelegramLink(url);else window.open(url,"_blank","noopener");managerOpenTimes.set(url,Date.now());if(managerOpenTimes.size>50)managerOpenTimes.delete(managerOpenTimes.keys().next().value);return true;}
+  // Same-tab WhatsApp navigation survives the awaited stock check on mobile browsers.
+  if(isTelegramStore()&&window.Telegram?.WebApp?.openTelegramLink) Telegram.WebApp.openTelegramLink(url);else window.open(url,url.startsWith('https://wa.me/')?"_self":"_blank","noopener");managerOpenTimes.set(url,Date.now());if(managerOpenTimes.size>50)managerOpenTimes.delete(managerOpenTimes.keys().next().value);return true;}
 
 function shareSelectedProduct(){
   if(!selectedProduct)return;
