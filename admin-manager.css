@@ -25,11 +25,12 @@ body[data-manager-view=inventory] #newProduct,body[data-manager-view=editor] #ne
 #adminSidebar .manager-menu-panel .nav-item:hover,#productNavigation .manager-menu-panel .nav-child:hover{background:#faf5f8}
 #adminSidebar .manager-menu-panel .logout{border-top:1px solid var(--line);border-radius:0;margin-top:4px}
 .workspace-main{max-width:1760px;padding:22px 42px 40px}
-#homePanel.activity-bar{flex-wrap:nowrap;gap:22px;padding:5px 16px;margin:0 0 26px;min-height:48px;border:1px solid var(--line);border-radius:9px;background:linear-gradient(100deg,#fcfafc,#fff)}
-.activity-label{display:flex;align-items:center;gap:16px;flex:0 0 auto}
+#homePanel.activity-bar{flex-wrap:nowrap;gap:24px;width:fit-content;max-width:100%;padding:5px 16px;margin:0 0 18px;min-height:48px;border:1px solid var(--line);border-radius:9px;background:linear-gradient(100deg,#fcfafc,#fff)}
+.activity-label{display:grid;gap:1px;flex:0 0 auto}
 .activity-label h2{font-size:12px}.activity-label>span{font-size:10px}
-.activity-metrics{display:flex;flex:1;order:0;justify-content:space-evenly;gap:20px;padding:0}
-.activity-metric{font-size:11px;gap:7px}.activity-metric strong{font-size:13px}
+.activity-metrics{display:flex;flex:0 0 auto;order:0;justify-content:flex-start;gap:0;padding:0 0 0 24px;border-left:1px solid var(--line)}
+.activity-metric{font-size:11px;gap:7px}.activity-metric strong{font-size:14px}
+.activity-metric+.activity-metric{margin-left:20px;padding-left:20px;border-left:1px solid var(--line)}
 .activity-details{order:0;min-height:36px;font-size:11px}
 .online-dot{background:#72966b;box-shadow:none}
 #inventoryPanel>.page-heading{gap:30px;margin:0 0 24px;align-items:center}
@@ -109,8 +110,8 @@ body[data-manager-view=inventory] #newProduct,body[data-manager-view=editor] #ne
 .editor-footer{border-radius:12px;bottom:14px;box-shadow:0 6px 25px #302b3210}
 .editor-footer button{border-radius:9px}.editor-footer #save{min-width:180px}
 @media(min-width:1500px){#inventory .product-thumb{height:240px}}
-@media(max-width:1150px){.unified-admin-header{padding:0 28px;gap:32px}.unified-admin-header #adminSidebar nav{gap:20px}.header-tools{gap:14px}.workspace-main{padding:20px 28px 36px}.activity-label>span{display:none}#homePanel.activity-bar{gap:16px}.home-work-plan{min-width:190px;max-width:220px}#inventoryPanel>.page-heading{gap:22px}#inventory .product-thumb{height:180px}#inventory .product-price{font-size:15px}#inventory .product-status{grid-column:1/-1;justify-self:start}.editor-grid{grid-template-columns:240px minmax(0,1fr)}}
-@media(max-width:900px){.unified-admin-header #adminSidebar .store-link{display:none}#currentAdminProfile{max-width:90px}.inventory-view-switch button{width:36px}.inventory-sort{width:165px}.activity-metrics{gap:12px}.activity-details{font-size:0}.activity-details::after{content:'↗';font-size:16px}.activity-label h2{font-size:11px}#inventory{grid-template-columns:repeat(3,minmax(0,1fr))}#inventoryPanel>.page-heading h1{font-size:32px}#topNewProduct{font-size:12px;padding:10px 16px}.home-work-plan{min-width:170px;max-width:200px}.editor-grid{grid-template-columns:200px minmax(0,1fr);gap:20px}.editor-sections>.form-card{padding:20px}.editor-sections .form-grid{grid-template-columns:1fr}.editor-sections .span-two{grid-column:auto}.editor-preview .preview-body{padding:14px}}
+@media(max-width:1150px){.unified-admin-header{padding:0 28px;gap:32px}.unified-admin-header #adminSidebar nav{gap:20px}.header-tools{gap:14px}.workspace-main{padding:20px 28px 36px}#homePanel.activity-bar{gap:16px}.activity-metrics{padding-left:16px}.activity-metric+.activity-metric{margin-left:16px;padding-left:16px}.home-work-plan{min-width:190px;max-width:220px}#inventoryPanel>.page-heading{gap:22px}#inventory .product-thumb{height:180px}#inventory .product-price{font-size:15px}#inventory .product-status{grid-column:1/-1;justify-self:start}.editor-grid{grid-template-columns:240px minmax(0,1fr)}}
+@media(max-width:900px){.unified-admin-header #adminSidebar .store-link{display:none}#currentAdminProfile{max-width:90px}.inventory-view-switch button{width:36px}.inventory-sort{width:165px}.activity-metrics{gap:0}.activity-metric+.activity-metric{margin-left:12px;padding-left:12px}.activity-details{font-size:0}.activity-details::after{content:'↗';font-size:16px}.activity-label h2{font-size:11px}#inventory{grid-template-columns:repeat(3,minmax(0,1fr))}#inventoryPanel>.page-heading h1{font-size:32px}#topNewProduct{font-size:12px;padding:10px 16px}.home-work-plan{min-width:170px;max-width:200px}.editor-grid{grid-template-columns:200px minmax(0,1fr);gap:20px}.editor-sections>.form-card{padding:20px}.editor-sections .form-grid{grid-template-columns:1fr}.editor-sections .span-two{grid-column:auto}.editor-preview .preview-body{padding:14px}}
 @media(max-width:700px){
  .unified-admin-header{position:relative;height:116px;min-height:116px;padding:10px 18px 48px;gap:0;align-items:center}
  .unified-admin-header #adminSidebar{position:static;flex:1}
@@ -123,7 +124,7 @@ body[data-manager-view=inventory] #newProduct,body[data-manager-view=editor] #ne
  .workspace-main{padding:14px 16px 30px}
  #homePanel.activity-bar{min-height:40px;gap:12px;padding:8px 10px;margin:0 0 20px;overflow-x:auto;scrollbar-width:none;align-items:center}
  .activity-label{flex:0 0 auto;display:block}.activity-label h2{font-size:10px;white-space:nowrap}.activity-label>span{display:block;font-size:8px}
- .activity-metrics{display:flex;flex:1 0 auto;gap:14px;justify-content:flex-start;padding:0}.activity-metric{font-size:9px;gap:4px}.activity-metric strong{font-size:11px}.activity-details{display:none}.activity-metric .online-dot{display:none}
+ .activity-metrics{display:flex;flex:0 0 auto;gap:0;justify-content:flex-start;padding:0;border:0}.activity-metric+.activity-metric{margin-left:8px;padding-left:8px}.activity-metric{display:grid;justify-items:center;font-size:9px;gap:2px}.activity-metric strong{font-size:11px}.activity-details{display:none}.activity-metric .online-dot{display:none}
  #inventoryPanel>.page-heading{display:grid;grid-template-columns:1fr auto;gap:15px 8px;margin-bottom:18px}
  #inventoryPanel>.page-heading h1{font-size:31px}#inventoryPanel>.page-heading .muted{font-size:11px;margin-top:5px}
  #topNewProduct{grid-column:2;grid-row:1;min-height:43px;padding:8px 12px;font-size:11px}

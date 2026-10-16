@@ -642,7 +642,7 @@ function updateOverview(data,full=true){
 let overviewBusy=false;
 async function refreshOverview(){
  if(overviewBusy||!session||document.visibilityState==='hidden'||$('workspace').classList.contains?.('hidden'))return;overviewBusy=true;const epoch=sessionEpoch;
- try{const data=await request('/rest/v1/rpc/store_analytics_summary',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({p_days:7})});if(epoch===sessionEpoch){updateOverview(data);loadProductWishlistCounts()}}
+ try{const data=await request('/rest/v1/rpc/store_analytics_summary',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({p_days:1})});if(epoch===sessionEpoch){updateOverview(data);loadProductWishlistCounts()}}
  catch{if(epoch===sessionEpoch){clearOverview();$('overviewStatus').textContent='Статистика временно недоступна.'}}
  finally{overviewBusy=false}
 }
