@@ -32,7 +32,8 @@
   }
   function stockFor(p,size=''){
     const q=p?.stock_quantities;if(q==null)return 1;
-    const aliases=Object.keys(q).filter(k=>normalize(k.trim())===size),n=Object.hasOwn(q,size)?q[size]:aliases.length===1?q[aliases[0]]:undefined;return typeof n==='number'&&Number.isInteger(n)&&n>=0&&n<=9999?n:0;
+    size=normalize(String(size).trim());
+    const aliases=Object.keys(q).filter(k=>normalize(k.trim())===size),n=aliases.length===1?q[aliases[0]]:undefined;return typeof n==='number'&&Number.isInteger(n)&&n>=0&&n<=9999?n:0;
   }
   function stockUnits(p){if(p?.stock_quantities==null)return 1;const sizes=parseSizes(p.size);return (sizes.length?sizes:['']).reduce((sum,size)=>sum+stockFor(p,size),0)}
   // Legacy cards may store colour choices in the size field. Keep their stock keys intact.
@@ -42,6 +43,18 @@
     const isColor=values.length>0&&values.every(v=>colors.has(v.toLowerCase().replace(/ё/g,'е')));
     return isColor?(plural?'Цвета':'Цвет'):(plural?'Размеры':'Размер');
   }
-  root.ProductSizes={variantLabel,parse:parseSizes,serialize:serializeSizes,compare:compare,normalize:normalize,stockFor,stockUnits};
+  function cartLimit(p,size='',rows=[]){
+    if(p?.stock_quantities==null){const other=rows.filter(r=>String(r.id)===String(p?.id)&&r.size!==size).reduce((n,r)=>n+r.quantity,0);return Math.max(0,1-other)}
+    return p.fulfillment_status==='on_order'?99:Math.min(99,stockFor(p,size));
+  }
+  function normalizeLegacyCart(rows,productFor){
+    const seen=new Set(),result=[];let changed=false;
+    for(const row of rows){
+      if(productFor(row)?.stock_quantities==null){const id=String(row.id);if(seen.has(id)){changed=true;continue}seen.add(id);if(row.quantity!==1){result.push({...row,quantity:1});changed=true;continue}}
+      result.push(row);
+    }
+    return {rows:result,changed};
+  }
+  root.ProductSizes={variantLabel,parse:parseSizes,serialize:serializeSizes,compare:compare,normalize:normalize,stockFor,stockUnits,cartLimit,normalizeLegacyCart};
   if(typeof module==='object')module.exports=root.ProductSizes;
 })(typeof window==='object'?window:globalThis);

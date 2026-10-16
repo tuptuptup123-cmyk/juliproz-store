@@ -7,7 +7,7 @@ const server=http.createServer((req,res)=>{const file=path.resolve(root,'.'+new 
   const page=await browser.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
   let passwordLogins=0,verifications=0,sessionStart=0,touchGate=null,touchFailure=0;
   const user={id:'synthetic-owner',email:'synthetic@example.invalid',factors:[{id:'synthetic-factor',status:'verified',factor_type:'totp'}]};
-  const auth=aal=>({access_token:`synthetic.${Buffer.from(JSON.stringify({aal})).toString('base64url')}.synthetic`,refresh_token:`synthetic-${aal}-refresh`,expires_at:Date.now()/1000+3600,user});
+  const auth=aal=>({access_token:`synthetic.${Buffer.from(JSON.stringify({aal,amr:aal==='aal2'?[{method:'totp',timestamp:Math.floor(Date.now()/1000)}]:[]})).toString('base64url')}.synthetic`,refresh_token:`synthetic-${aal}-refresh`,expires_at:Date.now()/1000+3600,user});
   await page.route('https://**/*',async route=>{
    const url=new URL(route.request().url());if(url.origin===new URL(adminURL).origin)return route.continue();if(url.hostname!=='qhgzzhgxwpcctafpzjid.supabase.co')return route.fulfill({status:404,body:''});
    if(url.pathname==='/auth/v1/token'){passwordLogins++;sessionStart=Date.now();return route.fulfill({json:auth('aal1')})}

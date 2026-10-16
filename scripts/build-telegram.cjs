@@ -9,8 +9,8 @@ for (const name of ['index.html', 'privacy.html', 'app.js', 'style.css', 'produc
   fs.copyFileSync(path.join(app, name), path.join(out, name));
 }
 // Catalogue rules, prices, stock, brand assets and analytics have one source.
-for (const name of ['config.js', 'fonts.css', 'image-policy.js', 'product-framing.js', 'catalog-taxonomy.js', 'product-sizes.js', 'product-sharing.js', 'product-pricing.js', 'analytics.js', 'images', 'fonts']) {
+for (const name of ['config.js', 'fonts.css', 'image-policy.js', 'product-framing.js', 'catalog-taxonomy.js', 'product-sizes.js','catalog-reader.js','telegram-sdk.js', 'product-sharing.js', 'product-pricing.js', 'analytics.js',  'fonts']) {
   fs.cpSync(path.join(root, name), path.join(out, name), {recursive: true});
 }
-require('./stage-photo-assets.cjs')(root, out);
+require('./stage-images.cjs')(root,out);
 console.log('Independent Telegram storefront built; no admin, server sources or website translations.');

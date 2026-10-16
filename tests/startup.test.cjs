@@ -4,7 +4,8 @@ function setup(cache,query='?tab=catalog'){
  const get=id=>{if(!nodes.has(id))nodes.set(id,{innerHTML:'',textContent:'',value:'',classList:{add(){},remove(){},toggle(){},contains(){return false}},addEventListener(){},setAttribute(){},focus(){}});return nodes.get(id)};
  let resolve;const pending=new Promise(r=>resolve=r);
  const window={STORE_CONFIG:{url:'https://test.invalid',key:'public'},addEventListener(){}};
- const context=vm.createContext({window,ProductSizes:require('../product-sizes.js'),safeProductImage:()=>false,document:{getElementById:get,querySelectorAll:()=>[],querySelector:()=>null,addEventListener:(name,fn)=>{listeners.set(name,[...(listeners.get(name)||[]),fn])}},sessionStorage:{getItem:k=>saved.get(k),setItem:(k,v)=>saved.set(k,v)},localStorage:{getItem:()=>null,setItem(){}},location:{search:query},URLSearchParams,AbortSignal,setTimeout,fetch:()=>pending});
+ const context=vm.createContext({window,ProductSizes:require('../product-sizes.js'),safeProductImage:()=>false,publicProductImage:v=>v,document:{getElementById:get,querySelectorAll:()=>[],querySelector:()=>null,addEventListener:(name,fn)=>{listeners.set(name,[...(listeners.get(name)||[]),fn])}},sessionStorage:{getItem:k=>saved.get(k),setItem:(k,v)=>saved.set(k,v)},localStorage:{getItem:()=>null,setItem(){}},location:{search:query},URLSearchParams,AbortSignal,setTimeout,fetch:()=>pending});
+ vm.runInContext(fs.readFileSync(__dirname+'/../catalog-reader.js','utf8'),context);context.CatalogReader=context.window.CatalogReader;
  vm.runInContext(fs.readFileSync(__dirname+'/../product-pricing.js','utf8'),context);
  vm.runInContext(fs.readFileSync(__dirname+'/../app.js','utf8'),context);
  return {get,window,listeners,saved,run:s=>vm.runInContext(s,context),finish:rows=>resolve({ok:true,json:async()=>rows})};

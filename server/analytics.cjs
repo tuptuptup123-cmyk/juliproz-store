@@ -14,10 +14,10 @@ function trustedIP(headers){
  return isIP(value)===6?new URL(`http://[${value}]/`).hostname.slice(1,-1):value;
 }
 async function readBody(req){
- if(Number(req.headers['content-length']||0)>2048)throw Object.assign(Error(),{status:413});
- if(req.body!==undefined){const value=typeof req.body==='string'||Buffer.isBuffer(req.body)?req.body:JSON.stringify(req.body);if(Buffer.byteLength(value)>2048)throw Object.assign(Error(),{status:413});return JSON.parse(String(value))}
+ if(Number(req.headers['content-length']||0)>8192)throw Object.assign(Error(),{status:413});
+ if(req.body!==undefined){const value=typeof req.body==='string'||Buffer.isBuffer(req.body)?req.body:JSON.stringify(req.body);if(Buffer.byteLength(value)>8192)throw Object.assign(Error(),{status:413});return JSON.parse(String(value))}
  const chunks=[];let bytes=0;
- for await(const chunk of req){bytes+=Buffer.byteLength(chunk);if(bytes>2048)throw Object.assign(Error(),{status:413});chunks.push(Buffer.from(chunk))}
+ for await(const chunk of req){bytes+=Buffer.byteLength(chunk);if(bytes>8192)throw Object.assign(Error(),{status:413});chunks.push(Buffer.from(chunk))}
  return JSON.parse(Buffer.concat(chunks).toString('utf8'));
 }
 function validEvent(b){return b&&typeof b==='object'&&!Array.isArray(b)&&uuid.test(b.event_id)&&uuid.test(b.visitor_id)&&uuid.test(b.session_id)&&events.has(b.event)&&(b.channel==null||['website','telegram'].includes(b.channel))&&(b.product_id==null||Number.isSafeInteger(b.product_id)&&b.product_id>0)&&(b.page==null||['catalog','wishlist','cart'].includes(b.page))}
@@ -32,12 +32,14 @@ function createHandler(env=process.env,request=fetch,now=()=>new Date()){
   if(req.method==='OPTIONS'){res.statusCode=204;return res.end()}
   if(req.method!=='POST'){res.setHeader('Allow','POST, OPTIONS');return reply(405,{error:'method'})}
   if(env.VERCEL_ENV!=='production')return reply(403,{error:'environment'});
-  const secret=env.ANALYTICS_INGEST_SECRET,ip=trustedIP(req.headers);
+  const secret=env.ANALYTICS_INGEST_SECRET;let ip=trustedIP(req.headers);
   if(typeof secret!=='string'||!/^[a-f0-9]{64}$/.test(secret)||!ip)return reply(503,{error:'unavailable'});
   try{
    const b=await readBody(req);if(!validEvent(b))return reply(400,{error:'event'});
-   // The dedicated bot origin wins over client hints. Legacy /telegram/ shares the website origin.
-   const channel=origin==='https://app.juliproz.com'?'telegram':b.channel||'legacy';
+   if(req.headers['x-jp-relay-signature']!==undefined){ip=require('./analytics-relay.cjs').relayIP(req.headers,b,env.ANALYTICS_RELAY_SECRET,now().getTime());if(!ip)return reply(403,{error:'relay'})}
+   const telegram=require('./telegram-init-data.cjs').validInitData(b.telegram_init_data,env.TELEGRAM_BOT_TOKEN,now().getTime());
+   if((origin==='https://app.juliproz.com'||b.telegram_init_data)&&!telegram)return reply(403,{error:'telegram'});
+   const channel=telegram?'telegram':'website';
    // Namespace sessions by channel, including cached clients and same-origin Telegram entries.
    const digest=createHash('sha256').update(`juliproz:analytics-session:v1:${channel}:${b.session_id}`).digest('hex');
    const session=`${digest.slice(0,8)}-${digest.slice(8,12)}-4${digest.slice(13,16)}-a${digest.slice(17,20)}-${digest.slice(20,32)}`;
@@ -53,4 +55,4 @@ function createHandler(env=process.env,request=fetch,now=()=>new Date()){
   }catch(error){return reply(error.status===413?413:error instanceof SyntaxError?400:503,{error:error.status===413?'size':error instanceof SyntaxError?'invalid':'unavailable'})}
  };
 }
-module.exports={createHandler,trustedIP};
+module.exports={createHandler,trustedIP,readBody};

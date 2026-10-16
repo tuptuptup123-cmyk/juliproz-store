@@ -17,7 +17,7 @@ const secret='JBSWY3DPEHPK3PXP'; // public, synthetic fixture
    const page=await browser.newPage({viewport:{width:390,height:844}}),errors=[],calls=[];let verified=false;
    page.on('pageerror',e=>errors.push(e.message));
    const user=()=>({id:'synthetic-invitee',email:'invitee@example.invalid',factors:verified?[{id:'synthetic-factor',status:'verified',factor_type:'totp'}]:[]});
-   const session=()=>({access_token:`synthetic.${Buffer.from(JSON.stringify({aal:verified?'aal2':'aal1'})).toString('base64url')}.synthetic`,refresh_token:'synthetic-refresh',expires_in:3600,user:user()});
+   const session=()=>({access_token:`synthetic.${Buffer.from(JSON.stringify({aal:verified?'aal2':'aal1',amr:verified?[{method:'totp',timestamp:Math.floor(Date.now()/1000)}]:[]})).toString('base64url')}.synthetic`,refresh_token:'synthetic-refresh',expires_in:3600,user:user()});
    await page.route('https://**/*',async route=>{
     const req=route.request(),url=new URL(req.url()),p=url.pathname;calls.push(p);
     if(url.hostname!=='qhgzzhgxwpcctafpzjid.supabase.co')return route.fulfill({status:404,body:''});

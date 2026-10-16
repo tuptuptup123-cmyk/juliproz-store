@@ -19,11 +19,23 @@ Deno.serve(async req=>{
   const headers={apikey:publicKey,Authorization:auth,'Content-Type':'application/json'};
   const user=await fetch(base+'/auth/v1/user',{headers,signal:AbortSignal.timeout(8000)});if(!user.ok)return reply(401,{message:'Сессия завершена. Войдите заново.'});
   // This RPC verifies owner membership, AAL2 and a durable rate limit before any email is sent.
-  const gate=await fetch(base+'/rest/v1/rpc/store_prepare_workspace_invite',{method:'POST',headers,body:JSON.stringify({p_email:email,p_name:name}),signal:AbortSignal.timeout(8000)});
-  if(!gate.ok){const e=await gate.json().catch(()=>({}));return reply(gate.status,{message:e.message||'Не удалось проверить право приглашения'})}
-  const invite=await fetch(base+'/auth/v1/invite?redirect_to='+encodeURIComponent(allowedOrigin+'/admin.html'),{method:'POST',headers:{apikey:secret,Authorization:'Bearer '+secret,'Content-Type':'application/json'},body:JSON.stringify({email}),signal:AbortSignal.timeout(10000)});
-  if(!invite.ok)return reply(invite.status===429?429:400,{message:invite.status===429?'Лимит отправки писем. Попробуйте позже.':'Не удалось отправить приглашение. Если аккаунт уже существует, используйте добавление существующего аккаунта.'});
-  const team=await fetch(base+'/rest/v1/rpc/store_workspace_team',{method:'POST',headers,body:'{}',signal:AbortSignal.timeout(8000)});
+  const operation=crypto.randomUUID();
+  const gate=await fetch(base+'/rest/v1/rpc/store_begin_workspace_invite',{method:'POST',headers,body:JSON.stringify({p_email:email,p_name:name,p_operation:operation}),signal:AbortSignal.timeout(8000)});
+  if(!gate.ok){const e=await gate.json().catch(()=>({}));return reply(gate.status,{code:e.code,message:e.message||'Не удалось проверить право приглашения'})}
+  const serviceHeaders={apikey:secret,Authorization:'Bearer '+secret,'Content-Type':'application/json'};
+  const finish=async(status,error=null)=>{
+   const response=await fetch(base+'/rest/v1/rpc/store_finish_workspace_invite',{method:'POST',headers:serviceHeaders,body:JSON.stringify({p_operation:operation,p_status:status,p_error:error}),signal:AbortSignal.timeout(8000)});
+   return response.ok&&await response.json()===true;
+  };
+  let invite;
+  try{invite=await fetch(base+'/auth/v1/invite?redirect_to='+encodeURIComponent(allowedOrigin+'/admin.html'),{method:'POST',headers:serviceHeaders,body:JSON.stringify({email}),signal:AbortSignal.timeout(10000)})}
+  catch{await finish('unknown','network_timeout').catch(()=>false);return reply(503,{delivery_status:'unknown',message:'Не удалось подтвердить отправку. Проверьте почту и обновите список команды. Если письмо пришло, повторно отправлять его не нужно.'})}
+  if(!invite.ok){
+   const delivery=invite.status>=500?'unknown':'failed';await finish(delivery,'provider_'+invite.status).catch(()=>false);
+   return reply(invite.status===429?429:400,{delivery_status:delivery,message:delivery==='unknown'?'Почтовый сервер не подтвердил отправку. Проверьте почту перед повтором.':invite.status===429?'Письмо не отправлено: лимит почтового сервиса. Попробуйте позже.':'Письмо не отправлено. Повторите приглашение; если аккаунт уже создан, используйте восстановление пароля и добавление существующего аккаунта.'});
+  }
+  if(!await finish('sent').catch(()=>false))return reply(409,{invitation_sent:true,message:'Письмо отправлено, но статус доставки не сохранён. Обновите команду и проверьте почту. Не отправляйте приглашение повторно.'});
+  const team=await fetch(base+'/rest/v1/rpc/store_workspace_team_secure',{method:'POST',headers,body:'{}',signal:AbortSignal.timeout(8000)});
   if(!team.ok)return reply(409,{message:'Приглашение отправлено. Обновите список команды; доступ нужно подтвердить отдельно после настройки MFA.'});
   return reply(200,{...await team.json(),invitation_sent:true});
  }catch{return reply(503,{message:'Сервер не ответил. Если письмо уже пришло, используйте «Добавить существующий аккаунт». Иначе повторите позже.'})}

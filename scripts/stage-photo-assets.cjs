@@ -25,3 +25,6 @@ module.exports = function stagePhotos(root, out) {
     fs.writeFileSync(target, bytes);
   }
 };
+
+// Source fixture staging for browser tests; production builds use stage-images.cjs.
+if(require.main===module)module.exports(path.resolve(__dirname,'..'),path.resolve(__dirname,'..'));

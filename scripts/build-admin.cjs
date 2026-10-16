@@ -2,7 +2,7 @@
 const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto');
 const root=path.resolve(__dirname,'..'),out=path.join(root,'apps/admin/dist');
 fs.rmSync(out,{recursive:true,force:true});fs.mkdirSync(out,{recursive:true});
-for(const name of ['admin.html','admin.css','admin.js','admin-manager.css','admin-manager.js','admin-session.js','admin-selects.js','admin-workspace.js','admin-sales.js','admin-schedule.js','admin-finance.js','admin-product-finance.js','admin-finance.css','analytics-report.js','fonts.css','config.js','image-policy.js','product-framing.js','catalog-taxonomy.js','product-sizes.js','product-sharing.js','product-sharing.css','product-pricing.js','photo-codec.js','photo-studio.js','photo-background.js','photo-worker.js','images','fonts','vendor']){const source=path.join(root,name);if(fs.existsSync(source))fs.cpSync(source,path.join(out,name),{recursive:true})}
+for(const name of ['admin.html','admin.css','admin.js','product-quality.js','admin-manager.css','admin-manager.js','admin-images.js','admin-step-up.js','business-date.js','admin-session.js','admin-selects.js','admin-workspace.js','admin-sales.js','admin-schedule.js','admin-finance.js','admin-product-finance.js','admin-finance.css','analytics-report.js','fonts.css','config.js','image-policy.js','product-framing.js','catalog-taxonomy.js','product-sizes.js','product-sharing.js','product-sharing.css','product-pricing.js','photo-codec.js','photo-studio.js','photo-background.js','photo-worker.js','fonts','vendor']){const source=path.join(root,name);if(fs.existsSync(source))fs.cpSync(source,path.join(out,name),{recursive:true})}
 // Only public, content-addressed assets receive long-lived browser caching.
 // HTML and all authenticated API responses remain no-store.
 function fingerprint(name){
@@ -16,5 +16,5 @@ function fingerprint(name){
 const html=fs.readFileSync(path.join(out,'admin.html'),'utf8').replace('href="/" target="_blank"','href="https://www.juliproz.com/" target="_blank"')
  .replace(/(src|href)="([a-z][a-z0-9-]*\.(?:js|css))(?:\?[^\"]*)?"/g,(_,attr,name)=>`${attr}="${fingerprint(name)}"`);
 fs.writeFileSync(path.join(out,'admin.html'),html);fs.writeFileSync(path.join(out,'index.html'),html);
-require('./stage-photo-assets.cjs')(root,out);
+require('./stage-images.cjs')(root,out);
 console.log('Isolated admin assets prepared. No Telegram SDK or public catalogue.');

@@ -5,7 +5,7 @@
       "headers": [
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' https://telegram.org; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' https://juliproz-store.vercel.app/images/ https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/; connect-src 'self' https://qhgzzhgxwpcctafpzjid.supabase.co; object-src 'none'; base-uri 'none'; form-action 'self'; upgrade-insecure-requests; frame-ancestors 'self' https://web.telegram.org"
+          "value": "default-src 'self'; script-src 'self' https://telegram.org; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' https://juliproz-store.vercel.app/images/ https://qhgzzhgxwpcctafpzjid.supabase.co/functions/v1/product-photo/; connect-src 'self' https://qhgzzhgxwpcctafpzjid.supabase.co; object-src 'none'; base-uri 'none'; form-action 'self'; upgrade-insecure-requests; frame-ancestors 'self' https://web.telegram.org"
         },
         {
           "key": "X-Content-Type-Options",
@@ -26,7 +26,7 @@
       "headers": [
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' https://juliproz-store.vercel.app/images/ data: https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/; connect-src 'self' https://qhgzzhgxwpcctafpzjid.supabase.co; object-src 'none'; base-uri 'none'; form-action 'self'; upgrade-insecure-requests; frame-ancestors 'none'"
+          "value": "default-src 'self'; script-src 'self'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' https://juliproz-store.vercel.app/images/ data: https://qhgzzhgxwpcctafpzjid.supabase.co/functions/v1/product-photo/; connect-src 'self' https://qhgzzhgxwpcctafpzjid.supabase.co; object-src 'none'; base-uri 'none'; form-action 'self'; upgrade-insecure-requests; frame-ancestors 'none'"
         },
         {
           "key": "X-Frame-Options",
@@ -52,7 +52,7 @@
       ]
     }
   ],
-  "buildCommand": "node scripts/prepare-photo-runtime.cjs && node scripts/configure-telegram.cjs && node scripts/build-public.cjs",
+  "buildCommand": "node scripts/configure-telegram.cjs && node scripts/build-public.cjs",
   "outputDirectory": "dist",
   "rewrites": [
     {
@@ -62,6 +62,10 @@
     {
       "source": "/telegram/:path*",
       "destination": "https://app.juliproz.com/:path*"
+    },
+    {
+      "source": "/images/:path*",
+      "destination": "/api/product-photo?path=:path*"
     }
   ],
   "redirects": [
@@ -70,5 +74,10 @@
       "destination": "/telegram/",
       "permanent": false
     }
-  ]
+  ],
+  "functions": {
+    "api/product-photo.js": {
+      "includeFiles": "private-product-assets/**"
+    }
+  }
 }

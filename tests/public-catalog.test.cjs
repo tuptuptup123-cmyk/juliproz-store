@@ -15,10 +15,11 @@ test('100 concurrent cold visitors share one public upstream request',async()=>{
   assert.equal(calls,1);release();await Promise.all(requests);
   for(const res of results){assert.equal(res.code,200);assert.deepEqual(res.body,[{id:1,name:'Public',available:true,team_pick:true}]);assert.match(res.headers['Vercel-CDN-Cache-Control'],/s-maxage=30/)}
 });
-test('all catalogue pages are returned and fields match the storefront allowlist',async()=>{
-  const offsets=[];const handler=createHandler({config,fetch:async url=>{offsets.push(new URL(url).searchParams.get('offset'));return {ok:true,json:async()=>offsets.length===1?Array.from({length:500},(_,id)=>({id,available:true})):[{id:500,available:true}]}}});
+test('keyset catalogue pages retain stable order during concurrent insert/delete',async()=>{
+  const cursors=[];const first=Array.from({length:500},(_,i)=>({id:1000-i,created_at:'2026-10-16T00:00:00+00:00',available:true}));
+  const handler=createHandler({config,fetch:async url=>{const u=new URL(url);assert.equal(u.searchParams.has('offset'),false);cursors.push(u.searchParams.get('or'));return {ok:true,json:async()=>cursors.length===1?first:[{id:500,created_at:'2026-10-15T00:00:00Z',available:true}]}}});
   const res=response();await handler({method:'GET',url:'/api/catalog'},res);
-  assert.equal(res.body.length,501);assert.deepEqual(offsets,['0','500']);
+  assert.equal(res.body.length,501);assert.equal(cursors[0],null);assert.match(cursors[1],/id.lt.501/);assert.equal(new Set(res.body.map(p=>p.id)).size,501);
   assert.equal(FIELDS,fs.readFileSync(require.resolve('../app.js'),'utf8').match(/const CATALOG_FIELDS='([^']+)'/)[1]);
 });
 test('errors, hidden records and malformed upstream payloads are never cached',async()=>{

@@ -1,3 +1,5 @@
+> Historical report, 13 October 2026. Its 12-hour / 30-minute session limits have been superseded by the fixed 30-day authenticated session policy. See README.md and admin-session.js for current behavior. Do not reapply old session migrations independently.
+
 # Security completion — 2026-10-13
 
 This release follows the fixes in PR #252. It does not claim the absence of all vulnerabilities.

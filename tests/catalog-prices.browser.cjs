@@ -206,6 +206,7 @@ const fixtures=[
  }
  for(const width of [390,529]){
   const page=await browser.newPage({viewport:{width,height:900},reducedMotion:'reduce'});
+  await page.route('**/rest/v1/products?**',r=>r.fulfill({json:fixtures.map(p=>({...p,image_url:'https://juliproz-store.vercel.app/images/brand-paw.webp'}))}));
   await page.addInitScript(()=>localStorage.setItem('jpAnalyticsConsent','declined'));
   await page.route('https://juliproz-store.vercel.app/images/**',r=>{
    const file=path.join(root,new URL(r.request().url()).pathname);

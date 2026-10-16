@@ -23,7 +23,7 @@ test('gateway records only daily keyed fingerprint and fixed event fields, with 
 });
 test('gateway rejects origins, preview, missing secrets, oversized bodies and invalid events before DB calls',async()=>{
  let calls=0;const handler=createHandler(env,async()=>{calls++;return Response.json(true)});
- for(const [opts,code] of [[{origin:'https://www.juliproz.com.evil.invalid'},403],[{method:'GET'},405],[{body:'{'},400],[{body:null},400],[{body:{...event(),product_id:1.5}},400],[{body:{...event(),page:'password'}},400],[{body:'x'.repeat(2049)},413],[{stream:[Buffer.alloc(1500),Buffer.alloc(1500)]},413],[{headers:{'x-vercel-forwarded-for':undefined}},503]])assert.equal((await invoke(handler,opts)).statusCode,code);
+ for(const [opts,code] of [[{origin:'https://www.juliproz.com.evil.invalid'},403],[{method:'GET'},405],[{body:'{'},400],[{body:null},400],[{body:{...event(),product_id:1.5}},400],[{body:{...event(),page:'password'}},400],[{body:'x'.repeat(8193)},413],[{stream:[Buffer.alloc(5000),Buffer.alloc(5000)]},413],[{headers:{'x-vercel-forwarded-for':undefined}},503]])assert.equal((await invoke(handler,opts)).statusCode,code);
  assert.equal((await invoke(createHandler({...env,VERCEL_ENV:'preview'}))).statusCode,403);assert.equal((await invoke(createHandler({VERCEL_ENV:'production'}))).statusCode,503);assert.equal(calls,0);
 });
 test('upstream malformed responses and outages fail closed without exposing credentials',async()=>{
@@ -32,12 +32,10 @@ test('upstream malformed responses and outages fail closed without exposing cred
  }
 });
 
-test('storefront channels isolate sessions and cannot be relabelled by the dedicated bot origin',async()=>{
+test('client hints cannot turn website traffic into Telegram',async()=>{
  const calls=[],handler=createHandler(env,async(u,o)=>{calls.push(JSON.parse(o.body));return Response.json(true)}),base=event();
- for(const [origin,channel] of [['https://www.juliproz.com','website'],['https://www.juliproz.com','telegram'],['https://app.juliproz.com','website'],['https://www.juliproz.com',undefined]])assert.equal((await invoke(handler,{origin,body:{...base,channel}})).statusCode,202);
- assert.deepEqual(calls.map(c=>c.p_channel),['website','telegram','telegram','legacy']);
- assert.notEqual(calls[0].p_session,calls[1].p_session);assert.equal(calls[1].p_session,calls[2].p_session);assert.notEqual(calls[3].p_session,calls[0].p_session);
- assert.ok(calls.every(c=>/^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-a[a-f0-9]{3}-[a-f0-9]{12}$/.test(c.p_session)&&c.p_visitor===base.visitor_id));
+ for(const channel of ['website','telegram',undefined])assert.equal((await invoke(handler,{body:{...base,channel}})).statusCode,202);
+ assert.deepEqual(calls.map(c=>c.p_channel),['website','website','website']);assert.equal(new Set(calls.map(c=>c.p_session)).size,1);
+ assert.equal((await invoke(handler,{origin:'https://app.juliproz.com',body:base})).statusCode,403);
  for(const channel of ['all','legacy','invalid',{},1])assert.equal((await invoke(handler,{body:{...base,channel}})).statusCode,400);
- assert.equal(calls.length,4);
 });

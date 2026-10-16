@@ -7,8 +7,9 @@ assert.deepEqual(sizes.parse('Верх L / C80; низ L / 175/74'),['Верх L
 assert.deepEqual(sizes.parse('44.5'),['44.5']);assert.deepEqual(sizes.parse('44,5'),['44.5']);assert.deepEqual(sizes.parse('40\n41\n40'),['40','41']);assert.deepEqual(sizes.parse('S, M; L'),['S','M','L']);assert.deepEqual(sizes.parse(null),[]);assert.equal(sizes.serialize('40\n41'),'40; 41');assert.throws(()=>sizes.serialize('X'.repeat(101)));
 const nodes=new Map();function node(id){if(!nodes.has(id))nodes.set(id,{innerHTML:'',textContent:'',value:'',dataset:{},classList:{add(){},remove(){},toggle(){},contains(){return false}},addEventListener(){},setAttribute(){},querySelector(){return null},focus(){}});return nodes.get(id)}
 let rows=[],contactUrl=null;
-const context=vm.createContext({ProductSizes:sizes,safeProductImage:()=>false,window:{STORE_CONFIG:{url:'https://test.invalid',key:'public'},open:u=>contactUrl=u,addEventListener(){}},document:{getElementById:node,querySelectorAll:()=>[],querySelector:()=>null,addEventListener(){}},localStorage:{getItem:()=>null},location:{search:'?tab=catalog'},URLSearchParams,AbortSignal,setTimeout,fetch:async()=>({ok:true,json:async()=>rows})});
-vm.runInContext(fs.readFileSync(__dirname+'/../product-pricing.js','utf8'),context);
+const context=vm.createContext({ProductSizes:sizes,safeProductImage:()=>false,publicProductImage:v=>v,window:{STORE_CONFIG:{url:'https://test.invalid',key:'public'},open:u=>contactUrl=u,addEventListener(){}},document:{getElementById:node,querySelectorAll:()=>[],querySelector:()=>null,addEventListener(){}},localStorage:{getItem:()=>null},location:{search:'?tab=catalog'},URLSearchParams,AbortSignal,setTimeout,fetch:async()=>({ok:true,json:async()=>rows})});
+vm.runInContext(fs.readFileSync(__dirname+'/../catalog-reader.js','utf8'),context);context.CatalogReader=context.window.CatalogReader;
+ vm.runInContext(fs.readFileSync(__dirname+'/../product-pricing.js','utf8'),context);
 vm.runInContext(fs.readFileSync(__dirname+'/../catalog-taxonomy.js','utf8'),context);
  vm.runInContext(fs.readFileSync(root+'/app.js','utf8'),context);
 const run=s=>vm.runInContext(s,context);

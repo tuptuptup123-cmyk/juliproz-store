@@ -14,7 +14,7 @@ const server=http.createServer((req,res)=>{
    const page=await browser.newPage({viewport:{width,height:900}}),errors=[],calls=[];let verified=false,approved=false,userFailure=true,setupFailure=true,passwordSaved=false;
    page.on('pageerror',e=>errors.push(e.message));page.on('dialog',async dialog=>{errors.push('Unexpected native dialog: '+dialog.type());await dialog.dismiss()});
    const factor={id:'synthetic-factor',status:'verified',factor_type:'totp'},user=()=>({id:'synthetic-invitee',email:'invitee@example.invalid',factors:verified?[factor]:[]});
-   const auth=aal=>({access_token:`synthetic.${Buffer.from(JSON.stringify({aal})).toString('base64url')}.synthetic`,refresh_token:'synthetic-refresh',expires_in:3600,user:user()});
+   const auth=aal=>({access_token:`synthetic.${Buffer.from(JSON.stringify({aal,amr:aal==='aal2'?[{method:'totp',timestamp:Math.floor(Date.now()/1000)}]:[]})).toString('base64url')}.synthetic`,refresh_token:'synthetic-refresh',expires_in:3600,user:user()});
    await page.route('https://**/*',async route=>{
     const req=route.request(),url=new URL(req.url()),p=url.pathname;
     if(url.origin===new URL(adminURL).origin)return route.continue();
