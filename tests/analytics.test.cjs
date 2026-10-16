@@ -30,7 +30,7 @@ test('withdrawal receipt survives only in memory and never resumes tracking',()=
 test('website and Telegram send the storefront channel only after consent, including legacy same-origin launches',()=>{
  const local=new Map(),session=new Map(),calls=[];const storage=m=>({getItem:k=>m.get(k)||null,setItem:(k,v)=>m.set(k,v),removeItem:k=>m.delete(k)});
  for(const channel of ['website','telegram']){
-  const context=vm.createContext({window:{STORE_CONFIG:{key:'public'}},document:{documentElement:{dataset:{storefront:channel}},visibilityState:'visible',getElementById:()=>null,addEventListener(){}},localStorage:storage(local),sessionStorage:storage(session),crypto,Date,AbortSignal,setInterval(){},fetch:async(u,o)=>calls.push(JSON.parse(o.body))});
+  const context=vm.createContext({window:{STORE_CONFIG:{key:'public'},Telegram:{WebApp:{initData:'signed-launch-fixture'}}},location:{hash:''},URLSearchParams,document:{documentElement:{dataset:{storefront:channel}},visibilityState:'visible',getElementById:()=>null,addEventListener(){}},localStorage:storage(local),sessionStorage:storage(session),crypto,Date,AbortSignal,setInterval(){},fetch:async(u,o)=>calls.push(JSON.parse(o.body))});
   vm.runInContext(fs.readFileSync(__dirname+'/../analytics.js','utf8'),context);
   if(channel==='website'){assert.equal(calls.length,0);context.window.StoreAnalytics.setConsent(true)}
   context.window.StoreAnalytics.track('product_view',42);

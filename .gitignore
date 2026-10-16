@@ -8,3 +8,8 @@ dist/
 .env
 .env.*
 !.env.example
+
+private-product-assets/
+
+supabase/.temp/
+tests/schema/node_modules/

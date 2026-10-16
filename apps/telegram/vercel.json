@@ -7,7 +7,7 @@
       "headers": [
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' https://telegram.org; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' https://juliproz-store.vercel.app/images/ https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/; connect-src 'self' https://qhgzzhgxwpcctafpzjid.supabase.co; object-src 'none'; base-uri 'none'; form-action 'self'; upgrade-insecure-requests; frame-ancestors 'self' https://web.telegram.org"
+          "value": "default-src 'self'; script-src 'self' https://telegram.org; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' https://juliproz-store.vercel.app/images/ https://qhgzzhgxwpcctafpzjid.supabase.co/functions/v1/product-photo/; connect-src 'self' https://qhgzzhgxwpcctafpzjid.supabase.co; object-src 'none'; base-uri 'none'; form-action 'self'; upgrade-insecure-requests; frame-ancestors 'self' https://web.telegram.org"
         },
         {
           "key": "X-Content-Type-Options",
@@ -37,10 +37,6 @@
     {
       "source": "/api/catalog",
       "destination": "https://www.juliproz.com/api/catalog"
-    },
-    {
-      "source": "/api/analytics",
-      "destination": "https://www.juliproz.com/api/analytics"
     }
   ]
 }

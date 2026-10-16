@@ -7,16 +7,8 @@ function createHandler({config=require('../config.js'),fetch:fetcher=globalThis.
   // Coalesce simultaneous cold requests on one instance; no durable process cache.
   let pending=null;
   async function read(){
-    const rows=[],signal=AbortSignal.timeout(12000);
-    for(let offset=0;offset<10000;offset+=500){
-      const response=await fetcher(`${config.url}/rest/v1/products?select=${FIELDS}&available=eq.true&order=created_at.desc,id.desc&limit=500&offset=${offset}`,{headers:{apikey:config.key},signal});
-      if(!response.ok)throw Error('Catalogue unavailable');
-      const page=await response.json();
-      if(!Array.isArray(page)||page.length>500||page.some(p=>!p||p.available!==true))throw Error('Invalid catalogue');
-      rows.push(...page.map(p=>Object.fromEntries(keys.filter(k=>Object.hasOwn(p,k)).map(k=>[k,p[k]]))));
-      if(page.length<500)return rows;
-    }
-    throw Error('Catalogue limit exceeded');
+    const rows=await require('../catalog-reader.js').read({url:config.url,key:config.key,fields:FIELDS,fetch:fetcher,signal:AbortSignal.timeout(12000)});
+    return rows.map(p=>Object.fromEntries(keys.filter(k=>Object.hasOwn(p,k)).map(k=>[k,p[k]])));
   }
   return async(req,res)=>{
     res.setHeader('Cache-Control','no-store');

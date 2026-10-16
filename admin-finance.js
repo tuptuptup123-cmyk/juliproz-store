@@ -8,7 +8,7 @@
  const rpc=(name,body)=>request('/rest/v1/rpc/'+name,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
  const money=n=>n==null?'Не заполнено':new Intl.NumberFormat('ru-RU',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(Number(n));
  const date=v=>/^\d{4}-\d{2}-\d{2}$/.test(v)?v.split('-').reverse().join('.'):'';
- const today=()=>new Intl.DateTimeFormat('sv-SE',{timeZone:'Europe/Kyiv',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
+ const today=()=>BusinessDate.today();
  const states={active:'В работе',completed:'Завершено',cancelled:'Отменено',linked:'Связано с продажей'};
  const financial=['received','purchase_cost','expenses','owner_due','owner_paid'];
  let savedCallback=null,reportFilterKey=null,group='all',rows=[],commissionRows=[],cursor=null,commissionCursor=null,generation=0,reportRequest=0,portfolioRequest=0,choiceRequest=0,historyRequest=0,reportBusy=false,portfolioBusy=false,draft=null,termsDraft=null,linkDraft=null,choices=[];

@@ -6,6 +6,9 @@
  function hidePanels(){$('profilePanel').classList.add('hidden');$('historyPanel').classList.add('hidden');$('teamPanel').classList.add('hidden')}
  function clear(){team=null;teamRequest++;historyRequest++;historyCursor=null;historyFilterKey=null;historyRows=[];historyBusy=false;hidePanels();for(const id of ['historyList','teamMembers','currentAdminProfile','profileEmail','teamStatus','profileStatus','historyStatus'])$(id).textContent='';$('historyActor').innerHTML='<option value="">Все администраторы</option>';$('historyProduct').value='';$('profileForm').reset();$('profileForm').elements.display_name.disabled=false;$('profileForm').querySelector('button').disabled=false;$('addAdminForm').reset();$('addAdminForm').querySelectorAll('button').forEach(b=>b.disabled=false);$('addAdminForm').classList.add('hidden')}
  function invitationStatus(invite){
+  if(invite.delivery_status==='failed')return 'Письмо не отправлено. Пригласите сотрудника повторно.';
+  if(invite.delivery_status==='pending')return 'Письмо отправляется…';
+  if(invite.delivery_status==='unknown'&&!invite.ready)return 'Отправка не подтверждена. Проверьте почту перед повторным приглашением.';
   if(invite.ready)return 'Почта подтверждена · Аутентификатор настроен · Ожидает вашего одобрения';
   if(typeof invite.email_confirmed!=='boolean')return 'Ожидаем подтверждение почты и настройку аутентификатора';
   return `Почта: ${invite.email_confirmed?'подтверждена':'не подтверждена'} · Аутентификатор: ${invite.mfa_confirmed?'настроен':'не настроен'}${invite.email_confirmed&&invite.mfa_confirmed?' · Требуется проверка аккаунта':''}`;
@@ -22,7 +25,7 @@
  }
  async function loadTeam(){
   if(!session)return;const id=++teamRequest,epoch=sessionEpoch,version=profileVersion;$('teamStatus').textContent='Загружаем профили…';$('profileStatus').textContent=activeView==='profile'?'Загружаем профиль…':'';
-  try{const data=await rpc('store_workspace_team');if(id!==teamRequest||epoch!==sessionEpoch)return;applyTeam(data,version!==profileVersion);$('teamStatus').textContent='';$('profileStatus').textContent=''}catch(e){if(id===teamRequest&&epoch===sessionEpoch){$('teamStatus').textContent='Не удалось загрузить команду: '+e.message;$('profileStatus').textContent='Не удалось загрузить профиль: '+e.message}}
+  try{const data=await rpc(activeView==='team'&&adminSecurity.owner?'store_workspace_team_secure':'store_workspace_team');if(id!==teamRequest||epoch!==sessionEpoch)return;applyTeam(data,version!==profileVersion);$('teamStatus').textContent='';$('profileStatus').textContent=''}catch(e){if(id===teamRequest&&epoch===sessionEpoch){$('teamStatus').textContent='Не удалось загрузить команду: '+e.message;$('profileStatus').textContent='Не удалось загрузить профиль: '+e.message}}
  }
  function valueText(value){if(value==null||value==='')return '—';if(typeof value==='boolean')return value?'Да':'Нет';if(typeof value==='object')return JSON.stringify(value,null,2);return String(value)}
  function renderHistory(){
