@@ -14,10 +14,26 @@
  if(typeof module==='object'&&module.exports){module.exports=logic;return}
  let data=null,month=null,selected=null,requestId=0,itemRequest=0,loading=false,mutating=false,dirty=false,lastLoaded=0,queue=[],itemRows=[],itemCursor=null;
  const rpc=(name,body={})=>request('/rest/v1/rpc/'+name,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+ // The home summary is read-only and never delays the inventory.
+ let homeEpoch=0,homeBusy=false,homeLoaded=0;
+ function resetHome(){homeEpoch++;homeBusy=false;homeLoaded=0;$('homePlanLabel').textContent='План на сегодня';$('homePlanValue').textContent='Открыть расписание ↗';$('homePlanProgress').classList.add('hidden')}
+ function renderHome(next){
+  const day=next.days.find(d=>d.day===next.today),own=day?.manager_id===session?.user?.id;
+  $('homePlanLabel').textContent=own?'Ваш план на сегодня':day?.manager_label?'Сегодня · '+day.manager_label:'План на сегодня';
+  $('homePlanValue').textContent=!day?.manager_id?'Дежурство не назначено':!day.active?'Нужна замена':`${day.uploaded} из ${day.target} вещей${day.uploaded>=day.target?' · готово':''}`;
+  const progress=$('homePlanProgress');progress.classList.toggle('hidden',!day?.active||!day?.target);progress.max=day?.target||1;progress.value=Math.min(day?.uploaded||0,day?.target||1);
+ }
+ async function loadHome(force=false){
+  if(!session||homeBusy||(!force&&Date.now()-homeLoaded<60000))return;
+  homeBusy=true;const id=++homeEpoch,epoch=sessionEpoch;
+  try{const next=await rpc('store_upload_schedule',{p_month:null});if(id!==homeEpoch||epoch!==sessionEpoch)return;if(next?.current_user_id!==session.user.id||!Array.isArray(next.days))throw Error('Invalid schedule');homeLoaded=Date.now();renderHome(next)}
+  catch{if(id===homeEpoch&&epoch===sessionEpoch){homeLoaded=Date.now();$('homePlanLabel').textContent='План на сегодня';$('homePlanValue').textContent='Проверить расписание ↗';$('homePlanProgress').classList.add('hidden')}}
+  finally{if(id===homeEpoch)homeBusy=false}
+ }
  const formatDay=(day,options={day:'numeric',month:'long'})=>new Intl.DateTimeFormat('ru-RU',{...options,timeZone:'UTC'}).format(new Date(day+'T12:00:00Z'));
  const chosen=()=>data?.days.find(d=>d.day===selected);
  function hide(){$('schedulePanel').classList.add('hidden');requestId++;itemRequest++;loading=false;}
- function clear(){hide();data=null;month=null;selected=null;queue=[];itemRows=[];itemCursor=null;dirty=false;mutating=false;lastLoaded=0;for(const id of ['scheduleCalendar','scheduleToday','schedulePeople','scheduleDaySummary','scheduleItems','scheduleQueue','scheduleStatus','scheduleItemStatus'])$(id).textContent='';$('scheduleDayForm').reset();$('scheduleRotationForm').reset();$('scheduleManagerFilter').innerHTML='';$('scheduleOwner').classList.add('hidden');$('scheduleDayForm').classList.add('hidden');}
+ function clear(){resetHome();hide();data=null;month=null;selected=null;queue=[];itemRows=[];itemCursor=null;dirty=false;mutating=false;lastLoaded=0;for(const id of ['scheduleCalendar','scheduleToday','schedulePeople','scheduleDaySummary','scheduleItems','scheduleQueue','scheduleStatus','scheduleItemStatus'])$(id).textContent='';$('scheduleDayForm').reset();$('scheduleRotationForm').reset();$('scheduleManagerFilter').innerHTML='';$('scheduleOwner').classList.add('hidden');$('scheduleDayForm').classList.add('hidden');}
  function mayDiscard(){return !dirty||confirm('Перейти без сохранения изменений расписания?')}
  function stateLabel(d){return {free:'Без дежурства',inactive:'Нужна замена',done:'План выполнен',missed:'План не выполнен',today:'Сегодня',planned:'По плану'}[dayState(d,data.today)]}
  function renderCalendar(){
@@ -58,7 +74,7 @@
   if(!session||activeView!=='schedule'||mutating)return;const id=++requestId,epoch=sessionEpoch;loading=true;$('scheduleStatus').textContent='Обновляем расписание…';
   try{const next=await rpc('store_upload_schedule',{p_month:month});if(id!==requestId||epoch!==sessionEpoch||activeView!=='schedule')return;
    if(!next||next.current_user_id!==session.user.id||!Array.isArray(next.days)||!Array.isArray(next.counts)||!Array.isArray(next.members)||!Array.isArray(next.rotations))throw Error('Некорректный ответ сервера');
-   data=next;month=next.month;if(!next.days.some(d=>d.day===selected))selected=next.days.some(d=>d.day===next.today)?next.today:month;dirty=false;lastLoaded=Date.now();
+   data=next;month=next.month;if(!next.days.some(d=>d.day===selected))selected=next.days.some(d=>d.day===next.today)?next.today:month;dirty=false;lastLoaded=Date.now();if(next.days.some(d=>d.day===next.today)){homeEpoch++;homeBusy=false;homeLoaded=Date.now();renderHome(next)}
    renderToday();renderCalendar();renderPeople();renderDay();$('scheduleOwner').classList.toggle('hidden',!data.can_manage);$('scheduleRotationStart').min=data.today;$('scheduleRotationStart').value=selected>=data.today?selected:data.today;initQueue();
    $('scheduleStatus').textContent='Обновлено '+new Intl.DateTimeFormat('ru-RU',{timeZone:data.time_zone,hour:'2-digit',minute:'2-digit'}).format(new Date())+' · время Киева';
   }catch(e){if(id===requestId&&epoch===sessionEpoch)$('scheduleStatus').textContent='Не удалось загрузить расписание: '+e.message;}
@@ -78,7 +94,7 @@
   catch(e){if(epoch===sessionEpoch)$('scheduleStatus').textContent='Не удалось сохранить: '+e.message;}
   finally{mutating=false;button.disabled=false;}
  }
- function onView(view){hide();if(view==='schedule'){$('schedulePanel').classList.remove('hidden');load();}}
+ function onView(view){hide();if(view==='schedule'){$('schedulePanel').classList.remove('hidden');load();}else if(!$('inventoryPanel').classList.contains('hidden'))loadHome();}
  $('scheduleCalendar').onclick=async e=>{const b=e.target.closest('[data-schedule-day]');if(!b||mutating||!mayDiscard())return;const day=b.dataset.scheduleDay,epoch=sessionEpoch;selected=day;dirty=false;renderCalendar();await renderDay();if(epoch!==sessionEpoch||selected!==day||activeView!=='schedule')return;requestAnimationFrame(()=>{if(epoch!==sessionEpoch||selected!==day||activeView!=='schedule')return;$('scheduleDayTitle').focus({preventScroll:true});$('scheduleDayTitle').scrollIntoView({behavior:'instant',block:'start'});});};
  for(const [id,delta] of [['schedulePrevious',-1],['scheduleNext',1]])$(id).onclick=()=>{if(loading||mutating||!mayDiscard())return;month=shiftMonth(month||monthOf(new Date().toISOString().slice(0,10)),delta);selected=null;load()};
  $('scheduleGoToday').onclick=()=>{if(mutating||!mayDiscard())return;month=null;selected=null;load()};
@@ -92,7 +108,7 @@
  $('scheduleDayForm').onsubmit=e=>{e.preventDefault();const d=chosen();if(!d)return;mutate(e.submitter,'store_save_upload_day',{p_day:d.day,p_manager_id:$('scheduleDayManager').value||null,p_note:$('scheduleDayNote').value.trim(),p_revision:d.revision,p_reset:false})};
  $('scheduleDayReset').onclick=e=>{const d=chosen();if(d)mutate(e.currentTarget,'store_save_upload_day',{p_day:d.day,p_manager_id:null,p_note:'',p_revision:d.revision,p_reset:true})};
  $('scheduleItems').onclick=async e=>{const b=e.target.closest('[data-upload-product]');if(!b||busy)return;const id=b.dataset.uploadProduct,epoch=sessionEpoch;b.disabled=true;try{let p=items.find(p=>String(p.id)===id);if(!p)p=(await request(`/rest/v1/products?id=eq.${encodeURIComponent(id)}&select=${ADMIN_FIELDS}`))[0];if(epoch!==sessionEpoch||activeView!=='schedule')return;if(!p)throw Error('Карточка уже удалена');if(!mayDiscard())return;dirty=false;edit(p);}catch(error){if(epoch===sessionEpoch)$('scheduleItemStatus').textContent=error.message}finally{b.disabled=false}};
- function refreshIfNeeded(){if(activeView==='schedule'&&session&&document.visibilityState!=='hidden'&&!dirty&&!loading&&!mutating&&Date.now()-lastLoaded>60000)load()}
+ function refreshIfNeeded(){if(session&&document.visibilityState!=='hidden'&&!$('inventoryPanel').classList.contains('hidden')&&$('editor').classList.contains('hidden'))loadHome();if(activeView==='schedule'&&session&&document.visibilityState!=='hidden'&&!dirty&&!loading&&!mutating&&Date.now()-lastLoaded>60000)load()}
  root.addEventListener('focus',refreshIfNeeded);setInterval(refreshIfNeeded,60000);
- root.AdminSchedule={...logic,clear,hide,onView};
+ root.AdminSchedule={...logic,clear,hide,onView,loadHome,invalidateHome:()=>{homeLoaded=0}};
 })(typeof window==='object'?window:globalThis);

@@ -8,4 +8,10 @@ async function clickAdminAction(page,selector){
  }
  await button.click();
 }
-module.exports={clickAdminAction};
+async function clickAdminControl(page,selector){
+ const control=page.locator(selector);
+ const menu=await control.evaluate(el=>el.closest('details.manager-menu')?.id);
+ if(menu&&!await page.locator('#'+menu).evaluate(el=>el.open))await page.locator('#'+menu+'>summary').click();
+ await control.click();
+}
+module.exports={clickAdminAction,clickAdminControl};
