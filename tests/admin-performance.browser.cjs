@@ -23,12 +23,19 @@ const server=http.createServer((req,res)=>{const file=path.resolve(root,'.'+new 
   page.once('dialog',d=>d.accept());await page.locator('#backToCatalog').click();await page.locator('#adminSearch').fill('шанель');await page.waitForFunction(()=>inventoryRows.length===207);assert.equal(await page.locator('#inventory article').count(),48);
   // Replaced rows and revision changes must invalidate counts, search and cards.
   await page.evaluate(()=>{items[413]={...items[413],brand:'Hermès',description:'новое описание',available:false,archive_status:'hidden',revision:2};render()});
-  assert.equal(await page.locator('[data-count=hidden]').innerText(),'1');await page.locator('#adminSearch').fill('новое описание');await page.locator('[data-edit="414"]').waitFor();assert.match(await page.locator('#inventory').innerText(),/Hermès/);
+  assert.equal(await page.locator('[data-count=hidden]').textContent(),'1');await page.locator('#adminSearch').fill('новое описание');await page.locator('[data-edit="414"]').waitFor();assert.match(await page.locator('#inventory').textContent(),/Hermès/);
   await page.locator('#resetFilters').click();await page.locator('[data-edit="1"]').waitFor();
   // Manual keyboard fallback works even without an intersection notification.
   await page.evaluate(()=>{$('moreInventory').focus({preventScroll:true});$('moreInventory').click()});assert.equal(await page.evaluate(()=>document.activeElement.dataset.edit),'49');
   await page.evaluate(()=>{while(inventoryRendered<inventoryRows.length)renderInventoryBatch()});assert.equal(await page.locator('#inventory article').count(),414);assert.equal(await page.locator('#moreInventory').isHidden(),true);
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+  // View switches keep card nodes; sorting covers the entire inventory and unknown prices stay last.
+  await page.evaluate(()=>window.beforeLayout=$('inventory').firstElementChild);await page.locator('#inventoryListView').click();assert.equal(await page.evaluate(()=>window.beforeLayout===$('inventory').firstElementChild),true);assert.equal(await page.locator('#inventoryListView').getAttribute('aria-pressed'),'true');
+  await page.locator('#inventoryGridView').click();assert.equal(await page.evaluate(()=>window.beforeLayout===$('inventory').firstElementChild),true);
+  await page.evaluate(()=>{items[0]={...items[0],price:100,revision:10};items[1]={...items[1],price:5000,revision:10};items[2]={...items[2],price:null,revision:10};render()});
+  await page.locator('#inventorySort').selectOption('price_asc');assert.equal(await page.locator('#inventory [data-edit]').first().getAttribute('data-edit'),'1');assert.equal(await page.locator('#inventory article').count(),48);assert.equal(await page.evaluate(()=>inventoryRows.at(-1).id),3);
+  await page.locator('#inventorySort').selectOption('price_desc');assert.equal(await page.locator('#inventory [data-edit]').first().getAttribute('data-edit'),'2');assert.equal(await page.evaluate(()=>inventoryRows.at(-1).id),3);
+  await page.locator('#resetFilters').click();assert.equal(await page.locator('#inventorySort').inputValue(),'newest');assert.equal(await page.locator('#inventory [data-edit]').first().getAttribute('data-edit'),'1');
   await page.evaluate(()=>endSession());assert.equal(await page.locator('#inventory article').count(),0);assert.equal(await page.locator('#moreInventory').isHidden(),true);assert.equal(await page.evaluate(()=>inventoryRows.length),0);
   assert.deepEqual(errors,[]);await page.close({runBeforeUnload:false});console.log(`PASS ${width}: bounded 414-product list, auto/manual batches, full search, stable filters and preview, scroll restore, revisions and logout`);
  }
