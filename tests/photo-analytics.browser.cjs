@@ -6,7 +6,7 @@ for(const width of [390,1280]){
  const page=await browser.newPage({viewport:{width,height:900}}),errors=[],events=[];page.on('pageerror',e=>errors.push(e.message));
  await page.route('**/api/analytics',r=>{events.push(r.request().postDataJSON());return r.fulfill({status:202,json:{accepted:true}})});
  await page.route('**/rest/v1/rpc/store_product_wishlist_counts',r=>r.fulfill({json:{days:30,counts:{}}}));
- await page.route('**/rest/v1/product_admin_notes?**',r=>r.fulfill({json:[]}));
+ await page.route('**/rest/v1/rpc/store_upload_schedule',r=>r.fulfill({json:{current_user_id:'synthetic',today:'2026-10-16',days:[]}}));await page.route('**/rest/v1/product_admin_notes?**',r=>r.fulfill({json:[]}));
  await page.route('**/rest/v1/rpc/store_bot_health',r=>r.fulfill({json:false}));await page.route('**/rest/v1/rpc/store_analytics_retention_health',r=>r.fulfill({json:{healthy:true}}));
  await page.route('**/rest/v1/products?**',r=>r.fulfill({json:[]}));
  await page.addInitScript(()=>localStorage.setItem('jpAntiScamSeenV1','1'));await page.goto('http://localhost:8774/?tab=catalog');await page.waitForTimeout(150);
