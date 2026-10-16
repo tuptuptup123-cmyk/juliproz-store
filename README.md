@@ -2,7 +2,7 @@
 
 Telegram Mini App: https://t.me/JuliProzBot/shop
 
-Static Vercel storefront using Supabase `public.products`. Existing storefront colors, typography and layout are retained. No npm dependencies are required. The production build configures the Telegram webhook when its server token is present.
+Vercel storefront with server-side catalog, analytics and photo gateways using Supabase `public.products`. Existing storefront colors, typography and layout are retained. No npm dependencies are required. The production build configures the Telegram webhook when its server token is present.
 
 ## Catalog and product links
 
@@ -16,18 +16,19 @@ Open `/admin.html`. Sign in using an authorized Supabase Authentication account.
 
 Completed admin logins persist across page reloads, tabs and browser restarts using `localStorage`, for 30 days from the original server sign-in. There is no inactivity timeout. Supabase Auth is configured with a 720-hour time-box, inactivity timeout 0, 3600-second access tokens and refresh-token reuse detection enabled. Short-lived access tokens still rotate; cross-tab refreshes use Web Locks and reuse the latest saved token. The migration `20261015094134_admin_session_thirty_days.sql` enforces the same fixed deadline on protected database operations. The previous tab-only saved login is discarded once on upgrade. Reload revalidates the server session, membership, MFA policy and user identity before showing inventory. Original session deadlines are preserved; manual logout and expiration clear the saved login. Supabase RLS validates every read/write; hiding the admin UI is not an authorization mechanism. A publishable key in `config.js` is expected; do not place database passwords, service-role keys or bot tokens in browser files.
 
-### One-time Supabase setup
+### Canonical database setup and current audit review
 
-1. Inspect current product policies and apply `supabase/setup.sql` in the existing project. The migration adds `photos`, creates an admin allowlist and Storage bucket, and replaces product policies with public availability reads and admin writes. It preserves product records. Review any custom policies before applying.
-2. Create or invite the owner through Supabase Authentication using their email. Passwords are managed through Supabase Auth; the database password is unrelated.
-3. Add the user's Auth UUID to `public.store_admins` using the commented insert at the end of the migration. Only project administrators can change this allowlist.
-4. Deploy these static files to the existing Vercel project. Verify admin login, add/edit/hide/restore, photo upload, public reads and denial of anonymous writes.
+The authoritative schema order is `supabase/schema/manifest.json`. Full findings, validation boundaries and production rollout order are in `review/EXTERNAL_AUDIT_FIXES.ru.txt`; reproducible commands are in `review/REPRODUCE.txt`.
 
-The migration must be applied and an admin user registered before the admin panel works. A GitHub deployment alone does not configure Supabase.
+For a **fresh Supabase project**, restore `supabase/schema/baseline-20261016.sql`, then only the migrations listed in the manifest, then the fresh-project platform bootstrap. Auth, Storage, pgcrypto and pg_cron are platform dependencies. Provision the first confirmed owner with verified TOTP and new server secrets separately. No production data or credentials are included.
+
+For the **existing project**, do not restore the baseline or replay historical setup scripts. Apply only the new `20261016144421_external_audit_security_and_logic.sql` once, then coordinate Edge/front-end deployment and the post-deployment private-bucket change as documented. This review branch has not applied these changes to production. Auth password-policy settings require separate Management API verification.
+
+A static-folder upload is incomplete: the website also needs its API handlers and `private-product-assets/**` function bundle, and Mini App needs its analytics relay. The old root-level SQL and earlier migrations below document historical changes, not an installation sequence.
 
 ## Reliability and account recovery
 
-Apply SQL in order: `setup.sql`, `catalog-hardening.sql`, then `catalog-reliability.sql`. The reliability migration adds a server-managed revision and a unique creation key. Apply it before deploying the admin UI. Existing owner membership is preserved; automatic email enrollment is retired. Public signup should be disabled in Supabase Auth settings. Invite new administrators through the dashboard, then add their UUID to `store_admins`.
+Revision, creation-key, membership, recovery and MFA controls are included in the canonical baseline. Public signup must stay disabled. Invitation emails do not grant membership; after confirmed email and TOTP enrollment the owner approves team access.
 
 The editor updates only changed fields and requires the original revision to match. A concurrent change produces a conflict instead of overwriting inventory. New-card retries reconcile the same creation key. Upload retries reuse object paths, decode and resize images to WebP, preserving transparency and discarding metadata. Removed gallery links do not delete shared stored files; automatic storage deletion is deliberately not enabled.
 
@@ -100,7 +101,7 @@ Current regression probes: `supabase/audit-security-probes.sql`. Legacy MFA prob
 
 One admin serves both storefronts. Statistics defaults to **Website** and can switch to **Bot** (the Telegram shop) or the unclassified legacy archive. The period, cards, chart, contact breakdown and product rankings use the selected channel. The compact home overview remains labelled as all channels.
 
-The existing consent-based collector sends a fixed storefront channel. The gateway enforces the dedicated bot origin, namespaces sessions by channel and retains shared ingestion limits. Legacy same-origin `/telegram/` launches identify the Telegram storefront explicitly. Old clients without a channel remain in the legacy archive; historical rows are never guessed or relabelled. Bot chat commands and message contents are not collected.
+The collector remains consent-based. The gateway derives the channel from verified Telegram initData, ignores client channel hints, namespaces sessions by channel and retains ingestion limits. The separate Mini App relay signs its trusted client IP and request body using ANALYTICS_RELAY_SECRET. Ordinary anonymous requests are website traffic; existing historical rows are not relabelled. Bot chat commands, message contents and Telegram profiles are not stored in analytics.
 
 Apply `supabase/migrations/20261015030634_analytics_storefront_channels.sql` before releasing the gateway and admin. Old RPC signatures remain compatible during rollout. The private analytics tables retain admin-only RLS and the existing 90-day retention. Run `supabase/analytics-channel-probes.sql` inside a rolled-back transaction to verify channel isolation, replay safety and access checks.
 
@@ -108,7 +109,7 @@ Apply `supabase/migrations/20261015030634_analytics_storefront_channels.sql` bef
 
 The private admin has a daily rotation: one approved manager per day, with a target of ten new product cards. Calendar days use `Europe/Kyiv`, matching the supplied team timetable. The initial rotation contains current non-owner admin accounts, ordered by display name; owners can edit its order from a chosen current/future date or replace one day's manager. Older rotation versions remain intact. A day replacement does not advance or shift the underlying rotation.
 
-Counts come from the existing server-side product INSERT audit, never a browser counter. Editing does not count again; duplicate insert log records are deduplicated. Deleted cards are listed separately and excluded from the target; hidden and sold cards retain their credit. System uploads have no manager attribution. Monthly totals include uploads outside assigned duty, while daily completion uses only the assigned manager. Cards predating available creation audit cannot be attributed retroactively.
+Counts use the first qualified publication in the server-side audit: available=true with brand, name, category and cover. Hidden drafts do not count. Credit belongs to the publishing manager on the Kyiv publication date; editing and republishing do not count again. Deleted cards are listed separately and excluded from the target; hidden and sold cards retain their credit. System uploads have no manager attribution. Monthly totals include uploads outside assigned duty, while daily completion uses only the assigned manager. Cards predating available creation audit cannot be attributed retroactively.
 
 Migration `20261015102752_manager_upload_schedule.sql` adds private RLS-protected schedule tables, guarded RPCs and an upload index. Reads require active membership/session/MFA; changes require the owner's second factor and revision checks. No raw product audit payloads or employee notes are returned by these RPCs. The original July sheet remains unchanged; its ambiguous historical date grid is not imported.
 
