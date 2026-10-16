@@ -1007,3 +1007,9 @@ html[lang=en] .home-shop-link{width:210px}
  .product-share-dialog input#productShareUrl{font-size:16px}
  .anti-scam-dialog{max-height:calc(100dvh - 32px)}
 }
+
+/* Team-curated pieces remain distinct from condition, discount and availability. */
+.team-pick-badge{font-family:Roboto,Arial,sans-serif;display:inline-flex;align-items:center;max-width:100%;padding:5px 9px;border:1px solid #e4c6d7;border-radius:6px;background:#f6e6ef;color:#744560;font-size:10px;font-weight:500;line-height:1.3;letter-spacing:.01em}
+.product .photo>.team-pick-badge{position:absolute;left:10px;bottom:10px;z-index:1;max-width:calc(100% - 20px);pointer-events:none}
+.detail>.team-pick-badge{margin:0 6px 10px 0;vertical-align:middle}
+@media(max-width:600px){.product .photo>.team-pick-badge{left:7px;bottom:7px;max-width:calc(100% - 14px);font-size:9px;padding:4px 7px}}

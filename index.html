@@ -110,10 +110,11 @@
     <section class="catalog-head">
       <span id="count">Загружаем наличие…</span>
       <div class="catalog-sort" id="catalogSortWrap">
-        <button id="catalogSort" class="sort-toggle" type="button" aria-label="Сортировка товаров: По брендам" aria-expanded="false" aria-controls="catalogSortOptions" data-value="brand"><svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><path d="M2 5h16M5 10h10M8 15h4"/></svg><span id="catalogSortLabel">Сортировка</span><span class="sort-chevron" aria-hidden="true">⌄</span></button>
+        <button id="catalogSort" class="sort-toggle" type="button" aria-label="Сортировка товаров: Рекомендуем" aria-expanded="false" aria-controls="catalogSortOptions" data-value="recommended"><svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><path d="M2 5h16M5 10h10M8 15h4"/></svg><span id="catalogSortLabel">Сортировка</span><span class="sort-chevron" aria-hidden="true">⌄</span></button>
         <div id="catalogSortOptions" class="sort-options hidden" role="group" aria-label="Сортировка товаров">
           <span class="sort-options-title">Сортировка</span>
-          <button type="button" data-sort="brand" aria-pressed="true">По брендам<span aria-hidden="true">✓</span></button>
+          <button type="button" data-sort="recommended" aria-pressed="true">Рекомендуем<span aria-hidden="true">✓</span></button>
+          <button type="button" data-sort="brand" aria-pressed="false">По брендам<span aria-hidden="true">✓</span></button>
           <button type="button" data-sort="newest" aria-pressed="false">Сначала новые<span aria-hidden="true">✓</span></button>
           <button type="button" data-sort="price_asc" aria-pressed="false">Дешевле<span aria-hidden="true">✓</span></button>
           <button type="button" data-sort="price_desc" aria-pressed="false">Дороже<span aria-hidden="true">✓</span></button>

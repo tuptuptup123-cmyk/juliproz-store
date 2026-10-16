@@ -58,7 +58,7 @@ run("products=[{id:1,price:100,currency:'EUR',created_at:'2026-01-01'},{id:2,pri
 assert.deepEqual(JSON.parse(run('JSON.stringify(filtered().map(p=>p.id))')),[4,2,1,3]);
 run("state.sort='price_desc'");assert.deepEqual(JSON.parse(run('JSON.stringify(filtered().map(p=>p.id))')),[1,2,4,3]);
 run("state.sort='newest'");assert.deepEqual(JSON.parse(run('JSON.stringify(filtered().map(p=>p.id))')),[2,3,1,4]);
-run("state.sort='discount'");assert.deepEqual(JSON.parse(run('JSON.stringify(filtered().map(p=>p.id))')),[4,2,1,3]);assert.deepEqual(JSON.parse(run('JSON.stringify(products.map(p=>p.id))')),[1,2,3,4]);get('reset').onclick();assert.equal(run('state.sort'),'brand');
+run("state.sort='discount'");assert.deepEqual(JSON.parse(run('JSON.stringify(filtered().map(p=>p.id))')),[4,2,1,3]);assert.deepEqual(JSON.parse(run('JSON.stringify(products.map(p=>p.id))')),[1,2,3,4]);get('reset').onclick();assert.equal(run('state.sort'),'recommended');
 // Price sorting needs no exchange-rate request.
 fail=true;await run("changeCatalogSort('price_asc')");assert.equal(run('state.sort'),'price_asc');assert.equal(get('sortStatus').textContent,'');fail=false;
 assert.equal(run("money({price:100,currency:'USD'})"),'');

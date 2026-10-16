@@ -1,7 +1,7 @@
 'use strict';
 
 // Only the same public fields and anonymous permissions used by the storefront.
-const FIELDS='id,created_at,brand,name,category,size,price,currency,image_url,available,fulfillment_status,gender,description,photos,reserved,product_condition,stock_quantities,on_commission,original_price,wear_condition';
+const FIELDS='id,created_at,brand,name,category,size,price,currency,image_url,available,fulfillment_status,gender,description,photos,reserved,product_condition,stock_quantities,on_commission,original_price,wear_condition,team_pick';
 const keys=FIELDS.split(',');
 function createHandler({config=require('../config.js'),fetch:fetcher=globalThis.fetch}={}){
   // Coalesce simultaneous cold requests on one instance; no durable process cache.
