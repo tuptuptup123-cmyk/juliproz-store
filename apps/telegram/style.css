@@ -744,7 +744,9 @@ img.product-framed{padding:0;object-fit:contain;transform-origin:center;box-sizi
 .catalogue-more{grid-column:1/-1;justify-self:center;margin:20px 0;padding:12px 24px;border:1px solid var(--line);background:#fff;color:var(--ink);font:inherit;cursor:pointer}
 
 /* Keep catalogue navigation available while viewing a product. */
-.product-modal{padding-bottom:calc(112px + var(--nav-safe-bottom,env(safe-area-inset-bottom)))}
+/* The scroll viewport ends above navigation: focused controls cannot hide behind it. */
+.product-modal{bottom:calc(92px + var(--nav-safe-bottom,env(safe-area-inset-bottom)));padding-bottom:24px;scroll-padding-top:100px;scroll-padding-bottom:8px}
+.product-modal::after{content:"";position:fixed;z-index:32;left:0;right:0;bottom:0;height:calc(92px + var(--nav-safe-bottom,env(safe-area-inset-bottom)));background:var(--bg);pointer-events:none}
 .product-toolbar{position:sticky;top:0;z-index:31;display:flex;align-items:center;justify-content:space-between;gap:16px;box-sizing:border-box;min-height:72px;padding:12px 20px;background:rgba(255,255,255,.97);border-bottom:1px solid var(--line);backdrop-filter:blur(12px)}
 .product-toolbar .back{position:static;flex:none;margin:0;background:#fff}
 .product-toolbar .catalog-menu-button{min-height:44px;min-width:100px;border-radius:10px;background:#fff;color:var(--ink);font-weight:400;box-shadow:none}

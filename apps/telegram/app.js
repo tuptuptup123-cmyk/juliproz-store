@@ -311,6 +311,7 @@ function pressNavWithPaw(button){
 function showMoneyPaw(button){
   const paw=document.getElementById('moneyPaw');
   if(!paw||!button?.getBoundingClientRect||window.matchMedia?.('(prefers-reduced-motion: reduce)').matches)return;
+  if(!paw.getAttribute('src')&&paw.dataset.src){paw.src=paw.dataset.src;if(paw.decode){paw.decode().then(()=>showMoneyPaw(button)).catch(()=>{});return}}
   const box=button.getBoundingClientRect(),width=110;
   clearTimeout(moneyPawTimer);paw.classList.remove('is-presenting');
   paw.style.left=`${Math.max(8,Math.min(innerWidth-width-8,box.left+box.width/2-width/2))}px`;

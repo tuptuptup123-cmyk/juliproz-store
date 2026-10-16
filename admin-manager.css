@@ -1,5 +1,5 @@
 /* Manager workspace. Data, permissions and transaction forms stay in their own modules. */
-:root{--ink:#302b32;--muted:#817985;--line:#ebe7eb;--bg:#fff;--card:#faf8fa;--brand-pink:#e5c9dc}
+:root{--ink:#302b32;--muted:#6d626f;--line:#ebe7eb;--bg:#fff;--card:#faf8fa;--brand-pink:#e5c9dc}
 #workspace button,#workspace a,#workspace summary{touch-action:manipulation}
 #workspace .primary{background:var(--brand-pink);border-color:var(--brand-pink);color:var(--ink);border-radius:10px}
 #workspace .primary:hover{background:#dcbdd1;border-color:#dcbdd1}
@@ -83,7 +83,7 @@ body[data-manager-view=inventory] #newProduct,body[data-manager-view=editor] #ne
 #inventory .product-price{grid-column:1;grid-row:auto;font-size:17px;align-self:center;padding:0}
 #inventory .product-status{grid-column:2;grid-row:auto;align-self:center;justify-self:end;padding:0}
 #inventory .badge{font-size:10px;padding:4px 8px}
-#inventory .stock{color:#668254;background:#f0f6ed}#inventory .order{color:#a18551;background:#faf4e9}#inventory .reserved{color:#a76d87;background:#f9edf3}#inventory .concealed{color:#817985;background:#f4f1f4}
+#inventory .stock{color:#49633a;background:#f0f6ed}#inventory .order{color:#765d2e;background:#faf4e9}#inventory .reserved{color:#88516c;background:#f9edf3}#inventory .concealed{color:#6d626f;background:#f4f1f4}
 #inventory .product-wishlist{position:absolute;right:11px;top:10px;font-size:10px;padding:0;background:#ffffffd9;max-width:calc(100% - 22px)}
 #inventory.inventory-list{grid-template-columns:1fr;gap:8px}
 #inventory.inventory-list article{grid-template-columns:90px minmax(100px,1fr) minmax(90px,.55fr) minmax(110px,.45fr) 110px;align-items:center;gap:18px;padding:10px 18px}
@@ -160,7 +160,7 @@ body[data-manager-view=inventory] #newProduct,body[data-manager-view=editor] #ne
 }
 @media(max-width:360px){.workspace-main{padding-left:12px;padding-right:12px}#inventoryPanel>.page-heading h1{font-size:28px}#topNewProduct{font-size:10px;padding:8px 10px}#inventory .product-thumb{height:132px}#inventory .product-title p{font-size:13px}#currentAdminProfile{max-width:90px}.inventory-view-switch button{width:28px}.manager-toolbar>button{padding:6px 9px}.inventory-sort select{font-size:10px}#productNavigation .product-filter-list{gap:14px}.home-work-plan>strong{font-size:10px}.preview-product{grid-template-columns:100px minmax(0,1fr)}.preview-image{height:100px}}
 
-.manager-toolbar .search-label input::placeholder{color:#a098a4;font-weight:400;font-size:12px}
+.manager-toolbar .search-label input::placeholder{color:#746978;font-weight:400;font-size:12px}
 
 @media(min-width:701px){.editor-actions{display:flex;align-items:center;flex-wrap:wrap;gap:10px;padding:12px 16px}.editor-actions .row-actions{margin:0;padding:0;border:0;flex:1}.editor-actions .editor-preview-actions{margin:0;padding:0;border:0}}
 
@@ -180,13 +180,13 @@ body[data-manager-view=inventory] #newProduct,body[data-manager-view=editor] #ne
 .upload-guide:not([open])>.upload-guide-content{display:none}
 .upload-guide-rules{display:grid;gap:14px;list-style:none;counter-reset:upload-rule;padding:0;margin:0}
 .upload-guide-rules>li{position:relative;padding-left:30px;counter-increment:upload-rule;font-size:12px;line-height:1.6}
-.upload-guide-rules>li::before{content:counter(upload-rule,decimal-leading-zero);position:absolute;left:0;top:1px;font-size:10px;color:#a67e96}
+.upload-guide-rules>li::before{content:counter(upload-rule,decimal-leading-zero);position:absolute;left:0;top:1px;font-size:10px;color:#805c72}
 .upload-guide-rules strong{font-weight:500;font-size:13px}.upload-guide-rules p{margin:3px 0 0;color:#6d636e}
 .upload-guide-name{display:flex;flex-wrap:wrap;gap:3px 18px;margin-top:7px;padding:7px 10px;border-radius:6px;background:#f6f0f4;color:#786a76;font-size:11px}
 .upload-guide-name b{color:var(--ink);font-weight:400}
 .upload-guide-example{min-width:0;margin:0;border:1px solid var(--line);border-radius:9px;overflow:hidden;background:#fff}
 .upload-guide-example-heading{display:flex;align-items:center;flex-wrap:wrap;gap:8px;justify-content:space-between;padding:12px 14px;font-size:11px}
-.upload-guide-tag{color:#698160;background:#f0f5ec;font-size:9px;padding:3px 7px;border-radius:5px}
+.upload-guide-tag{color:#4d6744;background:#f0f5ec;font-size:9px;padding:3px 7px;border-radius:5px}
 .upload-guide-photo{aspect-ratio:12/5;overflow:hidden}.upload-guide-photo img{display:block;width:100%;height:100%;object-fit:cover}
 .upload-guide-directions{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 12px 14px;text-align:center;font-size:11px;color:#6d636e}
 .upload-guide-directions>span>span{margin-left:4px;color:#9b5a80}
@@ -194,3 +194,13 @@ body[data-manager-view=inventory] #newProduct,body[data-manager-view=editor] #ne
 #showUploadGuide{min-height:36px;padding:5px 0;margin:0 0 14px;font-size:12px;color:#91617d;text-align:left}
 @media(min-width:1500px){.upload-guide-content{grid-template-columns:minmax(0,1.5fr) minmax(0,1fr)}.upload-guide-example{width:100%;max-width:470px;justify-self:end}.upload-guide-rules{grid-template-columns:1fr 1fr;gap:22px 26px}}
 @media(max-width:700px){.upload-guide{margin-bottom:18px}.upload-guide>summary{padding:14px;gap:10px}.upload-guide>summary strong{font-size:13px}.upload-guide>summary small{font-size:10px}.upload-guide-content{grid-template-columns:1fr;gap:18px;padding:2px 14px 14px}.upload-guide-rules{gap:13px}.upload-guide-rules>li{padding-left:25px}.upload-guide-rules strong{font-size:12px}.upload-guide-example{width:100%;max-width:450px;justify-self:center}}
+
+/* Audit: accessible status strip and an additional save action without covering fields. */
+#homePanel:focus-visible{outline:2px solid #805c72;outline-offset:3px}
+.editor-heading-actions{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+#saveTop{min-height:44px;padding:10px 22px}
+.product-quality{margin-top:20px;padding:18px 20px;border:1px solid var(--line);border-radius:12px;background:#faf8fa}
+.product-quality h2{margin:0 0 6px;font-size:16px}
+.product-quality ul{margin:10px 0 0;padding-left:20px;font-size:13px;line-height:1.65}
+.product-quality a{color:#76516b;text-underline-offset:3px}.quality-complete{color:#49633a}
+@media(max-width:700px){.editor-heading{align-items:flex-start}.editor-heading-actions{flex-shrink:0}#saveTop{padding:10px 14px;font-size:12px}.product-quality{padding:16px}}

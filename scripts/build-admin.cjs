@@ -2,7 +2,7 @@
 const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto');
 const root=path.resolve(__dirname,'..'),out=path.join(root,'apps/admin/dist');
 fs.rmSync(out,{recursive:true,force:true});fs.mkdirSync(out,{recursive:true});
-for(const name of ['admin.html','admin.css','admin.js','admin-manager.css','admin-manager.js','admin-session.js','admin-selects.js','admin-workspace.js','admin-sales.js','admin-schedule.js','admin-finance.js','admin-product-finance.js','admin-finance.css','analytics-report.js','fonts.css','config.js','image-policy.js','product-framing.js','catalog-taxonomy.js','product-sizes.js','product-sharing.js','product-sharing.css','product-pricing.js','photo-codec.js','photo-studio.js','photo-background.js','photo-worker.js','images','fonts','vendor']){const source=path.join(root,name);if(fs.existsSync(source))fs.cpSync(source,path.join(out,name),{recursive:true})}
+for(const name of ['admin.html','admin.css','admin.js','product-quality.js','admin-manager.css','admin-manager.js','admin-session.js','admin-selects.js','admin-workspace.js','admin-sales.js','admin-schedule.js','admin-finance.js','admin-product-finance.js','admin-finance.css','analytics-report.js','fonts.css','config.js','image-policy.js','product-framing.js','catalog-taxonomy.js','product-sizes.js','product-sharing.js','product-sharing.css','product-pricing.js','photo-codec.js','photo-studio.js','photo-background.js','photo-worker.js','images','fonts','vendor']){const source=path.join(root,name);if(fs.existsSync(source))fs.cpSync(source,path.join(out,name),{recursive:true})}
 // Only public, content-addressed assets receive long-lived browser caching.
 // HTML and all authenticated API responses remain no-store.
 function fingerprint(name){

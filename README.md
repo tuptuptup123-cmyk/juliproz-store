@@ -31,7 +31,7 @@ Apply SQL in order: `setup.sql`, `catalog-hardening.sql`, then `catalog-reliabil
 
 The editor updates only changed fields and requires the original revision to match. A concurrent change produces a conflict instead of overwriting inventory. New-card retries reconcile the same creation key. Upload retries reuse object paths, decode and resize images to WebP, preserving transparency and discarding metadata. Removed gallery links do not delete shared stored files; automatic storage deletion is deliberately not enabled.
 
-Password recovery uses Supabase's recovery email and a new-password form (minimum 12 characters). Incomplete MFA, recovery and pending-approval logins stay in memory. Completed logins persist only tokens, user ID and deadlines in the current tab; profile data and MFA secrets are not saved. Concurrent refreshes share one request; rejected credentials close the workspace, while transient network failures preserve the login for retry. Network calls time out after 20 seconds. The admin page disallows framing and caching; the storefront retains Telegram framing support.
+Password recovery uses Supabase's recovery email and a new-password form (minimum 12 characters). Incomplete MFA, recovery and pending-approval logins stay in memory. Completed logins persist only tokens, user ID and deadlines in localStorage on this device for a fixed 30-day lifetime; profile data and MFA secrets are not saved. Concurrent refreshes share one request; rejected credentials close the workspace, while transient network failures preserve the login for retry. Network calls time out after 20 seconds. The admin page disallows framing and caching; the storefront retains Telegram framing support.
 
 Validation: `node tests/store.test.cjs` and `node --test tests/swipe.test.cjs`.
 
@@ -86,7 +86,7 @@ Public signup was verified disabled through Auth settings. Dashboard-only action
 
 ## Audit corrections — 13 October 2026
 
-Apply `supabase/migrations/20261013054144_audit_security_and_logic_fixes.sql` before deploying the changed admin or Edge functions. Admin access/refresh tokens now live only in document memory; reload or a new tab requires sign-in, while non-sensitive editor preferences remain stored. Legacy saved credentials are removed. Invite/recovery links explicitly confirm the target email and cannot silently replace another active account.
+Apply `supabase/migrations/20261013054144_audit_security_and_logic_fixes.sql` before deploying the changed admin or Edge functions. Historical migration note (superseded by the current 30-day session implementation): that release used document-memory tokens. Current completed logins survive reloads and new tabs for 30 days; incomplete MFA and recovery sessions remain in memory. Legacy credential formats are removed. Invite/recovery links explicitly confirm the target email and cannot silently replace another active account.
 
 Invitation email delivery does not grant membership. The invited user confirms email, sets a password and enrolls TOTP, then waits for the owner to approve access. Existing accounts also require verified email and TOTP before an owner can add them. Only the owner can permanently delete products; ordinary administrators can mark them sold or hidden. MFA and active server sessions remain required.
 

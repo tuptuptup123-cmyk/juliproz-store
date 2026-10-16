@@ -10,6 +10,9 @@
  $('workspace').addEventListener('click',event=>{if(event.target.closest('[data-view],#logout,#newProduct,#topNewProduct'))closeMenus()});
  $('toggleInventoryFilters').onclick=()=>{const expanded=$('inventoryFilters').classList.toggle('hidden')===false;$('toggleInventoryFilters').setAttribute('aria-expanded',String(expanded));if(!expanded)$('toggleInventoryFilters').focus()};
  $('inventorySort').onchange=render;
+ // Top save uses the same form and validation; mirror processing/permission locks.
+ const syncSave=()=>{$('saveTop').disabled=$('save').disabled||$('editorFields').disabled};
+ for(const id of ['save','editorFields'])new MutationObserver(syncSave).observe($(id),{attributes:true,attributeFilter:['disabled']});syncSave();
  $('showUploadGuide').onclick=()=>{const guide=$('uploadGuide');guide.open=true;$('uploadGuideSummary').focus({preventScroll:true});guide.scrollIntoView({behavior:'auto',block:'start'})};
  function setLayout(layout){$('inventory').classList.toggle('inventory-list',layout==='list');$('inventoryGridView').setAttribute('aria-pressed',String(layout!=='list'));$('inventoryListView').setAttribute('aria-pressed',String(layout==='list'));try{localStorage.setItem('jpAdminInventoryLayout',layout)}catch{}}
  $('inventoryGridView').onclick=()=>setLayout('grid');$('inventoryListView').onclick=()=>setLayout('list');

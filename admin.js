@@ -370,6 +370,9 @@ async function saveInternalNote(id){
 function updatePreview(){syncInternalNote();const wf=$('editor').elements;if($('wearConditionField'))$('wearConditionField').classList.toggle('hidden',wf.product_condition?.value!=='pre_owned');if(wf.wear_condition){wf.wear_condition.disabled=wf.product_condition?.value!=='pre_owned';if(wf.wear_condition.disabled)wf.wear_condition.value=''}
  syncPriceMode();
  const f=$('editor').elements;
+ const quality=window.ProductQuality?.issues({name:f.name.value,description:f.description.value,product_condition:f.product_condition.value,wear_condition:f.wear_condition.value,photos:[...photos,...pendingPreviews.map(p=>p.src)]})||[{target:'productBasics',message:'Подсказки недоступны. Проверьте данные по правилам добавления вещи.'}];
+ $('productQualityList').innerHTML=quality.length?quality.map(q=>`<li><a href="#${esc(q.target)}">${esc(q.message)}</a></li>`).join(''):'<li class="quality-complete">Основные сведения заполнены. Проверьте точную модель и фотографии.</li>';
+
  $('previewTeamPick').classList.toggle('hidden',!f.team_pick?.checked);
  $('previewCondition').textContent=[conditionLabels[f.product_condition?.value||'new'],f.on_commission?.checked?'Комиссия':''].filter(Boolean).join(' · ');$('previewBrand').textContent=editorBrand(f)||'БРЕНД';$('previewName').textContent=f.name.value.trim()||'Название товара';
  $('previewSize').textContent=f.size.value.trim()?ProductSizes.variantLabel({size:f.size.value})+': '+ProductSizes.parse(f.size.value).join(' / '):'Размер уточняйте';
