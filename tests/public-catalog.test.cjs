@@ -8,12 +8,12 @@ test('100 concurrent cold visitors share one public upstream request',async()=>{
   const handler=createHandler({config,fetch:async(url,options)=>{
     calls++;assert.match(url,/available=eq.true/);assert.match(url,/limit=500/);
     assert.deepEqual(options.headers,{apikey:'public-anon'});
-    await gate;return {ok:true,json:async()=>[{id:1,available:true,name:'Public',internal_cost:9,client_email:'private@example.invalid'}]};
+    await gate;return {ok:true,json:async()=>[{id:1,available:true,name:'Public',team_pick:true,internal_cost:9,client_email:'private@example.invalid'}]};
   }});
   const results=Array.from({length:100},response);
   const requests=results.map(res=>handler({method:'GET',url:'/api/catalog',headers:{authorization:'must-not-forward',cookie:'must-not-forward'}},res));
   assert.equal(calls,1);release();await Promise.all(requests);
-  for(const res of results){assert.equal(res.code,200);assert.deepEqual(res.body,[{id:1,name:'Public',available:true}]);assert.match(res.headers['Vercel-CDN-Cache-Control'],/s-maxage=30/)}
+  for(const res of results){assert.equal(res.code,200);assert.deepEqual(res.body,[{id:1,name:'Public',available:true,team_pick:true}]);assert.match(res.headers['Vercel-CDN-Cache-Control'],/s-maxage=30/)}
 });
 test('all catalogue pages are returned and fields match the storefront allowlist',async()=>{
   const offsets=[];const handler=createHandler({config,fetch:async url=>{offsets.push(new URL(url).searchParams.get('offset'));return {ok:true,json:async()=>offsets.length===1?Array.from({length:500},(_,id)=>({id,available:true})):[{id:500,available:true}]}}});

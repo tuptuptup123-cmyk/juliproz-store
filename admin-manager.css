@@ -163,3 +163,8 @@ body[data-manager-view=inventory] #newProduct,body[data-manager-view=editor] #ne
 .manager-toolbar .search-label input::placeholder{color:#a098a4;font-weight:400;font-size:12px}
 
 @media(min-width:701px){.editor-actions{display:flex;align-items:center;flex-wrap:wrap;gap:10px;padding:12px 16px}.editor-actions .row-actions{margin:0;padding:0;border:0;flex:1}.editor-actions .editor-preview-actions{margin:0;padding:0;border:0}}
+
+.team-pick-badge{display:inline-flex;align-items:center;width:fit-content;max-width:100%;padding:4px 8px;border:1px solid #e4c6d7;border-radius:6px;background:#f6e6ef;color:#744560;font-size:10px;font-weight:500;line-height:1.3}
+.team-pick-option{padding:14px;border:1px solid #e4c6d7;border-radius:9px;background:#fffbfd}
+#previewTeamPick{margin-bottom:8px}#inventory .team-pick-badge{font-size:9px;margin:0 0 6px}
+.catalogue-preview-photo>.team-pick-badge{position:absolute;left:10px;bottom:10px}
