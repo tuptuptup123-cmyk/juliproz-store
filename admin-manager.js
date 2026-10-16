@@ -10,6 +10,7 @@
  $('workspace').addEventListener('click',event=>{if(event.target.closest('[data-view],#logout,#newProduct,#topNewProduct'))closeMenus()});
  $('toggleInventoryFilters').onclick=()=>{const expanded=$('inventoryFilters').classList.toggle('hidden')===false;$('toggleInventoryFilters').setAttribute('aria-expanded',String(expanded));if(!expanded)$('toggleInventoryFilters').focus()};
  $('inventorySort').onchange=render;
+ $('showUploadGuide').onclick=()=>{const guide=$('uploadGuide');guide.open=true;$('uploadGuideSummary').focus({preventScroll:true});guide.scrollIntoView({behavior:'auto',block:'start'})};
  function setLayout(layout){$('inventory').classList.toggle('inventory-list',layout==='list');$('inventoryGridView').setAttribute('aria-pressed',String(layout!=='list'));$('inventoryListView').setAttribute('aria-pressed',String(layout==='list'));try{localStorage.setItem('jpAdminInventoryLayout',layout)}catch{}}
  $('inventoryGridView').onclick=()=>setLayout('grid');$('inventoryListView').onclick=()=>setLayout('list');
  try{setLayout(localStorage.getItem('jpAdminInventoryLayout')==='list'?'list':'grid')}catch{}
