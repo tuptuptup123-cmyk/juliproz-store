@@ -44,7 +44,7 @@
    const result=await rpc('store_record_product_sale',payload);if(epoch!==sessionEpoch)return;
    if(!result?.sale_id)throw Error('Сервер не подтвердил продажу. Повторите сохранение.');
    if(result.product){const index=items.findIndex(p=>String(p.id)===String(result.product.id));if(index>=0)items[index]=result.product}
-   $('saleDialog').close();draft=null;render();status('Продажа записана. Дата, сумма и сотрудник сохранены в истории.');
+   $('saleDialog').close();draft=null;if(result.product&&!$('editor').classList.contains('hidden')&&String(editing)===String(result.product.id))edit(result.product);render();status('Продажа записана. Дата, сумма и сотрудник сохранены в истории.');
    try{await load()}catch{if(epoch===sessionEpoch)status('Продажа записана. Не удалось обновить список — обновите его позже.')}
   }catch(error){if(epoch===sessionEpoch)$('saleError').textContent=error.message+' Если связь прервалась, повторите сохранение: дубль не создастся.'}
   finally{busy=false;$('submitSale').disabled=false}

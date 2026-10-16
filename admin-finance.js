@@ -11,10 +11,10 @@
  const today=()=>new Intl.DateTimeFormat('sv-SE',{timeZone:'Europe/Kyiv',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
  const states={active:'В работе',completed:'Завершено',cancelled:'Отменено',linked:'Связано с продажей'};
  const financial=['received','purchase_cost','expenses','owner_due','owner_paid'];
- let reportFilterKey=null,group='all',rows=[],commissionRows=[],cursor=null,commissionCursor=null,generation=0,reportRequest=0,portfolioRequest=0,choiceRequest=0,historyRequest=0,reportBusy=false,portfolioBusy=false,draft=null,termsDraft=null,linkDraft=null,choices=[];
+ let savedCallback=null,reportFilterKey=null,group='all',rows=[],commissionRows=[],cursor=null,commissionCursor=null,generation=0,reportRequest=0,portfolioRequest=0,choiceRequest=0,historyRequest=0,reportBusy=false,portfolioBusy=false,draft=null,termsDraft=null,linkDraft=null,choices=[];
  function resetPeriod(){const t=today(),f=$('financeFilters').elements;f.from.value=t.slice(0,7)+'-01';f.to.value=t}
  function hide(){generation++;reportRequest++;portfolioRequest++;reportBusy=false;portfolioBusy=false;$('financePanel').classList.add('hidden');$('statisticsNavigation').classList.add('hidden')}
- function clear(){hide();draft=null;termsDraft=null;linkDraft=null;choices=[];rows=[];commissionRows=[];cursor=null;commissionCursor=null;choiceRequest++;historyRequest++;group='all';reportFilterKey=null;resetPeriod();
+ function clear(){hide();savedCallback=null;draft=null;termsDraft=null;linkDraft=null;choices=[];rows=[];commissionRows=[];cursor=null;commissionCursor=null;choiceRequest++;historyRequest++;group='all';reportFilterKey=null;resetPeriod();
   for(const id of ['financeDialog','commissionDialog','financeLinkDialog'])$(id).close();
   for(const id of ['financeForm','commissionForm','financeLinkForm'])$(id).reset();
   for(const id of ['financeSummary','financeList','financeCoverage','financeStatus','commissionList','commissionSummary','financeSource','financeCalculation','financeError','financeHistory','commissionProduct','commissionError','financeLinkOrder','financeLinkError','financeSaleChoice'])$(id).textContent='';
@@ -65,15 +65,15 @@
   f.completed_on.required=f.status.value==='completed';f.completed_on.disabled=f.status.value==='active'||draft.sale_id!=null;
   try{const e={on_commission:commission,amount:draft.sale_id!=null?draft.amount:amount(f.amount.value),received:amount(f.received.value),purchase_cost:amount(f.purchase_cost.value),owner_due:amount(f.owner_due.value),expenses:amount(f.expenses.value)};$('financeCalculation').textContent=e.amount==null?'Укажите общую сумму заказа.':`Остаток оплаты: ${money(balance(e))}. Расчёт после затрат: ${money(margin(e))}. Все суммы — за всё количество.`}catch(error){$('financeCalculation').textContent=error.message}
  }
- function openEntry(e){
-  if(!session||!adminSecurity.owner||busy)return;draft=e?structuredClone(e):{id:crypto.randomUUID(),revision:0,kind:'order',sale_id:null,status:'active',on_commission:false,opened_on:today(),quantity:1};
+ function openEntry(e,onSaved=null){
+  if(!session||!adminSecurity.owner||busy)return;savedCallback=onSaved;draft=e?structuredClone(e):{id:crypto.randomUUID(),revision:0,kind:'order',sale_id:null,status:'active',on_commission:false,opened_on:today(),quantity:1};
   const f=$('financeForm').elements;$('financeForm').reset();$('financeFields').disabled=false;$('financeSave').disabled=false;
   for(const key of ['product_label','product_id','client_ref','opened_on','completed_on','status','quantity','amount',...financial,'owner_ref','note'])f[key].value=draft[key]??'';f.on_commission.checked=draft.on_commission===true;
   f.opened_on.max=today();f.completed_on.max=today();const source=draft.sale_id!=null;$('financeOrderFields').classList.toggle('hidden',source);$('financeOrderFields').disabled=source;
   $('financeDialogTitle').textContent=source?'Финансы продажи':draft.revision?'Заказ клиента':'Новый заказ';$('financeSource').textContent=source?`${draft.product_label} · продажа № ${draft.sale_id} · ${date(draft.completed_on)} · ${money(draft.amount)}${draft.on_commission?' · Комиссия':''}${draft.status==='cancelled'?' · Продажа отменена. Укажите полученную сумму после возврата.':''}`:'Для вещей под заказ. Если продажа уже есть в истории, сохраните заказ и свяжите записи.';
   $('financeError').textContent='';$('financeHistory').textContent='';$('financeHistoryDetails').open=false;$('financeHistoryDetails').classList.toggle('hidden',!draft.revision);updateFields();window.AdminSelects?.sync();$('financeDialog').showModal();(source?f.received:f.product_label).focus();
  }
- function close(id){if(busy)return;$(id).close();if(id==='financeDialog'){draft=null;historyRequest++}if(id==='commissionDialog')termsDraft=null;if(id==='financeLinkDialog'){linkDraft=null;choiceRequest++}}
+ function close(id){if(busy)return;$(id).close();if(id==='financeDialog'){draft=null;savedCallback=null;historyRequest++}if(id==='commissionDialog')termsDraft=null;if(id==='financeLinkDialog'){linkDraft=null;choiceRequest++}}
  document.querySelectorAll('[data-finance-close]').forEach(b=>b.onclick=()=>close(b.dataset.financeClose));
  for(const id of ['financeDialog','commissionDialog','financeLinkDialog'])$(id).addEventListener('cancel',e=>{e.preventDefault();close(id)});
  $('financeForm').addEventListener('input',updateFields);$('financeForm').addEventListener('change',updateFields);
@@ -86,7 +86,7 @@
    const total=current.sale_id!=null?current.amount:values.amount;if(values.received!=null&&values.received>total)throw Error('Полученная сумма не может быть больше суммы сделки.');if(values.owner_paid!=null&&(values.owner_due==null||values.owner_paid>values.owner_due))throw Error('Выплата не может превышать согласованную сумму владельцу.');
   }catch(error){$('financeError').textContent=error.message;return}
   busy=true;$('financeFields').disabled=true;$('financeSave').disabled=true;$('financeError').textContent='Сохраняем…';
-  try{const saved=await rpc('store_save_finance_entry',{p_id:current.id,p_revision:current.revision,p_values:values});if(epoch!==sessionEpoch||draft!==current)return;if(saved?.id!==current.id)throw Error('Сервер не подтвердил запись');$('financeDialog').close();draft=null;await loadReport(false,'Финансы сохранены.')}catch(error){if(epoch===sessionEpoch&&draft===current)$('financeError').textContent=error.message+' Если связь прервалась, закройте форму и обновите отчёт: запись могла сохраниться.'}finally{if(epoch===sessionEpoch){busy=false;$('financeFields').disabled=false;$('financeSave').disabled=false;updateFields()}}
+  try{const saved=await rpc('store_save_finance_entry',{p_id:current.id,p_revision:current.revision,p_values:values});if(epoch!==sessionEpoch||draft!==current)return;if(saved?.id!==current.id)throw Error('Сервер не подтвердил запись');$('financeDialog').close();draft=null;const callback=savedCallback;savedCallback=null;if(callback)await callback(saved);else await loadReport(false,'Финансы сохранены.')}catch(error){if(epoch===sessionEpoch&&draft===current)$('financeError').textContent=error.message+' Если связь прервалась, закройте форму и обновите отчёт: запись могла сохраниться.'}finally{if(epoch===sessionEpoch){busy=false;$('financeFields').disabled=false;$('financeSave').disabled=false;updateFields()}}
  };
  $('financeList').onclick=e=>{const editButton=e.target.closest('[data-finance-edit]');if(editButton)return openEntry(rows.find(r=>r.id===editButton.dataset.financeEdit));const link=e.target.closest('[data-finance-link]');if(link)return openLink(rows.find(r=>r.id===link.dataset.financeLink));const sale=e.target.closest('[data-finance-sale]');if(sale&&!busy)window.AdminSales?.forProduct(sale.dataset.financeSale)};
  $('commissionList').onclick=e=>{const b=e.target.closest('[data-commission-edit]');if(!b||busy)return;termsDraft=commissionRows.find(p=>p.product_id===b.dataset.commissionEdit);if(!termsDraft)return;$('commissionForm').reset();$('commissionFields').disabled=false;$('commissionSave').disabled=false;$('commissionForm').elements.owner_ref.value=termsDraft.owner_ref;$('commissionForm').elements.due_per_unit.value=termsDraft.due_per_unit??'';$('commissionProduct').textContent=termsDraft.product_label;$('commissionError').textContent='';$('commissionDialog').showModal();$('commissionForm').elements.owner_ref.focus()};
@@ -99,5 +99,5 @@
  $('statisticsNavigation').onclick=e=>{const b=e.target.closest('[data-statistics]');if(b&&(!busy)&&(b.dataset.statistics!=='finance'||adminSecurity.owner))selectView(b.dataset.statistics)};
  $('financeGroups').onclick=e=>{const b=e.target.closest('[data-finance-group]');if(b&&!busy)selectGroup(b.dataset.financeGroup)};
  $('financeFilters').onsubmit=e=>{e.preventDefault();loadReport()};$('financeMonth').onclick=()=>{resetPeriod();loadReport()};$('financeRefresh').onclick=()=>{loadReport();if(group==='commission')loadCommission()};$('financeMore').onclick=()=>loadReport(true);$('commissionMore').onclick=()=>loadCommission(true);$('financeNew').onclick=()=>openEntry(null);
- window.AdminFinance={onView,hide,clear};
+ window.AdminFinance={onView,hide,clear,openEntry};
 })();

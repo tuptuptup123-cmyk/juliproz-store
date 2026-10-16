@@ -7,3 +7,6 @@
 
 .finance-portfolio>summary{font-size:20px;cursor:pointer;font-weight:500;line-height:1.5}
 @media(max-width:700px){#financePanel .page-heading{flex-wrap:wrap}#financePanel .page-heading>.primary{display:block;width:100%;margin-top:8px}#financeTitle{font-size:29px}}
+
+#productFinanceCard{min-width:0}#productFinanceCard input{min-width:0;width:100%;box-sizing:border-box}#productFinanceCard .finance-entry{background:#faf8f6}#productFinanceCard .finance-entry button{white-space:normal}#productFinanceCard .finance-notice{margin-top:18px}#productFinanceCard .field-help{line-height:1.6}
+@media(max-width:600px){#productFinanceCard .form-grid{grid-template-columns:minmax(0,1fr)}#productFinanceCard h2{font-size:20px}#productFinanceCard .finance-entry-numbers{grid-template-columns:minmax(0,1fr)}#productFinanceCard .finance-entry-numbers>div{display:flex;justify-content:space-between;gap:12px}#productFinanceCard .finance-entry-numbers dd{margin:0}#productFinanceCard .finance-entry-numbers dt{font-size:12px}}
