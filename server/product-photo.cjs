@@ -3,7 +3,7 @@ const fs=require('node:fs/promises'),path=require('node:path'),config=require('.
 function createHandler({fetch:request=fetch,readFile=fs.readFile,root=path.resolve(__dirname,'../private-product-assets')}={}){
  return async(req,res)=>{
   res.setHeader('Cache-Control','no-store');res.setHeader('Vary','Origin, Authorization');res.setHeader('X-Content-Type-Options','nosniff');
-  if(req.headers.origin==='https://admin.juliproz.com'){res.setHeader('Access-Control-Allow-Origin',req.headers.origin);res.setHeader('Access-Control-Allow-Headers','authorization');res.setHeader('Access-Control-Allow-Methods','GET, HEAD, OPTIONS')}
+  if(['https://admin.juliproz.com','https://www.juliproz.com','https://juliproz.com','https://juliproz-store.vercel.app','https://app.juliproz.com'].includes(req.headers.origin)){res.setHeader('Access-Control-Allow-Origin',req.headers.origin);res.setHeader('Access-Control-Allow-Headers','authorization');res.setHeader('Access-Control-Allow-Methods','GET, HEAD, OPTIONS')}
   const deny=code=>{res.statusCode=code;res.end()};
   if(req.method==='OPTIONS')return deny(204);
   if(!['GET','HEAD'].includes(req.method))return deny(405);

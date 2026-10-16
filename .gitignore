@@ -13,3 +13,7 @@ private-product-assets/
 
 supabase/.temp/
 tests/schema/node_modules/
+
+# Decoded source fixtures are generated from reviewed photo-assets JSON.
+/images/photo-cleanup-20261011/
+/tests/schema/node_modules/

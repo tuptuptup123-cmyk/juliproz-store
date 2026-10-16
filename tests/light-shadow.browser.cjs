@@ -27,6 +27,8 @@ const covers=require('./light-cover-fixtures.json');
 assert.equal(covers.length,15);assert.ok(!covers.some(c=>c.id===420));
 for(const width of [320,390,529]){
  const page=await browser.newPage({viewport:{width,height:1300},reducedMotion:'reduce'});
+ // This verifies source-specific CSS selection; storage image bytes are a local cutout fixture.
+ await page.route('https://qhgzzhgxwpcctafpzjid.supabase.co/storage/v1/object/public/product-photos/**',r=>r.fulfill({contentType:'image/webp',body:fs.readFileSync(path.join(root,'images/chrome-hearts-scroll-usa-white-109.webp'))}));
  await page.route('https://juliproz-store.vercel.app/images/**',r=>{const f=path.join(root,new URL(r.request().url()).pathname);return r.fulfill({body:fs.readFileSync(f),contentType:'image/webp'})});
  await page.goto(origin+'/style.css');
  const examples=covers.filter(c=>[41,363,421].includes(c.id));

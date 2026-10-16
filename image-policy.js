@@ -1,4 +1,4 @@
-// Product images come only from our deployment or our public storage bucket.
+// Product images come only from our deployment or our controlled photo gateways and stored canonical URLs.
 function safeProductImage(value){
   if(typeof value!=='string'||value.length>2048)return false;
   try{

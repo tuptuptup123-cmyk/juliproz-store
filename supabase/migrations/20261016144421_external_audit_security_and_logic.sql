@@ -490,4 +490,6 @@ begin
  return result||jsonb_build_object('pending_invitations',pending);
 end; $function$
 ;
+create index store_change_log_publication_window_idx on store_private.store_change_log(changed_at,actor_id) include(record_id,id) where entity='products' and operation in ('INSERT','UPDATE');
+notify pgrst,'reload schema';
 commit;

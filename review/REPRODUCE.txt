@@ -1,0 +1,23 @@
+JULI.PROZ — повторная проверка
+
+Node.js 24.19 использовался локально.
+
+Из корня source:
+  node --test tests/*.test.cjs
+  npm ci --prefix tests/schema --ignore-scripts --no-audit --no-fund
+  node tests/schema/run.cjs
+  node scripts/prepare-photo-runtime.cjs
+  node scripts/build-public.cjs
+  node scripts/build-admin.cjs
+  node scripts/build-telegram.cjs
+
+Браузер: Playwright 1.56.1, axe-core 4.10.3. Список 27 сценариев и команды в .github/workflows/responsive.yml. Для статических фото-фикстур сначала node scripts/stage-photo-assets.cjs. Рабочие файлы фото-редактора скачиваются по закреплённым хешам. Браузерные прогоны не должны выполняться одновременно на совпадающих локальных портах.
+
+tests/schema/platform-fixture.sql используется только для SQL-тестов и никогда не применяется к production. Канонический порядок чистой установки — supabase/schema/manifest.json. Для существующей базы применять только новую миграцию; действия после deployment вынесены в supabase/rollout.
+
+Для проверки соответствия живой схемы:
+  выполнить supabase/schema/catalog.sql от владельца базы;
+  сохранить массив строк {kind,name,definition} в JSON;
+  node scripts/check-schema-drift.cjs /path/to/export.json
+
+Архив не содержит .env, паролей, service_role, bot token или выгрузки строк базы. Публичный Supabase anon key в config.js намеренно является публичной частью клиента; безопасность зависит от RLS и прав RPC.

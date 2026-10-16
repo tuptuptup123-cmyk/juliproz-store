@@ -1,11 +1,11 @@
 // Every public read requires a currently published product. Originals stay private.
-const origin='https://admin.juliproz.com';
+const origins=new Set(['https://admin.juliproz.com','https://www.juliproz.com','https://juliproz.com','https://juliproz-store.vercel.app','https://app.juliproz.com']);
 Deno.serve(async req=>{
- const cors=req.headers.get('origin')===origin?{'Access-Control-Allow-Origin':origin,'Access-Control-Allow-Headers':'authorization,apikey','Access-Control-Allow-Methods':'GET, HEAD, OPTIONS'}:{};
+ const origin=req.headers.get('origin'),cors=origins.has(origin)?{'Access-Control-Allow-Origin':origin,'Access-Control-Allow-Headers':'authorization,apikey','Access-Control-Allow-Methods':'GET, HEAD, OPTIONS'}:{};
  const headers={...cors,'Cache-Control':'no-store','Vary':'Origin, Authorization','X-Content-Type-Options':'nosniff'},deny=status=>new Response(null,{status,headers});
  if(req.method==='OPTIONS')return deny(204);if(!['GET','HEAD'].includes(req.method))return deny(405);
  const input=new URL(req.url),prefix='/product-photo/',offset=input.pathname.indexOf(prefix),asset=offset<0?'':input.pathname.slice(offset+prefix.length);
- if(asset.length>256||!/^[A-Za-z0-9_/-]+\.(?:png|webp|jpe?g)$/.test(asset)||input.search)return deny(404);
+ if(asset.length>256||!/^[A-Za-z0-9_/-]+\.(?:png|webp|jpe?g)$/.test(asset)||[...input.searchParams].some(([k,v])=>!['jp_retry','refresh'].includes(k)||!/^\d{1,16}$/.test(v))||[...input.searchParams.keys()].some(k=>input.searchParams.getAll(k).length!==1))return deny(404);
  const base=Deno.env.get('SUPABASE_URL'),key=Deno.env.get('SUPABASE_ANON_KEY'),secret=Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
  if(!base||!key||!secret)return deny(503);
  const canonical=base+'/storage/v1/object/public/product-photos/'+asset,auth=req.headers.get('authorization'),lookup={apikey:key,...(auth?{Authorization:auth}:{})};
