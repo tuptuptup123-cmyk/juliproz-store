@@ -1,4 +1,4 @@
-const {chromium}=require('playwright'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),http=require('node:http');
+const {chromium}=require('./bff-browser-fixture.cjs'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),http=require('node:http');
 const root=path.resolve(__dirname,'..'),adminURL=process.env.QA_ADMIN_URL||'http://localhost:8783/admin.html';
 const server=http.createServer((req,res)=>{const file=path.resolve(root,'.'+new URL(req.url,'http://localhost').pathname);if(!file.startsWith(root+path.sep))return res.writeHead(403).end();fs.readFile(file,(err,data)=>{res.writeHead(err?404:200,{'Content-Type':({'.html':'text/html','.js':'text/javascript','.css':'text/css'})[path.extname(file)]||'application/octet-stream'});res.end(err?'Missing':data)})});
 (async()=>{
@@ -30,16 +30,16 @@ const server=http.createServer((req,res)=>{const file=path.resolve(root,'.'+new 
   await page.locator('#mfaPanel').waitFor();assert.equal(await page.locator('#workspace').isHidden(),true);
   await page.locator('#mfaVerify [name=code]').fill('123456');await page.locator('#mfaVerify button[type=submit]').click();await page.locator('#workspace').waitFor();await page.waitForFunction(()=>!busy);
   const deadline=await page.evaluate(()=>sessionClock.snapshot().absolute);
-  assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('jpAdminSession30dV1')).session.refresh_token),'synthetic-aal2-refresh');
+  assert.deepEqual(await page.evaluate(()=>Object.keys(JSON.parse(localStorage.getItem('jpAdminSessionInfoV2'))).sort()),['absolute','session_id','user_id']);
   let release;touchGate=new Promise(resolve=>release=resolve);
   await page.reload();await page.locator('#sessionRestore').waitFor();assert.equal(await page.locator('#login').isHidden(),true);assert.equal(await page.locator('#workspace').isHidden(),true);
   release();touchGate=null;await page.locator('#workspace').waitFor();
   for(let i=0;i<2;i++){await page.waitForFunction(()=>!busy&&!overviewBusy);await page.reload();await page.locator('#workspace').waitFor();assert.ok(await page.evaluate(deadline=>{const value=sessionClock.snapshot().absolute;return value<=deadline&&value>deadline-2000},deadline),'reload cannot extend the session deadline');assert.equal(await page.locator('#mfaPanel').isHidden(),true)}
   touchFailure=503;await page.waitForFunction(()=>!busy&&!overviewBusy);await page.reload();await page.locator('#retrySessionRestore').waitFor();
-  assert.equal(await page.locator('#login').isHidden(),true);assert.equal(await page.locator('#workspace').isHidden(),true);assert.ok(await page.evaluate(()=>localStorage.getItem('jpAdminSession30dV1')));
+  assert.equal(await page.locator('#login').isHidden(),true);assert.equal(await page.locator('#workspace').isHidden(),true);assert.ok(await page.evaluate(()=>localStorage.getItem('jpAdminSessionInfoV2')));
   touchFailure=0;await page.locator('#retrySessionRestore').click();await page.locator('#workspace').waitFor();
   assert.equal(passwordLogins,1);assert.equal(verifications,1);assert.ok(await page.evaluate(deadline=>{const value=sessionClock.snapshot().absolute;return value<=deadline&&value>deadline-2000},deadline),'reload cannot extend the session deadline');
-  touchFailure=403;await page.waitForFunction(()=>!busy&&!overviewBusy);await page.reload();await page.locator('#login').waitFor();assert.equal(await page.locator('#sessionRestore').isHidden(),true);assert.equal(await page.evaluate(()=>localStorage.getItem('jpAdminSession30dV1')),null);
+  touchFailure=403;await page.waitForFunction(()=>!busy&&!overviewBusy);await page.reload();await page.locator('#login').waitFor();assert.equal(await page.locator('#sessionRestore').isHidden(),true);assert.equal(await page.evaluate(()=>localStorage.getItem('jpAdminSessionInfoV2')),null);
   assert.deepEqual(errors,[]);
   console.log('PASS password → MFA → repeated reload; no login flash while restoring; 503 → retry without credentials; revoked access clears session');
  }finally{await browser.close();server.close()}

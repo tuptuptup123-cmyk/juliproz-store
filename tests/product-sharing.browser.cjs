@@ -1,4 +1,4 @@
-const {chromium}=require('playwright'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),http=require('node:http');
+const {chromium}=require('./bff-browser-fixture.cjs'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),http=require('node:http');
 const root=path.resolve(__dirname,'..');
 const server=http.createServer((req,res)=>{
  const name=new URL(req.url,'http://localhost').pathname,file=path.resolve(root,'.'+(name==='/'?'/index.html':name));
@@ -30,7 +30,7 @@ async function prepare(page,telegram){
    const page=await browser.newPage({viewport:{width,height:900}}),errors=[];page.on('pageerror',e=>errors.push(e.message));await prepare(page,telegram);
    await page.addInitScript(()=>localStorage.setItem('jpAntiScamSeenV1','1'));await page.goto(origin+'/?tab=catalog');await page.locator('[data-id="302"]').waitFor();await page.locator('[data-id="302"]').click();await page.locator('[data-size="XXL"]').click();
    await page.locator('[data-action=share]').click();const dialog=page.locator('#productShareDialog');await dialog.waitFor();
-   const expected=telegram?'https://t.me/JuliProzBot/shop?startapp=p_301':'https://www.juliproz.com/?product=301';
+   const expected=telegram?'https://t.me/JuliProzBot/shop?startapp=p_301':'https://www.juliproz.com/product/301';
    assert.equal(await page.locator('#productShareUrl').inputValue(),expected);
    await page.locator('[data-share-action=copy]').click();await page.waitForFunction(()=>window.__copied.length===1);assert.equal(await page.evaluate(()=>window.__copied[0]),expected);
    await page.locator('[data-share-action=telegram]').click();let link=new URL(await page.evaluate(()=>window.__shared.at(-1)));assert.equal(link.searchParams.get('url'),expected);assert.match(link.searchParams.get('text'),/XXL/);
@@ -40,7 +40,7 @@ async function prepare(page,telegram){
    assert.ok(await dialog.evaluate(d=>d.scrollWidth<=d.clientWidth),'dialog has no horizontal overflow');assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
    await page.keyboard.press('Escape');await dialog.waitFor({state:'hidden'});assert.equal(await page.locator('#productModal').isVisible(),true);assert.equal(await page.locator('[data-action=share]').evaluate(e=>e===document.activeElement),true);
    await page.goto(origin+'/?product=301');await page.locator('[data-size="XXL"][aria-pressed=true]').waitFor();
-   await page.goto(origin+'/?startapp=p_397');await page.locator('[data-color-id="397"][aria-pressed=true]').waitFor();await page.locator('[data-action=share]').click();assert.match(await page.locator('#productShareUrl').inputValue(),telegram?/startapp=p_397$/:/product=397$/);
+   await page.goto(origin+'/?startapp=p_397');await page.locator('[data-color-id="397"][aria-pressed=true]').waitFor();await page.locator('[data-action=share]').click();assert.match(await page.locator('#productShareUrl').inputValue(),telegram?/startapp=p_397$/:/product\/397$/);
    if(telegram){
     await page.keyboard.press('Escape');await page.evaluate(()=>{window.Telegram=undefined;history.replaceState(null,'',location.pathname+location.search+'#tgWebAppPlatform=ios')});
     await page.locator('[data-action=share]').click();assert.equal(await page.locator('#productShareUrl').inputValue(),'https://t.me/JuliProzBot/shop?startapp=p_397','Telegram launch keeps its link when the async SDK is unavailable');
@@ -49,8 +49,8 @@ async function prepare(page,telegram){
   }
   for(const width of [320,1280]){
    const page=await browser.newPage({viewport:{width,height:900}}),errors=[];page.on('pageerror',e=>errors.push(e.message));await prepare(page,false);await page.goto(origin+'/admin.html');
-   await page.evaluate(rows=>{session={access_token:'PRIVATE TOKEN',expires_at:Date.now()/1000+3600,user:{id:'synthetic-owner'}};items=rows;$('authArea').classList.add('hidden');$('workspace').classList.remove('hidden');selectView('all',true)},rows);
-   await page.locator('[data-edit="302"]').click();await page.locator('#shareEditorProduct').click();await page.locator('#productShareDialog').waitFor();assert.equal(await page.locator('#productShareUrl').inputValue(),'https://www.juliproz.com/?product=302');await page.keyboard.press('Escape');
+   await page.evaluate(rows=>{sessionClock.start();session={cookie_session:true,session_id:'synthetic-session',aal:'aal2',amr:[],expires_at:Date.now()/1000+3600,user:{id:'synthetic-owner'}};items=rows;$('authArea').classList.add('hidden');$('workspace').classList.remove('hidden');selectView('all',true)},rows);
+   await page.locator('[data-edit="302"]').click();await page.locator('#shareEditorProduct').click();await page.locator('#productShareDialog').waitFor();assert.equal(await page.locator('#productShareUrl').inputValue(),'https://www.juliproz.com/product/302');await page.keyboard.press('Escape');
    await page.evaluate(p=>edit(p),rows[1]);await page.waitForFunction(()=>!document.querySelector('[name=internal_note]').disabled);await page.locator('[name=name]').fill('UNSAVED TITLE');await page.locator('#shareEditorProduct').click();await page.locator('.product-share-status').filter({hasText:'сохранённую карточку'}).waitFor();
    await page.locator('[data-share-action=telegram]').click();await page.locator('[data-share-action=copy]').click();assert.doesNotMatch(await page.evaluate(()=>JSON.stringify([window.__shared,window.__copied,document.querySelector('#productShareDialog').textContent])),/PRIVATE|UNSAVED/);
    assert.ok(await page.locator('#productShareDialog').evaluate(d=>d.scrollWidth<=d.clientWidth));await page.keyboard.press('Escape');

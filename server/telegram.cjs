@@ -114,7 +114,7 @@ function callbackResponse(update) {
     link_preview_options: { is_disabled: true }, reply_markup: { inline_keyboard: selected.keyboard } };
 }
 
-function createHandler(env = process.env, allowReply = createReplyGuard(), apiRequest = fetch, allowCallback = createReplyGuard(() => performance.now(), 30), allowShared = createDistributedGuard(env)) {
+function createHandler(env = process.env, allowReply = createReplyGuard(), apiRequest = fetch, allowCallback = createReplyGuard(() => performance.now(), 30), allowShared = createDistributedGuard(env), outbox = null) {
   return function telegram(req, res) {
     res.setHeader('Cache-Control', 'no-store');
     res.setHeader('X-Content-Type-Options', 'nosniff');
@@ -152,6 +152,14 @@ function createHandler(env = process.env, allowReply = createReplyGuard(), apiRe
     // In-memory counters are only an extra guard; shared admission is authoritative.
     function admit(reply, kind, localGuard, send) {
       if (!reply) return res.status(200).json({ ok: true });
+      if(outbox){
+        // Durable admission and task creation are atomic. A 200 acknowledges the task, not delivery.
+        return outbox.enqueue(update.update_id,reply,kind,update.callback_query?.id).then(async state=>{
+          if(['pending','retry','sending'].includes(state))await outbox.drain(update.update_id).catch(()=>{});
+          return res.status(200).json({ok:true});
+        }).catch(()=>{res.setHeader('Retry-After','5');return res.status(503).json({error:'Bot temporarily unavailable'})});
+      }
+
       // Reserve synchronously before shared admission; undo on rejection/failure.
       if (!localGuard(reply.chat_id, update.update_id)) return res.status(200).json({ ok: true });
       const release = () => localGuard.release?.(reply.chat_id, update.update_id);
@@ -184,4 +192,6 @@ function createHandler(env = process.env, allowReply = createReplyGuard(), apiRe
   };
 }
 
-module.exports = { BOT_USERNAME, SHOP_URL, WEBHOOK_URL, WELCOME, readToken, webhookSecret, messageResponse, createReplyGuard, createHandler };
+function createDurableHandler(env=process.env,outbox=require('./telegram-outbox.cjs').createOutbox(env)){return createHandler(env,undefined,undefined,undefined,undefined,outbox)}
+
+module.exports = { createDurableHandler, BOT_USERNAME, SHOP_URL, WEBHOOK_URL, WELCOME, readToken, webhookSecret, messageResponse, createReplyGuard, createHandler };

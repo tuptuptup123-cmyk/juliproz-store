@@ -16,7 +16,7 @@
   <link rel="stylesheet" href="fonts.css?v=20261010-light-cyrillic" />
   <link rel="stylesheet" href="style.css?v=20261016-audit-fixes" />
   <link rel="preconnect" href="https://qhgzzhgxwpcctafpzjid.supabase.co" crossorigin>
-<link rel="stylesheet" href="product-sharing.css?v=20261014-site-language"></head>
+<link rel="stylesheet" href="product-sharing.css?v=20261014-site-language"><meta name="jp-release" content="development"><script src="runtime-errors.js" defer></script></head>
 <body>
     <header class="brand">
       <div class="masthead-inner">
@@ -173,6 +173,7 @@
     <button data-tab="sell" aria-label="Продать вещь"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3h8l10 10-8 8L3 11Z"/><circle cx="7.5" cy="7.5" r="1"/></svg><small>Продать</small></button>
     <button data-tab="services" aria-label="Услуги"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 8 3v6c0 5-8 9-8 9s-8-4-8-9V6Z"/><path d="m8 12 3 3 5-6"/></svg><small>Услуги</small></button>
   <button class="web-only hidden" data-tab="about" type="button" aria-label="Информация"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7h.01"/></svg><small><span class="nav-label-full">Информация</span><span class="nav-label-short" aria-hidden="true">Инфо</span></small></button>
+    <button id="moreNavigation" class="mobile-more" type="button" aria-label="Ещё" aria-controls="moreNavigationDialog" aria-expanded="false"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg><small>Ещё</small></button>
   </nav>
 
   <div id="sheet" class="sheet hidden">
@@ -211,5 +212,5 @@
   <script defer src="catalog-taxonomy.js?v=20261012-full-audit"></script><script defer src="catalog-reader.js"></script>
 <script defer src="product-sizes.js?v=20261012-full-audit"></script><script defer src="analytics.js?v=20261015-channels"></script><script defer src="product-pricing.js?v=20261010-precise-discounts"></script><script defer src="product-sharing.js?v=20261015-whatsapp"></script><script defer src="app.js?v=20261016-audit-fixes"></script>
   <script defer src="catalog-notice.js?v=20261014-once"></script>
-</body>
+<dialog id="moreNavigationDialog" class="more-navigation-dialog"><div class="more-navigation-heading"><h2>Ещё</h2><button type="button" data-close-more aria-label="Закрыть">×</button></div><button type="button" data-more-tab="home"><strong>Главная</strong><span>О магазине и наших услугах</span></button><button type="button" data-more-tab="services"><strong>Услуги</strong><span>Аутентификация, ателье и уход</span></button><button type="button" data-more-tab="about"><strong>Информация</strong><span>Контакты, каналы и безопасность</span></button></dialog><script defer src="mobile-navigation.js"></script></body>
 </html>

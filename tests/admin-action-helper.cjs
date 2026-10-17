@@ -14,4 +14,8 @@ async function clickAdminControl(page,selector){
  if(menu&&!await page.locator('#'+menu).evaluate(el=>el.open))await page.locator('#'+menu+'>summary').click();
  await control.click();
 }
-module.exports={clickAdminAction,clickAdminControl};
+async function openAdminSection(page,id){
+ const details=page.locator('#'+id+' > details');
+ if(await details.count()&&!await details.evaluate(e=>e.open))await details.locator(':scope > summary').click();
+}
+module.exports={clickAdminAction,clickAdminControl,openAdminSection};

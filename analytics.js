@@ -36,6 +36,11 @@
   if(now-(recent.get(key)||0)<(event==='product_view'?5000:350))return;recent.set(key,now);if(recent.size>200)recent.delete(recent.keys().next().value);sent++;
   fetch('/api/analytics',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({channel,...(channel==='telegram'?{telegram_init_data:telegramInitData()}:{}),event_id:uuid(),visitor_id:visitor,session_id:session,event,product_id:product==null?null:Number(product),page:page==='favorites'?'wishlist':page}),signal:AbortSignal.timeout(8000),keepalive:true}).catch(()=>{});
  }
+ const channelLinks=new Map([
+  ['https://t.me/+9q95XTJFt9kxYTQ0','channel_julia_main'],['https://t.me/+lz-ze3-GDEQ0YmFi','channel_julia_outlet'],
+  ['https://t.me/+vjEYfWCKhTMxNWE0','channel_vasya_main'],['https://t.me/+NWLPh8nc47kzMzI0','channel_vasya_outlet']
+ ]);
+ document.addEventListener('click',e=>{const anchor=e.target.closest?.('a[href]'),event=anchor&&channelLinks.get(anchor.href);if(event)track(event)},true);
  window.StoreAnalytics={track,setConsent,showChoices};
  document.getElementById('analyticsAccept')?.addEventListener('click',()=>setConsent(true));
  document.getElementById('analyticsDecline')?.addEventListener('click',()=>setConsent(false));

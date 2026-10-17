@@ -1,4 +1,4 @@
-const {chromium}=require('playwright'),assert=require('node:assert/strict'),fs=require('node:fs'),http=require('node:http'),path=require('node:path');
+const {chromium}=require('./bff-browser-fixture.cjs'),assert=require('node:assert/strict'),fs=require('node:fs'),http=require('node:http'),path=require('node:path');
 const root=path.resolve(__dirname,'..'),out=process.env.QA_OUTPUT||'/tmp/jp-design-review';fs.mkdirSync(out,{recursive:true});
 const types={'.html':'text/html','.css':'text/css','.js':'text/javascript','.webp':'image/webp','.png':'image/png','.woff2':'font/woff2','.woff':'font/woff'};
 const server=http.createServer((req,res)=>{let p=new URL(req.url,'http://localhost').pathname;if(p==='/')p='/index.html';const file=path.resolve(root,'.'+p);if(!file.startsWith(root+path.sep))return res.writeHead(403).end();fs.readFile(file,(err,data)=>{res.writeHead(err?404:200,{'Content-Type':types[path.extname(file)]||'application/octet-stream'});res.end(err?'Missing':data)})});
@@ -13,7 +13,7 @@ for(const width of [320,390,768,1280]){
  await page.addInitScript(()=>localStorage.setItem('jpAntiScamSeenV1','1'));await page.goto('http://localhost:8786/?tab=catalog');await page.locator('.product').first().waitFor();await snap('consent');await page.locator('#analyticsDecline').click();await snap('catalog');
  await page.locator('#toggleSearch').click();await page.locator('#search').fill('Нет такого товара');await snap('search-empty');await page.locator('#search').fill('');await page.locator('#toggleSearch').click();
  await page.locator('[data-tab=favorites]').click();await snap('wishlist-empty');await page.locator('[data-tab=cart]').click();await snap('cart-empty');
- for(const tab of ['sell','services']){await page.locator(`[data-tab=${tab}]`).click();await snap(tab)}
+ for(const tab of ['sell','services']){await require('./site-action-helper.cjs').clickSiteTab(page,tab);await snap(tab)}
  await page.locator('[data-tab=catalog]').click();await page.locator('#openCatalogMenu').click();await snap('menu');
  for(const group of ['category','size','brand','fulfillment_status']){const b=page.locator(`[data-menu-group=${group}]`);if(await b.count()){await b.click();await snap('menu-'+group);await b.click()}}
  await page.locator('#closeCatalogMenu').click();await page.locator('#catalogMenu').waitFor({state:'hidden'});
@@ -21,7 +21,7 @@ for(const width of [320,390,768,1280]){
  await page.locator('[data-tab=cart]').click();await snap('cart-filled');await page.goto('http://localhost:8786/privacy.html');await snap('privacy');
  await page.goto('http://localhost:8786/admin.html');await snap('admin-login');
  for(const id of ['confirmEmail','newPassword','mfaPanel']){await page.evaluate(id=>{for(const el of document.querySelectorAll('.auth-card>form,.auth-card>section'))el.classList.toggle('hidden',el.id!==id);if(id==='mfaPanel')document.getElementById('mfaInfo').textContent='Введите код из приложения-аутентификатора.'},id);await snap('admin-'+id)}
- await page.evaluate(rows=>{session={access_token:'synthetic.'+btoa(JSON.stringify({aal:'aal2',amr:[{method:'totp',timestamp:Math.floor(Date.now()/1000)}]}))+'.synthetic',expires_at:Date.now()/1000+3600,user:{id:'synthetic'}};items=rows;$('authArea').classList.add('hidden');$('workspace').classList.remove('hidden');render()},rows);
+ await page.evaluate(rows=>{sessionClock.start();session={cookie_session:true,session_id:'synthetic-session',aal:'aal2',amr:[{method:'totp',timestamp:Math.floor(Date.now()/1000)}],expires_at:Date.now()/1000+3600,user:{id:'synthetic'}};items=rows;$('authArea').classList.add('hidden');$('workspace').classList.remove('hidden');render()},rows);
  await snap('admin-inventory');await page.locator('#adminHome').click();await snap('admin-home');
  for(const view of ['analytics','settings']){await require('./admin-action-helper.cjs').clickAdminControl(page,`.sidebar [data-view=${view}]`);await snap('admin-'+view)}
  await page.evaluate(p=>edit(p),base);await snap('admin-editor');await page.locator('#previewCatalogue').click();await snap('admin-preview');await page.locator('#closeCataloguePreview').click();
@@ -40,7 +40,7 @@ for(const width of [390,1280]){
  const brands=await page.evaluate(()=>valuesFor('brand'));assert.equal(brands.filter(b=>b==='Amiri').length,1);assert.equal(brands.filter(b=>b==='Hermès').length,1);assert.equal(brands.filter(b=>b==='Loewe').length,1);
  await page.locator('#openCatalogMenu').click();await page.locator('[data-menu-type=category][data-menu-value="Головной убор"]').click();assert.deepEqual(await page.locator('#menuChoices-size .menu-choice').allTextContents(),['Все','One Size']);await page.locator('#showMenuProducts').click();assert.equal(await page.locator('.product').count(),2);
  await page.evaluate(()=>{state.category=null;state.brand='Loewe';render()});assert.equal(await page.locator('.product').count(),2);
- await page.goto('http://localhost:8786/admin.html');await page.evaluate(rows=>{session={access_token:'synthetic.'+btoa(JSON.stringify({aal:'aal2',amr:[{method:'totp',timestamp:Math.floor(Date.now()/1000)}]}))+'.synthetic',expires_at:Date.now()/1000+3600,user:{id:'synthetic'}};items=rows;$('authArea').classList.add('hidden');$('workspace').classList.remove('hidden');render()},aliases);
+ await page.goto('http://localhost:8786/admin.html');await page.evaluate(rows=>{sessionClock.start();session={cookie_session:true,session_id:'synthetic-session',aal:'aal2',amr:[{method:'totp',timestamp:Math.floor(Date.now()/1000)}],expires_at:Date.now()/1000+3600,user:{id:'synthetic'}};items=rows;$('authArea').classList.add('hidden');$('workspace').classList.remove('hidden');render()},aliases);
  assert.deepEqual(await page.locator('#categoryFilter option').allTextContents(),['Все категории','Головной убор','Обувь','Украшения']);
  await page.evaluate(()=>{$('categoryFilter').value='Головной убор';render()});assert.equal(await page.locator('#inventory article').count(),2);
  await page.evaluate(p=>edit(p),aliases[0]);assert.equal(await page.locator('[name=brand]').inputValue(),'Amiri');assert.equal(await page.locator('[name=category]').inputValue(),'Головной убор');assert.equal(await page.locator('[data-quantity-size="One Size"]').inputValue(),'4');

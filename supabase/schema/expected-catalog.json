@@ -1666,6 +1666,206 @@
   },
   {
     "kind": "column_grant",
+    "name": "store_private.admin_bff_secret.secret_hash.postgres.INSERT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.admin_bff_secret.secret_hash.postgres.REFERENCES",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.admin_bff_secret.secret_hash.postgres.SELECT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.admin_bff_secret.secret_hash.postgres.UPDATE",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.admin_bff_secret.singleton.postgres.INSERT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.admin_bff_secret.singleton.postgres.REFERENCES",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.admin_bff_secret.singleton.postgres.SELECT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.admin_bff_secret.singleton.postgres.UPDATE",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.admin_bff_sessions.auth_session_id.postgres.INSERT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.admin_bff_sessions.auth_session_id.postgres.REFERENCES",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.admin_bff_sessions.auth_session_id.postgres.SELECT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.admin_bff_sessions.auth_session_id.postgres.UPDATE",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.admin_bff_sessions.created_at.postgres.INSERT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.admin_bff_sessions.created_at.postgres.REFERENCES",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.admin_bff_sessions.created_at.postgres.SELECT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.admin_bff_sessions.created_at.postgres.UPDATE",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.admin_bff_sessions.expires_at.postgres.INSERT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.admin_bff_sessions.expires_at.postgres.REFERENCES",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.admin_bff_sessions.expires_at.postgres.SELECT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.admin_bff_sessions.expires_at.postgres.UPDATE",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.admin_bff_sessions.id.postgres.INSERT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.admin_bff_sessions.id.postgres.REFERENCES",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.admin_bff_sessions.id.postgres.SELECT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.admin_bff_sessions.id.postgres.UPDATE",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.admin_bff_sessions.lease.postgres.INSERT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.admin_bff_sessions.lease.postgres.REFERENCES",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.admin_bff_sessions.lease.postgres.SELECT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.admin_bff_sessions.lease.postgres.UPDATE",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.admin_bff_sessions.lease_until.postgres.INSERT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.admin_bff_sessions.lease_until.postgres.REFERENCES",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.admin_bff_sessions.lease_until.postgres.SELECT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.admin_bff_sessions.lease_until.postgres.UPDATE",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.admin_bff_sessions.payload.postgres.INSERT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.admin_bff_sessions.payload.postgres.REFERENCES",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.admin_bff_sessions.payload.postgres.SELECT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.admin_bff_sessions.payload.postgres.UPDATE",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.admin_bff_sessions.user_id.postgres.INSERT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.admin_bff_sessions.user_id.postgres.REFERENCES",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.admin_bff_sessions.user_id.postgres.SELECT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.admin_bff_sessions.user_id.postgres.UPDATE",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
     "name": "store_private.admin_invitations.created_at.postgres.INSERT",
     "definition": "YES"
   },
@@ -2841,6 +3041,506 @@
   },
   {
     "kind": "column_grant",
+    "name": "store_private.bot_outbox.attempts.postgres.INSERT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.bot_outbox.attempts.postgres.REFERENCES",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.bot_outbox.attempts.postgres.SELECT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.bot_outbox.attempts.postgres.UPDATE",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.bot_outbox.available_at.postgres.INSERT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.bot_outbox.available_at.postgres.REFERENCES",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.bot_outbox.available_at.postgres.SELECT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.bot_outbox.available_at.postgres.UPDATE",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.bot_outbox.chat_hash.postgres.INSERT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.bot_outbox.chat_hash.postgres.REFERENCES",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.bot_outbox.chat_hash.postgres.SELECT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.bot_outbox.chat_hash.postgres.UPDATE",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.bot_outbox.created_at.postgres.INSERT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.bot_outbox.created_at.postgres.REFERENCES",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.bot_outbox.created_at.postgres.SELECT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.bot_outbox.created_at.postgres.UPDATE",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.bot_outbox.error_code.postgres.INSERT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.bot_outbox.error_code.postgres.REFERENCES",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.bot_outbox.error_code.postgres.SELECT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.bot_outbox.error_code.postgres.UPDATE",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.bot_outbox.finished_at.postgres.INSERT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.bot_outbox.finished_at.postgres.REFERENCES",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.bot_outbox.finished_at.postgres.SELECT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.bot_outbox.finished_at.postgres.UPDATE",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.bot_outbox.kind.postgres.INSERT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.bot_outbox.kind.postgres.REFERENCES",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.bot_outbox.kind.postgres.SELECT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.bot_outbox.kind.postgres.UPDATE",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.bot_outbox.lease.postgres.INSERT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.bot_outbox.lease.postgres.REFERENCES",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.bot_outbox.lease.postgres.SELECT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.bot_outbox.lease.postgres.UPDATE",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.bot_outbox.lease_until.postgres.INSERT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.bot_outbox.lease_until.postgres.REFERENCES",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.bot_outbox.lease_until.postgres.SELECT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.bot_outbox.lease_until.postgres.UPDATE",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.bot_outbox.message_id.postgres.INSERT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.bot_outbox.message_id.postgres.REFERENCES",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.bot_outbox.message_id.postgres.SELECT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.bot_outbox.message_id.postgres.UPDATE",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.bot_outbox.payload.postgres.INSERT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.bot_outbox.payload.postgres.REFERENCES",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.bot_outbox.payload.postgres.SELECT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.bot_outbox.payload.postgres.UPDATE",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.bot_outbox.state.postgres.INSERT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.bot_outbox.state.postgres.REFERENCES",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.bot_outbox.state.postgres.SELECT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.bot_outbox.state.postgres.UPDATE",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.bot_outbox.update_id.postgres.INSERT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.bot_outbox.update_id.postgres.REFERENCES",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.bot_outbox.update_id.postgres.SELECT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.bot_outbox.update_id.postgres.UPDATE",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.client_errors.asset.postgres.INSERT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.client_errors.asset.postgres.REFERENCES",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.client_errors.asset.postgres.SELECT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.client_errors.asset.postgres.UPDATE",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.client_errors.bucket_at.postgres.INSERT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.client_errors.bucket_at.postgres.REFERENCES",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.client_errors.bucket_at.postgres.SELECT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.client_errors.bucket_at.postgres.UPDATE",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.client_errors.column_no.postgres.INSERT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.client_errors.column_no.postgres.REFERENCES",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.client_errors.column_no.postgres.SELECT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.client_errors.column_no.postgres.UPDATE",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.client_errors.fingerprint.postgres.INSERT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.client_errors.fingerprint.postgres.REFERENCES",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.client_errors.fingerprint.postgres.SELECT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.client_errors.fingerprint.postgres.UPDATE",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.client_errors.first_seen.postgres.INSERT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.client_errors.first_seen.postgres.REFERENCES",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.client_errors.first_seen.postgres.SELECT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.client_errors.first_seen.postgres.UPDATE",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.client_errors.hits.postgres.INSERT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.client_errors.hits.postgres.REFERENCES",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.client_errors.hits.postgres.SELECT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.client_errors.hits.postgres.UPDATE",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.client_errors.id.postgres.INSERT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.client_errors.id.postgres.REFERENCES",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.client_errors.id.postgres.SELECT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.client_errors.id.postgres.UPDATE",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.client_errors.kind.postgres.INSERT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.client_errors.kind.postgres.REFERENCES",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.client_errors.kind.postgres.SELECT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.client_errors.kind.postgres.UPDATE",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.client_errors.last_seen.postgres.INSERT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.client_errors.last_seen.postgres.REFERENCES",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.client_errors.last_seen.postgres.SELECT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.client_errors.last_seen.postgres.UPDATE",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.client_errors.line_no.postgres.INSERT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.client_errors.line_no.postgres.REFERENCES",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.client_errors.line_no.postgres.SELECT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.client_errors.line_no.postgres.UPDATE",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.client_errors.release.postgres.INSERT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.client_errors.release.postgres.REFERENCES",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.client_errors.release.postgres.SELECT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.client_errors.release.postgres.UPDATE",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.client_errors.surface.postgres.INSERT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.client_errors.surface.postgres.REFERENCES",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.client_errors.surface.postgres.SELECT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.client_errors.surface.postgres.UPDATE",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
     "name": "store_private.commission_terms.due_per_unit.postgres.INSERT",
     "definition": "YES"
   },
@@ -3637,6 +4337,66 @@
   {
     "kind": "column_grant",
     "name": "store_private.finance_entries.updated_by.postgres.UPDATE",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.operational_limits.hits.postgres.INSERT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.operational_limits.hits.postgres.REFERENCES",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.operational_limits.hits.postgres.SELECT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.operational_limits.hits.postgres.UPDATE",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.operational_limits.key.postgres.INSERT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.operational_limits.key.postgres.REFERENCES",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.operational_limits.key.postgres.SELECT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.operational_limits.key.postgres.UPDATE",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.operational_limits.window_at.postgres.INSERT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.operational_limits.window_at.postgres.REFERENCES",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.operational_limits.window_at.postgres.SELECT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.operational_limits.window_at.postgres.UPDATE",
     "definition": "YES"
   },
   {
@@ -5486,6 +6246,86 @@
   },
   {
     "kind": "constraint",
+    "name": "store_private.admin_bff_secret.admin_bff_secret_pkey",
+    "definition": "PRIMARY KEY (singleton)"
+  },
+  {
+    "kind": "constraint",
+    "name": "store_private.admin_bff_secret.admin_bff_secret_secret_hash_check",
+    "definition": "CHECK ((octet_length(secret_hash) = 32))"
+  },
+  {
+    "kind": "constraint",
+    "name": "store_private.admin_bff_secret.admin_bff_secret_secret_hash_not_null",
+    "definition": "NOT NULL secret_hash"
+  },
+  {
+    "kind": "constraint",
+    "name": "store_private.admin_bff_secret.admin_bff_secret_singleton_check",
+    "definition": "CHECK (singleton)"
+  },
+  {
+    "kind": "constraint",
+    "name": "store_private.admin_bff_secret.admin_bff_secret_singleton_not_null",
+    "definition": "NOT NULL singleton"
+  },
+  {
+    "kind": "constraint",
+    "name": "store_private.admin_bff_sessions.admin_bff_sessions_auth_session_id_fkey",
+    "definition": "FOREIGN KEY (auth_session_id) REFERENCES auth.sessions(id) ON DELETE CASCADE"
+  },
+  {
+    "kind": "constraint",
+    "name": "store_private.admin_bff_sessions.admin_bff_sessions_auth_session_id_not_null",
+    "definition": "NOT NULL auth_session_id"
+  },
+  {
+    "kind": "constraint",
+    "name": "store_private.admin_bff_sessions.admin_bff_sessions_created_at_not_null",
+    "definition": "NOT NULL created_at"
+  },
+  {
+    "kind": "constraint",
+    "name": "store_private.admin_bff_sessions.admin_bff_sessions_expires_at_not_null",
+    "definition": "NOT NULL expires_at"
+  },
+  {
+    "kind": "constraint",
+    "name": "store_private.admin_bff_sessions.admin_bff_sessions_id_check",
+    "definition": "CHECK ((id ~ '^[a-f0-9]{64}$'::text))"
+  },
+  {
+    "kind": "constraint",
+    "name": "store_private.admin_bff_sessions.admin_bff_sessions_id_not_null",
+    "definition": "NOT NULL id"
+  },
+  {
+    "kind": "constraint",
+    "name": "store_private.admin_bff_sessions.admin_bff_sessions_payload_check",
+    "definition": "CHECK (((length(payload) >= 40) AND (length(payload) <= 24000)))"
+  },
+  {
+    "kind": "constraint",
+    "name": "store_private.admin_bff_sessions.admin_bff_sessions_payload_not_null",
+    "definition": "NOT NULL payload"
+  },
+  {
+    "kind": "constraint",
+    "name": "store_private.admin_bff_sessions.admin_bff_sessions_pkey",
+    "definition": "PRIMARY KEY (id)"
+  },
+  {
+    "kind": "constraint",
+    "name": "store_private.admin_bff_sessions.admin_bff_sessions_user_id_fkey",
+    "definition": "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+  },
+  {
+    "kind": "constraint",
+    "name": "store_private.admin_bff_sessions.admin_bff_sessions_user_id_not_null",
+    "definition": "NOT NULL user_id"
+  },
+  {
+    "kind": "constraint",
     "name": "store_private.admin_invitations.admin_invitations_created_at_not_null",
     "definition": "NOT NULL created_at"
   },
@@ -5607,7 +6447,7 @@
   {
     "kind": "constraint",
     "name": "store_private.analytics_events.analytics_events_event_check",
-    "definition": "CHECK ((event = ANY (ARRAY['visit'::text, 'page_view'::text, 'product_view'::text, 'wishlist_add'::text, 'wishlist_remove'::text, 'cart_add'::text, 'cart_remove'::text, 'checkout_open'::text, 'manager_open'::text, 'manager_product'::text, 'manager_search_product'::text, 'manager_general'::text, 'manager_sell'::text, 'manager_authentication'::text, 'manager_atelier'::text])))"
+    "definition": "CHECK ((event = ANY (ARRAY['visit'::text, 'page_view'::text, 'product_view'::text, 'wishlist_add'::text, 'wishlist_remove'::text, 'cart_add'::text, 'cart_remove'::text, 'checkout_open'::text, 'manager_open'::text, 'manager_product'::text, 'manager_search_product'::text, 'manager_general'::text, 'manager_sell'::text, 'manager_authentication'::text, 'manager_atelier'::text, 'channel_julia_main'::text, 'channel_julia_outlet'::text, 'channel_vasya_main'::text, 'channel_vasya_outlet'::text])))"
   },
   {
     "kind": "constraint",
@@ -5768,6 +6608,136 @@
     "kind": "constraint",
     "name": "store_private.analytics_sessions.analytics_sessions_visitor_id_not_null",
     "definition": "NOT NULL visitor_id"
+  },
+  {
+    "kind": "constraint",
+    "name": "store_private.bot_outbox.bot_outbox_attempts_not_null",
+    "definition": "NOT NULL attempts"
+  },
+  {
+    "kind": "constraint",
+    "name": "store_private.bot_outbox.bot_outbox_available_at_not_null",
+    "definition": "NOT NULL available_at"
+  },
+  {
+    "kind": "constraint",
+    "name": "store_private.bot_outbox.bot_outbox_chat_hash_check",
+    "definition": "CHECK ((chat_hash ~ '^[a-f0-9]{64}$'::text))"
+  },
+  {
+    "kind": "constraint",
+    "name": "store_private.bot_outbox.bot_outbox_chat_hash_not_null",
+    "definition": "NOT NULL chat_hash"
+  },
+  {
+    "kind": "constraint",
+    "name": "store_private.bot_outbox.bot_outbox_created_at_not_null",
+    "definition": "NOT NULL created_at"
+  },
+  {
+    "kind": "constraint",
+    "name": "store_private.bot_outbox.bot_outbox_kind_check",
+    "definition": "CHECK ((kind = ANY (ARRAY['message'::text, 'callback'::text])))"
+  },
+  {
+    "kind": "constraint",
+    "name": "store_private.bot_outbox.bot_outbox_kind_not_null",
+    "definition": "NOT NULL kind"
+  },
+  {
+    "kind": "constraint",
+    "name": "store_private.bot_outbox.bot_outbox_pkey",
+    "definition": "PRIMARY KEY (update_id)"
+  },
+  {
+    "kind": "constraint",
+    "name": "store_private.bot_outbox.bot_outbox_state_check",
+    "definition": "CHECK ((state = ANY (ARRAY['pending'::text, 'sending'::text, 'retry'::text, 'delivered'::text, 'failed'::text])))"
+  },
+  {
+    "kind": "constraint",
+    "name": "store_private.bot_outbox.bot_outbox_state_not_null",
+    "definition": "NOT NULL state"
+  },
+  {
+    "kind": "constraint",
+    "name": "store_private.bot_outbox.bot_outbox_update_id_not_null",
+    "definition": "NOT NULL update_id"
+  },
+  {
+    "kind": "constraint",
+    "name": "store_private.client_errors.client_errors_asset_not_null",
+    "definition": "NOT NULL asset"
+  },
+  {
+    "kind": "constraint",
+    "name": "store_private.client_errors.client_errors_bucket_at_not_null",
+    "definition": "NOT NULL bucket_at"
+  },
+  {
+    "kind": "constraint",
+    "name": "store_private.client_errors.client_errors_column_no_not_null",
+    "definition": "NOT NULL column_no"
+  },
+  {
+    "kind": "constraint",
+    "name": "store_private.client_errors.client_errors_fingerprint_bucket_at_key",
+    "definition": "UNIQUE (fingerprint, bucket_at)"
+  },
+  {
+    "kind": "constraint",
+    "name": "store_private.client_errors.client_errors_fingerprint_not_null",
+    "definition": "NOT NULL fingerprint"
+  },
+  {
+    "kind": "constraint",
+    "name": "store_private.client_errors.client_errors_first_seen_not_null",
+    "definition": "NOT NULL first_seen"
+  },
+  {
+    "kind": "constraint",
+    "name": "store_private.client_errors.client_errors_hits_not_null",
+    "definition": "NOT NULL hits"
+  },
+  {
+    "kind": "constraint",
+    "name": "store_private.client_errors.client_errors_id_not_null",
+    "definition": "NOT NULL id"
+  },
+  {
+    "kind": "constraint",
+    "name": "store_private.client_errors.client_errors_kind_not_null",
+    "definition": "NOT NULL kind"
+  },
+  {
+    "kind": "constraint",
+    "name": "store_private.client_errors.client_errors_last_seen_not_null",
+    "definition": "NOT NULL last_seen"
+  },
+  {
+    "kind": "constraint",
+    "name": "store_private.client_errors.client_errors_line_no_not_null",
+    "definition": "NOT NULL line_no"
+  },
+  {
+    "kind": "constraint",
+    "name": "store_private.client_errors.client_errors_pkey",
+    "definition": "PRIMARY KEY (id)"
+  },
+  {
+    "kind": "constraint",
+    "name": "store_private.client_errors.client_errors_release_not_null",
+    "definition": "NOT NULL release"
+  },
+  {
+    "kind": "constraint",
+    "name": "store_private.client_errors.client_errors_surface_check",
+    "definition": "CHECK ((surface = ANY (ARRAY['website'::text, 'telegram'::text, 'admin'::text])))"
+  },
+  {
+    "kind": "constraint",
+    "name": "store_private.client_errors.client_errors_surface_not_null",
+    "definition": "NOT NULL surface"
   },
   {
     "kind": "constraint",
@@ -6028,6 +6998,26 @@
     "kind": "constraint",
     "name": "store_private.finance_entries.finance_entries_updated_at_not_null",
     "definition": "NOT NULL updated_at"
+  },
+  {
+    "kind": "constraint",
+    "name": "store_private.operational_limits.operational_limits_hits_not_null",
+    "definition": "NOT NULL hits"
+  },
+  {
+    "kind": "constraint",
+    "name": "store_private.operational_limits.operational_limits_key_not_null",
+    "definition": "NOT NULL key"
+  },
+  {
+    "kind": "constraint",
+    "name": "store_private.operational_limits.operational_limits_pkey",
+    "definition": "PRIMARY KEY (key)"
+  },
+  {
+    "kind": "constraint",
+    "name": "store_private.operational_limits.operational_limits_window_at_not_null",
+    "definition": "NOT NULL window_at"
   },
   {
     "kind": "constraint",
@@ -6501,6 +7491,11 @@
   },
   {
     "kind": "function",
+    "name": "public.store_admin_bff_session(p_secret text, p_action text, p_id text, p_payload text, p_auth_session uuid, p_user uuid, p_lease uuid)",
+    "definition": "CREATE OR REPLACE FUNCTION public.store_admin_bff_session(p_secret text, p_action text, p_id text, p_payload text DEFAULT NULL::text, p_auth_session uuid DEFAULT NULL::uuid, p_user uuid DEFAULT NULL::uuid, p_lease uuid DEFAULT NULL::uuid)\n RETURNS jsonb\n LANGUAGE sql\n SET search_path TO ''\nAS $function$select store_gateway.admin_bff_session(p_secret,p_action,p_id,p_payload,p_auth_session,p_user,p_lease)$function$\n"
+  },
+  {
+    "kind": "function",
     "name": "public.store_admin_security_status()",
     "definition": "CREATE OR REPLACE FUNCTION public.store_admin_security_status()\n RETURNS jsonb\n LANGUAGE sql\n SET search_path TO ''\nAS $function$select store_private.own_admin_security_status();$function$\n"
   },
@@ -6527,12 +7522,12 @@
   {
     "kind": "function",
     "name": "public.store_analytics_ingest(p_event_id uuid, p_visitor uuid, p_session uuid, p_event text, p_product bigint, p_page text, p_fingerprint text)",
-    "definition": "CREATE OR REPLACE FUNCTION public.store_analytics_ingest(p_event_id uuid, p_visitor uuid, p_session uuid, p_event text, p_product bigint, p_page text, p_fingerprint text)\n RETURNS boolean\n LANGUAGE plpgsql\n SET search_path TO ''\nAS $function$\ndeclare n integer;k text;new_session boolean;\nbegin\n if p_event not in ('visit','heartbeat','page_view','product_view','wishlist_add','wishlist_remove','cart_add','cart_remove','checkout_open','manager_open','manager_product','manager_search_product','manager_general','manager_sell','manager_authentication','manager_atelier') or p_visitor is null or p_session is null or p_event_id is null or p_fingerprint is null or p_fingerprint !~ '^[a-f0-9]{64}$' then return false;end if;\n if p_event is null or (p_page is not null and p_page not in ('catalog','wishlist','cart')) then return false;end if;\n if p_event in ('product_view','wishlist_add','wishlist_remove','cart_add','cart_remove','manager_product','manager_search_product') and p_product is null then return false;end if;\n if p_product is not null and not exists(select 1 from public.products where id=p_product and available=true) then return false;end if;\n\n begin\n if exists(select 1 from store_private.analytics_events where event_id=p_event_id) then return true;end if;\n foreach k in array array['ip:'||p_fingerprint,'visitor:'||p_visitor::text,'global:minute','global:day:'||current_date::text,'ip:day:'||current_date::text||':'||p_fingerprint] loop\n  insert into store_private.analytics_limits as l(key,window_at,hits) values(k,case when k like 'global:day:%' or k like 'ip:day:%' then date_trunc('day',now()) else date_trunc('minute',now()) end,1)\n  on conflict(key) do update set window_at=excluded.window_at,hits=case when l.window_at=excluded.window_at then l.hits+1 else 1 end returning hits into n;\n  if n>(case when k='global:minute' then 2400 when k like 'global:day:%' then 250000 when k like 'ip:day:%' then 20000 when k like 'ip:%' then 600 else 120 end) then raise exception using errcode='JP429',message='analytics refused';end if;\n end loop;\n new_session:=not exists(select 1 from store_private.analytics_sessions where session_id=p_session);\n if new_session then\n  foreach k in array array['sessions:global','sessions:ip:'||p_fingerprint] loop\n   insert into store_private.analytics_limits as l(key,window_at,hits) values(k,date_trunc('minute',now()),1)\n   on conflict(key) do update set window_at=excluded.window_at,hits=case when l.window_at=excluded.window_at then l.hits+1 else 1 end returning hits into n;\n   if n>(case when k='sessions:global' then 300 else 150 end) then raise exception using errcode='JP429',message='analytics refused';end if;\n  end loop;\n end if;\n insert into store_private.analytics_sessions as s(session_id,visitor_id) values(p_session,p_visitor) on conflict(session_id) do update set last_seen=now() where s.visitor_id=excluded.visitor_id;\n if not found then raise exception using errcode='JP429',message='analytics refused';end if;\n if p_event<>'heartbeat' then insert into store_private.analytics_events(event_id,visitor_id,session_id,event,product_id,page) values(p_event_id,p_visitor,p_session,p_event,p_product,p_page) on conflict(event_id) do nothing;end if;\n -- Daily cron owns retention; ingestion only records the event.\n return true;\n exception when sqlstate 'JP429' then return false;\n end;\nend; $function$\n"
+    "definition": "CREATE OR REPLACE FUNCTION public.store_analytics_ingest(p_event_id uuid, p_visitor uuid, p_session uuid, p_event text, p_product bigint, p_page text, p_fingerprint text)\n RETURNS boolean\n LANGUAGE plpgsql\n SET search_path TO ''\nAS $function$\ndeclare n integer;k text;new_session boolean;\nbegin\n if p_event not in ('visit','heartbeat','page_view','product_view','wishlist_add','wishlist_remove','cart_add','cart_remove','checkout_open','manager_open','manager_product','manager_search_product','manager_general','manager_sell','manager_authentication','manager_atelier','channel_julia_main','channel_julia_outlet','channel_vasya_main','channel_vasya_outlet') or p_visitor is null or p_session is null or p_event_id is null or p_fingerprint is null or p_fingerprint !~ '^[a-f0-9]{64}$' then return false;end if;\n if p_event is null or (p_page is not null and p_page not in ('catalog','wishlist','cart')) then return false;end if;\n if p_event in ('product_view','wishlist_add','wishlist_remove','cart_add','cart_remove','manager_product','manager_search_product') and p_product is null then return false;end if;\n if p_product is not null and not exists(select 1 from public.products where id=p_product and available=true) then return false;end if;\n\n begin\n if exists(select 1 from store_private.analytics_events where event_id=p_event_id) then return true;end if;\n foreach k in array array['ip:'||p_fingerprint,'visitor:'||p_visitor::text,'global:minute','global:day:'||current_date::text,'ip:day:'||current_date::text||':'||p_fingerprint] loop\n  insert into store_private.analytics_limits as l(key,window_at,hits) values(k,case when k like 'global:day:%' or k like 'ip:day:%' then date_trunc('day',now()) else date_trunc('minute',now()) end,1)\n  on conflict(key) do update set window_at=excluded.window_at,hits=case when l.window_at=excluded.window_at then l.hits+1 else 1 end returning hits into n;\n  if n>(case when k='global:minute' then 2400 when k like 'global:day:%' then 250000 when k like 'ip:day:%' then 20000 when k like 'ip:%' then 600 else 120 end) then raise exception using errcode='JP429',message='analytics refused';end if;\n end loop;\n new_session:=not exists(select 1 from store_private.analytics_sessions where session_id=p_session);\n if new_session then\n  foreach k in array array['sessions:global','sessions:ip:'||p_fingerprint] loop\n   insert into store_private.analytics_limits as l(key,window_at,hits) values(k,date_trunc('minute',now()),1)\n   on conflict(key) do update set window_at=excluded.window_at,hits=case when l.window_at=excluded.window_at then l.hits+1 else 1 end returning hits into n;\n   if n>(case when k='sessions:global' then 300 else 150 end) then raise exception using errcode='JP429',message='analytics refused';end if;\n  end loop;\n end if;\n insert into store_private.analytics_sessions as s(session_id,visitor_id) values(p_session,p_visitor) on conflict(session_id) do update set last_seen=now() where s.visitor_id=excluded.visitor_id;\n if not found then raise exception using errcode='JP429',message='analytics refused';end if;\n if p_event<>'heartbeat' then insert into store_private.analytics_events(event_id,visitor_id,session_id,event,product_id,page) values(p_event_id,p_visitor,p_session,p_event,p_product,p_page) on conflict(event_id) do nothing;end if;\n -- Daily cron owns retention; ingestion only records the event.\n return true;\n exception when sqlstate 'JP429' then return false;\n end;\nend; $function$\n"
   },
   {
     "kind": "function",
     "name": "public.store_analytics_ingest(p_event_id uuid, p_visitor uuid, p_session uuid, p_event text, p_product bigint, p_page text, p_fingerprint text, p_channel text)",
-    "definition": "CREATE OR REPLACE FUNCTION public.store_analytics_ingest(p_event_id uuid, p_visitor uuid, p_session uuid, p_event text, p_product bigint, p_page text, p_fingerprint text, p_channel text)\n RETURNS boolean\n LANGUAGE plpgsql\n SET search_path TO ''\nAS $function$\ndeclare n integer;k text;new_session boolean;\nbegin\n if p_channel is null or p_channel not in ('website','telegram','legacy') then return false;end if;\n if p_event not in ('visit','heartbeat','page_view','product_view','wishlist_add','wishlist_remove','cart_add','cart_remove','checkout_open','manager_open','manager_product','manager_search_product','manager_general','manager_sell','manager_authentication','manager_atelier') or p_visitor is null or p_session is null or p_event_id is null or p_fingerprint is null or p_fingerprint !~ '^[a-f0-9]{64}$' then return false;end if;\n if p_event is null or (p_page is not null and p_page not in ('catalog','wishlist','cart')) then return false;end if;\n if p_event in ('product_view','wishlist_add','wishlist_remove','cart_add','cart_remove','manager_product','manager_search_product') and p_product is null then return false;end if;\n if p_product is not null and not exists(select 1 from public.products where id=p_product and available=true) then return false;end if;\n\n begin\n if exists(select 1 from store_private.analytics_events where event_id=p_event_id) then return exists(select 1 from store_private.analytics_events where event_id=p_event_id and visitor_id=p_visitor and session_id=p_session and channel=p_channel);end if;\n foreach k in array array['ip:'||p_fingerprint,'visitor:'||p_visitor::text,'global:minute','global:day:'||current_date::text,'ip:day:'||current_date::text||':'||p_fingerprint] loop\n  insert into store_private.analytics_limits as l(key,window_at,hits) values(k,case when k like 'global:day:%' or k like 'ip:day:%' then date_trunc('day',now()) else date_trunc('minute',now()) end,1)\n  on conflict(key) do update set window_at=excluded.window_at,hits=case when l.window_at=excluded.window_at then l.hits+1 else 1 end returning hits into n;\n  if n>(case when k='global:minute' then 2400 when k like 'global:day:%' then 250000 when k like 'ip:day:%' then 20000 when k like 'ip:%' then 600 else 120 end) then raise exception using errcode='JP429',message='analytics refused';end if;\n end loop;\n new_session:=not exists(select 1 from store_private.analytics_sessions where session_id=p_session);\n if new_session then\n  foreach k in array array['sessions:global','sessions:ip:'||p_fingerprint] loop\n   insert into store_private.analytics_limits as l(key,window_at,hits) values(k,date_trunc('minute',now()),1)\n   on conflict(key) do update set window_at=excluded.window_at,hits=case when l.window_at=excluded.window_at then l.hits+1 else 1 end returning hits into n;\n   if n>(case when k='sessions:global' then 300 else 150 end) then raise exception using errcode='JP429',message='analytics refused';end if;\n  end loop;\n end if;\n insert into store_private.analytics_sessions as s(session_id,visitor_id,channel) values(p_session,p_visitor,p_channel) on conflict(session_id) do update set last_seen=now() where s.visitor_id=excluded.visitor_id and s.channel=excluded.channel;\n if not found then raise exception using errcode='JP429',message='analytics refused';end if;\n if p_event<>'heartbeat' then insert into store_private.analytics_events(event_id,visitor_id,session_id,event,product_id,page,channel) values(p_event_id,p_visitor,p_session,p_event,p_product,p_page,p_channel) on conflict(event_id) do nothing;end if;\n -- Daily cron owns retention; ingestion only records the event.\n return true;\n exception when sqlstate 'JP429' then return false;\n end;\nend; $function$\n"
+    "definition": "CREATE OR REPLACE FUNCTION public.store_analytics_ingest(p_event_id uuid, p_visitor uuid, p_session uuid, p_event text, p_product bigint, p_page text, p_fingerprint text, p_channel text)\n RETURNS boolean\n LANGUAGE plpgsql\n SET search_path TO ''\nAS $function$\ndeclare n integer;k text;new_session boolean;\nbegin\n if p_channel is null or p_channel not in ('website','telegram','legacy') then return false;end if;\n if p_event not in ('visit','heartbeat','page_view','product_view','wishlist_add','wishlist_remove','cart_add','cart_remove','checkout_open','manager_open','manager_product','manager_search_product','manager_general','manager_sell','manager_authentication','manager_atelier','channel_julia_main','channel_julia_outlet','channel_vasya_main','channel_vasya_outlet') or p_visitor is null or p_session is null or p_event_id is null or p_fingerprint is null or p_fingerprint !~ '^[a-f0-9]{64}$' then return false;end if;\n if p_event is null or (p_page is not null and p_page not in ('catalog','wishlist','cart')) then return false;end if;\n if p_event in ('product_view','wishlist_add','wishlist_remove','cart_add','cart_remove','manager_product','manager_search_product') and p_product is null then return false;end if;\n if p_product is not null and not exists(select 1 from public.products where id=p_product and available=true) then return false;end if;\n\n begin\n if exists(select 1 from store_private.analytics_events where event_id=p_event_id) then return exists(select 1 from store_private.analytics_events where event_id=p_event_id and visitor_id=p_visitor and session_id=p_session and channel=p_channel);end if;\n foreach k in array array['ip:'||p_fingerprint,'visitor:'||p_visitor::text,'global:minute','global:day:'||current_date::text,'ip:day:'||current_date::text||':'||p_fingerprint] loop\n  insert into store_private.analytics_limits as l(key,window_at,hits) values(k,case when k like 'global:day:%' or k like 'ip:day:%' then date_trunc('day',now()) else date_trunc('minute',now()) end,1)\n  on conflict(key) do update set window_at=excluded.window_at,hits=case when l.window_at=excluded.window_at then l.hits+1 else 1 end returning hits into n;\n  if n>(case when k='global:minute' then 2400 when k like 'global:day:%' then 250000 when k like 'ip:day:%' then 20000 when k like 'ip:%' then 600 else 120 end) then raise exception using errcode='JP429',message='analytics refused';end if;\n end loop;\n new_session:=not exists(select 1 from store_private.analytics_sessions where session_id=p_session);\n if new_session then\n  foreach k in array array['sessions:global','sessions:ip:'||p_fingerprint] loop\n   insert into store_private.analytics_limits as l(key,window_at,hits) values(k,date_trunc('minute',now()),1)\n   on conflict(key) do update set window_at=excluded.window_at,hits=case when l.window_at=excluded.window_at then l.hits+1 else 1 end returning hits into n;\n   if n>(case when k='sessions:global' then 300 else 150 end) then raise exception using errcode='JP429',message='analytics refused';end if;\n  end loop;\n end if;\n insert into store_private.analytics_sessions as s(session_id,visitor_id,channel) values(p_session,p_visitor,p_channel) on conflict(session_id) do update set last_seen=now() where s.visitor_id=excluded.visitor_id and s.channel=excluded.channel;\n if not found then raise exception using errcode='JP429',message='analytics refused';end if;\n if p_event<>'heartbeat' then insert into store_private.analytics_events(event_id,visitor_id,session_id,event,product_id,page,channel) values(p_event_id,p_visitor,p_session,p_event,p_product,p_page,p_channel) on conflict(event_id) do nothing;end if;\n -- Daily cron owns retention; ingestion only records the event.\n return true;\n exception when sqlstate 'JP429' then return false;\n end;\nend; $function$\n"
   },
   {
     "kind": "function",
@@ -6556,8 +7551,28 @@
   },
   {
     "kind": "function",
+    "name": "public.store_bot_claim(p_secret text, p_update_id bigint)",
+    "definition": "CREATE OR REPLACE FUNCTION public.store_bot_claim(p_secret text, p_update_id bigint DEFAULT NULL::bigint)\n RETURNS jsonb\n LANGUAGE sql\n SET search_path TO ''\nAS $function$select store_gateway.bot_claim(p_secret,p_update_id)$function$\n"
+  },
+  {
+    "kind": "function",
+    "name": "public.store_bot_enqueue(p_secret text, p_update_id bigint, p_chat_hash text, p_kind text, p_payload text)",
+    "definition": "CREATE OR REPLACE FUNCTION public.store_bot_enqueue(p_secret text, p_update_id bigint, p_chat_hash text, p_kind text, p_payload text)\n RETURNS text\n LANGUAGE sql\n SET search_path TO ''\nAS $function$select store_gateway.bot_enqueue(p_secret,p_update_id,p_chat_hash,p_kind,p_payload)$function$\n"
+  },
+  {
+    "kind": "function",
+    "name": "public.store_bot_finish(p_secret text, p_update_id bigint, p_lease uuid, p_state text, p_delay integer, p_code text, p_message_id bigint)",
+    "definition": "CREATE OR REPLACE FUNCTION public.store_bot_finish(p_secret text, p_update_id bigint, p_lease uuid, p_state text, p_delay integer, p_code text, p_message_id bigint)\n RETURNS boolean\n LANGUAGE sql\n SET search_path TO ''\nAS $function$select store_gateway.bot_finish(p_secret,p_update_id,p_lease,p_state,p_delay,p_code,p_message_id)$function$\n"
+  },
+  {
+    "kind": "function",
     "name": "public.store_bot_health()",
     "definition": "CREATE OR REPLACE FUNCTION public.store_bot_health()\n RETURNS boolean\n LANGUAGE sql\n SET search_path TO ''\nAS $function$select store_private.own_bot_health();$function$\n"
+  },
+  {
+    "kind": "function",
+    "name": "public.store_client_error_ingest(p_secret text, p_ip text, p_surface text, p_kind text, p_asset text, p_line integer, p_column integer, p_release text)",
+    "definition": "CREATE OR REPLACE FUNCTION public.store_client_error_ingest(p_secret text, p_ip text, p_surface text, p_kind text, p_asset text, p_line integer, p_column integer, p_release text)\n RETURNS boolean\n LANGUAGE sql\n SET search_path TO ''\nAS $function$select store_gateway.client_error_ingest(p_secret,p_ip,p_surface,p_kind,p_asset,p_line,p_column,p_release)$function$\n"
   },
   {
     "kind": "function",
@@ -6588,6 +7603,11 @@
     "kind": "function",
     "name": "public.store_link_finance_order(p_order uuid, p_sale uuid, p_order_revision bigint, p_sale_revision bigint)",
     "definition": "CREATE OR REPLACE FUNCTION public.store_link_finance_order(p_order uuid, p_sale uuid, p_order_revision bigint, p_sale_revision bigint)\n RETURNS jsonb\n LANGUAGE sql\n SET search_path TO ''\nAS $function$ select store_private.link_finance_order(p_order,p_sale,p_order_revision,p_sale_revision); $function$\n"
+  },
+  {
+    "kind": "function",
+    "name": "public.store_operational_health()",
+    "definition": "CREATE OR REPLACE FUNCTION public.store_operational_health()\n RETURNS jsonb\n LANGUAGE sql\n SET search_path TO ''\nAS $function$select store_private.operational_health()$function$\n"
   },
   {
     "kind": "function",
@@ -6683,6 +7703,31 @@
     "kind": "function",
     "name": "public.touch_store_admin_session()",
     "definition": "CREATE OR REPLACE FUNCTION public.touch_store_admin_session()\n RETURNS jsonb\n LANGUAGE sql\n SET search_path TO ''\nAS $function$SELECT store_private.touch_own_admin_session();$function$\n"
+  },
+  {
+    "kind": "function",
+    "name": "store_gateway.admin_bff_session(p_secret text, p_action text, p_id text, p_payload text, p_auth_session uuid, p_user uuid, p_lease uuid)",
+    "definition": "CREATE OR REPLACE FUNCTION store_gateway.admin_bff_session(p_secret text, p_action text, p_id text, p_payload text DEFAULT NULL::text, p_auth_session uuid DEFAULT NULL::uuid, p_user uuid DEFAULT NULL::uuid, p_lease uuid DEFAULT NULL::uuid)\n RETURNS jsonb\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\n SET lock_timeout TO '2s'\nAS $function$\ndeclare s store_private.admin_bff_sessions%rowtype;deadline timestamptz;\nbegin\n perform store_private.operational_secret('session',p_secret);\n if p_id is null or p_id !~ '^[a-f0-9]{64}$' then raise exception 'Invalid handle' using errcode='22023';end if;\n if p_action='rate' then return to_jsonb(store_private.operational_rate('login:'||p_id,12) and store_private.operational_rate('login-day:'||p_id,150,'day'));end if;\n if p_action='create' then\n  select least(a.created_at+interval '30 days',coalesce(a.not_after,'infinity'::timestamptz)) into deadline\n  from auth.sessions a join auth.users u on u.id=a.user_id where a.id=p_auth_session and a.user_id=p_user and u.deleted_at is null and (u.banned_until is null or u.banned_until<=now());\n  if deadline is null or deadline<=now() then raise exception 'Session expired' using errcode='PT401';end if;\n  insert into store_private.admin_bff_sessions(id,user_id,auth_session_id,payload,expires_at) values(p_id,p_user,p_auth_session,p_payload,deadline) returning * into s;\n elsif p_action='delete' then delete from store_private.admin_bff_sessions where id=p_id;return 'true'::jsonb;\n else\n  select b.* into s from store_private.admin_bff_sessions b join auth.sessions a on a.id=b.auth_session_id join auth.users u on u.id=b.user_id\n   where b.id=p_id and b.expires_at>now() and a.created_at>now()-interval '30 days' and (a.not_after is null or a.not_after>now()) and u.deleted_at is null and (u.banned_until is null or u.banned_until<=now()) for update of b;\n  if not found then return null;end if;\n  if p_action='lock' then\n   if s.lease_until>clock_timestamp() then return jsonb_build_object('busy',true);end if;\n   update store_private.admin_bff_sessions set lease=gen_random_uuid(),lease_until=clock_timestamp()+interval '60 seconds' where id=p_id returning * into s;\n  elsif p_action='commit' then\n   if p_lease is null or s.lease is distinct from p_lease or s.lease_until<=clock_timestamp() then raise exception 'Session changed' using errcode='PT409';end if;\n   update store_private.admin_bff_sessions set payload=p_payload,lease=null,lease_until=null where id=p_id returning * into s;\n  elsif p_action='unlock' then\n   update store_private.admin_bff_sessions set lease=null,lease_until=null where id=p_id and lease=p_lease;return 'true'::jsonb;\n  elsif p_action<>'read' then raise exception 'Invalid session action' using errcode='22023';end if;\n end if;\n return jsonb_build_object('payload',s.payload,'lease',s.lease,'expires_at',s.expires_at,'server_now',now(),'user_id',s.user_id,'auth_session_id',s.auth_session_id);\nend $function$\n"
+  },
+  {
+    "kind": "function",
+    "name": "store_gateway.bot_claim(p_secret text, p_update_id bigint)",
+    "definition": "CREATE OR REPLACE FUNCTION store_gateway.bot_claim(p_secret text, p_update_id bigint DEFAULT NULL::bigint)\n RETURNS jsonb\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\ndeclare result jsonb;\nbegin\n perform store_private.operational_secret('bot',p_secret);\n update store_private.bot_outbox set state='failed',payload=null,error_code='retry_exhausted',finished_at=now(),lease=null,lease_until=null\n where state in ('pending','retry','sending') and (created_at<now()-interval '24 hours' or attempts>=6) and (lease_until is null or lease_until<=now());\n with due as(select update_id from store_private.bot_outbox where (p_update_id is null or update_id=p_update_id) and available_at<=now()\n  and (state in ('pending','retry') or state='sending' and lease_until<=now()) and attempts<6 order by available_at,update_id for update skip locked limit 5),\n claimed as(update store_private.bot_outbox b set state='sending',attempts=attempts+1,lease=gen_random_uuid(),lease_until=now()+interval '120 seconds'\n  from due where b.update_id=due.update_id returning b.update_id,b.payload,b.lease,b.attempts)\n select coalesce(jsonb_agg(to_jsonb(c)),'[]'::jsonb) into result from claimed c;\n return result;\nend $function$\n"
+  },
+  {
+    "kind": "function",
+    "name": "store_gateway.bot_enqueue(p_secret text, p_update_id bigint, p_chat_hash text, p_kind text, p_payload text)",
+    "definition": "CREATE OR REPLACE FUNCTION store_gateway.bot_enqueue(p_secret text, p_update_id bigint, p_chat_hash text, p_kind text, p_payload text)\n RETURNS text\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\ndeclare result text;\nbegin\n perform store_private.operational_secret('bot',p_secret);\n if p_payload is null or length(p_payload) not between 40 and 24000 then raise exception 'Invalid payload' using errcode='22023';end if;\n -- The existing limiter serializes admission and update IDs; enqueue is the SAME transaction.\n if store_private.consume_telegram_update(p_chat_hash,p_update_id,p_kind) then\n  insert into store_private.bot_outbox(update_id,chat_hash,kind,payload) values(p_update_id,p_chat_hash,p_kind,p_payload) on conflict(update_id) do nothing;\n end if;\n select state into result from store_private.bot_outbox where update_id=p_update_id and chat_hash=p_chat_hash;\n return coalesce(result,'suppressed');\nend $function$\n"
+  },
+  {
+    "kind": "function",
+    "name": "store_gateway.bot_finish(p_secret text, p_update_id bigint, p_lease uuid, p_state text, p_delay integer, p_code text, p_message_id bigint)",
+    "definition": "CREATE OR REPLACE FUNCTION store_gateway.bot_finish(p_secret text, p_update_id bigint, p_lease uuid, p_state text, p_delay integer, p_code text, p_message_id bigint)\n RETURNS boolean\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\nbegin\n perform store_private.operational_secret('bot',p_secret);\n if p_state is null or p_state not in ('delivered','retry','failed') or (p_code is not null and p_code !~ '^[a-z0-9_]{1,40}$') then raise exception 'Invalid delivery state' using errcode='22023';end if;\n update store_private.bot_outbox set state=p_state,error_code=p_code,message_id=p_message_id,lease=null,lease_until=null,\n  payload=case when p_state in ('delivered','failed') then null else payload end,\n  finished_at=case when p_state in ('delivered','failed') then now() else null end,available_at=now()+make_interval(secs=>greatest(5,least(3600,coalesce(p_delay,30))))\n where update_id=p_update_id and state='sending' and lease=p_lease;\n return found;\nend $function$\n"
+  },
+  {
+    "kind": "function",
+    "name": "store_gateway.client_error_ingest(p_secret text, p_ip text, p_surface text, p_kind text, p_asset text, p_line integer, p_column integer, p_release text)",
+    "definition": "CREATE OR REPLACE FUNCTION store_gateway.client_error_ingest(p_secret text, p_ip text, p_surface text, p_kind text, p_asset text, p_line integer, p_column integer, p_release text)\n RETURNS boolean\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\ndeclare error_fingerprint text;\nbegin\n perform store_private.operational_secret('errors',p_secret);\n if p_ip is null or p_ip !~ '^[a-f0-9]{64}$' or p_surface is null or p_surface not in ('website','telegram','admin') or p_kind is null or p_kind not in ('TypeError','ReferenceError','SyntaxError','RangeError','Error','PromiseRejection','ResourceError')\n or p_asset is null or p_asset !~ '^[a-zA-Z0-9_-]{1,80}\\.(js|css)$' or p_line is null or p_line not between 0 and 1000000 or p_column is null or p_column not between 0 and 1000000 or p_release is null or p_release !~ '^[a-f0-9]{7,40}$|^development$' then return false;end if;\n if not store_private.operational_rate('errors:ip:'||p_ip,20) or not store_private.operational_rate('errors:global',500) or not store_private.operational_rate('errors:day',10000,'day') then return false;end if;\n error_fingerprint:=encode(sha256(convert_to(concat_ws(':',p_surface,p_kind,p_asset,p_line,p_column,p_release),'UTF8')),'hex');\n insert into store_private.client_errors(fingerprint,surface,kind,asset,line_no,column_no,release) values(error_fingerprint,p_surface,p_kind,p_asset,p_line,p_column,p_release)\n on conflict(fingerprint,bucket_at) do update set hits=client_errors.hits+1,last_seen=now();\n return true;\nend $function$\n"
   },
   {
     "kind": "function",
@@ -6788,6 +7833,26 @@
     "kind": "function",
     "name": "store_private.normalize_variant(value text)",
     "definition": "CREATE OR REPLACE FUNCTION store_private.normalize_variant(value text)\n RETURNS text\n LANGUAGE plpgsql\n IMMUTABLE\n SET search_path TO ''\nAS $function$\ndeclare s text:=btrim(value); latin text;\nbegin\n s:=regexp_replace(s,'^([0-9]+),([0-9]+)$','\\1.\\2');\n if s ~* '^(one[ -]?size|o[ /-]?s|единый размер|универсальный)$' then return 'One Size'; end if;\n latin:=upper(translate(s,'ХхМмСс','XXMMSS'));\n latin:=case latin when '2XL' then 'XXL' when '3XL' then 'XXXL' when 'XXXXL' then '4XL' else latin end;\n if latin ~ '^([2-6]?X{1,4}[SL]|[SML])$' then return latin; end if;\n return regexp_replace(s,'^Длинна:','Длина:','i');\nend $function$\n"
+  },
+  {
+    "kind": "function",
+    "name": "store_private.operational_health()",
+    "definition": "CREATE OR REPLACE FUNCTION store_private.operational_health()\n RETURNS jsonb\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\nbegin\n if not store_private.admin_mfa_satisfied() or not exists(select 1 from public.store_admins where user_id=auth.uid()) then raise exception 'Admin required' using errcode='42501';end if;\n return jsonb_build_object('server_now',now(),\n  'errors_24h',coalesce((select sum(hits) from store_private.client_errors where bucket_at>=now()-interval '24 hours'),0),\n  'error_alerts',coalesce((select jsonb_agg(to_jsonb(t)) from(select surface,kind,asset,line_no,column_no,release,sum(hits) hits,max(last_seen) last_seen from store_private.client_errors where bucket_at>=date_trunc('minute',now()-interval '24 hours') group by surface,kind,asset,line_no,column_no,release order by max(last_seen) desc limit 30)t),'[]'::jsonb),\n  'bot',jsonb_build_object('pending',(select count(*) from store_private.bot_outbox where state in ('pending','retry','sending')),\n   'delivered_24h',(select count(*) from store_private.bot_outbox where state='delivered' and finished_at>=now()-interval '24 hours'),\n   'failed_24h',(select count(*) from store_private.bot_outbox where state='failed' and finished_at>=now()-interval '24 hours'),\n   'overdue',(select count(*) from store_private.bot_outbox where state in ('pending','retry','sending') and created_at<now()-interval '5 minutes')));\nend $function$\n"
+  },
+  {
+    "kind": "function",
+    "name": "store_private.operational_rate(p_key text, p_limit integer, p_period text)",
+    "definition": "CREATE OR REPLACE FUNCTION store_private.operational_rate(p_key text, p_limit integer, p_period text DEFAULT 'minute'::text)\n RETURNS boolean\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\ndeclare n integer;\nbegin\n insert into store_private.operational_limits as l values(p_key,date_trunc(p_period,now()),1)\n on conflict(key) do update set window_at=excluded.window_at,hits=case when l.window_at=excluded.window_at then least(l.hits+1,1000000) else 1 end returning hits into n;\n return n<=p_limit;\nend $function$\n"
+  },
+  {
+    "kind": "function",
+    "name": "store_private.operational_retention()",
+    "definition": "CREATE OR REPLACE FUNCTION store_private.operational_retention()\n RETURNS void\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\nbegin\n delete from store_private.admin_bff_sessions where expires_at<=now();\n delete from store_private.operational_limits where window_at<now()-interval '2 days';\n update store_private.bot_outbox set state='failed',payload=null,finished_at=now(),error_code='expired',lease=null,lease_until=null where state in ('pending','retry','sending') and created_at<now()-interval '24 hours';\n delete from store_private.bot_outbox where created_at<now()-interval '7 days';\n delete from store_private.client_errors where bucket_at<now()-interval '30 days';\nend $function$\n"
+  },
+  {
+    "kind": "function",
+    "name": "store_private.operational_secret(p_kind text, p_secret text)",
+    "definition": "CREATE OR REPLACE FUNCTION store_private.operational_secret(p_kind text, p_secret text)\n RETURNS void\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\ndeclare valid boolean:=false;\nbegin\n if p_secret is not null and length(p_secret)=64 then\n  if p_kind='session' then select exists(select 1 from store_private.admin_bff_secret where singleton and secret_hash=sha256(convert_to(p_secret,'UTF8'))) into valid;\n  elsif p_kind='bot' then select exists(select 1 from store_private.telegram_limit_secret where id and secret_hash=sha256(convert_to(p_secret,'UTF8'))) into valid;\n  elsif p_kind='errors' then select exists(select 1 from store_private.analytics_gateway_secret where singleton and secret_hash=sha256(convert_to(p_secret,'UTF8'))) into valid;\n  end if;\n end if;\n if not valid then raise exception 'Unauthorized' using errcode='42501';end if;\nend $function$\n"
   },
   {
     "kind": "function",
@@ -6961,6 +8026,11 @@
   },
   {
     "kind": "function_acl",
+    "name": "public.store_admin_bff_session(p_secret text, p_action text, p_id text, p_payload text, p_auth_session uuid, p_user uuid, p_lease uuid)",
+    "definition": "{postgres=X/postgres,anon=X/postgres}"
+  },
+  {
+    "kind": "function_acl",
     "name": "public.store_admin_security_status()",
     "definition": "{postgres=X/postgres,authenticated=X/postgres}"
   },
@@ -7016,8 +8086,28 @@
   },
   {
     "kind": "function_acl",
+    "name": "public.store_bot_claim(p_secret text, p_update_id bigint)",
+    "definition": "{postgres=X/postgres,anon=X/postgres}"
+  },
+  {
+    "kind": "function_acl",
+    "name": "public.store_bot_enqueue(p_secret text, p_update_id bigint, p_chat_hash text, p_kind text, p_payload text)",
+    "definition": "{postgres=X/postgres,anon=X/postgres}"
+  },
+  {
+    "kind": "function_acl",
+    "name": "public.store_bot_finish(p_secret text, p_update_id bigint, p_lease uuid, p_state text, p_delay integer, p_code text, p_message_id bigint)",
+    "definition": "{postgres=X/postgres,anon=X/postgres}"
+  },
+  {
+    "kind": "function_acl",
     "name": "public.store_bot_health()",
     "definition": "{postgres=X/postgres,authenticated=X/postgres}"
+  },
+  {
+    "kind": "function_acl",
+    "name": "public.store_client_error_ingest(p_secret text, p_ip text, p_surface text, p_kind text, p_asset text, p_line integer, p_column integer, p_release text)",
+    "definition": "{postgres=X/postgres,anon=X/postgres}"
   },
   {
     "kind": "function_acl",
@@ -7047,6 +8137,11 @@
   {
     "kind": "function_acl",
     "name": "public.store_link_finance_order(p_order uuid, p_sale uuid, p_order_revision bigint, p_sale_revision bigint)",
+    "definition": "{postgres=X/postgres,authenticated=X/postgres}"
+  },
+  {
+    "kind": "function_acl",
+    "name": "public.store_operational_health()",
     "definition": "{postgres=X/postgres,authenticated=X/postgres}"
   },
   {
@@ -7143,6 +8238,31 @@
     "kind": "function_acl",
     "name": "public.touch_store_admin_session()",
     "definition": "{postgres=X/postgres,authenticated=X/postgres}"
+  },
+  {
+    "kind": "function_acl",
+    "name": "store_gateway.admin_bff_session(p_secret text, p_action text, p_id text, p_payload text, p_auth_session uuid, p_user uuid, p_lease uuid)",
+    "definition": "{postgres=X/postgres,anon=X/postgres}"
+  },
+  {
+    "kind": "function_acl",
+    "name": "store_gateway.bot_claim(p_secret text, p_update_id bigint)",
+    "definition": "{postgres=X/postgres,anon=X/postgres}"
+  },
+  {
+    "kind": "function_acl",
+    "name": "store_gateway.bot_enqueue(p_secret text, p_update_id bigint, p_chat_hash text, p_kind text, p_payload text)",
+    "definition": "{postgres=X/postgres,anon=X/postgres}"
+  },
+  {
+    "kind": "function_acl",
+    "name": "store_gateway.bot_finish(p_secret text, p_update_id bigint, p_lease uuid, p_state text, p_delay integer, p_code text, p_message_id bigint)",
+    "definition": "{postgres=X/postgres,anon=X/postgres}"
+  },
+  {
+    "kind": "function_acl",
+    "name": "store_gateway.client_error_ingest(p_secret text, p_ip text, p_surface text, p_kind text, p_asset text, p_line integer, p_column integer, p_release text)",
+    "definition": "{postgres=X/postgres,anon=X/postgres}"
   },
   {
     "kind": "function_acl",
@@ -7248,6 +8368,26 @@
     "kind": "function_acl",
     "name": "store_private.normalize_variant(value text)",
     "definition": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "kind": "function_acl",
+    "name": "store_private.operational_health()",
+    "definition": "{postgres=X/postgres,authenticated=X/postgres}"
+  },
+  {
+    "kind": "function_acl",
+    "name": "store_private.operational_rate(p_key text, p_limit integer, p_period text)",
+    "definition": "{postgres=X/postgres}"
+  },
+  {
+    "kind": "function_acl",
+    "name": "store_private.operational_retention()",
+    "definition": "{postgres=X/postgres}"
+  },
+  {
+    "kind": "function_acl",
+    "name": "store_private.operational_secret(p_kind text, p_secret text)",
+    "definition": "{postgres=X/postgres}"
   },
   {
     "kind": "function_acl",
@@ -7583,6 +8723,76 @@
     "kind": "grant",
     "name": "public.store_admins.service_role.TRUNCATE",
     "definition": "NO"
+  },
+  {
+    "kind": "grant",
+    "name": "store_private.admin_bff_secret.postgres.DELETE",
+    "definition": "YES"
+  },
+  {
+    "kind": "grant",
+    "name": "store_private.admin_bff_secret.postgres.INSERT",
+    "definition": "YES"
+  },
+  {
+    "kind": "grant",
+    "name": "store_private.admin_bff_secret.postgres.REFERENCES",
+    "definition": "YES"
+  },
+  {
+    "kind": "grant",
+    "name": "store_private.admin_bff_secret.postgres.SELECT",
+    "definition": "YES"
+  },
+  {
+    "kind": "grant",
+    "name": "store_private.admin_bff_secret.postgres.TRIGGER",
+    "definition": "YES"
+  },
+  {
+    "kind": "grant",
+    "name": "store_private.admin_bff_secret.postgres.TRUNCATE",
+    "definition": "YES"
+  },
+  {
+    "kind": "grant",
+    "name": "store_private.admin_bff_secret.postgres.UPDATE",
+    "definition": "YES"
+  },
+  {
+    "kind": "grant",
+    "name": "store_private.admin_bff_sessions.postgres.DELETE",
+    "definition": "YES"
+  },
+  {
+    "kind": "grant",
+    "name": "store_private.admin_bff_sessions.postgres.INSERT",
+    "definition": "YES"
+  },
+  {
+    "kind": "grant",
+    "name": "store_private.admin_bff_sessions.postgres.REFERENCES",
+    "definition": "YES"
+  },
+  {
+    "kind": "grant",
+    "name": "store_private.admin_bff_sessions.postgres.SELECT",
+    "definition": "YES"
+  },
+  {
+    "kind": "grant",
+    "name": "store_private.admin_bff_sessions.postgres.TRIGGER",
+    "definition": "YES"
+  },
+  {
+    "kind": "grant",
+    "name": "store_private.admin_bff_sessions.postgres.TRUNCATE",
+    "definition": "YES"
+  },
+  {
+    "kind": "grant",
+    "name": "store_private.admin_bff_sessions.postgres.UPDATE",
+    "definition": "YES"
   },
   {
     "kind": "grant",
@@ -8056,6 +9266,76 @@
   },
   {
     "kind": "grant",
+    "name": "store_private.bot_outbox.postgres.DELETE",
+    "definition": "YES"
+  },
+  {
+    "kind": "grant",
+    "name": "store_private.bot_outbox.postgres.INSERT",
+    "definition": "YES"
+  },
+  {
+    "kind": "grant",
+    "name": "store_private.bot_outbox.postgres.REFERENCES",
+    "definition": "YES"
+  },
+  {
+    "kind": "grant",
+    "name": "store_private.bot_outbox.postgres.SELECT",
+    "definition": "YES"
+  },
+  {
+    "kind": "grant",
+    "name": "store_private.bot_outbox.postgres.TRIGGER",
+    "definition": "YES"
+  },
+  {
+    "kind": "grant",
+    "name": "store_private.bot_outbox.postgres.TRUNCATE",
+    "definition": "YES"
+  },
+  {
+    "kind": "grant",
+    "name": "store_private.bot_outbox.postgres.UPDATE",
+    "definition": "YES"
+  },
+  {
+    "kind": "grant",
+    "name": "store_private.client_errors.postgres.DELETE",
+    "definition": "YES"
+  },
+  {
+    "kind": "grant",
+    "name": "store_private.client_errors.postgres.INSERT",
+    "definition": "YES"
+  },
+  {
+    "kind": "grant",
+    "name": "store_private.client_errors.postgres.REFERENCES",
+    "definition": "YES"
+  },
+  {
+    "kind": "grant",
+    "name": "store_private.client_errors.postgres.SELECT",
+    "definition": "YES"
+  },
+  {
+    "kind": "grant",
+    "name": "store_private.client_errors.postgres.TRIGGER",
+    "definition": "YES"
+  },
+  {
+    "kind": "grant",
+    "name": "store_private.client_errors.postgres.TRUNCATE",
+    "definition": "YES"
+  },
+  {
+    "kind": "grant",
+    "name": "store_private.client_errors.postgres.UPDATE",
+    "definition": "YES"
+  },
+  {
+    "kind": "grant",
     "name": "store_private.commission_terms.postgres.DELETE",
     "definition": "YES"
   },
@@ -8157,6 +9437,41 @@
   {
     "kind": "grant",
     "name": "store_private.finance_entries.postgres.UPDATE",
+    "definition": "YES"
+  },
+  {
+    "kind": "grant",
+    "name": "store_private.operational_limits.postgres.DELETE",
+    "definition": "YES"
+  },
+  {
+    "kind": "grant",
+    "name": "store_private.operational_limits.postgres.INSERT",
+    "definition": "YES"
+  },
+  {
+    "kind": "grant",
+    "name": "store_private.operational_limits.postgres.REFERENCES",
+    "definition": "YES"
+  },
+  {
+    "kind": "grant",
+    "name": "store_private.operational_limits.postgres.SELECT",
+    "definition": "YES"
+  },
+  {
+    "kind": "grant",
+    "name": "store_private.operational_limits.postgres.TRIGGER",
+    "definition": "YES"
+  },
+  {
+    "kind": "grant",
+    "name": "store_private.operational_limits.postgres.TRUNCATE",
+    "definition": "YES"
+  },
+  {
+    "kind": "grant",
+    "name": "store_private.operational_limits.postgres.UPDATE",
     "definition": "YES"
   },
   {
@@ -8641,6 +9956,21 @@
   },
   {
     "kind": "index",
+    "name": "store_private.admin_bff_secret_pkey",
+    "definition": "CREATE UNIQUE INDEX admin_bff_secret_pkey ON store_private.admin_bff_secret USING btree (singleton)"
+  },
+  {
+    "kind": "index",
+    "name": "store_private.admin_bff_sessions_expiry",
+    "definition": "CREATE INDEX admin_bff_sessions_expiry ON store_private.admin_bff_sessions USING btree (expires_at)"
+  },
+  {
+    "kind": "index",
+    "name": "store_private.admin_bff_sessions_pkey",
+    "definition": "CREATE UNIQUE INDEX admin_bff_sessions_pkey ON store_private.admin_bff_sessions USING btree (id)"
+  },
+  {
+    "kind": "index",
     "name": "store_private.admin_invitations_pkey",
     "definition": "CREATE UNIQUE INDEX admin_invitations_pkey ON store_private.admin_invitations USING btree (email)"
   },
@@ -8716,6 +10046,31 @@
   },
   {
     "kind": "index",
+    "name": "store_private.bot_outbox_due",
+    "definition": "CREATE INDEX bot_outbox_due ON store_private.bot_outbox USING btree (available_at) WHERE (state = ANY (ARRAY['pending'::text, 'retry'::text, 'sending'::text]))"
+  },
+  {
+    "kind": "index",
+    "name": "store_private.bot_outbox_pkey",
+    "definition": "CREATE UNIQUE INDEX bot_outbox_pkey ON store_private.bot_outbox USING btree (update_id)"
+  },
+  {
+    "kind": "index",
+    "name": "store_private.client_errors_fingerprint_bucket_at_key",
+    "definition": "CREATE UNIQUE INDEX client_errors_fingerprint_bucket_at_key ON store_private.client_errors USING btree (fingerprint, bucket_at)"
+  },
+  {
+    "kind": "index",
+    "name": "store_private.client_errors_pkey",
+    "definition": "CREATE UNIQUE INDEX client_errors_pkey ON store_private.client_errors USING btree (id)"
+  },
+  {
+    "kind": "index",
+    "name": "store_private.client_errors_recent",
+    "definition": "CREATE INDEX client_errors_recent ON store_private.client_errors USING btree (last_seen DESC)"
+  },
+  {
+    "kind": "index",
     "name": "store_private.commission_terms_pkey",
     "definition": "CREATE UNIQUE INDEX commission_terms_pkey ON store_private.commission_terms USING btree (product_id)"
   },
@@ -8753,6 +10108,11 @@
     "kind": "index",
     "name": "store_private.finance_entries_sale_id_key",
     "definition": "CREATE UNIQUE INDEX finance_entries_sale_id_key ON store_private.finance_entries USING btree (sale_id)"
+  },
+  {
+    "kind": "index",
+    "name": "store_private.operational_limits_pkey",
+    "definition": "CREATE UNIQUE INDEX operational_limits_pkey ON store_private.operational_limits USING btree (key)"
   },
   {
     "kind": "index",
@@ -8976,6 +10336,11 @@
   },
   {
     "kind": "schema_acl",
+    "name": "store_gateway",
+    "definition": "{postgres=UC/postgres,anon=U/postgres}"
+  },
+  {
+    "kind": "schema_acl",
     "name": "store_private",
     "definition": "{postgres=UC/postgres,supabase_auth_admin=U/postgres,authenticated=U/postgres,service_role=U/postgres}"
   },
@@ -8983,6 +10348,11 @@
     "kind": "sequence_acl",
     "name": "public.products_id_seq",
     "definition": "{postgres=rwU/postgres,authenticated=rU/postgres}"
+  },
+  {
+    "kind": "sequence_acl",
+    "name": "store_private.client_errors_id_seq",
+    "definition": "DEFAULT"
   },
   {
     "kind": "sequence_acl",
@@ -9023,6 +10393,16 @@
     "kind": "table",
     "name": "public.store_admins",
     "definition": "{\"rls\": true, \"columns\": [{\"name\": \"user_id\", \"type\": \"uuid\", \"default\": null, \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"display_name\", \"type\": \"text\", \"default\": \"''::text\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"access_role\", \"type\": \"text\", \"default\": \"'admin'::text\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}], \"force_rls\": false}"
+  },
+  {
+    "kind": "table",
+    "name": "store_private.admin_bff_secret",
+    "definition": "{\"rls\": true, \"columns\": [{\"name\": \"singleton\", \"type\": \"boolean\", \"default\": \"true\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"secret_hash\", \"type\": \"bytea\", \"default\": null, \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}], \"force_rls\": false}"
+  },
+  {
+    "kind": "table",
+    "name": "store_private.admin_bff_sessions",
+    "definition": "{\"rls\": true, \"columns\": [{\"name\": \"id\", \"type\": \"text\", \"default\": null, \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"user_id\", \"type\": \"uuid\", \"default\": null, \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"auth_session_id\", \"type\": \"uuid\", \"default\": null, \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"payload\", \"type\": \"text\", \"default\": null, \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"expires_at\", \"type\": \"timestamp with time zone\", \"default\": null, \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"lease\", \"type\": \"uuid\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"lease_until\", \"type\": \"timestamp with time zone\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"created_at\", \"type\": \"timestamp with time zone\", \"default\": \"now()\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}], \"force_rls\": false}"
   },
   {
     "kind": "table",
@@ -9076,6 +10456,16 @@
   },
   {
     "kind": "table",
+    "name": "store_private.bot_outbox",
+    "definition": "{\"rls\": true, \"columns\": [{\"name\": \"update_id\", \"type\": \"bigint\", \"default\": null, \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"chat_hash\", \"type\": \"text\", \"default\": null, \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"kind\", \"type\": \"text\", \"default\": null, \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"payload\", \"type\": \"text\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"state\", \"type\": \"text\", \"default\": \"'pending'::text\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"attempts\", \"type\": \"integer\", \"default\": \"0\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"available_at\", \"type\": \"timestamp with time zone\", \"default\": \"now()\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"lease\", \"type\": \"uuid\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"lease_until\", \"type\": \"timestamp with time zone\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"error_code\", \"type\": \"text\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"message_id\", \"type\": \"bigint\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"created_at\", \"type\": \"timestamp with time zone\", \"default\": \"now()\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"finished_at\", \"type\": \"timestamp with time zone\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}], \"force_rls\": false}"
+  },
+  {
+    "kind": "table",
+    "name": "store_private.client_errors",
+    "definition": "{\"rls\": true, \"columns\": [{\"name\": \"id\", \"type\": \"bigint\", \"default\": null, \"notnull\": true, \"identity\": \"a\", \"generated\": \"\"}, {\"name\": \"fingerprint\", \"type\": \"text\", \"default\": null, \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"surface\", \"type\": \"text\", \"default\": null, \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"kind\", \"type\": \"text\", \"default\": null, \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"asset\", \"type\": \"text\", \"default\": null, \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"line_no\", \"type\": \"integer\", \"default\": null, \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"column_no\", \"type\": \"integer\", \"default\": null, \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"release\", \"type\": \"text\", \"default\": null, \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"bucket_at\", \"type\": \"timestamp with time zone\", \"default\": \"date_trunc('minute'::text, now())\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"first_seen\", \"type\": \"timestamp with time zone\", \"default\": \"now()\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"last_seen\", \"type\": \"timestamp with time zone\", \"default\": \"now()\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"hits\", \"type\": \"integer\", \"default\": \"1\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}], \"force_rls\": false}"
+  },
+  {
+    "kind": "table",
     "name": "store_private.commission_terms",
     "definition": "{\"rls\": true, \"columns\": [{\"name\": \"product_id\", \"type\": \"bigint\", \"default\": null, \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"owner_ref\", \"type\": \"text\", \"default\": \"''::text\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"due_per_unit\", \"type\": \"numeric\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"revision\", \"type\": \"bigint\", \"default\": \"1\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"updated_at\", \"type\": \"timestamp with time zone\", \"default\": \"now()\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"updated_by\", \"type\": \"uuid\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}], \"force_rls\": false}"
   },
@@ -9088,6 +10478,11 @@
     "kind": "table",
     "name": "store_private.finance_entries",
     "definition": "{\"rls\": true, \"columns\": [{\"name\": \"id\", \"type\": \"uuid\", \"default\": \"gen_random_uuid()\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"sale_id\", \"type\": \"bigint\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"product_id\", \"type\": \"bigint\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"product_label\", \"type\": \"text\", \"default\": null, \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"kind\", \"type\": \"text\", \"default\": null, \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"status\", \"type\": \"text\", \"default\": null, \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"on_commission\", \"type\": \"boolean\", \"default\": \"false\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"on_order\", \"type\": \"boolean\", \"default\": \"false\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"opened_on\", \"type\": \"date\", \"default\": null, \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"completed_on\", \"type\": \"date\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"report_on\", \"type\": \"date\", \"default\": \"COALESCE(completed_on, opened_on)\", \"notnull\": false, \"identity\": \"\", \"generated\": \"s\"}, {\"name\": \"quantity\", \"type\": \"integer\", \"default\": null, \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"amount\", \"type\": \"numeric\", \"default\": null, \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"received\", \"type\": \"numeric\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"purchase_cost\", \"type\": \"numeric\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"expenses\", \"type\": \"numeric\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"owner_due\", \"type\": \"numeric\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"owner_paid\", \"type\": \"numeric\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"owner_ref\", \"type\": \"text\", \"default\": \"''::text\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"client_ref\", \"type\": \"text\", \"default\": \"''::text\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"note\", \"type\": \"text\", \"default\": \"''::text\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"merged_into\", \"type\": \"uuid\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"revision\", \"type\": \"bigint\", \"default\": \"1\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"created_at\", \"type\": \"timestamp with time zone\", \"default\": \"now()\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"updated_at\", \"type\": \"timestamp with time zone\", \"default\": \"now()\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"updated_by\", \"type\": \"uuid\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}], \"force_rls\": false}"
+  },
+  {
+    "kind": "table",
+    "name": "store_private.operational_limits",
+    "definition": "{\"rls\": true, \"columns\": [{\"name\": \"key\", \"type\": \"text\", \"default\": null, \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"window_at\", \"type\": \"timestamp with time zone\", \"default\": null, \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"hits\", \"type\": \"integer\", \"default\": null, \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}], \"force_rls\": false}"
   },
   {
     "kind": "table",

@@ -204,3 +204,7 @@ body[data-manager-view=inventory] #newProduct,body[data-manager-view=editor] #ne
 .product-quality ul{margin:10px 0 0;padding-left:20px;font-size:13px;line-height:1.65}
 .product-quality a{color:#76516b;text-underline-offset:3px}.quality-complete{color:#49633a}
 @media(max-width:700px){.editor-heading{align-items:flex-start}.editor-heading-actions{flex-shrink:0}#saveTop{padding:10px 14px;font-size:12px}.product-quality{padding:16px}}
+
+.operational-notice{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:12px 0;padding:12px 16px;background:#f7e7ee;border:1px solid #c88eaa;color:#382431;font-size:13px}.operational-notice.hidden{display:none}.operational-notice button{white-space:nowrap}.operational-health{margin-top:24px}
+
+.editor-disclosure>summary{cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;gap:12px}.editor-disclosure>summary::-webkit-details-marker{display:none}.editor-disclosure>summary::after{content:'+';font-size:24px;color:#735163}.editor-disclosure[open]>summary::after{content:'−'}.editor-disclosure .section-heading{margin-bottom:0}.editor-disclosure-content{padding-top:20px}.editor-disclosure>summary:focus-visible{outline:2px solid #8c4b70;outline-offset:6px}
