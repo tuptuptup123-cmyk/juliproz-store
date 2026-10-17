@@ -22,6 +22,7 @@ function allowedPath(path,method){
 }
 function createHandler(env=process.env,request=fetch,now=()=>Date.now()){
  const secret=env.ADMIN_SESSION_SECRET;
+ const googleSearch=require('./google-search.cjs').createClient(env,request,now);
  async function rpc(action,id,extra={}){
   const r=await request(config.url+'/rest/v1/rpc/store_admin_bff_session',{method:'POST',headers:{apikey:config.key,'Content-Type':'application/json'},body:JSON.stringify({p_secret:secret,p_action:action,p_id:id,...extra}),redirect:'error',signal:AbortSignal.timeout(6000)});
   if(!r.ok)throw fail(r.status===401?401:503,'Не удалось проверить сессию. Повторите попытку.');return r.json();
@@ -118,6 +119,18 @@ function createHandler(env=process.env,request=fetch,now=()=>Date.now()){
    }
    let current=await fresh(id);
    if(path==='/session')return send(200,publicSession(current.data,current.row,id));
+   if(path==='/reports/google-search'){
+    if(method!=='POST')throw fail(405,'Method not allowed');
+    if(current.data.setup_flow)throw fail(403,'Сначала завершите настройку входа.');
+    // Recheck membership, session and MFA on every request, including cache hits.
+    await upstream('/rest/v1/rpc/touch_store_admin_session','POST',{},current.data.access_token);
+    const security=await upstream('/rest/v1/rpc/store_admin_security_status','POST',{},current.data.access_token);
+    if(!security||security.pending===true)throw fail(403,'Доступ ещё не подтверждён владельцем.');
+    if(claims(current.data.access_token).aal!=='aal2'&&security.paused!==true)throw fail(403,'Подтвердите вход в админку.','MFA_REQUIRED');
+    const admins=await upstream('/rest/v1/store_admins?select=user_id&user_id=eq.'+encodeURIComponent(current.data.user.id),'GET',undefined,current.data.access_token);
+    if(!Array.isArray(admins)||admins.length!==1||admins[0].user_id!==current.data.user.id)throw fail(403,'Нет доступа к статистике магазина.');
+    return send(200,await googleSearch.load(body?.days??28));
+   }
    if(path==='/session/complete'){
     if(current.data.setup_flow)throw fail(403,'Сначала завершите настройку пароля.');
     await upstream('/rest/v1/rpc/touch_store_admin_session','POST',{},current.data.access_token);

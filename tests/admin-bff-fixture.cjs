@@ -28,9 +28,9 @@ function fixture(options={}){
   if(path.startsWith('/storage/v1/object/sign/product-photos/'))return response({signedURL:path.slice('/storage/v1'.length)+'?token=short-capability'});
   if(path.startsWith('/storage/v1/object/upload/sign/product-photos/'))return response({url:path.slice('/storage/v1'.length)+'?token=upload-capability'});
   if(path==='/auth/v1/logout')return response({});
-  if(path==='/rest/v1/store_admins')return response([{user_id:owner}]);
+  if(path==='/rest/v1/store_admins')return response(options.membership===false?[]:[{user_id:owner}]);
   if(path.endsWith('/touch_store_admin_session')){if(touchGate)await touchGate;if(touchFailure)return response({message:'Synthetic interruption'},touchFailure);const row=[...rows.values()][0];return response({server_now:new Date(time).toISOString(),expires_at:row?.expires_at,idle_expires_at:row?.expires_at})}
-  if(path.endsWith('/store_admin_security_status'))return response({paused:false,pending:false,access_role:'owner'});
+  if(path.endsWith('/store_admin_security_status'))return response(options.security||{paused:false,pending:false,access_role:'owner'});
   if(path.endsWith('/store_product_finance'))return response({cost:null});
   if(path.endsWith('/store_admin_operational_health'))return response({bot:{},errors:[]});
   if(path.endsWith('/store_analytics_summary'))return response({counts:{},daily:[]});

@@ -125,7 +125,7 @@ function clearMfa(){
 }
 function endSession(clearSaved=true){
  if(clearSaved){window.AdminTransport?.request('/auth/v1/logout?scope=local',{method:'POST'}).catch(()=>{});window.AdminTransport?.clear()}
- window.AdminStepUp?.cancel();window.AdminImages?.clear();window.AdminHealth?.clear();
+ window.AdminStepUp?.cancel();window.AdminImages?.clear();window.AdminHealth?.clear();window.AdminGoogleSearch?.clear();
  busy=false;sessionClock.clear();rememberAdminSession=false;restorePending=false;activityPromise=null;emailFlowType=null;clearEmailLink();$('sessionWarning').classList.add('hidden');$('photoStudio').close?.();
  if(clearSaved)clearSavedAdminSession();persistedAdminSession=false;persistedRefreshToken=null;window.ProductSharing?.close();window.AdminWorkspace?.clear();window.AdminManager?.clear();window.AdminSales?.clear();window.AdminSchedule?.clear();window.AdminFinance?.clear();window.AdminProductFinance?.clear();clearInternalFields();
  internalNoteState=null;if($('editor').elements?.internal_note)$('editor').elements.internal_note.value='';pendingCover=false;window.PhotoStudio?.cancel();adminSecurity={paused:false};session=null;sessionEpoch++;previewEpoch++;items=[];photos=[];editing=null;original=null;creationKey=null;recovering=false;
@@ -607,8 +607,9 @@ $('styleExistingPhotos').onclick=async()=>{
  finally{busy=false;$('editorFields').disabled=false;$('save').disabled=false;$('photoProcessingStatus').textContent='';renderPhotos()}
 };
 let analyticsBusy=false,analyticsData=null,analyticsChartMetric='visitors',analyticsChannel='website';
-const analyticsChannelNotes={website:'Сайт: посещения и действия на juliproz.com.',telegram:'Бот: посещения и действия в магазине Telegram. Команды и переписка в чате сюда не входят.',legacy:'Архив: общие события до разделения каналов. Их источник не был сохранён, поэтому они не включаются в отчёты сайта и бота.'};
+const analyticsChannelNotes={google:'Google: показы и переходы из поиска.',website:'Сайт: посещения и действия на juliproz.com.',telegram:'Бот: посещения и действия в магазине Telegram. Команды и переписка в чате сюда не входят.',legacy:'Архив: общие события до разделения каналов. Их источник не был сохранён, поэтому они не включаются в отчёты сайта и бота.'};
 async function loadAnalytics(){
+ const google=analyticsChannel==='google';$('storeAnalyticsReport').classList.toggle('hidden',google);$('googleSearchPanel').classList.toggle('hidden',!google);$('analyticsPanel').querySelector('.analytics-toolbar').classList.toggle('hidden',google);if(google){window.AdminGoogleSearch?.load();return}
  if(analyticsBusy||!session)return;analyticsBusy=true;const epoch=sessionEpoch;const channel=analyticsChannel;document.querySelectorAll('[data-analytics-channel]').forEach(b=>b.disabled=true);$('analyticsChannelNote').textContent=analyticsChannelNotes[channel];analyticsData=null;$('analyticsCards').innerHTML='';$('analyticsProducts').innerHTML='';$('analyticsChart').innerHTML='';$('analyticsDays').disabled=true;$('refreshAnalytics').disabled=true;$('analyticsStatus').textContent='Загружаем статистику…';
  try{const data=await request('/rest/v1/rpc/store_analytics_summary',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({p_days:Number($('analyticsDays').value),p_channel:channel})});if(epoch!==sessionEpoch)return;
   const report=window.AnalyticsReport.render(data);
