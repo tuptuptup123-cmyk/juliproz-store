@@ -168,11 +168,14 @@ async function request(path,options={}){
  if(epoch!==sessionEpoch)throw Error('Сессия завершена.');
  return data;
 }
-function keepSession(data,fresh=false){
+function keepSession(data,fresh=false,saved=null){
  if(data?.cookie_session!==true||!data.user||!data.session_id)throw Error('Не удалось подтвердить вход.');
  const remaining=Math.min(window.AdminSessionClock.MAX,Date.parse(data.limits?.absolute)-Date.parse(data.server_now));
  if(!Number.isFinite(remaining)||remaining<=0)throw Error('Сессия завершена.');
- const deadline=Date.now()+remaining;
+ let deadline=Date.now()+remaining;
+ // Reload must preserve the previous local deadline despite response latency.
+ // Metadata may shorten UI lifetime only; server authorization remains authoritative.
+ if(saved?.user_id===data.user.id&&saved?.session_id===data.session_id&&Number.isFinite(saved.absolute)&&saved.absolute>Date.now())deadline=Math.min(deadline,saved.absolute);
  if(fresh||!session){clearLegacyAdminSession();sessionClock.start({absolute:deadline,idle:deadline});rememberAdminSession=false}
  else{const limits=sessionClock.snapshot();sessionClock.start({absolute:Math.min(limits.absolute,deadline),idle:Math.min(limits.idle,deadline)})}
  session=data;if(data.setup_flow){recovering=true;emailFlowType=data.setup_flow}saveAdminSession();
@@ -768,7 +771,7 @@ async function restoreAdminSession(){
    let restored;
    try{restored=await fetchJSON('/session')}
    catch(error){if(error.httpStatus!==401||!legacyMigration)throw error;restored=await fetchJSON('/session/import',{method:'POST',body:JSON.stringify({access_token:legacyMigration.access_token,refresh_token:legacyMigration.refresh_token})})}
-   legacyMigration=null;keepSession(restored,true);rememberAdminSession=true;
+   legacyMigration=null;keepSession(restored,true,readSavedAdminSession());rememberAdminSession=true;
    await enterWorkspace();restorePending=false;$('sessionRestore').classList.add('hidden');
   }catch(error){
    if([400,401,403].includes(error.httpStatus)){legacyMigration=null;endSession();status(error.httpStatus===401?'':'Не удалось восстановить вход: '+error.message)}

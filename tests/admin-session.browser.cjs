@@ -23,7 +23,7 @@ const server=http.createServer(async(req,res)=>{
   const exposed=await page.evaluate(()=>({cookie:document.cookie,local:{...localStorage},tab:{...sessionStorage},session}));
   assert.doesNotMatch(JSON.stringify(exposed),/access_token|refresh_token|private-refresh|signed\.|__Host-jp-admin/);
   assert.deepEqual(Object.keys(exposed.local).filter(k=>k===KEY),[KEY]);
-  let release;f.touchGate(new Promise(r=>release=r));await page.reload();await page.locator('#sessionRestore').waitFor();assert.equal(await page.locator('#login').isHidden(),true);release();f.touchGate(null);await page.locator('#workspace').waitFor();await settled(page);
+  let release;f.touchGate(new Promise(r=>release=r));await page.reload();await page.locator('#sessionRestore').waitFor();assert.equal(await page.locator('#login').isHidden(),true);release();f.touchGate(null);await page.locator('#workspace').waitFor();await settled(page);assert.ok(await page.evaluate(deadline=>sessionClock.snapshot().absolute<=deadline,deadline),'reload preserves the previous local deadline');
   f.touchFailure(503);await page.reload();await page.locator('#retrySessionRestore').waitFor();assert.equal(await page.locator('#login').isHidden(),true);assert.ok((await context.cookies()).some(c=>c.name===COOKIE));f.touchFailure(0);await page.locator('#retrySessionRestore').click();await page.locator('#workspace').waitFor();await settled(page);
   // Server time advances independently of browser storage. Refresh and reload cannot extend it.
   f.advance(29*DAY);await page.reload();await page.locator('#workspace').waitFor();await settled(page);assert.ok(f.rotations>=1);assert.ok(await page.evaluate(()=>sessionClock.state().remaining<2*86400000));
