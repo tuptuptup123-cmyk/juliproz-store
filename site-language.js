@@ -96,7 +96,7 @@
   sync();apply();document.dispatchEvent(new CustomEvent('site-language-change',{detail:{language}}));
  }
  function start(){
-  try{const query=new URLSearchParams(root.location.search).get('lang'),stored=localStorage.getItem(key);preferred=['ru','en'].includes(query)?query:stored==='en'?'en':'ru'}catch{preferred=new URLSearchParams(root.location.search).get('lang')==='en'?'en':'ru'}
+  try{const query=new URLSearchParams(root.location.search).get('lang'),stored=localStorage.getItem(key),server=document.documentElement.dataset.seoLanguage;preferred=['ru','en'].includes(query)?query:['ru','en'].includes(server)?server:stored==='en'?'en':'ru'}catch{preferred=new URLSearchParams(root.location.search).get('lang')==='en'?'en':'ru'}
   sync();apply();
   observer=new MutationObserver(records=>{
    observer.disconnect();const targets=new Set(records.map(r=>r.type==='childList'?r.target:r.target));

@@ -1,4 +1,3 @@
-document.getElementById('serverProduct')?.remove?.();
 // Remove legacy admin credentials left on the public storefront origin.
 try{localStorage.removeItem('jpAdminSessionV1')}catch{}
 try{sessionStorage.removeItem('jpAdminSessionV1')}catch{}
@@ -117,10 +116,11 @@ function syncWebNavigation(){
 
 function initialStoreTab(){
  const params=new URLSearchParams(location.search);
+ const route=window.SiteSEO?.page?.kind;if(['brand','catalog','services','sell'].includes(route))return route==='brand'?'catalog':route;
  const linked=/^\/product\/[1-9]\d*\/?$/.test(location.pathname)||params.has('product')||params.get('startapp')?.startsWith('p_')||params.get('tgWebAppStartParam')?.startsWith('p_')||window.Telegram?.WebApp?.initDataUnsafe?.start_param?.startsWith('p_');
  return isTelegramStore()||linked||params.get('tab')==='catalog'?'catalog':'home';
 }
-let state={sort:"recommended",sale:false,product_condition:null,gender:null,fulfillment_status:null,category:null,brand:null,size:null,search:"",favorites:new Set((()=>{try{return JSON.parse(localStorage.getItem("jpFav")||"[]").map(String)}catch{return []}})()),tab:initialStoreTab()};
+let state={sort:"recommended",sale:false,product_condition:null,gender:null,fulfillment_status:null,category:null,brand:window.SiteSEO?.page?.brand||null,size:null,search:"",favorites:new Set((()=>{try{return JSON.parse(localStorage.getItem("jpFav")||"[]").map(String)}catch{return []}})()),tab:initialStoreTab()};
 const grid=document.getElementById("grid"),count=document.getElementById("count"),sheet=document.getElementById("sheet"),options=document.getElementById("sheetOptions");
 let currentFilter=null,tempValue=null;
 
@@ -159,6 +159,7 @@ function menuSizeLabel(value){
   return labels.join(' / ')||value;
 }
 function reconcileFilters(){
+  if(!products.length&&firstLoad)return;
   if(state.category&&!valuesFor('category').includes(state.category))state.category=null;
   if(state.brand&&!valuesFor('brand').includes(state.brand))state.brand=null;
   if(state.size&&!valuesFor('size').includes(state.size))state.size=null;
@@ -208,7 +209,7 @@ function emptyCollection(kind){
 // Keep the full data set for filtering; mount cards only as the reader approaches them.
 const CATALOG_BATCH_SIZE=24;
 let catalogueRows=[],catalogueRendered=0,catalogueMore=null,catalogueObserver=null;
-function catalogueCard(p){return `<article class="product" data-id="${esc(p.id)}"><div class="photo">${teamPickBadge(p)}${imageOf(p)?`<img src="${esc(imageOf(p))}" alt="${esc(p.name)}" loading="lazy" decoding="async">`:"JP"}<button class="heart ${isWishlisted(p)?"is-favorite":""}" aria-label="Виш-лист" aria-pressed="${isWishlisted(p)}" data-heart="${esc(p.id)}"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"/></svg></button></div><h3><button type="button" class="product-open" aria-label="Открыть ${esc(brandsOf(p).join(' × '))} ${esc(displayName(p))}">${esc(brandsOf(p).join(' × '))}</button>${window.ProductPricing.discount(p)?'<span class="card-sale-badge">SALE</span>':''}</h3><div class="card-name-row"><p>${esc(displayName(p))}${p.color_member_ids?` · ${p.color_member_ids.length} ${pluralRu(p.color_member_ids.length,'цвет','цвета','цветов')}`:""}</p></div><div class="card-size">${sizesOf(p).length?`${ProductSizes.variantLabel(p,sizesOf(p).length>1)}: ${esc(sizesOf(p).join(" · "))}`:"Размер уточняйте"}</div><div class="price">${priceMarkup(p)}</div><div class="card-footer"><div class="card-meta">${conditionBadge(p,true)}</div>${availabilityLabel(p)!=='В наличии'?'<div class="catalog-status '+(p.reserved?'is-reserved':onOrder(p)?'on-order':'')+'">'+availabilityLabel(p)+'</div>':''}<div class="card-delivery">Доставка ${deliveryLabel(p)}</div></div></article>`}
+function catalogueCard(p){return `<article class="product" data-id="${esc(p.id)}"><div class="photo">${teamPickBadge(p)}${imageOf(p)?`<img src="${esc(imageOf(p))}" alt="${esc(p.name)}" loading="lazy" decoding="async">`:"JP"}<button class="heart ${isWishlisted(p)?"is-favorite":""}" aria-label="Виш-лист" aria-pressed="${isWishlisted(p)}" data-heart="${esc(p.id)}"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"/></svg></button></div><h3><a href="${esc(productLink(p))}" class="product-open" aria-label="Открыть ${esc(brandsOf(p).join(' × '))} ${esc(displayName(p))}">${esc(brandsOf(p).join(' × '))}</a>${window.ProductPricing.discount(p)?'<span class="card-sale-badge">SALE</span>':''}</h3><div class="card-name-row"><p>${esc(displayName(p))}${p.color_member_ids?` · ${p.color_member_ids.length} ${pluralRu(p.color_member_ids.length,'цвет','цвета','цветов')}`:""}</p></div><div class="card-size">${sizesOf(p).length?`${ProductSizes.variantLabel(p,sizesOf(p).length>1)}: ${esc(sizesOf(p).join(" · "))}`:"Размер уточняйте"}</div><div class="price">${priceMarkup(p)}</div><div class="card-footer"><div class="card-meta">${conditionBadge(p,true)}</div>${availabilityLabel(p)!=='В наличии'?'<div class="catalog-status '+(p.reserved?'is-reserved':onOrder(p)?'on-order':'')+'">'+availabilityLabel(p)+'</div>':''}<div class="card-delivery">Доставка ${deliveryLabel(p)}</div></div></article>`}
 function appendCatalogueRows(){
   if(catalogueRendered>=catalogueRows.length)return;
   const end=Math.min(catalogueRendered+CATALOG_BATCH_SIZE,catalogueRows.length);
@@ -228,6 +229,8 @@ function renderCatalogueRows(rows,empty){
   catalogueObserver.observe(catalogueMore);
 }
 function render(){
+  window.SiteSEO?.sync(state);
+  if(!['catalog','favorites'].includes(state.tab)||products.length)window.SiteSEO?.ready();
   document.querySelectorAll('.bottom-nav [data-tab]').forEach(b=>{const active=b.dataset.tab===state.tab;b.classList.toggle('active',active);b.setAttribute('aria-current',active?'page':'false')});
   document.querySelector(".brand")?.classList.toggle("is-home-page",state.tab==="home");
   const inCart=state.tab==="cart",inSell=state.tab==="sell",inServices=state.tab==="services",inHome=state.tab==="home",inAbout=state.tab==="about",inWebPage=inHome||inAbout;
@@ -400,11 +403,13 @@ async function loadProducts(quiet=false){
     const rows=await fetchCatalogue();
     const changed=JSON.stringify(products)!==JSON.stringify(rows);products=rows;lastCatalogLoadedAt=Date.now();saveCatalogueCache(rows);
     if(changed||!quiet)render();
+    window.SiteSEO?.ready();
     if(changed)syncOpenProductGallery();
     const params=new URLSearchParams(location.search);
     const start=window.Telegram?.WebApp?.initDataUnsafe?.start_param||params.get("tgWebAppStartParam")||params.get("startapp");
     const id=/^\/product\/([1-9]\d*)\/?$/.exec(location.pathname)?.[1]||params.get("product")||(start?.startsWith("p_")?start.slice(2):null);
-    if(id&&firstLoad&&requestedNavigation===navigationRevision) await openLinkedProduct(id);firstLoad=false;
+    if(id&&firstLoad&&requestedNavigation===navigationRevision) await openLinkedProduct(id);
+    document.getElementById('serverProduct')?.remove?.();firstLoad=false;
   }catch(e){
     if(quiet)return;
     count.textContent="Не удалось загрузить наличие";
@@ -436,7 +441,7 @@ grid.onclick=e=>{
   if(e.target.id==="retryProducts"){loadProducts();return}
   const h=e.target.closest("[data-heart]");
   if(h){e.stopPropagation();toggleWishlist(h.dataset.heart,true);return}
-  const card=e.target.closest("[data-id]");if(card)openProduct(String(card.dataset.id));
+  const card=e.target.closest("[data-id]");if(card){if(e.target.closest("a")&&(e.ctrlKey||e.metaKey||e.shiftKey||e.altKey))return;e.preventDefault();openProduct(String(card.dataset.id));}
 };
 grid.onkeydown=e=>{if(e.target.matches("[data-id]")&&(e.key==="Enter"||e.key===" ")){e.preventDefault();openProduct(e.target.dataset.id)}};
 // Cart stays on this device. Checkout always rechecks the public catalogue.
@@ -452,6 +457,7 @@ function cartSnapshot(p){const snapshot=Object.fromEntries(['id','brand','name',
 function saveCart(){cartRevision++;try{localStorage.setItem('jpCart',JSON.stringify(cart))}catch{document.getElementById('cartStatus').textContent='Корзина доступна в этом сеансе. Браузер не разрешил сохранить её.'}}
 function setTab(tab){
   if(['home','about'].includes(tab)&&isTelegramStore())return;
+  if(!isTelegramStore())window.SiteSEO?.navigate(tab);
   setSortOpen(false);
   if(tab!=='catalog'){document.getElementById('catalogSearch').classList.add('hidden');document.getElementById('toggleSearch').setAttribute('aria-expanded','false');state.search='';document.getElementById('search').value=''}
   if(state.tab!==tab)window.StoreAnalytics?.track("page_view",null,['sell','services','home','about'].includes(tab)?null:tab);
@@ -758,6 +764,6 @@ if(typeof IntersectionObserver==='function'){
 }
 
 // Language changes retain filters, bag, wishlist and the selected variant.
-document.addEventListener('site-language-change',()=>{window.SiteLanguage?.apply();});
+document.addEventListener('site-language-change',()=>{window.SiteLanguage?.apply();window.SiteSEO?.sync(state);});
 
 document.addEventListener("click",event=>{if(event.target.closest('a[data-contact-event="manager_general"]'))window.StoreAnalytics?.track("manager_general")});

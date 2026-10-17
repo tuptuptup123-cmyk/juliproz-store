@@ -1,0 +1,34 @@
+const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs');
+const seo=require('../server/seo.cjs'),site=require('../server/site-page.cjs'),product=require('../server/product-page.cjs');
+const template=fs.readFileSync(require('node:path').resolve(__dirname,'../index.html'),'utf8');
+const rows=[{id:42,brand:'Hermès',name:'Сандалии Oran',description:'Цвет: Розовый',size:'38',price:500,currency:'EUR',available:true,stock_quantities:{38:1}},{id:43,brand:'Gucci',name:'Кроссовки',price:null,available:true}];
+function head(html){return html.split('</head>')[0]}
+function response(){return {headers:{},setHeader(k,v){this.headers[k]=v},end(v){this.body=v}}}
+test('both language versions have distinct self canonicals and reciprocal global hreflang',()=>{
+ for(const lang of ['ru','en'])for(const [kind,slug] of [['home'],['catalog'],['services'],['sell'],['brand','hermes']]){
+  const html=site.render(template,kind,slug,lang,rows),page=seo.page(kind,slug),h=head(html);
+  assert.match(html,new RegExp('<html lang="'+lang+'"'));assert.ok(h.includes('<link rel="canonical" href="'+seo.url(page.path,lang)+'">'));
+  for(const alternate of ['ru','en','x-default'])assert.ok(h.includes('hreflang="'+alternate+'"'));
+  assert.equal((h.match(/<title>/g)||[]).length,1);assert.equal((h.match(/name="description"/g)||[]).length,1);
+  assert.doesNotMatch(h,/en-AE|ru-RU|geo\.region|Yandex|yandex/);
+ }
+});
+test('English product source and schema are translated before any JavaScript executes',()=>{
+ const html=product.render(template,rows[0],'en');assert.match(head(html),/Hermès — Oran sandals/);
+ const article=html.match(/<article id="serverProduct"[\s\S]*?<\/article>/)[0];assert.doesNotMatch(article,/[А-Яа-яЁё]/);assert.match(article,/wa.me/);
+ const schema=JSON.parse(html.match(/type="application\/ld\+json">([\s\S]*?)<\/script>/)[1]);assert.equal(schema.name,'Hermès — Oran sandals');assert.equal(schema.offers.url,'https://www.juliproz.com/product/42?lang=en');
+});
+test('brand landing includes only matching public products with crawlable links',()=>{
+ const html=site.render(template,'brand','hermes','en',rows),body=html.match(/<article id="serverLanding"[\s\S]*?<\/article>/)[0];
+ assert.match(body,/product\/42\?lang=en/);assert.doesNotMatch(body,/product\/43|[А-Яа-яЁё]/);assert.match(body,/delivery options for your country/);
+ assert.doesNotMatch(body,/purchase_cost|internal_note/);
+});
+test('untrusted product strings cannot escape HTML or JSON-LD',()=>{
+ const html=site.render(template,'catalog',null,'en',[{...rows[0],name:'</a><script>alert(1)</script>'}]);
+ assert.doesNotMatch(html,/<script>alert/);assert.match(html,/&lt;script&gt;/);
+});
+test('unknown brands are real 404s and unavailable catalogue is 503',async()=>{
+ let calls=0;const handle=site.createHandler({readTemplate:async()=>template,request:async()=>{calls++;throw Error('upstream')}});
+ const unknown=response();await handle({method:'GET',url:'/api/site-page?page=brand&slug=unknown'},unknown);assert.equal(unknown.statusCode,404);assert.equal(calls,0);
+ const failure=response();await handle({method:'GET',url:'/api/site-page?page=catalog&lang=en'},failure);assert.equal(failure.statusCode,503);assert.equal(failure.headers['Retry-After'],'30');
+});
