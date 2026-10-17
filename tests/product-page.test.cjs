@@ -17,3 +17,8 @@ test('hidden/deleted cards get 404 and metadata fetch never forwards admin autho
  await handler({method:'GET',url:'/api/product-page?id=42',headers:{authorization:'Bearer private'}},{setHeader(k,v){result[k]=v},set statusCode(v){result.status=v},end(v){result.body=v}});
  assert.equal(result.status,404);assert.equal(result['X-Robots-Tag'],'noindex');assert.equal(options.headers.Authorization,undefined);assert.doesNotMatch(result.body,/Full description/);
 });
+
+test('sitemap validates public availability with the shared catalog reader',async()=>{
+ const prior=globalThis.fetch;globalThis.fetch=async input=>{const url=new URL(input);assert.equal(url.searchParams.get('available'),'eq.true');const fields=url.searchParams.get('select').split(',');assert.ok(fields.includes('available'));return Response.json([Object.fromEntries(fields.map(key=>[key,{id:42,created_at:'2026-10-17T00:00:00Z',available:true}[key]]))])};
+ try{const result={};await require('../api/sitemap.js')({method:'GET'},{setHeader(k,v){result[k]=v},set statusCode(v){result.status=v},end(v){result.body=v}});assert.equal(result.status,200);assert.match(result.body,/<loc>https:\/\/www.juliproz.com\/product\/42<\/loc>/);assert.doesNotMatch(result.body,/available|created_at/);}finally{globalThis.fetch=prior}
+});
