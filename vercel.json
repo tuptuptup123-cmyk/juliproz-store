@@ -56,6 +56,30 @@
   "outputDirectory": "dist",
   "rewrites": [
     {
+      "source": "/",
+      "destination": "/api/site-page?page=home"
+    },
+    {
+      "source": "/index.html",
+      "destination": "/api/site-page?page=home"
+    },
+    {
+      "source": "/catalog",
+      "destination": "/api/site-page?page=catalog"
+    },
+    {
+      "source": "/services",
+      "destination": "/api/site-page?page=services"
+    },
+    {
+      "source": "/sell",
+      "destination": "/api/site-page?page=sell"
+    },
+    {
+      "source": "/brands/:slug",
+      "destination": "/api/site-page?page=brand&slug=:slug"
+    },
+    {
       "source": "/product/:id",
       "destination": "/api/product-page?id=:id"
     },
@@ -103,7 +127,10 @@
       "maxDuration": 120
     },
     "api/product-page.js": {
-      "includeFiles": "index.html"
+      "includeFiles": "{index.html,site-translations.js,product-translations.js,site-language.js}"
+    },
+    "api/site-page.js": {
+      "includeFiles": "{index.html,site-translations.js,product-translations.js,site-language.js}"
     }
   },
   "crons": [
