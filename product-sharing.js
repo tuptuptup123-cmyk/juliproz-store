@@ -4,7 +4,7 @@
   const id=String(product?.id??'');
   if(!/^(?:[1-9]\d{0,18}|[a-f\d]{8}(?:-[a-f\d]{4}){3}-[a-f\d]{12})$/i.test(id)||product.available===false)return null;
   const english=!options.inTelegram&&(options.language==='en'||root.SiteLanguage?.language==='en');
-  const web='https://www.juliproz.com/?product='+encodeURIComponent(id)+(english?'&lang=en':'');
+  const web='https://www.juliproz.com/product/'+encodeURIComponent(id)+(english?'?lang=en':'');
   const bot='https://t.me/JuliProzBot/shop?startapp=p_'+encodeURIComponent(id);
   const url=options.inTelegram?bot:web;
   // Deliberately select public fields: never serialize admin records or the current URL.

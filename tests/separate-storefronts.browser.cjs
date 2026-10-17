@@ -48,7 +48,7 @@ let browser;
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));
   await page.locator('.bottom-nav [data-tab=catalog]').click();await page.locator('.product').first().waitFor();await page.evaluate(()=>document.fonts.ready);
   await page.screenshot({path:out+`/separate-telegram-${width}.png`,fullPage:true});
-  for(const tab of ['favorites','sell','services','cart']){await page.locator(`.bottom-nav [data-tab=${tab}]`).click();assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),tab+' fits '+width)}
+  for(const tab of ['favorites','sell','services','cart']){await require('./site-action-helper.cjs').clickSiteTab(page,tab);assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),tab+' fits '+width)}
   await page.reload();assert.equal(await page.evaluate(()=>cart.length),1);
   await page.goto('https://www.juliproz.com/?lang=en');await page.locator('#webHomePage').waitFor();assert.equal(await page.locator('html').getAttribute('lang'),'en');
   assert.deepEqual(errors,[]);await context.close();console.log(width+' PASS independent Telegram view, legacy URL, cart/favourites/consent continuity, exact product links and return to English website');

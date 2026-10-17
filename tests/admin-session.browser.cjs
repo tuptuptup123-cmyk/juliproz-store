@@ -1,50 +1,37 @@
+'use strict';
 const {chromium}=require('playwright'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),http=require('node:http');
-const root=path.resolve(__dirname,'..'),types={'.html':'text/html','.js':'text/javascript','.css':'text/css','.webp':'image/webp','.woff':'font/woff'};
-const server=http.createServer((req,res)=>{const file=path.resolve(root,'.'+new URL(req.url,'http://localhost').pathname);if(!file.startsWith(root+path.sep))return res.writeHead(403).end();fs.readFile(file,(err,data)=>{res.writeHead(err?404:200,{'Content-Type':types[path.extname(file)]||'application/octet-stream'});res.end(err?'Missing':data)})});
-const KEY='jpAdminSession30dV1',DAY=86400000,URL_ADMIN='http://localhost:8782/admin.html';
-(async()=>{await new Promise(r=>server.listen(8782,r));const browser=await chromium.launch({args:['--no-sandbox']});try{
- let touches=0,refreshes=0,signouts=0,passwordLogins=0,sessionStart=0,rotation=0,refreshToken='synthetic-refresh-0';const errors=[];
- const user={id:'synthetic-owner',email:'synthetic@example.invalid',factors:[{id:'synthetic-factor',status:'verified',factor_type:'totp'}]};
- const auth=now=>({access_token:`synthetic.${Buffer.from(JSON.stringify({aal:'aal2',session_id:'synthetic-session',rotation})).toString('base64url')}.synthetic`,refresh_token:refreshToken,expires_at:now/1000+3600,user});
- async function route(route){
-  const req=route.request(),url=new URL(req.url());if(url.hostname!=='qhgzzhgxwpcctafpzjid.supabase.co')return route.fulfill({status:404,body:''});
-  const now=await req.frame().page().evaluate(()=>Date.now());
-  if(url.pathname==='/auth/v1/token'){
-   if(url.searchParams.get('grant_type')==='refresh_token'){assert.equal(req.postDataJSON().refresh_token,refreshToken,'refresh must use latest shared token');refreshes++;rotation++;refreshToken='synthetic-refresh-'+rotation}
-   else{sessionStart=now;passwordLogins++}
-   return route.fulfill({json:auth(now)});
-  }
-  if(url.pathname==='/auth/v1/logout'){signouts++;return route.fulfill({status:204})}
-  if(url.pathname==='/auth/v1/user')return route.fulfill({json:user});
-  if(url.pathname.endsWith('touch_store_admin_session')){touches++;return route.fulfill({json:{server_now:new Date(now).toISOString(),expires_at:new Date(sessionStart+30*DAY).toISOString(),idle_expires_at:new Date(sessionStart+30*DAY).toISOString()}})}
-  if(url.pathname.endsWith('store_admin_security_status'))return route.fulfill({json:{paused:false,access_role:'owner'}});
-  if(url.pathname==='/rest/v1/store_admins')return route.fulfill({json:[{user_id:user.id}]});
-  if(url.pathname==='/rest/v1/products')return route.fulfill({json:[{id:1,brand:'Private',name:'Hidden fixture',available:false,archive_status:'hidden',price:100,currency:'EUR',photos:[]}]});
-  return route.fulfill({json:{counts:{},healthy:true}});
- }
- async function context(state){const c=await browser.newContext(state?{storageState:state}:{});await c.route('https://**/*',route);return c}
- async function page(c,time){const p=await c.newPage();p.on('pageerror',e=>errors.push(e.message));if(time!==undefined){await p.clock.install({time:new Date(time)});await p.clock.pauseAt(new Date(time+1000))}await p.goto(URL_ADMIN);return p}
- async function settled(p){await p.waitForFunction(()=>!busy&&!activityPromise&&!overviewBusy)}
- async function login(p){await p.locator('#login [name=email]').fill(user.email);await p.locator('#login [name=password]').fill('synthetic-password');await p.locator('#login button[type=submit]').click();await p.locator('#workspace').waitFor();await settled(p)}
- let c=await context(),p=await page(c,Date.parse('2026-10-15T09:00:00Z'));await login(p);
- const deadline=await p.evaluate(()=>sessionClock.snapshot().absolute);
- assert.equal(await p.evaluate(key=>sessionStorage.getItem(key),KEY),null);
- for(let i=0;i<2;i++){await p.reload();await p.locator('#workspace').waitFor();await settled(p);assert.equal(await p.evaluate(()=>sessionClock.snapshot().absolute),deadline)}
- const beforeSleep=touches;
- for(let day=0;day<29;day++){await p.clock.fastForward(DAY);await settled(p)}assert.equal(await p.locator('#workspace').isVisible(),true);assert.equal(await p.locator('#sessionWarning').isHidden(),true);assert.equal(touches,beforeSleep,'background checks cannot touch activity');
- const reopenTime=await p.evaluate(()=>Date.now()),state=await c.storageState();await c.close();
- c=await context(state);p=await page(c,reopenTime);await p.locator('#workspace').waitFor();await settled(p);
- assert.equal(passwordLogins,1,'reopening browser after 29 days requires no password');assert.ok(refreshes>0,'expired access token refreshes on reopen');assert.equal(await p.locator('#mfaPanel').isHidden(),true);assert.equal(await p.evaluate(()=>sessionClock.snapshot().absolute),deadline);
- // A second tab shares the completed login; concurrent refresh uses one rotation.
- const p2=await page(c);await p2.locator('#workspace').waitFor();await settled(p2);
- await p.evaluate(key=>{session.expires_at=1;const saved=JSON.parse(localStorage.getItem(key));saved.session.expires_at=1;localStorage.setItem(key,JSON.stringify(saved))},KEY);
- await p2.evaluate(()=>session.expires_at=1);const refreshBefore=refreshes;
- await Promise.all([p.evaluate(()=>request('/auth/v1/user')),p2.evaluate(()=>request('/auth/v1/user'))]);
- assert.equal(refreshes,refreshBefore+1,'Web Lock prevents duplicate refresh across tabs');
- const remaining=await p.evaluate(()=>sessionClock.state().remaining);await p.clock.fastForward(remaining-60000);await p.locator('#sessionWarning').waitFor();assert.match(await p.locator('#sessionWarningText').innerText(),/30-дневный/);assert.equal(await p.locator('#continueSession').isHidden(),true);
- await p.clock.fastForward(60000);await p.locator('#login').waitFor();await p2.locator('#login').waitFor();assert.equal(await p.locator('#inventory').innerText(),'');assert.equal(await p.evaluate(key=>localStorage.getItem(key),KEY),null);await p.waitForFunction(()=>document.getElementById('status').textContent.includes('Время входа истекло'));assert.ok(signouts>=1);
- await p.reload();await settled(p);assert.equal(await p.locator('#workspace').isHidden(),true);
- await login(p);await p2.reload();await p2.locator('#workspace').waitFor();await settled(p2);await require('./admin-action-helper.cjs').clickAdminControl(p,'#logout');await p.locator('#login').waitFor();await p2.locator('#login').waitFor();await p.reload();await settled(p);assert.equal(await p.locator('#workspace').isHidden(),true);assert.equal(await p.evaluate(key=>localStorage.getItem(key),KEY),null);assert.deepEqual(errors,[]);
- await c.close();
- console.log('PASS reload, 29-day idle + browser restart, token rotation, concurrent tabs, exact 30-day expiry, cross-tab cleanup and manual logout');
-}finally{await browser.close();server.close()}})().catch(error=>{console.error(error);server.close();process.exitCode=1});
+const {fixture,COOKIE}=require('./admin-bff-fixture.cjs'),f=fixture({browser:true});
+const root=path.resolve(__dirname,'..'),KEY='jpAdminSessionInfoV2',DAY=86400000;
+const server=http.createServer(async(req,res)=>{
+ if(req.url==='/api/admin'){let data='';for await(const chunk of req)data+=chunk;req.body=JSON.parse(data);req.headers['x-vercel-forwarded-for']='192.0.2.1';return f.handler(req,res)}
+ const file=path.resolve(root,'.'+new URL(req.url,'http://localhost').pathname);if(!file.startsWith(root+path.sep))return res.writeHead(403).end();
+ fs.readFile(file,(e,data)=>{res.writeHead(e?404:200,{'Content-Type':({'.html':'text/html','.js':'text/javascript','.css':'text/css','.woff2':'font/woff2'})[path.extname(file)]||'application/octet-stream'});res.end(e?'Missing':data)});
+});
+(async()=>{
+ await new Promise(r=>server.listen(8796,r));const browser=await chromium.launch({args:['--no-sandbox']});
+ try{
+  const context=await browser.newContext(),page=await context.newPage(),errors=[],responses=[];
+  page.on('pageerror',e=>errors.push(e.message));page.on('response',async r=>{if(r.url().endsWith('/api/admin'))responses.push(await r.text().catch(()=>''))});
+  await context.route('https://**/*',r=>r.fulfill({json:[]}));
+  const goto=async p=>{await p.goto('http://localhost:8796/admin.html');await p.waitForFunction(()=>!busy)};
+  const settled=async p=>p.waitForFunction(()=>!busy&&!overviewBusy&&!activityPromise);
+  await goto(page);await page.locator('#login [name=email]').fill(f.user.email);await page.locator('#login [name=password]').fill('synthetic-password');await page.locator('#login button[type=submit]').click();
+  await page.locator('#mfaPanel').waitFor();assert.equal(await page.locator('#workspace').isHidden(),true);
+  await page.locator('#mfaVerify [name=code]').fill('123456');await page.locator('#mfaVerify button').click();await page.locator('#workspace').waitFor();await settled(page);
+  const deadline=await page.evaluate(()=>sessionClock.snapshot().absolute),cookie=(await context.cookies()).find(c=>c.name===COOKIE);
+  assert.ok(cookie);assert.equal(cookie.httpOnly,true);assert.equal(cookie.secure,true);assert.equal(cookie.sameSite,'Strict');assert.ok(cookie.expires>Date.now()/1000+29*86400);
+  const exposed=await page.evaluate(()=>({cookie:document.cookie,local:{...localStorage},tab:{...sessionStorage},session}));
+  assert.doesNotMatch(JSON.stringify(exposed),/access_token|refresh_token|private-refresh|signed\.|__Host-jp-admin/);
+  assert.deepEqual(Object.keys(exposed.local).filter(k=>k===KEY),[KEY]);
+  let release;f.touchGate(new Promise(r=>release=r));await page.reload();await page.locator('#sessionRestore').waitFor();assert.equal(await page.locator('#login').isHidden(),true);release();f.touchGate(null);await page.locator('#workspace').waitFor();await settled(page);assert.ok(await page.evaluate(deadline=>sessionClock.snapshot().absolute<=deadline,deadline),'reload preserves the previous local deadline');
+  f.touchFailure(503);await page.reload();await page.locator('#retrySessionRestore').waitFor();assert.equal(await page.locator('#login').isHidden(),true);assert.ok((await context.cookies()).some(c=>c.name===COOKIE));f.touchFailure(0);await page.locator('#retrySessionRestore').click();await page.locator('#workspace').waitFor();await settled(page);
+  // Server time advances independently of browser storage. Refresh and reload cannot extend it.
+  f.advance(29*DAY);await page.reload();await page.locator('#workspace').waitFor();await settled(page);assert.ok(f.rotations>=1);assert.ok(await page.evaluate(()=>sessionClock.state().remaining<2*86400000));
+  const page2=await context.newPage();await goto(page2);await page2.locator('#workspace').waitFor();await settled(page2);
+  const rotations=f.rotations;f.advance(3600000);await Promise.all([page.evaluate(()=>AdminTransport.request('/session')),page2.evaluate(()=>AdminTransport.request('/session'))]);assert.equal(f.rotations,rotations+1);
+  await require('./admin-action-helper.cjs').clickAdminControl(page,'#logout');await page.locator('#login').waitFor();await page2.locator('#login').waitFor();assert.equal(await page2.locator('#inventory').innerText(),'');assert.equal(await page2.evaluate(key=>localStorage.getItem(key),KEY),null);
+  await goto(page);assert.equal(await page.locator('#workspace').isHidden(),true);
+  assert.doesNotMatch(responses.join('\n'),/access_token|refresh_token|private-refresh|signed\./);assert.deepEqual(errors,[]);assert.ok(deadline>Date.now());
+  await context.close();console.log('PASS real BFF: password + MFA, HttpOnly cookie, no browser tokens, reload loading, 503 retry, 29-day reopen, concurrent refresh, cross-tab logout');
+ }finally{await browser.close();server.close()}
+})().catch(e=>{console.error(e);server.close();process.exitCode=1});

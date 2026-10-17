@@ -26,7 +26,8 @@ let adminSecurity={paused:false,pending:false};
 const mfaPaused=()=>adminSecurity.paused===true;
 const MFA_ENROLLMENT_ENABLED=window.STORE_CONFIG.mfaEnrollmentEnabled===true;
 const $=id=>document.getElementById(id);
-const ADMIN_SESSION_KEY='jpAdminSession30dV1';
+const ADMIN_SESSION_KEY='jpAdminSessionInfoV2';
+let legacyMigration=null;
 let rememberAdminSession=false,restorePending=false,persistedAdminSession=false,persistedRefreshToken=null;
 let session=null,items=[],editing=null,photos=[],busy=false;
 function stockSummary(rows){const stock=rows.filter(p=>p.available&&p.fulfillment_status!=='on_order');let total=0,unpriced=0,unconverted=0,count=0;for(const p of stock){const units=typeof ProductSizes!=='undefined'?ProductSizes.stockUnits(p):1;count+=units;if(!units)continue;if(window.ProductPricing.amount(p.price,p.currency)==null){unpriced++;continue}if(!['EUR','€'].includes(p.currency||'EUR')){unconverted++;continue}total+=window.ProductPricing.amount(p.price,p.currency)*units}return {count,total,unpriced,unconverted}}
@@ -44,33 +45,21 @@ function setStockNumber(id,value,animate=false){
 }
 function updateStockSummary(animate=!$('workspace').classList.contains('hidden')){const s=stockSummary(items);setStockNumber('stockTotal',String(items.length),animate);setStockNumber('stockCount',String(s.count),animate);setStockNumber('stockValue',(s.unconverted?'от ':'')+new Intl.NumberFormat('ru-RU',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(s.total),animate);$('stockValueNote').textContent=[s.unpriced?'Без цены: '+s.unpriced:'',s.unconverted?'Требуют проверки цены: '+s.unconverted:''].filter(Boolean).join(' · ')}
 
-// Only completed logins persist. Server membership, MFA and session checks still run.
+// Only non-secret coordination metadata is stored in the browser.
 function clearLegacyAdminSession(){for(const key of ['jpAdminSessionV1','jpAdminReloadSessionV1']){try{localStorage.removeItem(key)}catch{}try{sessionStorage.removeItem(key)}catch{}}}
-function readSavedAdminSession(){
- let raw;try{raw=localStorage.getItem(ADMIN_SESSION_KEY)}catch{return undefined}
- try{const saved=JSON.parse(raw||'null'),s=saved?.session,t=Date.now(),limits=saved?.limits;
-  if(!s||typeof s.access_token!=='string'||!s.access_token||typeof s.refresh_token!=='string'||!s.refresh_token||typeof s.user?.id!=='string'||!s.user.id||!Number.isFinite(s.expires_at)||!limits||![limits.absolute,limits.idle].every(Number.isFinite)||limits.absolute<=t||limits.absolute>t+window.AdminSessionClock.MAX||limits.idle<=t||limits.idle>t+window.AdminSessionClock.IDLE||limits.idle>limits.absolute)return null;
-  return saved;
- }catch{return null}
-}
-function clearSavedAdminSession(){clearLegacyAdminSession();try{localStorage.removeItem(ADMIN_SESSION_KEY)}catch{}persistedAdminSession=false;persistedRefreshToken=null}
-function adminSessionId(s){try{return JSON.parse(atob(s.access_token.split('.')[1].replace(/-/g,'+').replace(/_/g,'/'))).session_id||null}catch{return null}}
+function readSavedAdminSession(){try{return JSON.parse(localStorage.getItem(ADMIN_SESSION_KEY)||'null')}catch{return null}}
+function clearSavedAdminSession(){clearLegacyAdminSession();try{localStorage.removeItem(ADMIN_SESSION_KEY);localStorage.removeItem('jpAdminSession30dV1')}catch{}persistedAdminSession=false;persistedRefreshToken=null}
+function adminSessionId(s){return s?.session_id||null}
 function syncSavedAdminSession(){
  if(!session||!rememberAdminSession||!persistedAdminSession)return;
- const saved=readSavedAdminSession();if(saved===undefined)return;
- if(!saved||saved.session.user.id!==session.user.id||adminSessionId(saved.session)!==adminSessionId(session)){
-  endSession(false);throw Error('Вход завершён или изменён в другой вкладке. Войди заново.');
- }
- if(saved.session.refresh_token!==persistedRefreshToken){
-  session={...saved.session,user:session.user};persistedRefreshToken=saved.session.refresh_token;
-  const limits=sessionClock.snapshot();sessionClock.start({absolute:Math.min(limits.absolute,saved.limits.absolute),idle:Math.min(limits.idle,saved.limits.idle)});
+ const saved=readSavedAdminSession();
+ if(!saved||saved.user_id!==session.user.id||saved.session_id!==session.session_id){
+  endSession(false);throw Error('Вход изменён в другой вкладке. Обновите страницу.');
  }
 }
 function saveAdminSession(){
  if(!session||!rememberAdminSession||recovering||sessionClock.state().expired)return false;
- syncSavedAdminSession();
- const {access_token,refresh_token,expires_at,user}=session;
- try{localStorage.setItem(ADMIN_SESSION_KEY,JSON.stringify({session:{access_token,refresh_token,expires_at,user:{id:user.id}},limits:sessionClock.snapshot()}));persistedAdminSession=true;persistedRefreshToken=refresh_token;return true}catch{return false}
+ try{localStorage.setItem(ADMIN_SESSION_KEY,JSON.stringify({user_id:session.user.id,session_id:session.session_id,absolute:sessionClock.snapshot().absolute}));persistedAdminSession=true;return true}catch{return false}
 }
 
 
@@ -85,9 +74,9 @@ const sessionWallStart=Date.now(),sessionMonoStart=typeof performance!=='undefin
 const sessionClock=window.AdminSessionClock.create(()=>Math.max(Date.now(),sessionWallStart+(typeof performance!=='undefined'?performance.now()-sessionMonoStart:0)));
 let activityPromise=null;
 function expireAdminSession(){
- const token=session?.access_token;endSession();
+ endSession();
  status('Время входа истекло. Войди заново. Несохранённые изменения не отправлены.');
- if(token)fetchJSON('/auth/v1/logout?scope=local',{method:'POST'},token).catch(()=>{});
+
 }
 function checkAdminSession(){
  const state=sessionClock.state();
@@ -135,7 +124,8 @@ function clearMfa(){
  $('mfaVerify').reset();$('mfaQr').onload=null;$('mfaQr').onerror=null;$('mfaQr').removeAttribute?.('src');$('mfaQr').classList.add('hidden');$('mfaQrError').classList.add('hidden');$('mfaSecret').textContent='';$('mfaFactor').innerHTML='';
 }
 function endSession(clearSaved=true){
- window.AdminStepUp?.cancel();window.AdminImages?.clear();
+ if(clearSaved){window.AdminTransport?.request('/auth/v1/logout?scope=local',{method:'POST'}).catch(()=>{});window.AdminTransport?.clear()}
+ window.AdminStepUp?.cancel();window.AdminImages?.clear();window.AdminHealth?.clear();
  busy=false;sessionClock.clear();rememberAdminSession=false;restorePending=false;activityPromise=null;emailFlowType=null;clearEmailLink();$('sessionWarning').classList.add('hidden');$('photoStudio').close?.();
  if(clearSaved)clearSavedAdminSession();persistedAdminSession=false;persistedRefreshToken=null;window.ProductSharing?.close();window.AdminWorkspace?.clear();window.AdminManager?.clear();window.AdminSales?.clear();window.AdminSchedule?.clear();window.AdminFinance?.clear();window.AdminProductFinance?.clear();clearInternalFields();
  internalNoteState=null;if($('editor').elements?.internal_note)$('editor').elements.internal_note.value='';pendingCover=false;window.PhotoStudio?.cancel();adminSecurity={paused:false};session=null;sessionEpoch++;previewEpoch++;items=[];photos=[];editing=null;original=null;creationKey=null;recovering=false;
@@ -146,10 +136,7 @@ function endSession(clearSaved=true){
 }
 async function fetchJSON(path,options={},token){
  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),path==='/functions/v1/invite-store-admin'?45000:20000);
- try{const r=await fetch(`${url}${path}`,{...options,cache:'no-store',signal:controller.signal,headers:{apikey:key,...(token?{Authorization:`Bearer ${token}`}:{ }),...options.headers}});
- const body=r.status===204?null:await r.json().catch(()=>null);
- if(!r.ok){const error=Error(body?.message||body?.msg||body?.error_description||`Ошибка ${r.status}`);error.httpStatus=r.status;error.code=body?.code;throw error}
- return body;
+ try{return await window.AdminTransport.request(path,{...options,signal:controller.signal});
  }catch(err){if(err.name==='AbortError')throw Error('Сервер не ответил. Попробуй ещё раз.');throw err}finally{clearTimeout(timer)}
 }
 async function request(path,options={}){
@@ -164,7 +151,7 @@ async function request(path,options={}){
     if(epoch!==sessionEpoch||!session)throw Error('Сессия завершена.');
     // Another tab may have rotated the token while this tab waited for the lock.
     syncSavedAdminSession();if(session.expires_at>=Date.now()/1000+60)return;
-    const current=session,data=await fetchJSON('/auth/v1/token?grant_type=refresh_token',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({refresh_token:current.refresh_token})});
+    const data=await fetchJSON('/session');
     if(epoch!==sessionEpoch)throw Error('Сессия завершена.');keepSession(data);
    };
    refreshPromise=(typeof navigator!=='undefined'&&navigator.locks?.request?navigator.locks.request('jp-admin-auth-refresh',refresh):refresh()).catch(err=>{if(epoch===sessionEpoch&&[400,401,403].includes(err.httpStatus))endSession();throw err}).finally(()=>{refreshPromise=null});
@@ -172,18 +159,29 @@ async function request(path,options={}){
   await refreshPromise;
  }
  if(epoch!==sessionEpoch||!session)throw Error('Сессия завершена. Войди заново.');
- let data;try{data=await fetchJSON(path,options,session.access_token)}catch(err){
+ let data;try{data=await fetchJSON(path,options)}catch(err){
   if(epoch===sessionEpoch&&err.code==='PT403'&&err.message==='MFA_STEP_UP_REQUIRED'&&window.AdminStepUp){
    await window.AdminStepUp.ensure();if(epoch!==sessionEpoch||!session)throw Error('Сессия завершена.');
-   data=await fetchJSON(path,options,session.access_token);
+   data=await fetchJSON(path,options);
   }else{if(epoch===sessionEpoch&&err.httpStatus===401)endSession();throw err}
  }
  if(epoch!==sessionEpoch)throw Error('Сессия завершена.');
  return data;
 }
-function keepSession(data,fresh=false){if(!data?.access_token||!data.user)throw Error('Не удалось подтвердить вход.');if(fresh||!session){clearSavedAdminSession();sessionClock.start();rememberAdminSession=false}session={...data,expires_at:data.expires_at||Date.now()/1000+(data.expires_in||3600)};saveAdminSession()}
-// This decoded claim controls UI only. Supabase verifies signatures and enforces RLS.
-function sessionAal(){try{return JSON.parse(atob(session.access_token.split('.')[1].replace(/-/g,'+').replace(/_/g,'/'))).aal||'aal1'}catch{return 'aal1'}}
+function keepSession(data,fresh=false,saved=null){
+ if(data?.cookie_session!==true||!data.user||!data.session_id)throw Error('Не удалось подтвердить вход.');
+ const remaining=Math.min(window.AdminSessionClock.MAX,Date.parse(data.limits?.absolute)-Date.parse(data.server_now));
+ if(!Number.isFinite(remaining)||remaining<=0)throw Error('Сессия завершена.');
+ let deadline=Date.now()+remaining;
+ // Reload must preserve the previous local deadline despite response latency.
+ // Metadata may shorten UI lifetime only; server authorization remains authoritative.
+ if(saved?.user_id===data.user.id&&saved?.session_id===data.session_id&&Number.isFinite(saved.absolute)&&saved.absolute>Date.now())deadline=Math.min(deadline,saved.absolute);
+ if(fresh||!session){clearLegacyAdminSession();sessionClock.start({absolute:deadline,idle:deadline});rememberAdminSession=false}
+ else{const limits=sessionClock.snapshot();sessionClock.start({absolute:Math.min(limits.absolute,deadline),idle:Math.min(limits.idle,deadline)})}
+ session=data;if(data.setup_flow){recovering=true;emailFlowType=data.setup_flow}saveAdminSession();
+}
+// Public metadata controls UI only. Supabase still verifies JWTs on the server.
+function sessionAal(){return session?.aal||'aal1'}
 async function currentAuthUser(){
  const user=await request('/auth/v1/user');
  if(!user?.id||user.id!==session?.user.id){endSession();throw Error('Не удалось проверить аккаунт. Войди заново.')}
@@ -223,7 +221,7 @@ async function enterWorkspace(){
  $('securityBtn').classList.toggle('hidden',!MFA_ENROLLMENT_ENABLED);
  if(mfaPaused()){$('securityState').textContent='Двухфакторная проверка временно отключена. Подтверди код из приложения, чтобы включить её.';$('securityBtn').textContent='Включить двухфакторную проверку';}
  if(!MFA_ENROLLMENT_ENABLED&&!verified.length)$('securityState').textContent='';
- await load();rememberAdminSession=true;saveAdminSession();$('login').reset();$('confirmEmail').reset();$('login').classList.add('hidden');$('confirmEmail').classList.add('hidden');$('workspace').classList.remove('hidden');$('authArea').classList.add('hidden');selectView('home',true);window.AdminWorkspace?.loadTeam();status('');refreshOverview();loadProductWishlistCounts();updateStockSummary('force');
+ await load();keepSession(await fetchJSON('/session/complete',{method:'POST'}));rememberAdminSession=true;saveAdminSession();$('login').reset();$('confirmEmail').reset();$('login').classList.add('hidden');$('confirmEmail').classList.add('hidden');$('workspace').classList.remove('hidden');$('authArea').classList.add('hidden');selectView('home',true);window.AdminWorkspace?.loadTeam();status('');refreshOverview();loadProductWishlistCounts();updateStockSummary('force');
 }
 $('login').onsubmit=async e=>{e.preventDefault();if(busy)return;const b=e.submitter,epoch=sessionEpoch;b.disabled=true;busy=true;try{
  status('');$('status').classList.add('admin-loading');$('status').innerHTML='<span class="admin-loading-content"><span class="loading-brand" aria-hidden="true"><span class="admin-logo">J.P</span><img class="loading-paw" src="images/brand-paw.webp" alt=""><span class="loading-signature">BY VASYA</span></span><span class="loading-caption">Загружаем управление магазином…</span><span class="loading-track" aria-hidden="true"></span></span>';
@@ -245,16 +243,16 @@ $('confirmEmail').onsubmit=async e=>{
   const token=link.searchParams.get('token');e.target.confirmation.value='';
   const data=await request('/auth/v1/verify',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token_hash:token,type})});
   if(epoch!==sessionEpoch)return;
-  if(!data?.access_token||!data.refresh_token)throw Error('Не удалось подтвердить ссылку.');
-  emailLinkState={type,access_token:data.access_token,refresh_token:data.refresh_token,expires_at:data.expires_at||Date.now()/1000+(data.expires_in||3600)};
+  if(!data?.cookie_session)throw Error('Не удалось подтвердить ссылку.');
+  emailLinkState={type,publicSession:data};
   busy=false;await validateEmailLink();
  }catch(err){if(epoch===sessionEpoch||!session)status(err.message)}finally{busy=false;b.disabled=false}
 };
 async function load(){const rows=[];for(let offset=0;;offset+=500){const page=await request(`/rest/v1/products?select=${ADMIN_FIELDS}&order=created_at.desc,id.desc&limit=500&offset=${offset}`);rows.push(...page);if(page.length<500)break}items=rows;window.AdminSchedule?.invalidateHome();render()}
 let pendingCover=false;
 let activeView='all',editorDirty=false,pendingPreviews=[],previewEpoch=0;
-const viewNames={sale:'SALE',pre_owned:'PRE-OWNED',vintage:'VINTAGE',commission:'Комиссия',all:'Все товары',in_stock:'В наличии',on_order:'Под заказ',hidden:'Скрытые',sold:'Проданные',legacy:'Нужно разобрать',sales:'История продаж',reserved:'На брони',analytics:'Статистика',settings:'Настройки',home:'Главное',history:'История изменений',team:'Команда',profile:'Профиль',schedule:'Расписание',finance:'Финансовый отчёт'};
-function matchesView(p,view){if(!p.available)return view==='all'||view===(p.archive_status||'legacy');return view==='all'||(view==='sale'&&Boolean(window.ProductPricing.discount(p)))||(view==='commission'&&p.on_commission===true)||(['pre_owned','vintage'].includes(view)?p.product_condition===view:false)||(view==='reserved'?p.available&&p.reserved===true:view==='hidden'?!p.available:p.available&&!p.reserved&&(view!=='in_stock'||ProductSizes.stockUnits(p)>0)&&(p.fulfillment_status==='on_order'?'on_order':'in_stock')===view)}
+const viewNames={needs_review:'Нужно заполнить',sale:'SALE',pre_owned:'PRE-OWNED',vintage:'VINTAGE',commission:'Комиссия',all:'Все товары',in_stock:'В наличии',on_order:'Под заказ',hidden:'Скрытые',sold:'Проданные',legacy:'Нужно разобрать',sales:'История продаж',reserved:'На брони',analytics:'Статистика',settings:'Настройки',home:'Главное',history:'История изменений',team:'Команда',profile:'Профиль',schedule:'Расписание',finance:'Финансовый отчёт'};
+function matchesView(p,view){if(view==='needs_review')return p.available===true&&Boolean(window.ProductQuality?.issues(p).length);if(!p.available)return view==='all'||view===(p.archive_status||'legacy');return view==='all'||(view==='sale'&&Boolean(window.ProductPricing.discount(p)))||(view==='commission'&&p.on_commission===true)||(['pre_owned','vintage'].includes(view)?p.product_condition===view:false)||(view==='reserved'?p.available&&p.reserved===true:view==='hidden'?!p.available:p.available&&!p.reserved&&(view!=='in_stock'||ProductSizes.stockUnits(p)>0)&&(p.fulfillment_status==='on_order'?'on_order':'in_stock')===view)}
 function adminPriceMarkup(p){return window.ProductPricing.markup(p,cataloguePrice,esc)||'Цена по запросу'}
 function inventoryAvailability(p){return !p.available?({sold:'Продано',hidden:'Скрыто',legacy:'Нужно разобрать'}[p.archive_status]||'Нужно разобрать'):p.reserved?'На брони':p.fulfillment_status==='on_order'?'Под заказ':ProductSizes.stockUnits(p)===0?'Нет остатка':'В наличии'}
 function formatPrice(p){return cataloguePrice(p)||'Цена по запросу'}
@@ -719,9 +717,9 @@ async function validateEmailLink(){
  $('emailLinkMessage').textContent='Подтверждаем аккаунт из письма.';$('emailLinkIdentity').textContent='';
  for(const id of ['acceptEmailLink','retryEmailLink','renewEmailLink'])$(id).classList.add('hidden');status('');
  try{
-  const user=await fetchJSON('/auth/v1/user',{},link.access_token);if(emailLinkState!==link)return;
+  const user=link.publicSession?.user||await fetchJSON('/session/link-preview',{method:'POST',body:JSON.stringify({access_token:link.access_token})});if(emailLinkState!==link)return;
   if(!user?.id||!user.email)throw Error('Не удалось проверить аккаунт ссылки.');
-  const previous=session||readSavedAdminSession()?.session;
+  const previous=session;
   if(previous&&previous.user.id!==user.id){clearEmailLink();showEmailLinkProblem('Ссылка относится к другому аккаунту. Сначала выйдите из текущего аккаунта.');return}
   link.user=user;$('emailLinkTitle').textContent=link.type==='invite'?'Приглашение в магазин':'Восстановление доступа';
   $('emailLinkIdentity').textContent=user.email;
@@ -733,9 +731,9 @@ async function validateEmailLink(){
 async function acceptEmailLink(){
  const link=emailLinkState;if(!link?.user||busy)return;busy=true;$('acceptEmailLink').disabled=true;status('');
  try{
-  const previous=session||readSavedAdminSession()?.session;
+  const previous=session;
   if(!link.adopted&&previous&&previous.user.id!==link.user.id)throw Error('Ссылка относится к другому аккаунту. Сначала выйдите из текущего аккаунта.');
-  if(!link.adopted){recovering=true;emailFlowType=link.type;keepSession({access_token:link.access_token,refresh_token:link.refresh_token,expires_at:link.expires_at,user:link.user},true);link.adopted=true}
+  if(!link.adopted){recovering=true;emailFlowType=link.type;const imported=link.publicSession||await fetchJSON('/session/import',{method:'POST',body:JSON.stringify({access_token:link.access_token,refresh_token:link.refresh_token,type:link.type})});keepSession(imported,true);delete link.access_token;delete link.refresh_token;link.adopted=true}
   await enterWorkspace();clearEmailLink();
  }catch(error){if(emailLinkState===link)showEmailLinkProblem('Не удалось продолжить: '+error.message);else status(error.message)}
  finally{busy=false;$('acceptEmailLink').disabled=false}
@@ -763,19 +761,22 @@ async function restoreAdminSession(){
   emailLinkState={type:callback.get('type'),access_token:callback.get('access_token'),refresh_token:callback.get('refresh_token'),expires_at:Date.now()/1000+(Number(callback.get('expires_in'))||3600)};
   await validateEmailLink();return;
  }
-  const saved=readSavedAdminSession();
-  if(!saved){if(session)endSession();else{clearSavedAdminSession();restorePending=false;$('sessionRestore').classList.add('hidden');$('login').classList.remove('hidden')}return}
+  // One-time upgrade: remove old plaintext credentials before contacting the server.
+  try{const old=localStorage.getItem('jpAdminSession30dV1');if(old&&!legacyMigration)legacyMigration=JSON.parse(old)?.session;localStorage.removeItem('jpAdminSession30dV1')}catch{}
   busy=true;restorePending=true;status('');
   $('authArea').classList.remove('hidden');$('workspace').classList.add('hidden');$('login').classList.add('hidden');$('sessionRestore').classList.remove('hidden');
   $('sessionRestoreMessage').textContent='Проверяем сохранённую сессию.';
   $('retrySessionRestore').classList.add('hidden');$('cancelSessionRestore').classList.add('hidden');
-  try{sessionClock.start(saved.limits);session=saved.session;rememberAdminSession=true;persistedAdminSession=true;persistedRefreshToken=session.refresh_token;await enterWorkspace();restorePending=false;$('sessionRestore').classList.add('hidden')}
-  catch(error){
-   if([400,401,403].includes(error.httpStatus)||!session||!checkAdminSession()){if(session)endSession();status('Не удалось восстановить вход: '+error.message)}
+  try{
+   let restored;
+   try{restored=await fetchJSON('/session')}
+   catch(error){if(error.httpStatus!==401||!legacyMigration)throw error;restored=await fetchJSON('/session/import',{method:'POST',body:JSON.stringify({access_token:legacyMigration.access_token,refresh_token:legacyMigration.refresh_token})})}
+   legacyMigration=null;keepSession(restored,true,readSavedAdminSession());rememberAdminSession=true;
+   await enterWorkspace();restorePending=false;$('sessionRestore').classList.add('hidden');
+  }catch(error){
+   if([400,401,403].includes(error.httpStatus)){legacyMigration=null;endSession();status(error.httpStatus===401?'':'Не удалось восстановить вход: '+error.message)}
    else{$('sessionRestoreMessage').textContent='Не удалось загрузить админку. Вход сохранён — проверь соединение и повтори попытку.';$('retrySessionRestore').classList.remove('hidden');$('cancelSessionRestore').classList.remove('hidden');status('Не удалось восстановить вход: '+error.message)}
-  }
-  finally{busy=false}
-  return;
+  }finally{busy=false}
 }
 $('retrySessionRestore').onclick=()=>restoreAdminSession();
 $('cancelSessionRestore').onclick=()=>{if(!busy){endSession();status('')}};
@@ -783,4 +784,4 @@ window.addEventListener('online',()=>{if(restorePending&&!busy)restoreAdminSessi
 const adminSessionReady=restoreAdminSession();
 $('checkPendingAccess').onclick=async()=>{if(busy||!session)return;busy=true;try{await enterWorkspace()}catch(e){status(e.message)}finally{busy=false}};
 
-window.addEventListener('storage',e=>{if((e.key===ADMIN_SESSION_KEY||e.key===null)&&session&&rememberAdminSession){try{syncSavedAdminSession()}catch(error){status(error.message)}}});
+window.addEventListener('storage',e=>{if((e.key===ADMIN_SESSION_KEY||e.key===null)&&session&&rememberAdminSession){if(e.newValue===null){endSession(false);status('Вход завершён в другой вкладке.')}else{try{syncSavedAdminSession()}catch(error){status(error.message)}}}});

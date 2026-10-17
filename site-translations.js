@@ -2,6 +2,10 @@
 (function(root){
  'use strict';
  const ui={
+  'Ещё':'More','Главная':'Home','О магазине и наших услугах':'About the shop and our services','Аутентификация, ателье и уход':'Authentication, tailoring and care','Контакты, каналы и безопасность':'Contacts, channels and safety','Другие разделы':'More sections','Техническая диагностика':'Technical diagnostics',
+  'JULI.PROZ Store · обновлено 17 октября 2026':'JULI.PROZ Store · updated 17 October 2026',
+  'Для исправления сбоев сайт передаёт тип ошибки, имя файла программы, номер строки, версию и раздел сервиса. Эти данные хранятся до 30 дней. Текст ошибок, переписка, содержимое форм, пароли и данные аккаунта не передаются. Диагностика работает независимо от согласия на статистику посещений.':'To fix failures, the site sends the error type, program filename, line number, version and service area. These records are kept for up to 30 days. Error messages, conversations, form contents, passwords and account details are not sent. Diagnostics operate independently of consent to visitor analytics.',
+
   'Меню':'Menu','Поиск по каталогу':'Search the catalogue','Поиск по каталогу...':'Search the catalogue…','Оживить лапу J.P':'Animate the J.P paw','Мой магазин':'Shop the collection',
   'Курс по байерству — MS Fashion Institute':'Luxury buying course — MS Fashion Institute','Курс по байерству':'Luxury buying course','Курсы по байерству — MSFI Education':'Luxury buying courses — MSFI Education','Курсы по байерству':'Luxury buying courses',
   'Самый надежный байер-сервис в мире':'The world’s most trusted luxury sourcing service',

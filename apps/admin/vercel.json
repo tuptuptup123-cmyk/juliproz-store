@@ -7,7 +7,7 @@
       "headers": [
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' blob: https://juliproz-store.vercel.app/images/ data: https://qhgzzhgxwpcctafpzjid.supabase.co/functions/v1/product-photo/; connect-src 'self' https://juliproz-store.vercel.app/images/ https://qhgzzhgxwpcctafpzjid.supabase.co; object-src 'none'; base-uri 'none'; form-action 'self'; upgrade-insecure-requests; frame-ancestors 'none'"
+          "value": "default-src 'self'; script-src 'self'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' blob: https://juliproz-store.vercel.app/images/ data: https://qhgzzhgxwpcctafpzjid.supabase.co/functions/v1/product-photo/; connect-src 'self' https://www.juliproz.com https://juliproz-store.vercel.app/images/ https://qhgzzhgxwpcctafpzjid.supabase.co; object-src 'none'; base-uri 'none'; form-action 'self'; upgrade-insecure-requests; frame-ancestors 'none'"
         },
         {
           "key": "X-Frame-Options",
@@ -49,7 +49,7 @@
       "headers": [
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; connect-src 'self'; object-src 'none'; base-uri 'none'"
+          "value": "default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; connect-src 'self' https://www.juliproz.com; object-src 'none'; base-uri 'none'"
         }
       ]
     }
@@ -60,5 +60,13 @@
       "destination": "/admin.html",
       "permanent": false
     }
+  ],
+  "functions": {
+    "api/admin.js": {
+      "maxDuration": 60
+    }
+  },
+  "regions": [
+    "dub1"
   ]
 }

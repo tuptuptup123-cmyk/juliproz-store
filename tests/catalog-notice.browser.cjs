@@ -26,9 +26,9 @@ let browser;
     return shop.top>=title.bottom&&social.left>=shop.right&&Math.abs(social.top+social.height/2-shop.top-shop.height/2)<2&&course.top>=photos.bottom&&document.querySelector('.brand').getBoundingClientRect().height<=160;
    }),'Mobile home keeps the logo compact, shop and socials below title and education below photos');
    assert.ok(await page.locator('.bottom-nav').evaluate(nav=>{
-    const bounds=nav.getBoundingClientRect(),buttons=[...nav.querySelectorAll('[data-tab]')].filter(b=>!b.classList.contains('hidden'));
-    return buttons.length===7&&nav.scrollWidth<=nav.clientWidth&&buttons.every(b=>{const r=b.getBoundingClientRect(),label=b.querySelector('small');return r.left>=bounds.left&&r.right<=bounds.right&&label.scrollWidth<=label.clientWidth;});
-   }),'All seven navigation destinations and their labels fit at once');
+    const bounds=nav.getBoundingClientRect(),buttons=[...nav.querySelectorAll('button')].filter(b=>b.getBoundingClientRect().width>0);
+    return buttons.length===(innerWidth<=680?5:7)&&nav.scrollWidth<=nav.clientWidth&&buttons.every(b=>{const r=b.getBoundingClientRect(),label=b.querySelector('small');return r.left>=bounds.left&&r.right<=bounds.right&&label.scrollWidth<=label.clientWidth;});
+   }),'Primary navigation and labels fit; secondary destinations stay in More');
   }else{
    assert.equal(await page.locator('.brand .buyer-education-card').isVisible(),true);
    assert.equal(await page.locator('.home-shop-link').isVisible(),true);
@@ -42,10 +42,10 @@ let browser;
   await page.keyboard.press('Tab');assert.equal(await page.locator('#catalogAntiScam').evaluate(e=>e.contains(document.activeElement)),true,'Native modal keeps keyboard focus inside');
   await page.screenshot({path:out+'/anti-scam-'+width+'.png',fullPage:false});
   await page.locator('#acknowledgeAntiScam').click();assert.equal(await page.evaluate(()=>localStorage.getItem('jpAntiScamSeenV1')),'1');
-  await page.locator('.bottom-nav [data-tab=home]').click();await page.locator('.bottom-nav [data-tab=catalog]').click();await page.waitForTimeout(600);assert.equal(await page.locator('#catalogAntiScam').isVisible(),false);
+  await require('./site-action-helper.cjs').clickSiteTab(page,'home');await page.locator('.bottom-nav [data-tab=catalog]').click();await page.waitForTimeout(600);assert.equal(await page.locator('#catalogAntiScam').isVisible(),false);
   await page.reload();await page.waitForTimeout(600);assert.equal(await page.locator('#catalogAntiScam').isVisible(),false,'Acknowledgement survives reload');
   const next=await context.newPage();await next.goto(origin+'/?tab=catalog');await next.waitForTimeout(600);assert.equal(await next.locator('#catalogAntiScam').isVisible(),false,'Acknowledgement survives a new tab');
-  await page.locator('.bottom-nav [data-tab=about]').click();assert.equal(await page.locator('.information-education').getAttribute('href'),'https://msfi.education');await page.locator('.information-education').scrollIntoViewIfNeeded();await page.locator('.information-education img').evaluate(e=>e.decode());
+  await require('./site-action-helper.cjs').clickSiteTab(page,'about');assert.equal(await page.locator('.information-education').getAttribute('href'),'https://msfi.education');await page.locator('.information-education').scrollIntoViewIfNeeded();await page.locator('.information-education img').evaluate(e=>e.decode());
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));await page.screenshot({path:out+'/information-education-'+width+'.png',fullPage:true});assert.deepEqual(errors,[]);await context.close();
   console.log(width+' PASS home layout, visible navigation, first visit, focus, dismissal, reload/new-tab persistence, education layout');
  }
@@ -54,7 +54,7 @@ let browser;
   if(action==='blocked-storage')await context.addInitScript(()=>{const set=Storage.prototype.setItem;Storage.prototype.setItem=function(k,v){if(k==='jpAntiScamSeenV1')throw new DOMException('Blocked','QuotaExceededError');return set.call(this,k,v)}});
   const page=await context.newPage();await page.goto(origin+'/?tab=catalog');await page.locator('#catalogAntiScam').waitFor();
   if(action==='escape')await page.keyboard.press('Escape');else await page.locator('#closeAntiScam').click();
-  await page.locator('.bottom-nav [data-tab=home]').click();await page.locator('.bottom-nav [data-tab=catalog]').click();await page.waitForTimeout(600);assert.equal(await page.locator('#catalogAntiScam').isVisible(),false);
+  await require('./site-action-helper.cjs').clickSiteTab(page,'home');await page.locator('.bottom-nav [data-tab=catalog]').click();await page.waitForTimeout(600);assert.equal(await page.locator('#catalogAntiScam').isVisible(),false);
   if(action!=='blocked-storage'){await page.goto(origin+'/?tab=catalog');await page.waitForTimeout(600);assert.equal(await page.locator('#catalogAntiScam').isVisible(),false)}
   await context.close();console.log(action+' PASS');
  }

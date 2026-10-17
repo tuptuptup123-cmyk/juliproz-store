@@ -1,3 +1,3 @@
 'use strict';
 
-module.exports = require('../server/telegram.cjs').createHandler();
+module.exports = require('../server/telegram.cjs').createDurableHandler();

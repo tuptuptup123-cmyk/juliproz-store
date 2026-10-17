@@ -114,10 +114,10 @@ const fixtures=[
   if(width===390){await page.locator('.product-sourcing .sourcing-link').scrollIntoViewIfNeeded();await page.screenshot({path:out+'/manager-contact-390.png'});}
   await page.locator('#backProduct').click();assert.equal(await page.locator('.product').count(),1);
   const headerBaseline=await page.locator('.brand .logo').evaluate(e=>e.getBoundingClientRect().bottom+window.scrollY);
-  await page.locator('[data-tab="services"]').click();
+  await require('./site-action-helper.cjs').clickSiteTab(page,'services');
   for(const target of ['catalog','favorites','cart','sell','services']){
-   await page.locator('[data-tab="'+target+'"]').click();
-   assert.equal(await page.locator('.bottom-nav [aria-current="page"]').getAttribute('data-tab'),target);
+   await require('./site-action-helper.cjs').clickSiteTab(page,target);
+   assert.equal(await page.evaluate(()=>state.tab),target);
    if(target==='sell'||target==='services'){
     assert.equal(await page.locator('#sellPage .sell-paw,#servicesPage .sell-paw').count(),0,'Only the main header paw remains');
     if(width<=600){const bounds=await page.locator('.brand-lockup,.brand-signature,.brand-paw').evaluateAll(es=>es.map(e=>e.getBoundingClientRect().toJSON()));const left=Math.min(...bounds.map(b=>b.left)),right=Math.max(...bounds.map(b=>b.right));assert.ok(Math.abs((left+right)/2-width/2)<16,'Complete logo grouping is visually centered');assert.ok(left>=0&&right<=width,'Header fits phone width');}
@@ -130,7 +130,7 @@ const fixtures=[
     if(width<=600){const gap=await page.evaluate(()=>document.querySelector('#sellTitle').getBoundingClientRect().top-document.querySelector('.brand-lockup').getBoundingClientRect().bottom);assert.ok(gap>=48&&gap<=80,'Sell intro keeps a compact, readable logo gap');}
     if(width===390||width===529||width===1280)await page.screenshot({path:out+'/services-sell-'+width+'.png',fullPage:true});
    }
-   const nav=await page.locator('.bottom-nav button').evaluateAll(es=>es.map(e=>({width:e.getBoundingClientRect().width,background:getComputedStyle(e).backgroundColor,iconWidth:e.querySelector('svg').getBoundingClientRect().width,outline:getComputedStyle(e.querySelector('svg')).outlineStyle})));
+   const nav=await page.locator('.bottom-nav button:visible').evaluateAll(es=>es.map(e=>({width:e.getBoundingClientRect().width,background:getComputedStyle(e).backgroundColor,iconWidth:e.querySelector('svg').getBoundingClientRect().width,outline:getComputedStyle(e.querySelector('svg')).outlineStyle})));
    assert.ok(nav.every(n=>n.background==='rgba(0, 0, 0, 0)'&&n.iconWidth===24&&n.outline==='none'),'Navigation has no tile fills or icon borders');
    const floating=await page.locator('.bottom-nav').evaluate(e=>({height:e.getBoundingClientRect().height,left:e.getBoundingClientRect().left,right:e.getBoundingClientRect().right,bottom:e.getBoundingClientRect().bottom,radius:getComputedStyle(e).borderRadius,background:getComputedStyle(e).backgroundColor}));
    assert.equal(floating.height,68);assert.equal(floating.radius,'24px');assert.equal(floating.background,'rgb(255, 255, 255)');
@@ -153,8 +153,9 @@ const fixtures=[
   assert.equal(await page.locator('.services-page .sell-intro p').evaluate(e=>getComputedStyle(e).textAlign),'center');
   const services=await page.locator('.services-page .service-card p').evaluateAll(es=>es.map(e=>({align:getComputedStyle(e).textAlign,hyphens:getComputedStyle(e).hyphens})));
   assert.ok(services.length>=2&&services.every(s=>s.align==='left'&&s.hyphens==='none'),'Service details stay left-aligned without automatic hyphens');
+  await page.mouse.move(0,0); // Check the resting colour; the More menu can leave the pointer over a service CTA.
   const serviceButtons=await page.locator('.services-page .service-contact').evaluateAll(es=>es.map(e=>({bg:getComputedStyle(e).backgroundColor,color:getComputedStyle(e).color,size:getComputedStyle(e).fontSize,weight:getComputedStyle(e).fontWeight,height:e.getBoundingClientRect().height,svg:!!e.querySelector('svg')})));
-  assert.equal(serviceButtons.length,2);assert.ok(serviceButtons.every(b=>b.bg==='rgb(228, 202, 221)'&&b.color==='rgb(37, 57, 79)'&&b.size==='16px'&&b.weight==='500'&&b.height>=48&&b.svg),'Services buttons use gentle brand colours and vector arrows');
+  assert.equal(serviceButtons.length,2);assert.ok(serviceButtons.every(b=>b.bg==='rgb(228, 202, 221)'&&b.color==='rgb(37, 57, 79)'&&b.size==='16px'&&b.weight==='500'&&b.height>=48&&b.svg),'Services buttons use gentle brand colours and vector arrows: '+JSON.stringify(serviceButtons));
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Services fit narrow screens');
   if(width===390||width===529||width===1280)await page.screenshot({path:out+'/services-'+width+'.png',fullPage:true});
   if(width===320||width===390){

@@ -1,4 +1,4 @@
-const {chromium}=require('playwright'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),http=require('node:http');
+const {chromium}=require('./bff-browser-fixture.cjs'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),http=require('node:http');
 const root=path.resolve(__dirname,'..');
 const headers=Object.fromEntries(require('../apps/admin/vercel.json').headers[0].headers.map(h=>[h.key,h.value]));
 const server=http.createServer((req,res)=>{

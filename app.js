@@ -1,3 +1,4 @@
+document.getElementById('serverProduct')?.remove?.();
 // Remove legacy admin credentials left on the public storefront origin.
 try{localStorage.removeItem('jpAdminSessionV1')}catch{}
 try{sessionStorage.removeItem('jpAdminSessionV1')}catch{}
@@ -81,7 +82,7 @@ function stockLabel(p,size=null){if(p?.available===false||p?.reserved||onOrder(p
 const availabilityLabel=p=>p?.reserved?'На брони':onOrder(p)?'Под заказ':ProductSizes.stockUnits(p)===0?'Нет в наличии':'В наличии';
 const deliveryLabel=p=>onOrder(p)?'10–14 рабочих дней':'7–10 рабочих дней';
 const statusLabels={in_stock:'В наличии',on_order:'Под заказ'};
-function productLink(p){const id=encodeURIComponent(String(p.id));return isTelegramStore()?`https://t.me/JuliProzBot/shop?startapp=p_${id}`:`https://www.juliproz.com/?product=${id}${window.SiteLanguage?.language==='en'?'&lang=en':''}`}
+function productLink(p){const id=encodeURIComponent(String(p.id));return isTelegramStore()?`https://t.me/JuliProzBot/shop?startapp=p_${id}`:`https://www.juliproz.com/product/${id}${window.SiteLanguage?.language==='en'?'?lang=en':''}`}
 const CATALOG_FIELDS='id,created_at,brand,name,category,size,price,currency,image_url,available,fulfillment_status,gender,description,photos,reserved,product_condition,stock_quantities,on_commission,original_price,wear_condition,team_pick';
 function photosOf(p){return [...new Set([p.image_url,p.image,...(Array.isArray(p.photos)?p.photos:[])].filter(safeProductImage))].map(publicProductImage)}
 const managerOpenTimes=new Map();
@@ -116,7 +117,7 @@ function syncWebNavigation(){
 
 function initialStoreTab(){
  const params=new URLSearchParams(location.search);
- const linked=params.has('product')||params.get('startapp')?.startsWith('p_')||params.get('tgWebAppStartParam')?.startsWith('p_')||window.Telegram?.WebApp?.initDataUnsafe?.start_param?.startsWith('p_');
+ const linked=/^\/product\/[1-9]\d*\/?$/.test(location.pathname)||params.has('product')||params.get('startapp')?.startsWith('p_')||params.get('tgWebAppStartParam')?.startsWith('p_')||window.Telegram?.WebApp?.initDataUnsafe?.start_param?.startsWith('p_');
  return isTelegramStore()||linked||params.get('tab')==='catalog'?'catalog':'home';
 }
 let state={sort:"recommended",sale:false,product_condition:null,gender:null,fulfillment_status:null,category:null,brand:null,size:null,search:"",favorites:new Set((()=>{try{return JSON.parse(localStorage.getItem("jpFav")||"[]").map(String)}catch{return []}})()),tab:initialStoreTab()};
@@ -402,7 +403,7 @@ async function loadProducts(quiet=false){
     if(changed)syncOpenProductGallery();
     const params=new URLSearchParams(location.search);
     const start=window.Telegram?.WebApp?.initDataUnsafe?.start_param||params.get("tgWebAppStartParam")||params.get("startapp");
-    const id=params.get("product")||(start?.startsWith("p_")?start.slice(2):null);
+    const id=/^\/product\/([1-9]\d*)\/?$/.exec(location.pathname)?.[1]||params.get("product")||(start?.startsWith("p_")?start.slice(2):null);
     if(id&&firstLoad&&requestedNavigation===navigationRevision) await openLinkedProduct(id);firstLoad=false;
   }catch(e){
     if(quiet)return;

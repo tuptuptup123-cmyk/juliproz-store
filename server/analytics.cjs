@@ -4,7 +4,7 @@ const {isIP}=require('node:net');
 const config=require('../config.js');
 const ORIGIN='https://qhgzzhgxwpcctafpzjid.supabase.co';
 const origins=new Set(['https://juliproz-store.vercel.app','https://juliproz.com','https://www.juliproz.com','https://app.juliproz.com']);
-const events=new Set(['visit','heartbeat','page_view','product_view','wishlist_add','wishlist_remove','cart_add','cart_remove','checkout_open','manager_open','manager_product','manager_search_product','manager_general','manager_sell','manager_authentication','manager_atelier']);
+const events=new Set(['visit','heartbeat','page_view','product_view','wishlist_add','wishlist_remove','cart_add','cart_remove','checkout_open','manager_open','manager_product','manager_search_product','manager_general','manager_sell','manager_authentication','manager_atelier','channel_julia_main','channel_julia_outlet','channel_vasya_main','channel_vasya_outlet']);
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 function trustedIP(headers){
  // Vercel overwrites this header at ingress. Never fall back to client-supplied

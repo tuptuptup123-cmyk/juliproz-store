@@ -7,7 +7,7 @@
  const ttl=15*60;let pending=null,settle=null,verifying=false;
  const dialog=$('stepUpDialog'),form=$('stepUpForm'),error=$('stepUpError');
  function fresh(){
-  try{const claims=JSON.parse(atob(session.access_token.split('.')[1].replace(/-/g,'+').replace(/_/g,'/'))),now=Date.now()/1000;
+  try{const claims=session,now=Date.now()/1000;
    return claims.aal==='aal2'&&Array.isArray(claims.amr)&&claims.amr.some(x=>x.method==='totp'&&typeof x.timestamp==='number'&&x.timestamp>now-ttl&&x.timestamp<=now+30);
   }catch{return false}
  }

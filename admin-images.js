@@ -4,8 +4,7 @@
  async function read(value){
   if(!safeProductImage(value)||!session||!checkAdminSession())throw Error('Фото недоступно.');
   if(session.expires_at<Date.now()/1000+60){if(!refreshJob)refreshJob=request('/rest/v1/rpc/touch_store_admin_session',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'}).finally(()=>refreshJob=null);await refreshJob}
-  const epoch=sessionEpoch,target=value.includes('/storage/v1/object/public/product-photos/')?value.replace('/object/public/','/object/authenticated/'):value;
-  const response=await fetch(target,{headers:{Authorization:'Bearer '+session.access_token,...(target.startsWith(url)?{apikey:key}:{})},cache:'no-store',credentials:'omit',redirect:'error',signal:AbortSignal.timeout(20000)});
+  const epoch=sessionEpoch,response=await window.AdminTransport.photo(value);
   if(epoch!==sessionEpoch||!response.ok)throw Error('Не удалось загрузить фото.');
   const blob=await response.blob();if(blob.size>6*1024*1024||!['image/webp','image/png','image/jpeg'].includes(blob.type))throw Error('Недопустимый формат фото.');return blob;
  }

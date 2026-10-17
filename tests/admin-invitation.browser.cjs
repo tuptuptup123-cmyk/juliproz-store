@@ -1,4 +1,4 @@
-const {chromium}=require('playwright'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),http=require('node:http');
+const {chromium}=require('./bff-browser-fixture.cjs'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),http=require('node:http');
 const root=path.resolve(__dirname,'..'),headers=Object.fromEntries(require('../apps/admin/vercel.json').headers[0].headers.map(h=>[h.key,h.value]));
 const server=http.createServer((req,res)=>{
  const file=path.resolve(root,'.'+new URL(req.url,'http://localhost').pathname);
@@ -47,16 +47,16 @@ const server=http.createServer((req,res)=>{
    assert.equal(await page.locator('#emailLinkIdentity').textContent(),'invitee@example.invalid');assert.equal(await page.evaluate(()=>session),null);
    await page.locator('#acceptEmailLink').click();await page.locator('#retryEmailLink').waitFor();setupFailure=false;await page.locator('#retryEmailLink').click();
    await page.locator('#newPassword').waitFor();assert.equal(await page.locator('#newPasswordTitle').textContent(),'Создайте пароль');assert.equal(await page.locator('#login').isHidden(),true);assert.equal(await page.locator('#mfaPanel').isHidden(),true);
-   assert.equal(await page.evaluate(()=>localStorage.getItem('jpAdminSession30dV1')),null);
+   assert.equal(await page.evaluate(()=>localStorage.getItem('jpAdminSessionInfoV2')),null);
    assert.ok(!calls.some(c=>c.path==='/rest/v1/products'||c.path==='/auth/v1/factors'));
    assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
    if(process.env.QA_OUTPUT){fs.mkdirSync(process.env.QA_OUTPUT,{recursive:true});await page.screenshot({path:path.join(process.env.QA_OUTPUT,`invitation-password-${width}.png`),fullPage:true})}
    await page.locator('#newPassword [name=password]').fill('synthetic-new-password');await page.locator('#newPassword button').click();await page.locator('#mfaPanel').waitFor();
    assert.equal(await page.locator('#newPassword').isHidden(),true);assert.equal(await page.locator('#login').isHidden(),true);
    await page.locator('#mfaVerify [name=code]').fill('123456');await page.locator('#mfaVerify button').click();await page.locator('#pendingAccess').waitFor();
-   assert.equal(await page.locator('#workspace').isHidden(),true);assert.equal(await page.evaluate(()=>localStorage.getItem('jpAdminSession30dV1')),null);
+   assert.equal(await page.locator('#workspace').isHidden(),true);assert.equal(await page.evaluate(()=>localStorage.getItem('jpAdminSessionInfoV2')),null);
    assert.ok(!calls.some(c=>c.path==='/rest/v1/products'));approved=true;await page.locator('#checkPendingAccess').click();await page.locator('#workspace').waitFor();await page.waitForFunction(()=>!busy);
-   assert.ok(await page.evaluate(()=>localStorage.getItem('jpAdminSession30dV1')));await page.reload();await page.locator('#workspace').waitFor();await page.waitForFunction(()=>!busy);
+   assert.ok(await page.evaluate(()=>localStorage.getItem('jpAdminSessionInfoV2')));await page.reload();await page.locator('#workspace').waitFor();await page.waitForFunction(()=>!busy);
    // Recovery for an existing protected account still requires MFA before password changes.
    await page.goto('about:blank');await page.goto(callback('recovery'));await page.locator('#acceptEmailLink').click();await page.locator('#mfaPanel').waitFor();
    assert.equal(await page.locator('#newPassword').isHidden(),true);assert.equal(calls.filter(c=>c.method==='PUT').length,1);

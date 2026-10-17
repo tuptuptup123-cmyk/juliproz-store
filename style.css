@@ -1015,3 +1015,10 @@ html[lang=en] .home-shop-link{width:210px}
 .product .photo>.team-pick-badge{position:absolute;left:10px;bottom:10px;z-index:1;max-width:calc(100% - 20px);pointer-events:none}
 .detail>.team-pick-badge{margin:0 6px 10px 0;vertical-align:middle}
 @media(max-width:600px){.product .photo>.team-pick-badge{left:7px;bottom:7px;max-width:calc(100% - 14px);font-size:9px;padding:4px 7px}}
+
+.mobile-more{display:none!important}.more-navigation-dialog{border:0;border-radius:20px;padding:24px;width:min(440px,calc(100% - 32px));color:#202020;background:white;box-shadow:0 12px 60px #0003}.more-navigation-dialog::backdrop{background:#0006}.more-navigation-heading{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}.more-navigation-heading h2{font-size:22px;margin:0}.more-navigation-heading button{min-height:44px;min-width:44px;border:0;background:#f6eff4;border-radius:50%;font-size:25px}.more-navigation-dialog>[data-more-tab]{display:flex;flex-direction:column;gap:5px;width:100%;text-align:left;padding:18px 12px;background:white;border:0;border-bottom:1px solid #eee;color:#202020}.more-navigation-dialog>[data-more-tab] strong{font-size:17px}.more-navigation-dialog>[data-more-tab] span{font-size:13px;color:#625660}.server-product{max-width:700px;margin:40px auto;padding:20px}.server-product img{max-width:100%;height:auto;object-fit:contain}
+@media(max-width:680px){.bottom-nav.is-website-navigation .mobile-secondary{display:none!important}.bottom-nav.is-website-navigation .mobile-more{display:flex!important}.bottom-nav.is-website-navigation{grid-template-columns:repeat(5,minmax(0,1fr))}.bottom-nav.is-website-navigation button{font-size:12px}.bottom-nav.is-website-navigation small{font-size:10px}}
+
+@media(max-width:680px){.bottom-nav.is-website-navigation .mobile-more{width:100%;min-width:0;flex:initial}}
+
+.bottom-nav .mobile-more,.bottom-nav .mobile-more.active{background:transparent;color:#626262}.bottom-nav .mobile-more.active{color:#202020}

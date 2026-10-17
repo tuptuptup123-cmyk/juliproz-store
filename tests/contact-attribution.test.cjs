@@ -13,10 +13,10 @@ test('each contact button records its purpose once, with product context only wh
  assert.deepEqual(events.filter(e=>e[0].startsWith('manager_')).map(e=>e[0]),['manager_authentication','manager_atelier','manager_sell','manager_search_product','manager_product','manager_general']);
  assert.deepEqual(events.find(e=>e[0]==='manager_search_product'),['manager_search_product',7]);
  assert.deepEqual(events.find(e=>e[0]==='manager_product'),['manager_product',7]);
- assert.match(new URL(links.find(url=>new URL(url).searchParams.get('text')?.includes('Артикул: 7'))).searchParams.get('text'),/https:\/\/www\.juliproz\.com\/\?product=7$/);
+ assert.match(new URL(links.find(url=>new URL(url).searchParams.get('text')?.includes('Артикул: 7'))).searchParams.get('text'),/https:\/\/www\.juliproz\.com\/product\/7$/);
  for(const platform of ['website','telegram'])for(const language of ['ru','en']){
   run(`window.Telegram=${platform==='telegram'?'{WebApp:{platform:"ios"}}':'undefined'};window.SiteLanguage={language:${JSON.stringify(language)}}`);
-  assert.equal(run('productLink({id:7})'),platform==='telegram'?'https://t.me/JuliProzBot/shop?startapp=p_7':'https://www.juliproz.com/?product=7'+(language==='en'?'&lang=en':''));
+  assert.equal(run('productLink({id:7})'),platform==='telegram'?'https://t.me/JuliProzBot/shop?startapp=p_7':'https://www.juliproz.com/product/7'+(language==='en'?'?lang=en':''));
  }
 
 });
