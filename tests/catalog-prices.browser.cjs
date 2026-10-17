@@ -60,7 +60,7 @@ const fixtures=[
   assert.equal(await page.locator('.product .catalog-status.on-order').innerText(),'Под заказ');
   const saleOrder=await page.locator('.sale-price').evaluateAll(es=>es.map(e=>e.querySelector('.price-original').getBoundingClientRect().bottom<=e.querySelector('.price-current').getBoundingClientRect().y));
   assert.ok(saleOrder.every(Boolean),'Small former price precedes large current price');
-  const brandBadges=await page.locator('.product h3:has(.card-sale-badge)').evaluateAll(es=>es.map(e=>({brand:e.querySelector('button').getBoundingClientRect().right,badge:e.querySelector('.card-sale-badge').getBoundingClientRect().x})));
+  const brandBadges=await page.locator('.product h3:has(.card-sale-badge)').evaluateAll(es=>es.map(e=>({brand:e.querySelector('.product-open').getBoundingClientRect().right,badge:e.querySelector('.card-sale-badge').getBoundingClientRect().x})));
   assert.ok(brandBadges.every(b=>Math.abs(b.badge-b.brand-6)<1),'SALE sits directly after the brand');
   assert.equal(await page.locator('[data-id="900001"] .condition-badge').first().innerText(),'PRE-OWNED');
   assert.equal(await page.locator('[data-id="900001"] .commission-badge').innerText(),'Комиссия');
