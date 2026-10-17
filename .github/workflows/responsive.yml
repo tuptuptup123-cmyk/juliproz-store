@@ -1,7 +1,7 @@
 name: Responsive catalogue checks
 on:
   pull_request:
-    paths: ['seo-content.js', 'site-seo.js', 'server/seo.cjs', 'server/site-page.cjs', 'server/product-page.cjs', 'api/site-page.js', 'api/sitemap.js', 'tests/site-action-helper.cjs', 'server/admin-bff.cjs', 'tests/bff-browser-fixture.cjs', 'tests/admin-bff-fixture.cjs', 'admin-transport.js', 'admin-editor-sections.js', 'mobile-navigation.js', 'runtime-errors.js', 'apps/telegram/**', 'scripts/build-telegram.cjs', 'telegram-entry.js', 'app.js', 'site-language.js', '*translations.js', 'admin.js', 'admin-manager.js', 'admin-session.js', 'admin-step-up.js', 'admin-images.js', 'business-date.js', 'catalog-reader.js', 'telegram-sdk.js', 'image-policy.js', 'admin-workspace.js', 'admin-sales.js', 'admin-finance.js', 'admin-product-finance.js', 'admin-schedule.js', '*.css', '*.html', 'product-sizes.js', 'product-sharing.js', 'analytics.js', 'photo-studio.js', 'tests/*.browser.cjs', 'tests/admin-action-helper.cjs', '.github/workflows/responsive.yml']
+    paths: ['admin-google-search.js', 'server/google-search.cjs', 'seo-content.js', 'site-seo.js', 'server/seo.cjs', 'server/site-page.cjs', 'server/product-page.cjs', 'api/site-page.js', 'api/sitemap.js', 'tests/site-action-helper.cjs', 'server/admin-bff.cjs', 'tests/bff-browser-fixture.cjs', 'tests/admin-bff-fixture.cjs', 'admin-transport.js', 'admin-editor-sections.js', 'mobile-navigation.js', 'runtime-errors.js', 'apps/telegram/**', 'scripts/build-telegram.cjs', 'telegram-entry.js', 'app.js', 'site-language.js', '*translations.js', 'admin.js', 'admin-manager.js', 'admin-session.js', 'admin-step-up.js', 'admin-images.js', 'business-date.js', 'catalog-reader.js', 'telegram-sdk.js', 'image-policy.js', 'admin-workspace.js', 'admin-sales.js', 'admin-finance.js', 'admin-product-finance.js', 'admin-schedule.js', '*.css', '*.html', 'product-sizes.js', 'product-sharing.js', 'analytics.js', 'photo-studio.js', 'tests/*.browser.cjs', 'tests/admin-action-helper.cjs', '.github/workflows/responsive.yml']
 permissions:
   contents: read
 jobs:
@@ -17,6 +17,7 @@ jobs:
           node-version: '24'
       - run: npm install --prefix "$RUNNER_TEMP/jp-browser" --no-audit --no-fund --ignore-scripts playwright@1.56.1 axe-core@4.10.3
       - run: node "$RUNNER_TEMP/jp-browser/node_modules/playwright/cli.js" install --with-deps chromium
+      - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" node tests/admin-google-search.browser.cjs
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" node tests/seo.browser.cjs
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" node tests/remaining-design.browser.cjs
       - run: node scripts/stage-photo-assets.cjs
