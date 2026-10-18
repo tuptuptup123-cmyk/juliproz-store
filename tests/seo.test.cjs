@@ -22,6 +22,9 @@ test('both language versions have distinct self canonicals and reciprocal global
   assert.match(html,new RegExp('<html lang="'+lang+'"'));assert.ok(h.includes('<link rel="canonical" href="'+seo.url(page.path,lang)+'">'));
   for(const alternate of ['ru','en','x-default'])assert.ok(h.includes('hreflang="'+alternate+'"'));
   assert.equal((h.match(/<title>/g)||[]).length,1);assert.equal((h.match(/name="description"/g)||[]).length,1);
+  assert.ok(h.includes('property="og:locale" content="'+(lang==='en'?'en_US':'ru_RU')+'"'));
+  assert.equal((h.match(/property="og:locale"/g)||[]).length,1);
+  assert.ok(h.includes('name="twitter:image"'));
   assert.doesNotMatch(h,/en-AE|ru-RU|geo\.region|Yandex|yandex/);
  }
 });

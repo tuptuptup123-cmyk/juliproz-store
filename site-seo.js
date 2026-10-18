@@ -25,7 +25,7 @@
  }
  function metadata(){
   const lang=language();document.title=data.title[lang];
-  const values={'meta[name="description"]':data.description[lang],'meta[property="og:title"]':data.title[lang],'meta[property="og:description"]':data.description[lang],'meta[property="og:url"]':content.url(data.path,lang),'meta[property="og:type"]':data.kind==='product'?'product':'website','meta[property="og:image"]':data.image||content.origin+'/images/brand-paw.webp','meta[name="twitter:title"]':data.title[lang],'meta[name="twitter:description"]':data.description[lang]};
+  const values={'meta[name="description"]':data.description[lang],'meta[property="og:title"]':data.title[lang],'meta[property="og:description"]':data.description[lang],'meta[property="og:url"]':content.url(data.path,lang),'meta[property="og:type"]':data.kind==='product'?'product':'website','meta[property="og:locale"]':lang==='en'?'en_US':'ru_RU','meta[property="og:locale:alternate"]':lang==='en'?'ru_RU':'en_US','meta[name="twitter:image"]':data.image||content.origin+'/images/brand-paw.webp','meta[property="og:image"]':data.image||content.origin+'/images/brand-paw.webp','meta[name="twitter:title"]':data.title[lang],'meta[name="twitter:description"]':data.description[lang]};
   for(const [selector,value] of Object.entries(values)){const el=document.querySelector(selector);if(el)el.setAttribute('content',value)}
   document.querySelector('link[rel="canonical"]')?.setAttribute('href',content.url(data.path,lang));
   for(const link of document.querySelectorAll('link[rel="alternate"][hreflang]'))link.setAttribute('href',content.url(data.path,link.hreflang==='en'?'en':'ru'));
