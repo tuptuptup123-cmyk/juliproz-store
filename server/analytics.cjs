@@ -4,7 +4,7 @@ const {isIP}=require('node:net');
 const config=require('../config.js');
 const ORIGIN='https://qhgzzhgxwpcctafpzjid.supabase.co';
 const origins=new Set(['https://juliproz-store.vercel.app','https://juliproz.com','https://www.juliproz.com','https://app.juliproz.com']);
-const events=new Set(['visit','heartbeat','page_view','product_view','wishlist_add','wishlist_remove','cart_add','cart_remove','checkout_open','manager_open','manager_product','manager_search_product','manager_general','manager_sell','manager_authentication','manager_atelier','channel_julia_main','channel_julia_outlet','channel_vasya_main','channel_vasya_outlet']);
+const events=new Set(['visit','heartbeat','category_view','page_view','product_view','wishlist_add','wishlist_remove','cart_add','cart_remove','checkout_open','manager_open','manager_product','manager_search_product','manager_general','manager_sell','manager_authentication','manager_atelier','channel_julia_main','channel_julia_outlet','channel_vasya_main','channel_vasya_outlet']);
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 function trustedIP(headers){
  // Vercel overwrites this header at ingress. Never fall back to client-supplied
@@ -21,7 +21,7 @@ async function readBody(req){
  return JSON.parse(Buffer.concat(chunks).toString('utf8'));
 }
 const sources=new Set(['google_organic','google_paid','campaign','referral','direct','unknown','telegram']);
-function validEvent(b){return b&&typeof b==='object'&&!Array.isArray(b)&&uuid.test(b.event_id)&&uuid.test(b.visitor_id)&&uuid.test(b.session_id)&&events.has(b.event)&&(b.source==null||sources.has(b.source))&&(b.channel==null||['website','telegram'].includes(b.channel))&&(b.product_id==null||Number.isSafeInteger(b.product_id)&&b.product_id>0)&&(b.page==null||['catalog','wishlist','cart'].includes(b.page))}
+function validEvent(b){return b&&typeof b==='object'&&!Array.isArray(b)&&uuid.test(b.event_id)&&uuid.test(b.visitor_id)&&uuid.test(b.session_id)&&events.has(b.event)&&(b.source==null||sources.has(b.source))&&(b.channel==null||['website','telegram'].includes(b.channel))&&(b.product_id==null||Number.isSafeInteger(b.product_id)&&b.product_id>0)&&(b.event==='category_view'?typeof b.category==='string'&&b.category.length>0&&b.category.length<=80&&!/[\x00-\x1f\x7f]/.test(b.category)&&b.product_id==null&&['catalog','hermes'].includes(b.page):b.category==null)&&(b.page==null||['catalog','wishlist','cart','home','about','services','sell','hermes','outlet'].includes(b.page))}
 function createHandler(env=process.env,request=fetch,now=()=>new Date()){
  return async(req,res)=>{
   const origin=req.headers.origin;
@@ -48,7 +48,7 @@ function createHandler(env=process.env,request=fetch,now=()=>new Date()){
    const response=await request(`${ORIGIN}/rest/v1/rpc/store_analytics_gateway_ingest_attributed`,{
     method:'POST',redirect:'error',signal:AbortSignal.timeout(5000),
     headers:{apikey:config.key,'Content-Type':'application/json'},
-    body:JSON.stringify({p_secret:secret,p_event_id:b.event_id,p_visitor:b.visitor_id,p_session:session,p_event:b.event,p_product:b.product_id??null,p_page:b.page??null,p_fingerprint:fingerprint,p_channel:channel,p_source:telegram?'telegram':b.source==='telegram'?'unknown':b.source??'unknown'})
+    body:JSON.stringify({p_secret:secret,p_event_id:b.event_id,p_visitor:b.visitor_id,p_session:session,p_event:b.event,p_product:b.product_id??null,p_page:b.page??null,p_fingerprint:fingerprint,p_channel:channel,p_category:b.category??null,p_source:telegram?'telegram':b.source==='telegram'?'unknown':b.source??'unknown'})
    });
    if(!response.ok)return reply(503,{error:'unavailable'});
    let accepted;try{accepted=await response.json()}catch{return reply(503,{error:'unavailable'})}if(typeof accepted!=='boolean')return reply(503,{error:'unavailable'});
