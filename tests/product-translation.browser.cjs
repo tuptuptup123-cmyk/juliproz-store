@@ -13,6 +13,17 @@ const server=http.createServer((req,res)=>{const file=path.resolve(root,'.'+new 
    request=async(path,options={})=>{if(path.startsWith('/rest/v1/products')){if(options.method==='PATCH'){const patch=JSON.parse(options.body);savedWrites.push(patch);testRow={...testRow,...patch,revision:testRow.revision+1}}return [testRow]}if(path.includes('product_admin_notes'))return [];return null};
    items=[testRow];$('authArea').classList.add('hidden');$('workspace').classList.remove('hidden');edit(testRow);
   });
+  await page.locator('#productSeoGuide > summary').click();
+  await page.locator('#jpGuideTitle').waitFor();
+  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Open writing guide fits '+width);
+  assert.equal(await page.locator('#productSeoGuide script').count(),0);
+  await page.screenshot({path:out+'/writing-guide-'+width+'.png',fullPage:true});
+  await page.locator('#productSeoGuide > summary').click();
+  await page.locator('[name=name]').fill('Часы Datejust 31');
+  await page.locator('#productEnglishFields').evaluate(el=>el.open=true);
+  assert.match(await page.locator('#productSeoTitleEn').innerText(),/Datejust 31 watch/);
+  await page.locator('[name=name]').fill('Сумка '+ 'Birkin '.repeat(18));
+  assert.match(await page.locator('#productSeoTitleRu').innerText(),/Длинный заголовок/);
   await page.locator('[name=name]').fill('Авторская модель вне словаря');await page.locator('[name=description]').fill('Описание изделия с проверенными деталями.');
   await page.locator('#productEnglishFields').evaluate(el=>el.open=true);assert.match(await page.locator('#productTranslationStatus').innerText(),/Нужен английский перевод/);
   await page.locator('#save').click();await page.waitForFunction(()=>!busy);assert.match(await page.locator('#status').innerText(),/Заполните английский перевод/);assert.equal(await page.evaluate(()=>savedWrites.length),0);
