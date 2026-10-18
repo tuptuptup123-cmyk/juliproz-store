@@ -14,7 +14,7 @@ const server=http.createServer((req,res)=>{const url=new URL(req.url,'http://loc
  const context=await browser.newContext({viewport:{width,height:900},reducedMotion:'reduce'});await context.route('**/api/catalog',r=>r.fulfill({json:products}));await context.route('**/rest/v1/products?**',r=>r.fulfill({json:products}));await context.route('https://juliproz-store.vercel.app/images/**',r=>r.fulfill({path:root+'/images/brands/hermes-birkin.png',contentType:'image/png'}));await context.route('**/api/analytics',r=>r.fulfill({status:204}));await context.addInitScript(()=>{localStorage.setItem('jpAnalyticsConsent','declined');localStorage.setItem('jpAntiScamSeenV1','1')});
  const page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.goto(origin+'/');await page.locator('html:not([data-server-view])').waitFor();await page.evaluate(()=>document.fonts.ready);
- assert.match(await page.locator('#webHomeTitle').innerText(),/Байерский сервис/);
+ assert.match(await page.locator('#webHomeTitle').innerText(),/Buyer service/);
  assert.equal(await page.locator('#homeBuyerContent .home-buyer-steps>li').count(),3);
  assert.equal(await page.locator('#webHomePage a[data-manager-link]').getAttribute('href'),'https://t.me/juliproz');
  assert.equal(await page.locator('#homeBuyerContent a[data-contact-event]').getAttribute('href'),'https://t.me/juliproz');
@@ -24,7 +24,7 @@ const server=http.createServer((req,res)=>{const url=new URL(req.url,'http://loc
  await page.evaluate(()=>scrollTo(0,0));assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
  await page.screenshot({path:out+'/home-buyer-ru-'+width+'.png',fullPage:true});
  await page.locator('.masthead-inner [data-site-language=en]').click();
- assert.match(await page.locator('#webHomeTitle').innerText(),/Luxury personal shopping/);
+ assert.match(await page.locator('#webHomeTitle').innerText(),/Buyer service/);
  assert.doesNotMatch(await page.locator('#homeBuyerContent').innerText(),/[А-Яа-яЁё]/);
  assert.match(await page.locator('#webHomePage a[data-manager-link]').getAttribute('href'),/^https:\/\/wa.me\//);
  assert.match(await page.locator('#homeBuyerContent a[data-contact-event]').getAttribute('href'),/^https:\/\/wa.me\//);
