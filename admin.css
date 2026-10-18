@@ -434,31 +434,72 @@ dialog.sale-dialog{width:min(580px,calc(100vw - 24px));max-width:580px;max-heigh
 
 @media(max-width:700px){.category-metrics dt{font-size:11px}.category-row-heading h3{font-size:16px}.category-row-heading>span{font-size:11px}.category-sort-label select{font-size:13px}}
 
-/* Product writing guide supplied with the SEO recheck, adapted for the editor. */
-
-.jp-guide{--ink:#1f1f1f;--muted:#5a5a5a;--line:#e6e6e6;--soft:#f7f2f5;--pink:#ecd4e1;--good:#e8f3ea;--bad:#fbecec;max-width:860px;margin:0 auto;padding:24px 20px;color:var(--ink);font:15px/1.6 Roboto,Arial,sans-serif}
-.jp-guide *{box-sizing:border-box}
-.jp-guide h2{font:500 28px/1.2 'Playfair Display',Georgia,serif;margin:0 0 6px}
-.jp-guide h3{font:500 21px/1.3 'Playfair Display',Georgia,serif;margin:28px 0 10px}
-.jp-guide p{margin:0 0 10px}
-.jp-guide .jp-lead{color:var(--muted)}
-.jp-guide .jp-formula{background:var(--pink);border-radius:12px;padding:14px 16px;margin:12px 0;font-weight:500}
-.jp-guide .jp-formula span{display:inline-block;background:#fff;border-radius:8px;padding:2px 8px;margin:2px}
-.jp-guide ul{margin:0 0 10px;padding-left:20px}
-.jp-guide li{margin:4px 0}
-.jp-guide .jp-table{width:100%;border-collapse:collapse;margin:8px 0 12px;font-size:14px}
-.jp-guide .jp-table th,.jp-guide .jp-table td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
-.jp-guide .jp-table th{background:var(--soft);font-weight:500}
-.jp-guide .jp-bad{background:var(--bad)}
-.jp-guide .jp-good{background:var(--good)}
-.jp-guide .jp-example{border-left:3px solid var(--pink);background:var(--soft);padding:12px 14px;border-radius:0 10px 10px 0;margin:10px 0}
-.jp-guide .jp-example b{display:block;margin-bottom:4px}
-.jp-guide .jp-check{list-style:none;padding:0}
-.jp-guide .jp-check li{padding-left:28px;position:relative}
-.jp-guide .jp-check li::before{content:"";position:absolute;left:0;top:4px;width:16px;height:16px;border:1.5px solid var(--ink);border-radius:4px}
-.jp-guide details{border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin:10px 0}
-.jp-guide summary{cursor:pointer;font-weight:500}
-@media(max-width:600px){.jp-guide{padding:16px}.jp-guide h2{font-size:24px}.jp-guide .jp-table{font-size:13px}.jp-guide .jp-table th,.jp-guide .jp-table td{padding:6px}}
-
-.product-seo-guide{border:1px solid var(--line,#e6e6e6);border-radius:12px;padding:12px;min-width:0}.product-seo-guide>summary{cursor:pointer;font-weight:600;overflow-wrap:anywhere}.product-seo-title{display:block;overflow-wrap:anywhere}.jp-guide{width:100%;max-width:100%;padding:18px 0 0;min-width:0}.jp-guide table{table-layout:fixed}.jp-guide td,.jp-guide th{overflow-wrap:anywhere}.jp-guide a{text-decoration:underline}.jp-guide summary:focus-visible,.product-seo-guide>summary:focus-visible{outline:2px solid #583c50;outline-offset:4px}
-@media(max-width:600px){.jp-guide .jp-table:has(thead),.jp-guide .jp-table:has(thead) tbody,.jp-guide .jp-table:has(thead) tr,.jp-guide .jp-table:has(thead) td{display:block;width:100%}.jp-guide .jp-table thead{display:none}.jp-guide .jp-table:has(thead) tr{margin-bottom:12px}.jp-guide td[data-label]::before{content:attr(data-label);display:block;font-weight:600;margin-bottom:4px}.jp-guide{padding:16px 0 0}}
+/* In-context writing help; no product fields or publication rules are changed. */
+.product-seo-guide{margin:0 0 18px;border:1px solid #ddc9d7;border-radius:20px;background:#fff;min-width:0;overflow:hidden}
+.product-seo-guide>summary{display:flex;align-items:center;gap:16px;list-style:none;cursor:pointer;padding:22px 24px;background:linear-gradient(110deg,#f7edf3,#f1f5fa);overflow-wrap:anywhere}
+.product-seo-guide>summary::-webkit-details-marker{display:none}
+.product-seo-guide>summary:focus-visible{outline:3px solid #6c90b9;outline-offset:-4px}
+.writing-guide-mark{display:grid;place-items:center;width:52px;height:52px;flex-shrink:0;border-radius:16px;background:#e8cedf;color:#493249;font:500 27px/1 'Playfair Display',Georgia,serif}
+.writing-guide-intro{display:grid;gap:4px;min-width:0;flex:1}
+.writing-guide-eyebrow{font-size:9px;letter-spacing:.12em;font-weight:600;color:#6f4f66}
+.writing-guide-intro strong{font:500 26px/1.2 'Playfair Display',Georgia,serif}
+.writing-guide-intro small{font-size:12px;color:var(--muted)}
+.writing-guide-expand{display:flex;align-items:center;gap:12px;font-size:12px;color:#60475a}
+.writing-guide-expand svg{flex-shrink:0;transition:transform .2s}
+.product-seo-guide[open] .writing-guide-expand svg{transform:rotate(180deg)}
+.writing-guide-body{padding:22px 24px 0;min-width:0}
+.writing-guide-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;padding:5px;background:#f2f5f9;border-radius:14px;margin-bottom:24px}
+.writing-guide-tabs button{display:flex;align-items:center;justify-content:center;gap:8px;border-color:transparent;border-radius:10px;min-width:0;font-size:13px;padding:10px 8px;min-height:44px}
+.writing-guide-tabs button span{font-size:10px;opacity:.65}
+.writing-guide-tabs button[aria-selected=true]{background:#fff;border-color:#e5d9e2;color:#56394d;box-shadow:0 2px 6px #25394f08}
+.writing-guide-panel{max-width:960px;margin:0 auto;min-width:0;font-size:14px;line-height:1.65;overflow-wrap:anywhere}
+.writing-guide-panel[hidden]{display:none}
+.writing-guide-panel:focus-visible{outline:2px solid var(--brand-blue);outline-offset:4px;border-radius:6px}
+.writing-guide-heading{margin-bottom:18px}
+.writing-guide-heading h3{font:500 24px/1.25 'Playfair Display',Georgia,serif;margin:0 0 7px}
+.writing-guide-heading p{margin:0;color:var(--muted)}
+.writing-guide-panel p{margin:0 0 14px}
+.writing-guide-formula{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:18px}
+.writing-guide-formula span{padding:7px 12px;border-radius:9px;background:#f5e7ef;color:#56394d;font-weight:500}
+.writing-guide-formula b{font-weight:400;color:#8b6e83}
+.writing-guide-examples{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:18px 0 12px}
+.writing-guide-examples article,.writing-guide-example{border:1px solid var(--line);border-radius:12px;padding:16px;background:#f9fbfd;min-width:0}
+.writing-guide-examples article p,.writing-guide-example p{margin:7px 0 0}
+.writing-guide-example-label{font-size:9px;letter-spacing:.09em;font-weight:600;color:#566b82}
+.writing-guide-note{font-size:12px;color:#566b82;line-height:1.7}
+.writing-guide-list{padding-left:20px;margin:16px 0 22px}
+.writing-guide-list li+li{margin-top:8px}
+.writing-guide-steps{list-style:none;counter-reset:writing;display:grid;gap:16px;padding:0;margin:0 0 22px}
+.writing-guide-steps li{counter-increment:writing;position:relative;padding-left:40px}
+.writing-guide-steps li::before{content:counter(writing,decimal-leading-zero);position:absolute;left:0;top:1px;font-size:11px;color:#7f5c76;background:#f5e7ef;border-radius:8px;padding:4px 6px}
+.writing-guide-steps strong,.writing-guide-steps span{display:block}
+.writing-guide-steps span{color:var(--muted);font-size:13px;margin-top:3px}
+.writing-guide-template{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;margin:18px 0;padding:18px;border:1px solid #ddc9d7;border-radius:12px;background:#fcf8fb}
+.writing-guide-template>div p{font-size:12px;color:var(--muted);margin:4px 0 0}
+.writing-guide-template button{background:#e8cedf;border-color:#d9bace;color:#493249;align-self:start;font-size:12px}
+#writingDescriptionTemplate{grid-column:1/-1;white-space:pre-wrap;margin:0;padding-top:12px;border-top:1px solid #eadce6;font-size:13px;user-select:text}
+#writingCopyStatus{grid-column:1/-1;font-size:12px;margin:0;color:#56394d}
+#writingCopyStatus:empty{display:none}
+.writing-guide-translations{display:grid;gap:10px;margin:16px 0}
+.writing-guide-translations article{border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.writing-guide-translations p{display:flex;align-items:baseline;gap:10px;margin:0}
+.writing-guide-translations p+p{margin-top:8px;color:#5a4860}
+.writing-guide-translations p span{font-size:10px;letter-spacing:.06em;color:var(--muted);flex-shrink:0}
+.writing-guide-checks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;list-style:none;padding:0;margin:0 0 22px}
+.writing-guide-checks li{padding:0 0 0 28px;position:relative}
+.writing-guide-checks li::before{content:'✓';position:absolute;left:0;top:0;color:#706084;font-size:17px}
+.writing-guide-checks strong,.writing-guide-checks span{display:block}
+.writing-guide-checks span{color:var(--muted);font-size:13px;margin-top:4px}
+.writing-guide-footer{display:flex;align-items:center;justify-content:space-between;gap:16px;border-top:1px solid var(--line);margin-top:24px;padding:16px 0;color:var(--muted);font-size:11px;line-height:1.6}
+.writing-guide-footer p{margin:0;max-width:660px}
+.writing-guide-footer a{flex-shrink:0;text-underline-offset:3px}
+.writing-guide-footer-actions{display:grid;justify-items:center;gap:8px;flex-shrink:0}
+.writing-guide-footer-actions button{font-size:12px;background:#f5e7ef;border-color:#e5d3df;color:#56394d}
+.writing-field{min-width:0}
+.writing-field-help{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:8px 0;border:0;border-radius:6px;color:#78526d;font-size:12px;text-align:left}
+.writing-field-help:hover{background:transparent;color:#493249;text-decoration:underline;text-underline-offset:3px}
+.product-seo-title{display:block;overflow-wrap:anywhere;margin-top:8px;padding:10px 12px;background:#f2f5f9;border-radius:10px}
+.product-seo-title:empty{display:none}
+@media(max-width:700px){.product-seo-guide>summary{padding:18px 16px;gap:12px}.writing-guide-expand>span{display:none}.writing-guide-mark{width:44px;height:44px;border-radius:13px;font-size:24px}.writing-guide-intro strong{font-size:23px}.writing-guide-body{padding:16px 16px 0}.writing-guide-tabs{grid-template-columns:repeat(2,minmax(0,1fr));margin-bottom:20px}.writing-guide-tabs button{justify-content:flex-start;padding:10px 12px}.writing-guide-examples,.writing-guide-checks{grid-template-columns:minmax(0,1fr)}.writing-guide-heading h3{font-size:22px}.writing-guide-template{grid-template-columns:minmax(0,1fr);padding:14px}.writing-guide-template button{justify-self:start}.writing-guide-footer{display:block}.writing-guide-footer a{display:inline-block;min-height:44px;padding-top:10px}.writing-guide-panel{font-size:13px}.writing-guide-formula{gap:6px}.writing-guide-formula span{padding:6px 9px;font-size:12px}}
+@media(max-width:360px){.writing-guide-mark{display:none}.writing-guide-intro strong{font-size:22px}.writing-guide-eyebrow{font-size:8px;letter-spacing:.08em}.writing-guide-tabs button{font-size:12px;gap:5px}.writing-guide-body{padding:14px 12px 0}}
+@media(prefers-reduced-motion:reduce){.writing-guide-expand svg{transition:none}}

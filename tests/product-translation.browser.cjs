@@ -7,6 +7,7 @@ const server=http.createServer((req,res)=>{const file=path.resolve(root,'.'+new 
   const page=await browser.newPage({viewport:{width,height:900}}),errors=[];page.on('pageerror',e=>errors.push(e.message));
   await page.route('https://**',route=>route.abort());
   await page.goto('http://127.0.0.1:'+server.address().port+'/admin.html');
+  await page.evaluate(()=>adminSessionReady);
   await page.evaluate(()=>{
    sessionClock.start();session={cookie_session:true,session_id:'synthetic-session',aal:'aal2',amr:[{method:'totp',timestamp:Date.now()/1000}],expires_at:Date.now()/1000+3600,user:{id:'synthetic'}};adminSecurity.owner=false;
    window.AdminProductFinance=null;window.savedWrites=[];window.testRow={id:42,brand:'Brand',name:'Кроссовки',description:null,category:'Обувь',size:'40',price:300,currency:'EUR',available:true,revision:1,image_url:'https://juliproz-store.vercel.app/images/gucci-blackwhite-45.webp',fulfillment_status:'in_stock',gender:'unisex',product_condition:'new',stock_quantities:{40:1}};
@@ -17,10 +18,36 @@ const server=http.createServer((req,res)=>{const file=path.resolve(root,'.'+new 
   await page.locator('#jpGuideTitle').waitFor();
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Open writing guide fits '+width);
   assert.equal(await page.locator('#productSeoGuide script').count(),0);
-  await page.screenshot({path:out+'/writing-guide-'+width+'.png',fullPage:true});
+  await page.locator('#productSeoGuide').screenshot({path:out+'/writing-guide-'+width+'.png'});
+  await page.locator('#writingTabName').focus();await page.keyboard.press('ArrowRight');
+  assert.equal(await page.locator('#writingPanelDescription').isVisible(),true);
+  assert.equal(await page.locator('#writingTabDescription').evaluate(el=>el===document.activeElement),true);
+  await page.keyboard.press('End');assert.equal(await page.locator('#writingPanelCheck').isVisible(),true);
+  await page.keyboard.press('Home');assert.equal(await page.locator('#writingPanelName').isVisible(),true);
+  await page.locator('#writingTabEnglish').click();assert.equal(await page.locator('#writingPanelEnglish').isVisible(),true);
+  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'English guide fits '+width);
+  await page.locator('#productSeoGuide > summary').click();
+  await page.locator('[data-writing-open=Description]').click();
+  assert.equal(await page.locator('#writingPanelDescription').isVisible(),true);
+  // Clipboard success and browser denial both keep the draft and product writes untouched.
+  await page.evaluate(()=>{window.copiedTemplate='';Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText:async text=>{copiedTemplate=text}}})});
+  await page.locator('#copyWritingTemplate').click();
+  await page.locator('#writingCopyStatus').filter({hasText:'Шаблон скопирован'}).waitFor();
+  assert.equal(await page.evaluate(()=>copiedTemplate),await page.locator('#writingDescriptionTemplate').textContent());
+  await page.evaluate(()=>{navigator.clipboard.writeText=async()=>{throw Error('Denied')}});
+  await page.locator('#copyWritingTemplate').click();await page.locator('#writingCopyStatus').filter({hasText:'Текст выделен'}).waitFor();
+  assert.match(await page.evaluate(()=>getSelection().toString()),/\[Тип вещи\]/);
+  assert.equal(await page.locator('[name=description]').inputValue(),'');assert.equal(await page.evaluate(()=>savedWrites.length),0);assert.equal(await page.evaluate(()=>editorDirty),false);
+  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Description guide fits '+width);
+  await page.locator('#productSeoGuide').screenshot({path:out+'/writing-description-'+width+'.png'});
+  await page.locator('#closeWritingGuide').click();assert.equal(await page.locator('#productSeoGuide').evaluate(el=>el.open),false);
+  assert.equal(await page.locator('[name=description]').evaluate(el=>el===document.activeElement),true);
+  await page.locator('[data-writing-open=Name]').click();assert.equal(await page.locator('#writingPanelName').isVisible(),true);
   await page.locator('#productSeoGuide > summary').click();
   await page.locator('[name=name]').fill('Часы Datejust 31');
   await page.locator('#productEnglishFields').evaluate(el=>el.open=true);
+  await page.locator('[data-writing-open=English]').click();assert.equal(await page.locator('#writingPanelEnglish').isVisible(),true);
+  await page.locator('#productSeoGuide > summary').click();
   assert.match(await page.locator('#productSeoTitleEn').innerText(),/Datejust 31 watch/);
   await page.locator('[name=name]').fill('Сумка '+ 'Birkin '.repeat(18));
   assert.match(await page.locator('#productSeoTitleRu').innerText(),/Длинный заголовок/);
@@ -28,6 +55,7 @@ const server=http.createServer((req,res)=>{const file=path.resolve(root,'.'+new 
   await page.locator('#productEnglishFields').evaluate(el=>el.open=true);assert.match(await page.locator('#productTranslationStatus').innerText(),/Нужен английский перевод/);
   await page.locator('#save').click();await page.waitForFunction(()=>!busy);assert.match(await page.locator('#status').innerText(),/Заполните английский перевод/);assert.equal(await page.evaluate(()=>savedWrites.length),0);
   await page.locator('[name=name_en]').fill('Reviewed special edition');await page.locator('[name=description_en]').fill('Reviewed item details.');
+  await page.locator('#productBasics').screenshot({path:out+'/writing-fields-'+width+'.png'});
   await page.screenshot({path:out+'/editor-'+width+'.png',fullPage:true});
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
   await page.locator('#save').click();await page.waitForFunction(()=>savedWrites.length===1&&!busy);
