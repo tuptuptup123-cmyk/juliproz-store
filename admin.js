@@ -30,7 +30,7 @@ function syncStatisticsAccess(){
  document.querySelectorAll('[data-owner-statistics]').forEach(el=>el.classList.toggle('hidden',!allowed));
  if(!allowed){
   clearOverview();analyticsData=null;productWishlistCounts=null;productWishlistLoadedAt=0;
-  for(const id of ['analyticsCards','analyticsProducts','analyticsChart','analyticsStatus','retentionStatus','productWishlistStatus'])$(id).textContent='';
+  for(const id of ['analyticsCards','analyticsProducts','analyticsChart','analyticsDaily','analyticsPeriod','analyticsStatus','retentionStatus','productWishlistStatus'])$(id).textContent='';
   for(const id of ['stockTotal','stockCount','stockValue'])$(id).textContent='—';$('stockValueNote').textContent='';
   document.querySelectorAll('.product-wishlist').forEach(el=>el.remove());
   $('analyticsPanel').classList.add('hidden');window.AdminGoogleSearch?.clear();window.AdminHealth?.clear();window.AdminFinance?.clear();
@@ -624,11 +624,11 @@ const analyticsChannelNotes={google:'Google: показы и переходы и
 async function loadAnalytics(){
  if(!canViewStatistics())return;
  const google=analyticsChannel==='google';$('storeAnalyticsReport').classList.toggle('hidden',google);$('googleSearchPanel').classList.toggle('hidden',!google);$('analyticsPanel').querySelector('.analytics-toolbar').classList.toggle('hidden',google);if(google){window.AdminGoogleSearch?.load();return}
- if(analyticsBusy||!session)return;analyticsBusy=true;const epoch=sessionEpoch;const channel=analyticsChannel;document.querySelectorAll('[data-analytics-channel]').forEach(b=>b.disabled=true);$('analyticsChannelNote').textContent=analyticsChannelNotes[channel];analyticsData=null;$('analyticsCards').innerHTML='';$('analyticsProducts').innerHTML='';$('analyticsChart').innerHTML='';$('analyticsDays').disabled=true;$('refreshAnalytics').disabled=true;$('analyticsStatus').textContent='Загружаем статистику…';
+ if(analyticsBusy||!session)return;analyticsBusy=true;const epoch=sessionEpoch;const channel=analyticsChannel;document.querySelectorAll('[data-analytics-channel]').forEach(b=>b.disabled=true);$('analyticsChannelNote').textContent=analyticsChannelNotes[channel];analyticsData=null;$('analyticsCards').innerHTML='';$('analyticsProducts').innerHTML='';$('analyticsChart').innerHTML='';$('analyticsDaily').innerHTML='';$('analyticsPeriod').textContent='';$('analyticsDays').disabled=true;$('refreshAnalytics').disabled=true;$('analyticsStatus').textContent='Загружаем статистику…';
  try{const data=await request('/rest/v1/rpc/store_analytics_summary',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({p_days:Number($('analyticsDays').value),p_channel:channel})});if(epoch!==sessionEpoch||!canViewStatistics())return;
   const report=window.AnalyticsReport.render(data);
   analyticsData=data;$('analyticsCards').innerHTML=report.cards;renderAnalyticsChart();
-  $('analyticsProducts').innerHTML=report.details;
+  $('analyticsProducts').innerHTML=report.details;$('analyticsDaily').innerHTML=report.daily||'';$('analyticsPeriod').textContent=report.period||'Киев · Europe/Kyiv';$('analyticsChartControls').querySelector('[data-chart-metric=wishlist]').classList.toggle('hidden',channel!=='website');if(channel!=='website'&&analyticsChartMetric==='wishlist'){analyticsChartMetric='visitors';renderAnalyticsChart()}
   $('analyticsStatus').textContent=`Обновлено ${new Date().toLocaleTimeString('ru-RU')}. Добавления и удаления — количество действий за период.`;
   try{const limited=await request('/rest/v1/rpc/store_analytics_health',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});if(epoch!==sessionEpoch||!canViewStatistics())return;if(limited===true)$('analyticsStatus').textContent+=' Сбор приближается к защитным лимитам или достиг их: данные могут быть неполными.'}catch{if(epoch===sessionEpoch&&canViewStatistics())$('analyticsStatus').textContent+=' Статус лимитов недоступен.'}
   try{const botLimited=await request('/rest/v1/rpc/store_bot_health',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});if(epoch!==sessionEpoch||!canViewStatistics())return;if(botLimited===true)$('analyticsStatus').textContent+=' Бот приближается к защитным лимитам или достиг их.'}catch{if(epoch===sessionEpoch&&canViewStatistics())$('analyticsStatus').textContent+=' Статус лимитов бота недоступен.'}
@@ -637,6 +637,7 @@ async function loadAnalytics(){
  finally{analyticsBusy=false;document.querySelectorAll('[data-analytics-channel]').forEach(b=>b.disabled=false);$('analyticsDays').disabled=false;$('refreshAnalytics').disabled=false}
 }
 function renderAnalyticsChart(){if(!canViewStatistics()||!analyticsData)return;$('analyticsChart').innerHTML=window.AnalyticsReport.chart(analyticsData,analyticsChartMetric);document.querySelectorAll('[data-chart-metric]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.chartMetric===analyticsChartMetric)))}
+$('analyticsProducts').addEventListener('change',e=>{if(e.target.id==='analyticsCategorySort'&&canViewStatistics()&&analyticsData?.channel==='website')$('analyticsCategoryRows').innerHTML=window.AnalyticsReport.categoryContent(analyticsData,e.target.value)});
 $('analyticsChartControls').addEventListener('click',e=>{const b=e.target.closest('[data-chart-metric]');if(!b)return;analyticsChartMetric=b.dataset.chartMetric;renderAnalyticsChart()});
 $('refreshAnalytics').onclick=loadAnalytics;$('analyticsDays').onchange=loadAnalytics;
 $('analyticsChannels').addEventListener('click',e=>{const b=e.target.closest('[data-analytics-channel]');if(!b||analyticsBusy||!session||!Object.hasOwn(analyticsChannelNotes,b.dataset.analyticsChannel)||b.dataset.analyticsChannel===analyticsChannel)return;analyticsChannel=b.dataset.analyticsChannel;document.querySelectorAll('[data-analytics-channel]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.analyticsChannel===analyticsChannel)));loadAnalytics()});
