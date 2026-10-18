@@ -74,7 +74,7 @@ test('SALE selection includes discounted subcategories and aliases, excluding fu
  for(const [collection,id] of [['clothing',101],['shoes',102],['accessories',103]]){
   assert.deepEqual(saleRows.filter(p=>sale.matches(p,collection)).map(p=>p.id),[id]);
   const html=site.render(template,'catalog',null,'en',saleRows,sale.fromSearch('?sale=1&collection='+collection)),body=html.match(/<article id="serverLanding"[\s\S]*?<\/article>/)[0];
-  assert.match(body,/SALE/);assert.deepEqual([...body.matchAll(/href="https:\/\/www.juliproz.com\/product\/(\d+)/g)].map(m=>Number(m[1])),[id]);
+  assert.doesNotMatch(body,/<h1>|Discounted pieces from our collection/);assert.deepEqual([...body.matchAll(/href="https:\/\/www.juliproz.com\/product\/(\d+)/g)].map(m=>Number(m[1])),[id]);
  }
  assert.deepEqual(sale.fromSearch('?sale=1&collection=__proto__'),{sale:true,saleCollection:null});
  assert.deepEqual(sale.fromSearch('?collection=clothing'),{sale:false,saleCollection:null});

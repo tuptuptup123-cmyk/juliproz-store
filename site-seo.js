@@ -52,15 +52,14 @@
    const next=url.pathname+url.search+url.hash;if(next!==location.pathname+location.search+location.hash)history.replaceState(history.state,'',next);
   }
   if(inCatalog&&data.kind==='brand'&&state.brand!==data.brand){data={...content.pages.catalog,kind:'catalog'};updateURL('catalog',true);metadata()}
-  const intro=document.getElementById('seoCatalogIntro'),show=inCatalog&&data.kind!=='product';
+  const intro=document.getElementById('seoCatalogIntro'),show=inCatalog&&data.kind!=='product'&&!(data.kind==='catalog'&&state.sale);
   if(intro){
    intro.hidden=!show;
    if(show){
     const page=data.kind==='brand'?data:content.pages.catalog,slug=page.path.split('/')[2],rich=data.kind==='brand'&&discovery?.definitions[slug];
     intro.classList.toggle('discovery-intro',Boolean(rich));
-    const sale=!rich&&state.sale?root.SaleCollections?.copy(lang,state.saleCollection):null;
-    const html=rich?discovery.brand(slug,lang):`<h1>${escape(sale?.heading||page.heading[lang])}</h1><p>${escape(sale?.intro||page.intro[lang])}</p>${sale?`<a class="discovery-text-link" href="${root.SaleCollections.url(lang)}">${lang==='en'?'All SALE pieces':'Все вещи SALE'} →</a>`:''}`;
-    setHTML(intro,lang+'|'+page.path+'|'+Boolean(sale)+'|'+(state.saleCollection||''),html);
+    const html=rich?discovery.brand(slug,lang):`<h1>${escape(page.heading[lang])}</h1><p>${escape(page.intro[lang])}</p>`;
+    setHTML(intro,lang+'|'+page.path,html);
    }
   }
   const outlet=document.getElementById('webOutletPage');if(outlet&&state.tab==='outlet')setHTML(outlet,lang,discovery.outlet(lang));
