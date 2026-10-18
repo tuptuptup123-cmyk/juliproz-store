@@ -39,8 +39,8 @@ for(const width of [390,1280]){
  await page.locator('[data-size="40"]').click();
  assert.equal(await page.locator('.photo-picker button').count(),2);
  const savedCart=await page.evaluate(()=>JSON.stringify(cart));
- await page.evaluate(()=>{document.getElementById('productModal').scrollTop=100});
- const scrollBefore=await page.locator('#productModal').evaluate(e=>e.scrollTop);
+ await page.evaluate(()=>{document.getElementById('productContent').scrollTop=100});
+ const scrollBefore=await page.locator('#productContent').evaluate(e=>e.scrollTop);
  rows[0]={...rows[0],photos:[cover]};
  await page.evaluate(()=>loadProducts(true));
  assert.equal(await page.locator('.photo-picker').count(),0);
@@ -48,7 +48,7 @@ for(const width of [390,1280]){
  assert.equal(await page.evaluate(()=>selectedProduct.photos.length),1);
  assert.equal(await page.evaluate(()=>selectedSize),'40');
  assert.equal(await page.evaluate(()=>JSON.stringify(cart)),savedCart);
- const scrollAfter=await page.locator('#productModal').evaluate(e=>({top:e.scrollTop,max:Math.max(0,e.scrollHeight-e.clientHeight)}));
+ const scrollAfter=await page.locator('#productContent').evaluate(e=>({top:e.scrollTop,max:Math.max(0,e.scrollHeight-e.clientHeight)}));
  assert.equal(scrollAfter.top,Math.min(scrollBefore,scrollAfter.max));
  assert.equal(await page.locator('#productModal').isVisible(),true);
  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));assert.deepEqual(errors,[]);await page.screenshot({path:out+'/audit-'+width+'.png'});await page.close();console.log(width+' PASS 150-click buy/wishlist/manager/checkout/quantity/delete, price-safe cart edits, stale navigation, reserved One Size, ordered sizes');
