@@ -15,5 +15,6 @@ const root=path.resolve(__dirname,'../..');
  if(process.argv.includes('--update-snapshot'))fs.writeFileSync(snapshot,JSON.stringify(catalog,null,2)+'\n');else assert.deepEqual(catalog,JSON.parse(fs.readFileSync(snapshot,'utf8')),'Canonical schema snapshot changed; review migration and update snapshot explicitly.');
  await require('./audit-probes.cjs')(db);
  await require('./remaining-probes.cjs')(db);
+ await require('./acquisition-probes.cjs')(db);
  await db.close();console.log('PASS schema restore and permission probes');
 })().catch(e=>{console.error(e.stack);process.exitCode=1});

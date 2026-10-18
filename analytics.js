@@ -7,12 +7,38 @@
  // Load Vercel's same-origin collectors only after the visitor opts in.
  let vercelStarted=false;
  const publicHosts=new Set(['juliproz.com','www.juliproz.com','juliproz-store.vercel.app']);
+ const publicPath=path=>/^(?:\/|\/index\.html|\/(?:catalog|services|sell|outlet)|\/brands\/[a-z0-9-]+|\/product\/[1-9][0-9]*)$/.test(path);
+ const sources=new Set(['google_organic','google_paid','campaign','referral','direct','unknown','telegram']);
+ // Keep only a coarse source, never a referrer URL, search query, campaign or click ID.
+ function entrySource(){
+  if(channel==='telegram')return 'telegram';
+  try{
+   const url=new URL(window.location.href),q=url.searchParams,medium=(q.get('utm_medium')||'').toLowerCase(),source=(q.get('utm_source')||'').toLowerCase();
+   if(['gclid','gbraid','wbraid','dclid'].some(k=>q.has(k))||source==='google'&&/^(cpc|ppc|paid|paidsearch|display|cpm)$/.test(medium))return 'google_paid';
+   if(source||medium)return source==='google'&&medium==='organic'?'google_organic':'campaign';
+   if(!document.referrer)return 'direct';
+   const ref=new URL(document.referrer);
+   if(publicHosts.has(ref.hostname)||ref.origin===url.origin)return 'direct';
+   return /^(?:www\.)?google\.(?:com|ru|de|fr|es|it|nl|be|ch|at|ca|ie|pt|pl|cz|dk|se|no|fi|ae|co\.uk|co\.in|co\.jp|co\.kr|com\.au|com\.br|com\.mx|com\.tr|com\.sg|com\.hk|com\.ua)$/.test(ref.hostname)?'google_organic':'referral';
+  }catch{return 'unknown'}
+ }
+ const landingSource=entrySource();let acquisition=null,firstEvent=true;
+ function visitSource(now){
+  if(!acquisition)try{acquisition=JSON.parse(sessionStorage.getItem('jpAnalyticsAcquisition'))}catch{}
+  if(!acquisition||acquisition.session!==session||!sources.has(acquisition.source)||!Number.isFinite(acquisition.seenAt)||now-acquisition.seenAt>=1800000||now<acquisition.seenAt){
+   if(acquisition&&acquisition.session===session){session=uuid();try{sessionStorage.setItem('jpAnalyticsSession',session)}catch{}recent.clear()}
+   acquisition={session,source:firstEvent?landingSource:channel==='telegram'?'telegram':'direct',seenAt:now};
+  }
+  firstEvent=false;acquisition.seenAt=now;
+  try{sessionStorage.setItem('jpAnalyticsAcquisition',JSON.stringify(acquisition))}catch{}
+  return acquisition.source;
+ }
  function beforeVercelSend(event){
   if(consent!==true)return null;
-  try{const url=new URL(event.url,window.location.href);if(!publicHosts.has(url.hostname)||!['/','/index.html'].includes(url.pathname))return null;url.search='';url.hash='';return {...event,url:url.href}}catch{return null}
+  try{const url=new URL(event.url,window.location.href);if(channel==='telegram'||!publicHosts.has(url.hostname)||!publicPath(url.pathname))return null;url.search='';url.hash='';return {...event,url:url.href}}catch{return null}
  }
  function startVercel(){
-  if(vercelStarted||!publicHosts.has(window.location?.hostname)||!['/','/index.html'].includes(window.location.pathname))return;
+  if(vercelStarted||channel==='telegram'||!publicHosts.has(window.location?.hostname)||!publicPath(window.location.pathname))return;
   vercelStarted=true;
   for(const [name,queue,src] of [['va','vaq','/_vercel/insights/script.js'],['si','siq','/_vercel/speed-insights/script.js']]){
    window[name]=window[name]||function(){(window[queue]=window[queue]||[]).push(arguments)};
@@ -22,7 +48,7 @@
  }
  const uuid=()=>crypto.randomUUID(),valid=x=>/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(x||'');
  function identity(storage,key){try{let id=storage.getItem(key);if(!valid(id)){id=uuid();storage.setItem(key,id)}return id}catch{return uuid()}}
- function forget(){if(valid(visitor))withdrawnReference=visitor;try{localStorage.removeItem('jpAnalyticsVisitor');sessionStorage.removeItem('jpAnalyticsSession')}catch{}visitor=null;session=null;recent.clear();sent=0}
+ function forget(){if(valid(visitor))withdrawnReference=visitor;try{localStorage.removeItem('jpAnalyticsVisitor');sessionStorage.removeItem('jpAnalyticsSession');sessionStorage.removeItem('jpAnalyticsAcquisition')}catch{}visitor=null;session=null;acquisition=null;firstEvent=true;recent.clear();sent=0}
  function showChoices(){const ref=visitor||withdrawnReference,node=document.getElementById('analyticsDeletionReference');if(node){node.textContent=ref?`Код для запроса удаления ранее отправленной статистики: ${ref}. Сохраните его перед закрытием страницы и передайте менеджеру.`:'';node.classList.toggle('hidden',!ref)}document.getElementById('analyticsConsent')?.classList.remove('hidden');document.getElementById('analyticsAccept')?.focus()}
  function setConsent(value){
   consent=value===true;try{localStorage.setItem('jpAnalyticsConsent',consent?'accepted':'declined')}catch{}
@@ -32,9 +58,9 @@
  }
  function track(event,product=null,page=null){
   if(channel==='telegram'&&!telegramInitData())return;
-  if(consent!==true||document.visibilityState==='hidden'||sent>=2000)return;const now=Date.now(),key=`${event}:${product||''}:${page||''}`;
+  if(consent!==true||document.visibilityState==='hidden'||sent>=2000)return;const now=Date.now(),source=visitSource(now),key=`${event}:${product||''}:${page||''}`;
   if(now-(recent.get(key)||0)<(event==='product_view'?5000:350))return;recent.set(key,now);if(recent.size>200)recent.delete(recent.keys().next().value);sent++;
-  fetch('/api/analytics',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({channel,...(channel==='telegram'?{telegram_init_data:telegramInitData()}:{}),event_id:uuid(),visitor_id:visitor,session_id:session,event,product_id:product==null?null:Number(product),page:page==='favorites'?'wishlist':page}),signal:AbortSignal.timeout(8000),keepalive:true}).catch(()=>{});
+  fetch('/api/analytics',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({channel,source,...(channel==='telegram'?{telegram_init_data:telegramInitData()}:{}),event_id:uuid(),visitor_id:visitor,session_id:session,event,product_id:product==null?null:Number(product),page:page==='favorites'?'wishlist':page}),signal:AbortSignal.timeout(8000),keepalive:true}).catch(()=>{});
  }
  const channelLinks=new Map([
   ['https://t.me/+9q95XTJFt9kxYTQ0','channel_julia_main'],['https://t.me/+lz-ze3-GDEQ0YmFi','channel_julia_outlet'],

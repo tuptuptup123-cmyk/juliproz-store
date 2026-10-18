@@ -26,3 +26,8 @@ test('analytics preflight permits only exact shop origins',async()=>{
  for(const origin of ['https://juliproz.com','https://www.juliproz.com','https://juliproz-store.vercel.app']){const r=await handler(new Request('https://synthetic.invalid',{method:'OPTIONS',headers:{origin}}));assert.equal(r.status,204);assert.equal(r.headers.get('Access-Control-Allow-Origin'),origin);assert.equal(r.headers.get('Vary'),'Origin')}
  assert.equal((await handler(new Request('https://synthetic.invalid',{method:'OPTIONS',headers:{origin:'https://www.juliproz.com.evil.invalid'}}))).status,403);
 });
+
+test('Speed Insights covers indexed pages but never admin, API or Telegram routes',()=>{
+ for(const path of ['/catalog','/services','/sell','/outlet','/brands/hermes','/product/42'])assert.equal(setup('accepted','www.juliproz.com',path).scripts.length,2,path);
+ for(const path of ['/api/analytics','/telegram/','/admin','/auth/callback'])assert.equal(setup('accepted','www.juliproz.com',path).scripts.length,0,path);
+});

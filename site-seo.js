@@ -25,6 +25,10 @@
  }
  function metadata(){
   const lang=language();document.title=data.title[lang];
+  const paths={home:'/',catalog:'/catalog',hermes:'/brands/hermes',outlet:'/outlet',favorites:'/?tab=favorites',cart:'/?tab=cart',sell:'/sell',services:'/services',about:'/?tab=about'};
+  for(const link of document.querySelectorAll('a[data-tab],a[data-web-section]')){
+   const path=paths[link.dataset.tab||link.dataset.webSection];if(path)link.setAttribute('href',path+(lang==='en'?(path.includes('?')?'&':'?')+'lang=en':''));
+  }
   const values={'meta[name="description"]':data.description[lang],'meta[property="og:title"]':data.title[lang],'meta[property="og:description"]':data.description[lang],'meta[property="og:url"]':content.url(data.path,lang),'meta[property="og:type"]':data.kind==='product'?'product':'website','meta[property="og:locale"]':lang==='en'?'en_US':'ru_RU','meta[property="og:locale:alternate"]':lang==='en'?'ru_RU':'en_US','meta[name="twitter:image"]':data.image||content.origin+'/images/brand-paw.webp','meta[property="og:image"]':data.image||content.origin+'/images/brand-paw.webp','meta[name="twitter:title"]':data.title[lang],'meta[name="twitter:description"]':data.description[lang]};
   for(const [selector,value] of Object.entries(values)){const el=document.querySelector(selector);if(el)el.setAttribute('content',value)}
   document.querySelector('link[rel="canonical"]')?.setAttribute('href',content.url(data.path,lang));
@@ -46,6 +50,7 @@
  function setHTML(el,key,html){if(el&&el.dataset.renderKey!==key){el.innerHTML=html;el.dataset.renderKey=key}}
  function sync(state){
   const lang=language(),inCatalog=['catalog','hermes'].includes(state.tab);
+  if(state.tab==='home')for(const img of document.querySelectorAll('img[data-home-src]')){img.src=img.dataset.homeSrc;delete img.dataset.homeSrc}
   if(serverRendered&&state.tab==='catalog'&&data.kind==='catalog'){
    const url=new URL(location.href);url.searchParams.delete('sale');url.searchParams.delete('collection');
    if(state.sale){url.searchParams.set('sale','1');if(window.SaleCollections?.groups[state.saleCollection])url.searchParams.set('collection',state.saleCollection)}
