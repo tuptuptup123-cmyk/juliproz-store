@@ -10,9 +10,31 @@ const server=http.createServer((req,res)=>{const url=new URL(req.url,'http://loc
  const file=path.resolve(root,'.'+route);if(!file.startsWith(root+path.sep))return res.writeHead(403).end();fs.readFile(file,(err,data)=>{res.writeHead(err?404:200,{'Content-Type':types[path.extname(file)]||'application/octet-stream'});res.end(err?'Missing':data)});
 });
 (async()=>{await new Promise(r=>server.listen(0,'127.0.0.1',r));const origin='http://127.0.0.1:'+server.address().port,browser=await chromium.launch();try{
- for(const width of [390,1280]){
- const context=await browser.newContext({viewport:{width,height:900}});await context.route('**/api/catalog',r=>r.fulfill({json:products}));await context.route('**/rest/v1/products?**',r=>r.fulfill({json:products}));await context.route('https://juliproz-store.vercel.app/images/**',r=>r.fulfill({path:root+'/images/brands/hermes-birkin.png',contentType:'image/png'}));await context.route('**/api/analytics',r=>r.fulfill({status:204}));await context.addInitScript(()=>{localStorage.setItem('jpAnalyticsConsent','declined');localStorage.setItem('jpAntiScamSeenV1','1')});
+ for(const width of [320,390,1280]){
+ const context=await browser.newContext({viewport:{width,height:900},reducedMotion:'reduce'});await context.route('**/api/catalog',r=>r.fulfill({json:products}));await context.route('**/rest/v1/products?**',r=>r.fulfill({json:products}));await context.route('https://juliproz-store.vercel.app/images/**',r=>r.fulfill({path:root+'/images/brands/hermes-birkin.png',contentType:'image/png'}));await context.route('**/api/analytics',r=>r.fulfill({status:204}));await context.addInitScript(()=>{localStorage.setItem('jpAnalyticsConsent','declined');localStorage.setItem('jpAntiScamSeenV1','1')});
  const page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.goto(origin+'/');await page.locator('html:not([data-server-view])').waitFor();await page.evaluate(()=>document.fonts.ready);
+ assert.match(await page.locator('#webHomeTitle').innerText(),/Байерский сервис/);
+ assert.equal(await page.locator('#homeBuyerContent .home-buyer-steps>li').count(),3);
+ assert.equal(await page.locator('#webHomePage a[data-manager-link]').getAttribute('href'),'https://t.me/juliproz');
+ assert.equal(await page.locator('#homeBuyerContent a[data-contact-event]').getAttribute('href'),'https://t.me/juliproz');
+ const question=page.locator('#homeBuyerContent details').nth(1);
+ await question.locator('summary').focus();await page.keyboard.press('Enter');assert.equal(await question.getAttribute('open'),'');
+ await page.locator('.home-hero-actions a[href="#homeHowItWorks"]').click();assert.ok(await page.locator('#homeHowItWorks').evaluate(el=>el.getBoundingClientRect().top<innerHeight));
+ await page.evaluate(()=>scrollTo(0,0));assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+ await page.screenshot({path:out+'/home-buyer-ru-'+width+'.png',fullPage:true});
+ await page.locator('.masthead-inner [data-site-language=en]').click();
+ assert.match(await page.locator('#webHomeTitle').innerText(),/Luxury personal shopping/);
+ assert.doesNotMatch(await page.locator('#homeBuyerContent').innerText(),/[А-Яа-яЁё]/);
+ assert.match(await page.locator('#webHomePage a[data-manager-link]').getAttribute('href'),/^https:\/\/wa.me\//);
+ assert.match(await page.locator('#homeBuyerContent a[data-contact-event]').getAttribute('href'),/^https:\/\/wa.me\//);
+ assert.equal(await page.locator('#homeBuyerContent a[href^="/services"]').getAttribute('href'),'/services?lang=en');
+ assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+ await page.screenshot({path:out+'/home-buyer-en-'+width+'.png',fullPage:true});
+ await page.reload();await page.locator('html:not([data-server-view])').waitFor();assert.match(await page.locator('#homeBuyerContent').innerText(),/How personal shopping works/);
+ await page.locator('.masthead-inner [data-site-language=ru]').click();assert.match(await page.locator('#homeBuyerContent').innerText(),/Как заказать через байера/);
+ assert.equal(await page.locator('#homeBuyerContent a[data-contact-event]').getAttribute('href'),'https://t.me/juliproz');
+ console.log('PASS homepage steps, FAQ keyboard, anchor, RU/EN contacts, reload and layout',width);
  await page.goto(origin+'/brands/hermes?lang=en');await page.locator('#grid .product').waitFor();assert.equal(await page.locator('#grid .product').count(),1);assert.match(await page.locator('#seoCatalogIntro h1').innerText(),/Hermès/);assert.equal(await page.locator('html').getAttribute('lang'),'en');assert.match(await page.locator('#grid .product-open').getAttribute('href'),/product\/99001\?lang=en$/);
  await page.locator('.masthead-inner [data-site-language=ru]').click();assert.match(await page.locator('#seoCatalogIntro p').innerText(),/Смотрите/);await page.reload();await page.locator('#grid .product').waitFor();assert.equal(await page.locator('#grid .product').count(),1);
  await page.locator('.product-open').click();await page.locator('#productContent h1').waitFor();await page.locator('#backProduct').click();
