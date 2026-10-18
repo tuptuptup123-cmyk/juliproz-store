@@ -219,7 +219,7 @@ test('admin prices and stock totals use rounded EUR unit prices',()=>{
  assert.equal(h.run("cataloguePrice({price:624.9,currency:'USD'})"),'');
  h.run("ProductSizes={stockUnits:p=>p.units||1};items=[{available:true,price:624.9,currency:'EUR',units:2},{available:true,price:124.4,currency:'€',units:3},{available:true,price:null},{available:true,price:624.9,currency:'USD'}]");
  const summary=h.run('stockSummary(items)');assert.equal(summary.total,1622);assert.equal(summary.unpriced,1);assert.equal(summary.unconverted,1);
- h.run('updateStockSummary(false)');assert.match(h.get('stockValue').textContent,/1[\s\u00a0\u202f]622/);assert.doesNotMatch(h.get('stockValue').textContent,/[,.]\d/);
+ h.seed(session('aal2'));h.run('adminSecurity.owner=true;updateStockSummary(false)');assert.match(h.get('stockValue').textContent,/1[\s\u00a0\u202f]622/);assert.doesNotMatch(h.get('stockValue').textContent,/[,.]\d/);
 });
 
 test('global logout requires confirmation and never claims other sessions revoked after failure',async()=>{

@@ -126,6 +126,7 @@ function createHandler(env=process.env,request=fetch,now=()=>Date.now()){
     await upstream('/rest/v1/rpc/touch_store_admin_session','POST',{},current.data.access_token);
     const security=await upstream('/rest/v1/rpc/store_admin_security_status','POST',{},current.data.access_token);
     if(!security||security.pending===true)throw fail(403,'Доступ ещё не подтверждён владельцем.');
+    if(security.access_role!=='owner')throw fail(403,'Статистика доступна только главному администратору.');
     if(claims(current.data.access_token).aal!=='aal2'&&security.paused!==true)throw fail(403,'Подтвердите вход в админку.','MFA_REQUIRED');
     const admins=await upstream('/rest/v1/store_admins?select=user_id&user_id=eq.'+encodeURIComponent(current.data.user.id),'GET',undefined,current.data.access_token);
     if(!Array.isArray(admins)||admins.length!==1||admins[0].user_id!==current.data.user.id)throw fail(403,'Нет доступа к статистике магазина.');
