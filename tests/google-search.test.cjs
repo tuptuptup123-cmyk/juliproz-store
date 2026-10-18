@@ -62,7 +62,7 @@ test('Google BFF report requires cookie, CSRF, active membership, MFA and comple
  const success=await f.invoke(path,options);assert.equal(success.status,200);assert.equal(success.body.status,'not_connected');assert.match(success.headers['Cache-Control'],/no-store/);
  assert.equal((await f.invoke(path,{...options,body:{days:800}})).status,400);
  f.touchFailure(403);assert.equal((await f.invoke(path,options)).status,403);
- for(const config of [{membership:false},{browser:true},{security:{paused:true,pending:true}},{security:{paused:false,pending:false},browser:true}]){
+ for(const config of [{security:{paused:false,pending:false,access_role:'admin'}},{security:{paused:false,pending:false}},{membership:false},{browser:true},{security:{paused:true,pending:true}},{security:{paused:false,pending:false},browser:true}]){
   const f=fixture(config),login=await f.login();assert.equal((await f.invoke(path,{...login,method:'POST',body:{days:7}})).status,403);
  }
  const pending=fixture(),imported=await pending.invoke('/session/import',{method:'POST',body:{...pending.auth(),type:'invite'}});

@@ -38,13 +38,13 @@
   content.innerHTML=cards()+(report.status==='empty'?'<div class="google-empty"><strong>Google пока не вернул статистику за этот период.</strong><p>Для недавно подключённого сайта это ожидаемо. Попробуйте другой период или проверьте отчёт позже.</p></div>':chart()+tables());
  }
  async function load(force=false){
-  if(!session)return;const days=Number($('googleSearchDays').value);
+  if(!canViewStatistics())return;const days=Number($('googleSearchDays').value);
   if(!force&&report&&loadedDays===days&&Date.now()-lastLoaded<15*60000)return;
   controller?.abort();controller=new AbortController();const run=++generation,epoch=sessionEpoch;
   report=null;content.innerHTML='';status.textContent='Загружаем статистику Google…';panel.setAttribute('aria-busy','true');$('googleSearchRefresh').disabled=true;
   try{
    const result=await request('/reports/google-search',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({days}),signal:controller.signal});
-   if(run!==generation||epoch!==sessionEpoch||!session)return;
+   if(run!==generation||epoch!==sessionEpoch||!canViewStatistics()||!session)return;
    if(!['not_connected','ready','empty'].includes(result?.status))throw Error('Не удалось получить отчёт Google.');
    report=result;loadedDays=days;lastLoaded=Date.now();
    if(result.status==='not_connected'){
@@ -54,7 +54,7 @@
    const updated=new Date(result.updatedAt);
    status.textContent=`${date(result.period.start)} — ${date(result.period.end)} · Получено ${updated.toLocaleString('ru-RU')}${result.lastDataDate?' · Данные по '+date(result.lastDataDate):''}${result.firstIncompleteDate?' · С '+date(result.firstIncompleteDate)+' данные предварительные.':'.'} Обновление — не чаще раза в 15 минут.`;
    render();
-  }catch(error){if(run!==generation||epoch!==sessionEpoch||error.name==='AbortError')return;status.textContent=error.message||'Не удалось загрузить Google. Попробуйте позже.';content.innerHTML='<p class="google-empty">Отчёт недоступен. Нажмите «Обновить», чтобы повторить.</p>'}
+  }catch(error){if(run!==generation||epoch!==sessionEpoch||!canViewStatistics()||error.name==='AbortError')return;status.textContent=error.message||'Не удалось загрузить Google. Попробуйте позже.';content.innerHTML='<p class="google-empty">Отчёт недоступен. Нажмите «Обновить», чтобы повторить.</p>'}
   finally{if(run===generation){panel.removeAttribute('aria-busy');$('googleSearchRefresh').disabled=false;controller=null}}
  }
  panel.addEventListener('click',event=>{

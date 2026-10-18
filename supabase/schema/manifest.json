@@ -3,7 +3,10 @@
   "migrations": [
     "supabase/migrations/20261016144421_external_audit_security_and_logic.sql",
     "supabase/migrations/20261017082140_remaining_audit_sessions_delivery_observability.sql",
-    "supabase/migrations/20261018051207_analytics_acquisition_sources.sql"
+    "supabase/migrations/20261018051301_owner_only_statistics.sql",
+    "supabase/migrations/20261018051207_analytics_acquisition_sources.sql",
+    "supabase/migrations/20261018051735_statistics_owner_fail_closed.sql",
+    "supabase/migrations/20261018051835_statistics_acquisition_owner_guard.sql"
   ],
   "postDeployment": [
     "supabase/rollout/private-product-photos.sql"
