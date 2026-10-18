@@ -27,8 +27,9 @@ let browser;
    }),'Mobile home keeps the logo compact, shop and socials below title and education below photos');
    assert.ok(await page.locator('.bottom-nav').evaluate(nav=>{
     const bounds=nav.getBoundingClientRect(),buttons=[...nav.querySelectorAll('button')].filter(b=>b.getBoundingClientRect().width>0);
-    return buttons.length===(innerWidth<=680?5:7)&&nav.scrollWidth<=nav.clientWidth&&buttons.every(b=>{const r=b.getBoundingClientRect(),label=b.querySelector('small');return r.left>=bounds.left&&r.right<=bounds.right&&label.scrollWidth<=label.clientWidth;});
-   }),'Primary navigation and labels fit; secondary destinations stay in More');
+    const visible=nav.scrollWidth>nav.clientWidth?buttons.filter(b=>b.getAttribute('aria-current')==='page'):buttons;
+    return buttons.length===9&&bounds.left>=0&&bounds.right<=innerWidth+1&&buttons.every(b=>{const label=b.querySelector('small');return label.scrollWidth<=label.clientWidth+1;})&&visible.length>0&&visible.every(b=>{const r=b.getBoundingClientRect();return r.left>=bounds.left-1&&r.right<=bounds.right+1;});
+   }),'Nine destinations remain available; labels fit and the active tab stays visible in the scrollable navigation');
   }else{
    assert.equal(await page.locator('.brand .buyer-education-card').isVisible(),true);
    assert.equal(await page.locator('.home-shop-link').isVisible(),true);
