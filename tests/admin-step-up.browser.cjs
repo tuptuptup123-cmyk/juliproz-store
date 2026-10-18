@@ -15,7 +15,11 @@ const root=path.resolve(__dirname,'..'),server=http.createServer((req,res)=>{con
    if(p.endsWith('store_finance_report'))return route.fulfill({json:{rows:[],summary:{},today:'2026-10-16'}});
    return route.fulfill({json:[]});
   });
-  await page.goto('http://localhost:8799/admin.html');await page.evaluate(user=>{sessionClock.start();session={user,cookie_session:true,session_id:'synthetic-session',aal:'aal2',amr:[{method:'totp',timestamp:Date.now()/1000}],expires_at:Date.now()/1000+3600};adminSecurity.owner=true;$('authArea').classList.add('hidden');$('workspace').classList.remove('hidden');AdminFinance.openEntry(null)},user);
+  await page.goto('http://localhost:8799/admin.html');
+  // Finish the anonymous restore before installing a synthetic owner session.
+  // Otherwise its late 401 can clear the fixture and close the finance dialog.
+  await page.evaluate(()=>adminSessionReady);
+  await page.evaluate(user=>{sessionClock.start();session={user,cookie_session:true,session_id:'synthetic-session',aal:'aal2',amr:[{method:'totp',timestamp:Date.now()/1000}],expires_at:Date.now()/1000+3600};adminSecurity.owner=true;$('authArea').classList.add('hidden');$('workspace').classList.remove('hidden');AdminFinance.openEntry(null)},user);
   await page.locator('#financeForm [name=product_label]').fill('Pending order');await page.locator('#financeForm [name=amount]').fill('100');await page.locator('#financeSave').click();await page.locator('#stepUpDialog').waitFor();assert.equal(writes,0);
   await page.locator('#stepUpForm [name=code]').fill('000000');await page.locator('#stepUpForm button[type=submit]').click();await page.locator('#stepUpError').filter({hasText:'Неверный код'}).waitFor();assert.equal(writes,0);assert.equal(await page.locator('#financeForm [name=product_label]').inputValue(),'Pending order');
   await page.locator('#stepUpForm [name=code]').fill('123456');await page.locator('#stepUpForm button[type=submit]').click();await page.locator('#financeDialog').waitFor({state:'hidden'});assert.equal(writes,1);assert.equal(attempts,2);
