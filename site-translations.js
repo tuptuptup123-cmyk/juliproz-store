@@ -2,6 +2,11 @@
 (function(root){
  'use strict';
  const ui={
+  "Байерский сервис — поиск и выкуп люксовых вещей по всему миру":"Luxury personal shopping and worldwide sourcing",
+  "Находим одежду, сумки, обувь, часы и украшения под ваш запрос. Согласовываем стоимость, проверку подлинности и условия доставки до оплаты.":"We source clothing, bags, shoes, watches and jewellery for you. We agree on the cost, authentication and delivery arrangements before payment.",
+  "Отправить запрос байеру":"Send a sourcing request",
+  "Как мы работаем":"How it works",
+
   'Ещё':'More','Главная':'Home','О магазине и наших услугах':'About the shop and our services','Аутентификация, ателье и уход':'Authentication, tailoring and care','Контакты, каналы и безопасность':'Contacts, channels and safety','Другие разделы':'More sections','Техническая диагностика':'Technical diagnostics',
   'JULI.PROZ Store · обновлено 17 октября 2026':'JULI.PROZ Store · updated 17 October 2026',
   'Для исправления сбоев сайт передаёт тип ошибки, имя файла программы, номер строки, версию и раздел сервиса. Эти данные хранятся до 30 дней. Текст ошибок, переписка, содержимое форм, пароли и данные аккаунта не передаются. Диагностика работает независимо от согласия на статистику посещений.':'To fix failures, the site sends the error type, program filename, line number, version and service area. These records are kept for up to 30 days. Error messages, conversations, form contents, passwords and account details are not sent. Diagnostics operate independently of consent to visitor analytics.',

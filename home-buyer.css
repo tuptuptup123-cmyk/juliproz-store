@@ -1,0 +1,67 @@
+/* Approved homepage: existing masthead and photos, editorial service content. */
+html[data-storefront="website"] #webHomePage{column-gap:40px;row-gap:32px;padding-bottom:0}
+#webHomePage .home-buyer-eyebrow{display:block;margin-bottom:24px;font:400 11px/1.5 Roboto,Arial,sans-serif;letter-spacing:.12em;color:#747074}
+#webHomePage h1{font-size:clamp(36px,4vw,58px);line-height:1.13;text-wrap:pretty;letter-spacing:-.025em}
+#webHomePage .web-page-intro>p{font-size:15px;line-height:1.7;max-width:550px}
+.home-hero-actions{display:flex;flex-wrap:wrap;align-items:center;gap:18px 24px;margin-top:28px}
+.home-buyer-button{display:inline-flex;align-items:center;justify-content:space-between;gap:24px;min-height:52px;padding:15px 24px;border:1px solid transparent;border-radius:4px;background:#e8cfdf;color:#202020;text-decoration:none;font:400 16px/1.4 "Playfair Display",Georgia,serif;box-sizing:border-box}
+.home-buyer-button .inline-arrow,.home-text-link .inline-arrow{flex:none;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.home-buyer-button-dark{background:#151515;color:#fff;white-space:nowrap}
+.home-text-link{display:inline-flex;align-items:center;gap:10px;min-height:44px;color:#202020;text-decoration:underline;text-underline-offset:6px;text-decoration-thickness:1px;font:400 13px/1.5 Roboto,Arial,sans-serif}
+.home-buyer-button:focus-visible,.home-text-link:focus-visible,.home-buyer-questions summary:focus-visible{outline:2px solid #80566d;outline-offset:5px}
+@media(hover:hover){.home-buyer-button:hover{background:#e0bed3}.home-buyer-button-dark:hover{background:#333}.home-text-link:hover{color:#80566d}.home-buyer-questions summary:hover{color:#80566d}}
+#homeBuyerContent{grid-column:1/-1;min-width:0;margin-top:20px}
+.home-buyer-categories{display:flex;justify-content:center;flex-wrap:wrap;gap:16px 42px;margin:0;padding:24px 12px;list-style:none;border-block:1px solid #e6e0e3;font:400 21px/1.4 "Playfair Display",Georgia,serif}
+.home-buyer-process{padding:46px 0 38px;scroll-margin-top:24px}
+.home-section-heading{display:flex;align-items:baseline;justify-content:space-between;gap:20px;margin-bottom:30px}
+.home-buyer-process h2,.home-buyer-request h2,.home-buyer-faq h2{font:400 clamp(27px,3vw,40px)/1.2 "Playfair Display",Georgia,serif;letter-spacing:-.02em;margin:0;text-wrap:balance}
+.home-buyer-steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));list-style:none;padding:0;margin:0;gap:0}
+.home-buyer-steps>li{padding:0 28px;min-width:0}
+.home-buyer-steps>li:first-child{padding-left:0}.home-buyer-steps>li:last-child{padding-right:0}
+.home-buyer-steps>li+li{border-left:1px solid #e6e0e3}
+.home-step-number{display:block;margin-bottom:8px;font:500 italic 34px/1 "Playfair Display",Georgia,serif;color:#c68eaf}
+.home-buyer-steps h3{font:400 clamp(22px,2vw,28px)/1.25 "Playfair Display",Georgia,serif;letter-spacing:-.01em;margin:0 0 12px}
+.home-buyer-steps p,.home-buyer-request p,.home-buyer-faq p{font:300 15px/1.65 Roboto,Arial,sans-serif;color:#686268;margin:0}
+.home-buyer-request{display:flex;align-items:center;justify-content:space-between;gap:28px;padding:30px 32px;background:#f1e0e9}
+.home-buyer-request h2{font-size:clamp(26px,2.7vw,36px);margin-bottom:10px}
+.home-buyer-request>.home-buyer-button{flex-shrink:0}
+.home-buyer-faq{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:56px;padding:44px 0 24px}
+.home-buyer-faq h2{margin-bottom:18px}.home-buyer-faq>div>p{max-width:350px}
+.home-buyer-questions details{border-top:1px solid #e6e0e3;padding:0 0 1px}
+.home-buyer-questions details:last-child{border-bottom:1px solid #e6e0e3}
+.home-buyer-questions summary{display:flex;align-items:center;justify-content:space-between;gap:20px;min-height:58px;padding:16px 0;list-style:none;cursor:pointer;font:400 14px/1.5 Roboto,Arial,sans-serif}
+.home-buyer-questions summary::-webkit-details-marker{display:none}
+.home-buyer-questions details>p{padding:0 30px 20px 0;font-size:13px}
+.home-faq-symbol{position:relative;display:block;flex:0 0 14px;width:14px;height:14px}
+.home-faq-symbol::before,.home-faq-symbol::after{content:"";position:absolute;background:currentColor;top:6px;left:1px;width:12px;height:1px}
+.home-faq-symbol::after{transform:rotate(90deg)}details[open]>.home-faq-symbol::after,.home-buyer-questions details[open] .home-faq-symbol::after{display:none}
+html[lang=en] #webHomePage h1{font-size:clamp(34px,3.7vw,54px)}
+@media(min-width:1200px){.brand.is-home-page .masthead-inner{border-bottom:1px solid #e6e0e3;margin-bottom:18px}}
+@media(max-width:899px){
+ html[data-storefront="website"] #webHomePage{row-gap:26px}
+ #webHomePage h1,html[lang=en] #webHomePage h1{font-size:clamp(34px,6vw,48px);max-width:650px}
+ #webHomePage .home-buyer-eyebrow{margin-bottom:18px}
+ #homeBuyerContent{margin-top:4px}
+ .home-buyer-request{padding:26px}.home-buyer-faq{gap:28px;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr)}
+ .home-buyer-steps>li{padding-inline:20px}
+}
+@media(max-width:600px){
+ #webHomePage h1,html[lang=en] #webHomePage h1{font-size:clamp(30px,8vw,43px);line-height:1.14;margin-bottom:22px}
+ #webHomePage .home-buyer-eyebrow{font-size:10px;margin-bottom:16px}
+ #webHomePage .web-page-intro>p{font-size:14px}
+ .home-hero-actions{gap:8px;margin-top:22px;align-items:flex-start;flex-direction:column}
+ .home-hero-actions .home-buyer-button{width:100%;max-width:440px;font-size:16px}
+ .home-buyer-categories{gap:14px 22px;font-size:18px;padding:22px 4px}
+ .home-buyer-process{padding:32px 0}.home-section-heading{align-items:flex-start;flex-direction:column;gap:8px;margin-bottom:20px}
+ .home-buyer-steps{grid-template-columns:1fr;gap:0}
+ .home-buyer-steps>li,.home-buyer-steps>li:first-child,.home-buyer-steps>li:last-child{padding:20px 0 20px 46px;position:relative;border-left:0}
+ .home-buyer-steps>li+li{border-left:0;border-top:1px solid #e6e0e3}
+ .home-step-number{position:absolute;left:0;top:22px;font-size:28px}
+ .home-buyer-steps h3{font-size:24px;margin-bottom:8px}
+ .home-buyer-steps p,.home-buyer-request p,.home-buyer-faq p{font-size:14px}
+ .home-buyer-request{padding:24px 20px;flex-direction:column;align-items:stretch;gap:20px}
+ .home-buyer-request h2{text-wrap:pretty;font-size:29px}.home-buyer-request>.home-buyer-button{align-self:flex-start}
+ .home-buyer-faq{grid-template-columns:1fr;gap:24px;padding:32px 0 10px}
+ .home-buyer-faq h2{font-size:30px;margin-bottom:12px}.home-buyer-faq>div>p{max-width:none}
+ .home-buyer-questions details>p{font-size:13px}
+}

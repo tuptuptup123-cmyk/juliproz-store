@@ -4,6 +4,18 @@ const template=fs.readFileSync(require('node:path').resolve(__dirname,'../index.
 const rows=[{id:42,brand:'Hermès',name:'Сандалии Oran',description:'Цвет: Розовый',size:'38',price:500,currency:'EUR',available:true,stock_quantities:{38:1}},{id:43,brand:'Gucci',name:'Кроссовки',price:null,available:true}];
 function head(html){return html.split('</head>')[0]}
 function response(){return {headers:{},setHeader(k,v){this.headers[k]=v},end(v){this.body=v}}}
+test('homepage service content is indexable in both languages with matching contact destinations',()=>{
+ for(const lang of ['ru','en']){
+  const html=site.render(template,'home',null,lang),body=html.match(/<article id="serverLanding"[\s\S]*?<\/article>/)[0];
+  assert.ok(body.includes(seo.page('home').heading[lang]));
+  assert.equal((body.match(/<details/g)||[]).length,3);
+  assert.equal((body.match(/class="home-step-number"/g)||[]).length,3);
+  assert.ok(body.includes(require('../home-buyer.js').render(lang,'server-')));
+  assert.match(body,lang==='en'?/https:\/\/wa.me\/message\//:/https:\/\/t.me\/juliproz/);
+  if(lang==='en')assert.doesNotMatch(body,/[А-Яа-яЁё]/);
+  assert.doesNotMatch(body,/FAQPage|AggregateRating/);
+ }
+});
 test('both language versions have distinct self canonicals and reciprocal global hreflang',()=>{
  for(const lang of ['ru','en'])for(const [kind,slug] of [['home'],['catalog'],['services'],['sell'],['brand','hermes']]){
   const html=site.render(template,kind,slug,lang,rows),page=seo.page(kind,slug),h=head(html);
