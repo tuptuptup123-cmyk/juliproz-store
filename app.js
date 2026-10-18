@@ -252,12 +252,13 @@ function render(){
   document.querySelector(".catalog-toolbar")?.classList.toggle("hidden",!isCatalogTab()||Boolean(editorial));
   document.querySelector(".catalog-head")?.classList.toggle("hidden",inCart||inSell||inServices||inWebPage);
   document.getElementById("filterSummary").classList.toggle("hidden",!isCatalogTab()||Boolean(editorial)||!document.getElementById("filterSummary").textContent);
+  window.StoreAnalytics?.view?.(state.tab,isCatalogTab()?state.category:null);
   if(inSell||inServices||inWebPage)return;
   renderCart();
   if(inCart)return;
   syncCatalogSort();
   if(isCatalogTab()){
-    reconcileFilters();renderCatalogMenu();
+    reconcileFilters();window.StoreAnalytics?.view?.(state.tab,state.category);renderCatalogMenu();
     document.querySelectorAll("[data-gender]").forEach(b=>b.setAttribute("aria-pressed",String((b.dataset.gender||null)===state.gender)));
     document.querySelectorAll("[data-filter]").forEach(b=>{const type=b.dataset.filter;b.textContent=(type==='fulfillment_status'?statusLabels[state[type]]:state[type])||{fulfillment_status:"Наличие",category:"Категория",brand:"Бренд",size:"Размер"}[type];b.classList.toggle("selected",!!state[type])});
     document.getElementById("filterSummary").classList.toggle("hidden",Boolean(editorial)||!document.getElementById("filterSummary").textContent);
@@ -470,7 +471,6 @@ function setTab(tab,options={}){
   if(!isTelegramStore()&&options.history!==false)window.SiteSEO?.navigate(tab,options);
   setSortOpen(false);
   if(tab!=='catalog'){document.getElementById('catalogSearch').classList.add('hidden');document.getElementById('toggleSearch').setAttribute('aria-expanded','false');state.search='';document.getElementById('search').value=''}
-  if(state.tab!==tab)window.StoreAnalytics?.track("page_view",null,['sell','services','home','about','hermes','outlet'].includes(tab)?null:tab);
   navigationRevision++;
   state.tab=tab;selectedProduct=null;selectedSize=null;hideProductModal();productReturnFocus=null;
   document.querySelectorAll('[data-tab]').forEach(b=>{b.classList.toggle('active',b.dataset.tab===tab);b.setAttribute('aria-current',b.dataset.tab===tab?'page':'false')});render();

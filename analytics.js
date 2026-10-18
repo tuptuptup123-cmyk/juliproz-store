@@ -4,6 +4,16 @@
  const channel=document.documentElement?.dataset?.storefront==='telegram'?'telegram':'website';
  const telegramInitData=()=>window.Telegram?.WebApp?.initData||new URLSearchParams(location.hash.slice(1)).get('tgWebAppData')||'';
  let consent=null,visitor=null,session=null,sent=0,withdrawnReference=null;const recent=new Map();
+ let currentView=null,lastView=null,lastCategory=null;
+ const pages=new Set(['catalog','wishlist','cart','home','about','services','sell','hermes','outlet']);
+ // Remember only the currently visible section before consent, never a browsing history.
+ function view(page,category=null){
+  page=page==='favorites'?'wishlist':page;if(!pages.has(page))return;
+  currentView={page,category:['catalog','hermes'].includes(page)&&typeof category==='string'?category:null};
+  if(consent!==true||document.visibilityState==='hidden')return;
+  if(lastView!==page){track('page_view',null,page);lastView=page;lastCategory=null}
+  if(currentView.category!==lastCategory){if(currentView.category)track('category_view',null,page,currentView.category);lastCategory=currentView.category}
+ }
  // Load Vercel's same-origin collectors only after the visitor opts in.
  let vercelStarted=false;
  const publicHosts=new Set(['juliproz.com','www.juliproz.com','juliproz-store.vercel.app']);
@@ -48,31 +58,31 @@
  }
  const uuid=()=>crypto.randomUUID(),valid=x=>/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(x||'');
  function identity(storage,key){try{let id=storage.getItem(key);if(!valid(id)){id=uuid();storage.setItem(key,id)}return id}catch{return uuid()}}
- function forget(){if(valid(visitor))withdrawnReference=visitor;try{localStorage.removeItem('jpAnalyticsVisitor');sessionStorage.removeItem('jpAnalyticsSession');sessionStorage.removeItem('jpAnalyticsAcquisition')}catch{}visitor=null;session=null;acquisition=null;firstEvent=true;recent.clear();sent=0}
+ function forget(){if(valid(visitor))withdrawnReference=visitor;try{localStorage.removeItem('jpAnalyticsVisitor');sessionStorage.removeItem('jpAnalyticsSession');sessionStorage.removeItem('jpAnalyticsAcquisition')}catch{}visitor=null;session=null;acquisition=null;firstEvent=true;recent.clear();sent=0;lastView=lastCategory=null}
  function showChoices(){const ref=visitor||withdrawnReference,node=document.getElementById('analyticsDeletionReference');if(node){node.textContent=ref?`Код для запроса удаления ранее отправленной статистики: ${ref}. Сохраните его перед закрытием страницы и передайте менеджеру.`:'';node.classList.toggle('hidden',!ref)}document.getElementById('analyticsConsent')?.classList.remove('hidden');document.getElementById('analyticsAccept')?.focus()}
  function setConsent(value){
   consent=value===true;try{localStorage.setItem('jpAnalyticsConsent',consent?'accepted':'declined')}catch{}
   document.getElementById('analyticsConsent')?.classList.add('hidden');
   if(!consent){forget();return}
-  visitor=identity(localStorage,'jpAnalyticsVisitor');session=identity(sessionStorage,'jpAnalyticsSession');track('visit');startVercel();
+  visitor=identity(localStorage,'jpAnalyticsVisitor');session=identity(sessionStorage,'jpAnalyticsSession');track('visit');if(currentView)view(currentView.page,currentView.category);startVercel();
  }
- function track(event,product=null,page=null){
+ function track(event,product=null,page=null,category=null){
   if(channel==='telegram'&&!telegramInitData())return;
-  if(consent!==true||document.visibilityState==='hidden'||sent>=2000)return;const now=Date.now(),source=visitSource(now),key=`${event}:${product||''}:${page||''}`;
+  if(consent!==true||document.visibilityState==='hidden'||sent>=2000)return;const now=Date.now(),source=visitSource(now),key=`${event}:${product||''}:${page||''}:${category||''}`;
   if(now-(recent.get(key)||0)<(event==='product_view'?5000:350))return;recent.set(key,now);if(recent.size>200)recent.delete(recent.keys().next().value);sent++;
-  fetch('/api/analytics',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({channel,source,...(channel==='telegram'?{telegram_init_data:telegramInitData()}:{}),event_id:uuid(),visitor_id:visitor,session_id:session,event,product_id:product==null?null:Number(product),page:page==='favorites'?'wishlist':page}),signal:AbortSignal.timeout(8000),keepalive:true}).catch(()=>{});
+  fetch('/api/analytics',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({channel,source,...(category?{category}:{}),...(channel==='telegram'?{telegram_init_data:telegramInitData()}:{}),event_id:uuid(),visitor_id:visitor,session_id:session,event,product_id:product==null?null:Number(product),page:page==='favorites'?'wishlist':page}),signal:AbortSignal.timeout(8000),keepalive:true}).catch(()=>{});
  }
  const channelLinks=new Map([
   ['https://t.me/+9q95XTJFt9kxYTQ0','channel_julia_main'],['https://t.me/+lz-ze3-GDEQ0YmFi','channel_julia_outlet'],
   ['https://t.me/+vjEYfWCKhTMxNWE0','channel_vasya_main'],['https://t.me/+NWLPh8nc47kzMzI0','channel_vasya_outlet']
  ]);
  document.addEventListener('click',e=>{const anchor=e.target.closest?.('a[href]'),event=anchor&&channelLinks.get(anchor.href);if(event)track(event)},true);
- window.StoreAnalytics={track,setConsent,showChoices};
+ window.StoreAnalytics={track,view,setConsent,showChoices};
  document.getElementById('analyticsAccept')?.addEventListener('click',()=>setConsent(true));
  document.getElementById('analyticsDecline')?.addEventListener('click',()=>setConsent(false));
  document.getElementById('analyticsPreferences')?.addEventListener('click',showChoices);
  try{const saved=localStorage.getItem('jpAnalyticsConsent');if(saved==='accepted')setConsent(true);else{forget();if(saved==='declined')consent=false;else showChoices()}}catch{forget();showChoices()}
  window.addEventListener?.('storage',e=>{if(e.key==='jpAnalyticsConsent'){if(e.newValue==='accepted')setConsent(true);else{consent=false;forget();if(e.newValue===null)showChoices()}}});
  setInterval(()=>track('heartbeat'),60000);
- document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')track('heartbeat')});
+ document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'){track('heartbeat');if(currentView)view(currentView.page,currentView.category)}});
 })();
