@@ -13,6 +13,5 @@
  function fromSearch(search){const params=new URLSearchParams(search),sale=params.get('sale')==='1';return {sale,saleCollection:sale?valid(params.get('collection')):null}}
  function matches(product,collection){return product?.available!==false&&Boolean(pricing.discount(product))&&(!valid(collection)||groups[collection].categories.includes(taxonomy.category(product.category)))}
  function url(lang='ru',collection=null){const params=new URLSearchParams({sale:'1'});if(valid(collection))params.set('collection',collection);if(lang==='en')params.set('lang','en');return '/catalog?'+params}
- function copy(lang='ru',collection=null){const en=lang==='en',group=groups[valid(collection)];return {heading:'SALE'+(group?' · '+group[en?'en':'ru']:''),intro:en?'Discounted pieces from our collection. The original and current prices are shown on each product.':'Вещи со скидкой из нашего каталога. В карточках указаны цена до скидки и актуальная стоимость.'}}
- const api={groups,fromSearch,matches,url,copy};root.SaleCollections=api;if(node)module.exports=api;
+ const api={groups,fromSearch,matches,url};root.SaleCollections=api;if(node)module.exports=api;
 })(typeof window==='object'?window:globalThis);

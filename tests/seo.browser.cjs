@@ -105,13 +105,13 @@ const server=http.createServer((req,res)=>{const url=new URL(req.url,'http://loc
    await page.goto(origin+'/outlet?lang=en');await page.locator('#webOutletPage [data-sale-collection="'+collection+'"]').click();
    await page.waitForURL(url=>url.pathname==='/catalog'&&url.searchParams.get('collection')===collection);await page.locator('#grid .product').first().waitFor();
    assert.deepEqual(await page.locator('#grid .product').evaluateAll(cards=>cards.map(c=>c.dataset.id)),[id]);
-   assert.match(await page.locator('#seoCatalogIntro h1').innerText(),/SALE/);assert.match(await page.locator('#filterSummary').innerText(),/SALE/);
+   assert.equal(await page.locator('#seoCatalogIntro').isVisible(),false);assert.match(await page.locator('#filterSummary').innerText(),/SALE/);
    await page.reload();await page.locator('#grid .product').first().waitFor();assert.equal(await page.locator('#grid .product').count(),1);assert.equal(await page.locator('#grid .product').getAttribute('data-id'),id);
    await page.locator('.masthead-inner [data-site-language=ru]').click();assert.equal(new URL(page.url()).searchParams.get('collection'),collection);assert.equal(await page.locator('#grid .product').getAttribute('data-id'),id);
    await page.goBack();await page.locator('#webOutletPage h1').waitFor();assert.equal(new URL(page.url()).pathname,'/outlet');
    await page.goForward();await page.locator('#grid .product').first().waitFor();assert.equal(await page.locator('#grid .product').getAttribute('data-id'),id);
   }
-  await page.locator('#seoCatalogIntro a').click();await page.locator('#grid .product').first().waitFor();assert.deepEqual((await page.locator('#grid .product').evaluateAll(cards=>cards.map(c=>c.dataset.id))).sort(),['99002','99003','99005']);
+  await page.locator('.bottom-nav [data-tab=outlet]').click();await page.locator('#webOutletPage .outlet-section-heading a').click();await page.locator('#grid .product').first().waitFor();assert.deepEqual((await page.locator('#grid .product').evaluateAll(cards=>cards.map(c=>c.dataset.id))).sort(),['99002','99003','99005']);
   await page.locator('#reset').click();assert.equal(await page.locator('#grid .product').count(),products.length);assert.equal(new URL(page.url()).searchParams.has('sale'),false);assert.equal(new URL(page.url()).searchParams.has('collection'),false);
   await page.reload();await page.locator('#grid .product').first().waitFor();assert.equal(await page.locator('#grid .product').count(),products.length);
   await context.close();console.log('PASS Outlet SALE categories, exact discount matching, reload, language, Back/Forward and reset '+width);
