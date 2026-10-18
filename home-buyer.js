@@ -32,7 +32,7 @@
  function render(language='ru',prefix=''){
   const en=language==='en',c=copy[en?'en':'ru'],id=escape(prefix),contact=en?'https://wa.me/message/LX6SBE3QCQXKG1':'https://t.me/juliproz';
   return `<ul class="home-buyer-categories" aria-label="${c.categoriesLabel}">${c.categories.map(label=>`<li>${label}</li>`).join('')}</ul>
-   <section class="home-buyer-process" id="${id}homeHowItWorks" aria-labelledby="${id}homeProcessTitle" tabindex="-1">
+   <section class="home-buyer-process" id="${id}homeHowItWorks" aria-labelledby="${id}homeProcessTitle">
     <div class="home-section-heading"><h2 id="${id}homeProcessTitle">${c.process}</h2><a class="home-text-link" href="/services${en?'?lang=en':''}">${c.more}${arrow}</a></div>
     <ol class="home-buyer-steps">${c.steps.map(([title,description],i)=>`<li><span class="home-step-number" aria-hidden="true">0${i+1}</span><h3>${title}</h3><p>${description}</p></li>`).join('')}</ol>
    </section>
