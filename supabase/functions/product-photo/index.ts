@@ -14,8 +14,9 @@ Deno.serve(async req=>{
   const products=await fetch(base+'/rest/v1/products?select=id&or='+encodeURIComponent(filter)+(auth?'':'&available=eq.true')+'&limit=1',{headers:lookup,redirect:'error',signal:AbortSignal.timeout(8000)});
   if(!products.ok)return deny(products.status===401?401:503);
   const rows=await products.json();if(!Array.isArray(rows)||!rows.length)return deny(404);
-  const image=await fetch(base+'/storage/v1/object/authenticated/product-photos/'+asset,{method:req.method,headers:{apikey:secret,Authorization:'Bearer '+secret},redirect:'error',signal:AbortSignal.timeout(15000)});
-  if(!image.ok)return deny(image.status===404?404:503);
+  const image=await fetch(base+'/storage/v1/object/authenticated/product-photos/'+asset,{method:req.method,headers:{apikey:secret,Authorization:'Bearer '+secret,...(!auth&&req.headers.get('if-none-match')?{'If-None-Match':req.headers.get('if-none-match')}:{})},redirect:'error',signal:AbortSignal.timeout(15000)});
+  const etag=image.headers.get('ETag');if(!auth){headers['Cache-Control']='private, no-cache, must-revalidate';if(etag)headers['ETag']=etag;if(image.status===304)return new Response(null,{status:304,headers})}
+  if(!image.ok){headers['Cache-Control']='no-store';return deny(image.status===404?404:503)}
   const type=image.headers.get('Content-Type')?.split(';')[0];if(!['image/png','image/jpeg','image/webp'].includes(type))return deny(404);
   return new Response(req.method==='HEAD'?null:image.body,{status:200,headers:{...headers,'Content-Type':type}});
  }catch{return deny(503)}

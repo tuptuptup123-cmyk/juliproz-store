@@ -1015,3 +1015,6 @@ html[lang=en] .home-shop-link{width:210px}
 .product .photo>.team-pick-badge{position:absolute;left:10px;bottom:10px;z-index:1;max-width:calc(100% - 20px);pointer-events:none}
 .detail>.team-pick-badge{margin:0 6px 10px 0;vertical-align:middle}
 @media(max-width:600px){.product .photo>.team-pick-badge{left:7px;bottom:7px;max-width:calc(100% - 14px);font-size:9px;padding:4px 7px}}
+
+/* One overlay at a time while the first-visit safety notice is open. */
+body:has(#catalogAntiScam[open]) #analyticsConsent{visibility:hidden;pointer-events:none}

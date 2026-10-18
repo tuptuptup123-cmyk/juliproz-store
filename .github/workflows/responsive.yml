@@ -21,6 +21,8 @@ jobs:
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" node tests/owner-statistics.browser.cjs
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" node tests/admin-google-search.browser.cjs
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" node tests/seo.browser.cjs
+      - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" node tests/audit-followup.browser.cjs
+      - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" node tests/product-translation.browser.cjs
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" node tests/remaining-design.browser.cjs
       - run: node scripts/stage-photo-assets.cjs
       - run: node scripts/build-telegram.cjs

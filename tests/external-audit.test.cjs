@@ -56,15 +56,19 @@ test('static photo gateway never reads files for hidden/unreferenced/unsafe asse
  const handler=createHandler({fetch:async(u,o)=>{queries.push({u,o});return {ok:true,json:async()=>visible?[{id:1}]:[]}},readFile:async()=>{reads++;return Buffer.from('image')}});
  const req=(value,headers={})=>({method:'GET',url:'/api/product-photo?path='+encodeURIComponent(value),headers});
  let res=response();await handler(req(asset),res);assert.equal(res.statusCode,404);assert.equal(reads,0);
- visible=true;res=response();await handler(req(asset),res);assert.equal(res.statusCode,200);assert.equal(reads,1);assert.equal(res.headers['Cache-Control'],'no-store');assert.match(queries.at(-1).u,/available=eq.true/);
+ visible=true;res=response();await handler(req(asset),res);assert.equal(res.statusCode,200);assert.equal(reads,1);assert.equal(res.headers['Cache-Control'],'private, no-cache, must-revalidate');assert.match(queries.at(-1).u,/available=eq.true/);
+ const etag=res.headers.ETag;res=response();await handler(req(asset,{'if-none-match':etag}),res);assert.equal(res.statusCode,304);
+ visible=false;res=response();await handler(req(asset,{'if-none-match':etag}),res);assert.equal(res.statusCode,404);assert.equal(res.headers['Cache-Control'],'no-store');visible=true;
  res=response();await handler(req(asset,{authorization:'Bearer mock.jwt.token',origin:'https://admin.juliproz.com'}),res);assert.equal(res.statusCode,200);assert.equal(queries.at(-1).o.headers.Authorization,'Bearer mock.jwt.token');assert.doesNotMatch(queries.at(-1).u,/available=eq.true/);
- for(const bad of ['../config.js','missing.webp',asset+'?x=1']){res=response();await handler(req(bad),res);assert.equal(res.statusCode,404)}assert.equal(reads,2);
+ for(const bad of ['../config.js','missing.webp',asset+'?x=1']){res=response();await handler(req(bad),res);assert.equal(res.statusCode,404)}assert.equal(reads,3);
 });
 test('storage photo gateway checks publication before using service credentials',async()=>{
  let handler,visible=false;const calls=[],asset='11111111-1111-4111-8111-111111111111/photo.webp';
- const context={Deno:{serve:f=>handler=f,env:{get:k=>({SUPABASE_URL:'https://test.invalid',SUPABASE_ANON_KEY:'public',SUPABASE_SERVICE_ROLE_KEY:'server-secret'}[k])}},URL,Response,AbortSignal,fetch:async(u,o)=>{calls.push({u,o});return u.includes('/rest/')?new Response(JSON.stringify(visible?[{id:1}]:[])):new Response('image',{headers:{'Content-Type':'image/webp'}})}};
+ const context={Deno:{serve:f=>handler=f,env:{get:k=>({SUPABASE_URL:'https://test.invalid',SUPABASE_ANON_KEY:'public',SUPABASE_SERVICE_ROLE_KEY:'server-secret'}[k])}},URL,Response,AbortSignal,fetch:async(u,o)=>{calls.push({u,o});return u.includes('/rest/')?new Response(JSON.stringify(visible?[{id:1}]:[])):o.headers['If-None-Match']==='"image-v1"'?new Response(null,{status:304,headers:{ETag:'"image-v1"'}}):new Response('image',{headers:{'Content-Type':'image/webp',ETag:'"image-v1"'}})}};
  vm.runInNewContext(fs.readFileSync('supabase/functions/product-photo/index.ts','utf8'),context);
  let r=await handler(new Request('https://test.invalid/functions/v1/product-photo/'+asset));assert.equal(r.status,404);assert.equal(calls.length,1);
  visible=true;r=await handler(new Request('https://test.invalid/functions/v1/product-photo/'+asset));assert.equal(r.status,200);assert.equal(calls.at(-1).o.headers.Authorization,'Bearer server-secret');assert.doesNotMatch(await r.text(),/server-secret/);
+ r=await handler(new Request('https://test.invalid/functions/v1/product-photo/'+asset,{headers:{'If-None-Match':'"image-v1"'}}));assert.equal(r.status,304);assert.equal(r.headers.get('Cache-Control'),'private, no-cache, must-revalidate');
+ visible=false;const count=calls.length;r=await handler(new Request('https://test.invalid/functions/v1/product-photo/'+asset,{headers:{'If-None-Match':'"image-v1"'}}));assert.equal(r.status,404);assert.equal(calls.length,count+1);assert.equal(r.headers.get('Cache-Control'),'no-store');
  r=await handler(new Request('https://test.invalid/functions/v1/product-photo/'+asset+'?download=1'));assert.equal(r.status,404);
 });

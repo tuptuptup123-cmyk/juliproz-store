@@ -1,3 +1,4 @@
+const {clickSiteTab}=require('./site-action-helper.cjs');
 const {chromium}=require('playwright'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),http=require('node:http');
 const root=path.resolve(__dirname,'..'),out=process.env.QA_OUTPUT||'/tmp/jp-seo';fs.mkdirSync(out,{recursive:true});
 const products=[{id:99001,created_at:'2026-10-17T00:00:00Z',brand:'Hermès',name:'Сандалии Oran',category:'Обувь',size:'38',price:500,currency:'EUR',available:true,stock_quantities:{38:1},image_url:'https://juliproz-store.vercel.app/images/brands/hermes-birkin.png'},{id:99002,created_at:'2026-10-17T00:00:00Z',brand:'Gucci',name:'Кроссовки',category:'Обувь',size:'40',price:600,currency:'EUR',available:true,stock_quantities:{40:1}}];
@@ -47,13 +48,13 @@ const server=http.createServer((req,res)=>{const url=new URL(req.url,'http://loc
  assert.equal(await page.locator('#homeBuyerContent a[data-contact-event]').getAttribute('href'),'https://t.me/juliproz');
  console.log('PASS homepage steps, FAQ keyboard, anchor, RU/EN contacts, reload and layout',width);
  const nav=page.locator('.bottom-nav');
- assert.deepEqual(await nav.locator('[data-tab]:visible').evaluateAll(items=>items.map(x=>x.dataset.tab)),['home','catalog','hermes','outlet','favorites','cart','sell','services','about']);
- await nav.locator('[data-tab=hermes]').click();await page.waitForURL(url=>url.pathname==='/brands/hermes');
+ assert.deepEqual(await nav.locator('[data-tab]:visible').evaluateAll(items=>items.map(x=>x.dataset.tab)),width<900?['home','catalog','favorites','cart']:['home','catalog','hermes','outlet','favorites','cart','sell','services','about']);
+ await clickSiteTab(page,'hermes');await page.waitForURL(url=>url.pathname==='/brands/hermes');
  assert.equal(await nav.locator('[aria-current=page]').getAttribute('data-tab'),'hermes');
  assert.equal(await page.locator('#seoCatalogIntro .discovery-model').count(),3);
  await page.locator('#seoCatalogIntro .discovery-model summary').first().click();assert.equal(await page.locator('#seoCatalogIntro .discovery-model').first().getAttribute('open'),'');
  await page.locator('#seoCatalogIntro .discovery-model summary').first().click();
- await nav.locator('[data-tab=outlet]').click();await page.waitForURL(url=>url.pathname==='/outlet');
+ await clickSiteTab(page,'outlet');await page.waitForURL(url=>url.pathname==='/outlet');
  assert.equal(await page.locator('#webOutletPage h1').innerText(),'Аутлеты и приватные сейлы');
  assert.equal(await page.locator('#webOutletPage .discovery-breadcrumb, #webOutletPage .discovery-eyebrow').count(),0);
  assert.equal(await page.locator('#grid').isVisible(),false);
@@ -66,8 +67,8 @@ const server=http.createServer((req,res)=>{const url=new URL(req.url,'http://loc
  assert.equal(await page.locator('meta[property="og:locale"]').getAttribute('content'),'en_US');
  assert.equal(await page.locator('link[hreflang=ru]').getAttribute('href'),'https://www.juliproz.com/outlet');
  await page.evaluate(()=>scrollTo(0,0));await page.screenshot({path:out+'/outlet-en-'+width+'.png',fullPage:true});await page.screenshot({path:out+'/outlet-first-'+width+'.png',fullPage:false});
- for(const tab of ['about','services','sell','cart','favorites','home','catalog','hermes']){await nav.locator('[data-tab='+tab+']').click();assert.equal(await nav.locator('[aria-current=page]').getAttribute('data-tab'),tab);assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));}
- assert.equal(await nav.evaluate(el=>el.scrollWidth>el.clientWidth),width<900);
+ for(const tab of ['about','services','sell','cart','favorites','home','catalog','hermes']){await clickSiteTab(page,tab);assert.equal(await nav.locator('[aria-current=page]').getAttribute('data-tab'),tab);assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));}
+ assert.equal(await nav.evaluate(el=>el.scrollWidth>el.clientWidth),false);
  await page.locator('.masthead-inner [data-site-language=ru]').click();
  await page.evaluate(()=>scrollTo(0,0));await page.screenshot({path:out+'/hermes-ru-'+width+'.png',fullPage:true});await page.screenshot({path:out+'/hermes-first-'+width+'.png',fullPage:false});
  await nav.locator('[data-tab=catalog]').click();
@@ -78,7 +79,7 @@ const server=http.createServer((req,res)=>{const url=new URL(req.url,'http://loc
  assert.equal(await page.locator('#grid .product').count(),1);
  await page.locator('#openCatalogMenu').click();await page.locator('#resetMenu').click();await page.locator('#showMenuProducts').click();
  assert.equal(await page.locator('#grid .product').count(),2);
- await nav.locator('[data-tab=hermes]').click();await nav.locator('[data-tab=home]').click();await page.locator('[data-web-section=catalog]:visible').first().click();
+ await clickSiteTab(page,'hermes');await nav.locator('[data-tab=home]').click();await page.locator('[data-web-section=catalog]:visible').first().click();
  assert.equal(await page.locator('#grid .product').count(),2,'The main shop must not retain the editorial Hermes filter');
  for(const slug of ['chanel','loro-piana']){await page.goto(origin+'/brands/'+slug+'?lang=en');await page.locator('html:not([data-server-view])').waitFor();assert.doesNotMatch(await page.locator('#seoCatalogIntro').innerText(),/[А-Яа-яЁё]/);assert.equal(await page.locator('#grid .product').count(),0);assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));}
  console.log('PASS nine tabs, Hermes/Outlet routing, reload, Back/Forward, contacts, existing brand filter and responsive overflow',width);
@@ -88,7 +89,7 @@ const server=http.createServer((req,res)=>{const url=new URL(req.url,'http://loc
  await page.locator('.product-open').click();await page.locator('#productContent h1').waitFor();assert.match(await page.locator('a.related-card').first().getAttribute('href'),/product\/99002$/);await page.locator('a.related-card').first().click();assert.match(await page.locator('#productContent h1').innerText(),/Кроссовки/);await page.locator('#backProduct').click();
  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));await page.screenshot({path:out+'/seo-brand-'+width+'.png',fullPage:true});
  for(const route of ['/?lang=en','/catalog?lang=en','/services?lang=en','/sell?lang=en','/product/99001?lang=en']){await page.goto(origin+route);await page.locator('html:not([data-server-view])').waitFor();assert.equal(await page.locator('html').getAttribute('lang'),'en');if(route.startsWith('/product/'))await page.locator('#productContent h1').waitFor();assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));}
- await nav.locator('[data-tab=outlet]').click();
+ await clickSiteTab(page,'outlet');
  assert.equal(await page.locator('meta[property="og:type"]').getAttribute('content'),'website');
  assert.equal(await page.locator('meta[name="twitter:title"]').getAttribute('content'),await page.title());
  assert.equal(await page.locator('script[type="application/ld+json"]').evaluateAll(items=>items.some(el=>JSON.parse(el.textContent)['@type']==='Product')),false,'Outlet must not keep product structured data');
@@ -123,7 +124,7 @@ const server=http.createServer((req,res)=>{const url=new URL(req.url,'http://loc
    await page.goBack();await page.locator('#webOutletPage h1').waitFor();assert.equal(new URL(page.url()).pathname,'/outlet');
    await page.goForward();await page.locator('#grid .product').first().waitFor();assert.equal(await page.locator('#grid .product').getAttribute('data-id'),id);
   }
-  await page.locator('.bottom-nav [data-tab=outlet]').click();await page.locator('#webOutletPage .outlet-section-heading a').click();await page.locator('#grid .product').first().waitFor();assert.deepEqual((await page.locator('#grid .product').evaluateAll(cards=>cards.map(c=>c.dataset.id))).sort(),['99002','99003','99005']);
+  await clickSiteTab(page,'outlet');await page.locator('#webOutletPage .outlet-section-heading a').click();await page.locator('#grid .product').first().waitFor();assert.deepEqual((await page.locator('#grid .product').evaluateAll(cards=>cards.map(c=>c.dataset.id))).sort(),['99002','99003','99005']);
   await page.locator('#reset').click();assert.equal(await page.locator('#grid .product').count(),products.length);assert.equal(new URL(page.url()).searchParams.has('sale'),false);assert.equal(new URL(page.url()).searchParams.has('collection'),false);
   await page.reload();await page.locator('#grid .product').first().waitFor();assert.equal(await page.locator('#grid .product').count(),products.length);
   await context.close();console.log('PASS Outlet SALE categories, exact discount matching, reload, language, Back/Forward and reset '+width);

@@ -43,7 +43,18 @@ module.exports=async db=>{
  await denied(()=>q('select public.store_record_product_sale($1,100,$2,current_date,101,\'XL\',1)',[op,revision]));
  await denied(()=>q('select public.store_void_product_sale($1,$2,\'mistake\')',[sale.sale_id,sale.product.revision]),'42501');
  await as(owner);const restored=(await one('select public.store_void_product_sale($1,$2,\'mistake\') as v',[sale.sale_id,sale.product.revision])).v;
- assert.equal(restored.product.stock_quantities.XL,2);checks++;
+ assert.equal(restored.product.stock_quantities.XL,2);assert.equal(restored.product.reserved,false);checks++;
+ await q('update public.products set reserved=true where id=100');
+ revision=(await one('select revision from public.products where id=100')).revision;
+ const reservedSale=(await one("select public.store_record_product_sale($1,100,$2,current_date,100,'XL',1) as v",[randomUUID(),revision])).v;
+ const reservedRestore=(await one("select public.store_void_product_sale($1,$2,'mistake') as v",[reservedSale.sale_id,reservedSale.product.revision])).v;
+ assert.equal(reservedRestore.product.reserved,true);assert.equal(reservedRestore.product.stock_quantities.XL,2);checks++;
+ await q("update public.products set name_en='Complete translated model',description_en='Full set' where id=100");
+ await db.exec('reset role; set role anon');
+ assert.equal((await one('select name_en from public.products where id=100')).name_en,'Complete translated model');
+ await denied(()=>q("update public.products set name_en='Untrusted edit' where id=100"),'42501');
+ await as(owner);
+ await q("update public.products set name='Changed source model' where id=100");assert.equal((await one('select name_en from public.products where id=100')).name_en,null);checks++;
  // Legacy null stock is one item for the entire card, not one of each size.
  revision=(await one('select revision from public.products where id=102')).revision;
  await denied(()=>q('select public.store_record_product_sale($1,102,$2,current_date,100,\'M\',2)',[randomUUID(),revision]));

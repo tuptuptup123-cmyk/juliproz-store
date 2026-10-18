@@ -26,10 +26,10 @@ let browser;
     return shop.top>=title.bottom&&social.left>=shop.right&&Math.abs(social.top+social.height/2-shop.top-shop.height/2)<2&&course.top>=photos.bottom&&document.querySelector('.brand').getBoundingClientRect().height<=160;
    }),'Mobile home keeps the logo compact, shop and socials below title and education below photos');
    assert.ok(await page.locator('.bottom-nav').evaluate(nav=>{
-    const bounds=nav.getBoundingClientRect(),buttons=[...nav.querySelectorAll('button')].filter(b=>b.getBoundingClientRect().width>0);
+    const bounds=nav.getBoundingClientRect(),buttons=[...nav.querySelectorAll('[data-tab],#moreNavigation')].filter(b=>b.getBoundingClientRect().width>0);
     const visible=nav.scrollWidth>nav.clientWidth?buttons.filter(b=>b.getAttribute('aria-current')==='page'):buttons;
-    return buttons.length===9&&bounds.left>=0&&bounds.right<=innerWidth+1&&buttons.every(b=>{const label=b.querySelector('small');return label.scrollWidth<=label.clientWidth+1;})&&visible.length>0&&visible.every(b=>{const r=b.getBoundingClientRect();return r.left>=bounds.left-1&&r.right<=bounds.right+1;});
-   }),'Nine destinations remain available; labels fit and the active tab stays visible in the scrollable navigation');
+    return buttons.length===(innerWidth<900?5:9)&&bounds.left>=0&&bounds.right<=innerWidth+1&&buttons.every(b=>{const label=b.querySelector('small');return label.scrollWidth<=label.clientWidth+1;})&&visible.length>0&&visible.every(b=>{const r=b.getBoundingClientRect();return r.left>=bounds.left-1&&r.right<=bounds.right+1;});
+   }),'All primary destinations fit; the bag is visible and secondary sections use More');
   }else{
    assert.equal(await page.locator('.brand .buyer-education-card').isVisible(),true);
    assert.equal(await page.locator('.home-shop-link').isVisible(),true);

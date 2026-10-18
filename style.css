@@ -810,7 +810,7 @@ body.product-modal-open{overflow:hidden}
 .information-icon{display:flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:12px;background:#f6f5f5;color:#171717}
 .information-icon svg{display:block;width:25px;height:25px}
 .information-link-copy{min-width:0;font-size:14px;font-weight:400;line-height:1.5;overflow-wrap:anywhere}
-.information-link-copy small{display:block;margin-top:5px;font-size:12px;font-weight:300;color:#777}
+.information-link-copy small{display:block;margin-top:5px;font-size:12px;font-weight:300;color:#666}
 .information-arrow{display:flex;align-items:center;justify-content:center;width:30px;height:30px;color:#555}
 .information-arrow svg{width:20px;height:20px}
 .information-contact{grid-column:1/-1;min-height:94px;background:#faf6f8;border-color:#eedfe6}
@@ -1033,3 +1033,11 @@ html[data-server-view] .brand,html[data-server-view] main.app,html[data-server-v
 /* Purchase terms stay available without interrupting the manager checkout. */
 .cart-summary .purchase-terms-link{display:inline-flex;align-items:center;min-height:44px;margin-top:4px;color:var(--ink);font-size:13px;text-underline-offset:4px}
 .cart-summary .purchase-terms-link:focus-visible{outline:2px solid var(--brand-blue);outline-offset:3px}
+
+body:has(#catalogAntiScam[open]) #analyticsConsent{visibility:hidden;pointer-events:none}
+
+/* Pink action buttons have a neutral resting border; keyboard focus stays explicit. */
+.brand .home-shop-link{color:#25394f}
+.primary,.sell-offer,.product-sourcing .sourcing-link,.services-page .service-contact{border-color:#d4afc6;box-shadow:none}
+.primary:hover,.primary:active,.sell-offer:hover,.product-sourcing .sourcing-link:hover,.services-page .service-contact:hover{border-color:#bf90ab}
+.primary:focus-visible,.sell-offer:focus-visible,.product-sourcing .sourcing-link:focus-visible,.services-page .service-contact:focus-visible{outline:2px solid #25394f;outline-offset:3px}

@@ -9,6 +9,9 @@
  const fragments={...copy.products,...copy.ui,...categories,...labels};
  const fragmentKeys=Object.keys(fragments).sort((a,b)=>b.length-a.length);
  const nodes=new WeakMap(),attrs=new WeakMap();
+ // Server-rendered legal pages retain the original copy for reversible RU/EN switches.
+ let localizedSources=new Map();
+ try{if(typeof document!=='undefined')localizedSources=new Map(JSON.parse(document.getElementById('localizedPageSources')?.textContent||'[]'))}catch{}
  function telegram(){
   if(root.document?.documentElement?.dataset?.storefront==='telegram')return true;
   const app=root.Telegram?.WebApp,hash=new URLSearchParams(root.location?.hash?.slice(1)||'');
@@ -45,7 +48,7 @@
    const escaped=source.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
    result=result.replace(new RegExp('(?<![А-Яа-яЁё])'+escaped+'(?![А-Яа-яЁё])','g'),()=>fragments[source]);
   }
-  return result;
+  return root.ProductCopy?root.ProductCopy.english(result):result;
  }
  function text(value){return language==='en'?english(value):String(value??'')}
  // The phone destination is resolved from the owner's WhatsApp Business short link.
@@ -56,7 +59,7 @@
   return url+(message?'?text='+encodeURIComponent(whatsapp?english(message):String(message)):'');
  }
  function rememberText(node){
-  const current=node.nodeValue,old=nodes.get(node),source=old&&old.result===current?old.source:current,result=text(source);
+  const current=node.nodeValue,old=nodes.get(node),source=old&&old.result===current?old.source:(localizedSources.get(current)||current),result=text(source);
   nodes.set(node,{source,result});if(current!==result)node.nodeValue=result;
  }
  const attributes=['aria-label','title','placeholder','alt'];
@@ -68,7 +71,7 @@
   const saved=attrs.get(el)||{};
   for(const name of attributes){
    if(!el.hasAttribute(name))continue;
-   const current=el.getAttribute(name),old=saved[name],source=old&&old.result===current?old.source:current,result=text(source);
+   const current=el.getAttribute(name),old=saved[name],source=old&&old.result===current?old.source:(localizedSources.get(current)||current),result=text(source);
    saved[name]={source,result};if(current!==result)el.setAttribute(name,result);
   }
   attrs.set(el,saved);
