@@ -2,7 +2,7 @@
 (function(root){
  'use strict';
  const ui={
-  "Байерский сервис — поиск и выкуп люксовых вещей по всему миру":"Luxury personal shopping and worldwide sourcing",
+  "Buyer service — поиск и выкуп люксовых вещей по миру":"Buyer service — worldwide luxury sourcing",
   "Находим одежду, сумки, обувь, часы и украшения под ваш запрос. Согласовываем стоимость, проверку подлинности и условия доставки до оплаты.":"We source clothing, bags, shoes, watches and jewellery for you. We agree on the cost, authentication and delivery arrangements before payment.",
   "Отправить запрос байеру":"Send a sourcing request",
   "Как мы работаем":"How it works",
