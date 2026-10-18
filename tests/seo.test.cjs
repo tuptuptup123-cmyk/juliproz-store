@@ -17,7 +17,7 @@ test('homepage service content is indexable in both languages with matching cont
  }
 });
 test('both language versions have distinct self canonicals and reciprocal global hreflang',()=>{
- for(const lang of ['ru','en'])for(const [kind,slug] of [['home'],['catalog'],['services'],['sell'],['brand','hermes']]){
+ for(const lang of ['ru','en'])for(const [kind,slug] of [['home'],['catalog'],['services'],['sell'],['outlet'],['brand','hermes'],['brand','chanel'],['brand','loro-piana']]){
   const html=site.render(template,kind,slug,lang,rows),page=seo.page(kind,slug),h=head(html);
   assert.match(html,new RegExp('<html lang="'+lang+'"'));assert.ok(h.includes('<link rel="canonical" href="'+seo.url(page.path,lang)+'">'));
   for(const alternate of ['ru','en','x-default'])assert.ok(h.includes('hreflang="'+alternate+'"'));
@@ -43,4 +43,19 @@ test('unknown brands are real 404s and unavailable catalogue is 503',async()=>{
  let calls=0;const handle=site.createHandler({readTemplate:async()=>template,request:async()=>{calls++;throw Error('upstream')}});
  const unknown=response();await handle({method:'GET',url:'/api/site-page?page=brand&slug=unknown'},unknown);assert.equal(unknown.statusCode,404);assert.equal(calls,0);
  const failure=response();await handle({method:'GET',url:'/api/site-page?page=catalog&lang=en'},failure);assert.equal(failure.statusCode,503);assert.equal(failure.headers['Retry-After'],'30');
+});
+
+test('Outlet and brand guides are readable without JavaScript and expose only the agreed routes',()=>{
+ for(const lang of ['ru','en']){
+  for(const [kind,slug] of [['outlet'],['brand','hermes'],['brand','chanel'],['brand','loro-piana']]){
+   const html=site.render(template,kind,slug,lang,rows),body=html.match(/<article id="serverLanding"[\s\S]*?<\/article>/)[0];
+   assert.equal((body.match(/<h1>/g)||[]).length,1);
+   if(lang==='en')assert.doesNotMatch(body,/[А-Яа-яЁё]/);
+   assert.match(body,/data-contact-event="manager_general"/);
+   assert.doesNotMatch(body,/href="[^"]*\/(?:journal|about|buyer-service|models)\b/);
+  }
+  const outlet=site.render(template,'outlet',null,lang);
+  assert.match(outlet,/https:\/\/t.me\/\+lz-ze3-GDEQ0YmFi/);
+  assert.match(outlet,/https:\/\/t.me\/\+NWLPh8nc47kzMzI0/);
+ }
 });

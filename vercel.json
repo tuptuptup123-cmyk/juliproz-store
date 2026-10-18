@@ -68,6 +68,10 @@
       "destination": "/api/site-page?page=catalog"
     },
     {
+      "source": "/outlet",
+      "destination": "/api/site-page?page=outlet"
+    },
+    {
       "source": "/services",
       "destination": "/api/site-page?page=services"
     },

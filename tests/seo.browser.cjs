@@ -5,7 +5,7 @@ const request=async url=>{const id=new URL(url).searchParams.get('id');return Re
 const site=require('../server/site-page.cjs').createHandler({request}),product=require('../server/product-page.cjs').createHandler({request});
 const types={'.html':'text/html','.js':'text/javascript','.css':'text/css','.png':'image/png','.jpg':'image/jpeg','.webp':'image/webp','.woff2':'font/woff2'};
 const server=http.createServer((req,res)=>{const url=new URL(req.url,'http://localhost'),route=url.pathname;
- if(route==='/'||['/catalog','/services','/sell'].includes(route)||route.startsWith('/brands/')){url.searchParams.set('page',route==='/'?'home':route.startsWith('/brands/')?'brand':route.slice(1));if(route.startsWith('/brands/'))url.searchParams.set('slug',route.split('/')[2]);req.url='/api/site-page'+url.search;return site(req,res)}
+ if(route==='/'||['/catalog','/services','/sell','/outlet'].includes(route)||route.startsWith('/brands/')){url.searchParams.set('page',route==='/'?'home':route.startsWith('/brands/')?'brand':route.slice(1));if(route.startsWith('/brands/'))url.searchParams.set('slug',route.split('/')[2]);req.url='/api/site-page'+url.search;return site(req,res)}
  if(route.startsWith('/product/')){url.searchParams.set('id',route.split('/')[2]);req.url='/api/product-page'+url.search;return product(req,res)}
  const file=path.resolve(root,'.'+route);if(!file.startsWith(root+path.sep))return res.writeHead(403).end();fs.readFile(file,(err,data)=>{res.writeHead(err?404:200,{'Content-Type':types[path.extname(file)]||'application/octet-stream'});res.end(err?'Missing':data)});
 });
@@ -35,8 +35,36 @@ const server=http.createServer((req,res)=>{const url=new URL(req.url,'http://loc
  await page.locator('.masthead-inner [data-site-language=ru]').click();assert.match(await page.locator('#homeBuyerContent').innerText(),/Как заказать через байера/);
  assert.equal(await page.locator('#homeBuyerContent a[data-contact-event]').getAttribute('href'),'https://t.me/juliproz');
  console.log('PASS homepage steps, FAQ keyboard, anchor, RU/EN contacts, reload and layout',width);
+ const nav=page.locator('.bottom-nav');
+ assert.deepEqual(await nav.locator('[data-tab]:visible').evaluateAll(items=>items.map(x=>x.dataset.tab)),['home','catalog','hermes','outlet','favorites','cart','sell','services','about']);
+ await nav.locator('[data-tab=hermes]').click();await page.waitForURL(url=>url.pathname==='/brands/hermes');
+ assert.equal(await nav.locator('[aria-current=page]').getAttribute('data-tab'),'hermes');
+ assert.equal(await page.locator('#seoCatalogIntro .discovery-model').count(),3);
+ await page.locator('#seoCatalogIntro .discovery-model summary').first().click();assert.equal(await page.locator('#seoCatalogIntro .discovery-model').first().getAttribute('open'),'');
+ await page.locator('#seoCatalogIntro .discovery-model summary').first().click();
+ await nav.locator('[data-tab=outlet]').click();await page.waitForURL(url=>url.pathname==='/outlet');
+ assert.equal(await page.locator('#webOutletPage h1').innerText(),'Outlet');
+ assert.equal(await page.locator('#grid').isVisible(),false);
+ assert.equal(await page.locator('#webOutletPage .discovery-channels a').first().getAttribute('href'),'https://t.me/+lz-ze3-GDEQ0YmFi');
+ await page.goBack();await page.waitForURL(url=>url.pathname==='/brands/hermes');assert.equal(await nav.locator('[aria-current=page]').getAttribute('data-tab'),'hermes');
+ await page.goForward();await page.waitForURL(url=>url.pathname==='/outlet');await page.reload();await page.locator('html:not([data-server-view])').waitFor();assert.equal(await nav.locator('[aria-current=page]').getAttribute('data-tab'),'outlet');
+ await page.locator('.masthead-inner [data-site-language=en]').click();assert.doesNotMatch(await page.locator('#webOutletPage').innerText(),/[А-Яа-яЁё]/);
+ assert.match(await page.locator('#webOutletPage .discovery-button').first().getAttribute('href'),/^https:\/\/wa.me\//);
+ assert.equal(await page.locator('link[rel=canonical]').getAttribute('href'),'https://www.juliproz.com/outlet?lang=en');
+ assert.equal(await page.locator('link[hreflang=ru]').getAttribute('href'),'https://www.juliproz.com/outlet');
+ await page.evaluate(()=>scrollTo(0,0));await page.screenshot({path:out+'/outlet-en-'+width+'.png',fullPage:true});await page.screenshot({path:out+'/outlet-first-'+width+'.png',fullPage:false});
+ for(const tab of ['about','services','sell','cart','favorites','home','catalog','hermes']){await nav.locator('[data-tab='+tab+']').click();assert.equal(await nav.locator('[aria-current=page]').getAttribute('data-tab'),tab);assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));}
+ assert.equal(await nav.evaluate(el=>el.scrollWidth>el.clientWidth),width<900);
+ await page.locator('.masthead-inner [data-site-language=ru]').click();
+ await page.evaluate(()=>scrollTo(0,0));await page.screenshot({path:out+'/hermes-ru-'+width+'.png',fullPage:true});await page.screenshot({path:out+'/hermes-first-'+width+'.png',fullPage:false});
+ await nav.locator('[data-tab=catalog]').click();await page.locator('.discovery-directory summary').click();
+ assert.equal(await page.locator('.discovery-brand-links a[href="/brands/hermes"]').count(),1);
+ assert.equal(await page.locator('#grid .product').count(),2);
+ for(const slug of ['chanel','loro-piana']){await page.goto(origin+'/brands/'+slug+'?lang=en');await page.locator('html:not([data-server-view])').waitFor();assert.doesNotMatch(await page.locator('#seoCatalogIntro').innerText(),/[А-Яа-яЁё]/);assert.equal(await page.locator('#grid .product').count(),0);assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));}
+ console.log('PASS nine tabs, Hermes/Outlet routing, reload, Back/Forward, contacts, brand directory and responsive overflow',width);
+
  await page.goto(origin+'/brands/hermes?lang=en');await page.locator('#grid .product').waitFor();assert.equal(await page.locator('#grid .product').count(),1);assert.match(await page.locator('#seoCatalogIntro h1').innerText(),/Hermès/);assert.equal(await page.locator('html').getAttribute('lang'),'en');assert.match(await page.locator('#grid .product-open').getAttribute('href'),/product\/99001\?lang=en$/);
- await page.locator('.masthead-inner [data-site-language=ru]').click();assert.match(await page.locator('#seoCatalogIntro p').innerText(),/Смотрите/);await page.reload();await page.locator('#grid .product').waitFor();assert.equal(await page.locator('#grid .product').count(),1);
+ await page.locator('.masthead-inner [data-site-language=ru]').click();assert.match(await page.locator('#seoCatalogIntro p').first().innerText(),/Поможем/);await page.reload();await page.locator('#grid .product').waitFor();assert.equal(await page.locator('#grid .product').count(),1);
  await page.locator('.product-open').click();await page.locator('#productContent h1').waitFor();await page.locator('#backProduct').click();
  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));await page.screenshot({path:out+'/seo-brand-'+width+'.png',fullPage:true});
  for(const route of ['/?lang=en','/catalog?lang=en','/services?lang=en','/sell?lang=en','/product/99001?lang=en']){await page.goto(origin+route);await page.locator('html:not([data-server-view])').waitFor();assert.equal(await page.locator('html').getAttribute('lang'),'en');if(route.startsWith('/product/'))await page.locator('#productContent h1').waitFor();assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));}
