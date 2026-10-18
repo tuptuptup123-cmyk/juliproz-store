@@ -58,7 +58,8 @@
    if(show){
     const page=data.kind==='brand'?data:content.pages.catalog,slug=page.path.split('/')[2],rich=data.kind==='brand'&&discovery?.definitions[slug];
     intro.classList.toggle('discovery-intro',Boolean(rich));
-    const html=rich?discovery.brand(slug,lang):`<h1>${escape(page.heading[lang])}</h1><p>${escape(page.intro[lang])}</p>`;
+    intro.classList.toggle('catalog-intro-compact',data.kind==='catalog');
+    const html=rich?discovery.brand(slug,lang):`<h1>${escape(page.heading[lang])}</h1>${data.kind==='catalog'?'':`<p>${escape(page.intro[lang])}</p>`}`;
     setHTML(intro,lang+'|'+page.path,html);
    }
   }

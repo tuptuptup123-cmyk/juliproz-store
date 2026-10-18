@@ -13,6 +13,8 @@
 .brand.is-discovery-page .masthead-controls{display:none}
 .brand.is-discovery-page .buyer-education-card{display:none}
 #seoCatalogIntro.discovery-intro{max-width:none;width:100%;margin:0;min-width:0}
+#seoCatalogIntro.catalog-intro-compact{max-width:none;margin:0 0 8px}
+#seoCatalogIntro.catalog-intro-compact h1,.seo-landing .seo-catalog-heading{font:400 24px/1.2 "Playfair Display",Georgia,serif;margin:0}
 #webOutletPage{grid-column:1/-1;width:100%;min-width:0}
 .discovery-page{color:#202020;min-width:0;padding:12px 0 28px}
 .discovery-page h1,.discovery-page h2,.discovery-page h3{font-family:"Playfair Display",Georgia,serif;font-weight:400;letter-spacing:-.025em}
