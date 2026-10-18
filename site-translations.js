@@ -3,7 +3,7 @@
  'use strict';
  const ui={
   "Buyer service — поиск и выкуп люксовых вещей по миру":"Buyer service — worldwide luxury sourcing",
-  "Находим одежду, сумки, обувь, часы и украшения под ваш запрос. Согласовываем стоимость, проверку подлинности и условия доставки до оплаты.":"We source clothing, bags, shoes, watches and jewellery for you. We agree on the cost, authentication and delivery arrangements before payment.",
+  "Ваш персональный байер: ищем и выкупаем люксовые сумки, одежду, обувь, часы и украшения по всему миру. Стоимость, проверку подлинности и доставку согласуем до оплаты.":"Your luxury personal shopper for designer bags, clothing, shoes, watches and jewellery. We source worldwide and agree on the cost, authentication and delivery before payment.",
   "Отправить запрос байеру":"Send a sourcing request",
   "Как мы работаем":"How it works",
 

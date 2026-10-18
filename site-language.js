@@ -92,7 +92,7 @@
  function set(value){
   if(!['ru','en'].includes(value)||telegram())return;
   preferred=value;try{localStorage.setItem(key,value)}catch{}
-  try{const url=new URL(root.location.href);url.searchParams.set('lang',value);root.history.replaceState(root.history.state,'',url)}catch{}
+  try{const url=new URL(root.location.href);if(value==='en')url.searchParams.set('lang','en');else url.searchParams.delete('lang');root.history.replaceState(root.history.state,'',url)}catch{}
   sync();apply();document.dispatchEvent(new CustomEvent('site-language-change',{detail:{language}}));
  }
  function start(){

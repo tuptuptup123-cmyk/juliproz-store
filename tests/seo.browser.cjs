@@ -33,6 +33,8 @@ const server=http.createServer((req,res)=>{const url=new URL(req.url,'http://loc
  await page.screenshot({path:out+'/home-buyer-en-'+width+'.png',fullPage:true});
  await page.reload();await page.locator('html:not([data-server-view])').waitFor();assert.match(await page.locator('#homeBuyerContent').innerText(),/How personal shopping works/);
  await page.locator('.masthead-inner [data-site-language=ru]').click();assert.match(await page.locator('#homeBuyerContent').innerText(),/Как заказать через байера/);
+ assert.equal(new URL(page.url()).searchParams.has('lang'),false);
+ assert.equal(await page.locator('meta[property="og:locale"]').getAttribute('content'),'ru_RU');
  assert.equal(await page.locator('#homeBuyerContent a[data-contact-event]').getAttribute('href'),'https://t.me/juliproz');
  console.log('PASS homepage steps, FAQ keyboard, anchor, RU/EN contacts, reload and layout',width);
  const nav=page.locator('.bottom-nav');
@@ -52,6 +54,7 @@ const server=http.createServer((req,res)=>{const url=new URL(req.url,'http://loc
  await page.locator('.masthead-inner [data-site-language=en]').click();assert.doesNotMatch(await page.locator('#webOutletPage').innerText(),/[А-Яа-яЁё]/);
  assert.match(await page.locator('#webOutletPage .discovery-button').first().getAttribute('href'),/^https:\/\/wa.me\//);
  assert.equal(await page.locator('link[rel=canonical]').getAttribute('href'),'https://www.juliproz.com/outlet?lang=en');
+ assert.equal(await page.locator('meta[property="og:locale"]').getAttribute('content'),'en_US');
  assert.equal(await page.locator('link[hreflang=ru]').getAttribute('href'),'https://www.juliproz.com/outlet');
  await page.evaluate(()=>scrollTo(0,0));await page.screenshot({path:out+'/outlet-en-'+width+'.png',fullPage:true});await page.screenshot({path:out+'/outlet-first-'+width+'.png',fullPage:false});
  for(const tab of ['about','services','sell','cart','favorites','home','catalog','hermes']){await nav.locator('[data-tab='+tab+']').click();assert.equal(await nav.locator('[aria-current=page]').getAttribute('data-tab'),tab);assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));}
@@ -72,7 +75,7 @@ const server=http.createServer((req,res)=>{const url=new URL(req.url,'http://loc
  console.log('PASS nine tabs, Hermes/Outlet routing, reload, Back/Forward, contacts, existing brand filter and responsive overflow',width);
 
  await page.goto(origin+'/brands/hermes?lang=en');await page.locator('#grid .product').waitFor();assert.equal(await page.locator('#grid .product').count(),1);assert.match(await page.locator('#seoCatalogIntro h1').innerText(),/Hermès/);assert.equal(await page.locator('html').getAttribute('lang'),'en');assert.match(await page.locator('#grid .product-open').getAttribute('href'),/product\/99001\?lang=en$/);
- await page.locator('.masthead-inner [data-site-language=ru]').click();assert.match(await page.locator('#seoCatalogIntro p').first().innerText(),/Поможем/);await page.reload();await page.locator('#grid .product').waitFor();assert.equal(await page.locator('#grid .product').count(),1);
+ await page.locator('.masthead-inner [data-site-language=ru]').click();assert.match(await page.locator('#seoCatalogIntro p').first().innerText(),/сумок Hermès/);await page.reload();await page.locator('#grid .product').waitFor();assert.equal(await page.locator('#grid .product').count(),1);
  await page.locator('.product-open').click();await page.locator('#productContent h1').waitFor();await page.locator('#backProduct').click();
  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));await page.screenshot({path:out+'/seo-brand-'+width+'.png',fullPage:true});
  for(const route of ['/?lang=en','/catalog?lang=en','/services?lang=en','/sell?lang=en','/product/99001?lang=en']){await page.goto(origin+route);await page.locator('html:not([data-server-view])').waitFor();assert.equal(await page.locator('html').getAttribute('lang'),'en');if(route.startsWith('/product/'))await page.locator('#productContent h1').waitFor();assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));}
