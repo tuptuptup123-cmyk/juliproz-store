@@ -38,6 +38,7 @@
   if(!serverRendered)return;
   const url=new URL(location.href);url.pathname=data.path;url.hash='';
   for(const key of ['product','tab','page','slug'])url.searchParams.delete(key);
+  if(tab!=='catalog')for(const key of ['sale','collection'])url.searchParams.delete(key);
   if(['favorites','cart','about'].includes(tab))url.searchParams.set('tab',tab);
   const next=url.pathname+url.search,current=location.pathname+location.search+location.hash;
   if(next!==current)history[replace?'replaceState':'pushState']({tab},'',next);
@@ -45,6 +46,11 @@
  function setHTML(el,key,html){if(el&&el.dataset.renderKey!==key){el.innerHTML=html;el.dataset.renderKey=key}}
  function sync(state){
   const lang=language(),inCatalog=['catalog','hermes'].includes(state.tab);
+  if(serverRendered&&state.tab==='catalog'&&data.kind==='catalog'){
+   const url=new URL(location.href);url.searchParams.delete('sale');url.searchParams.delete('collection');
+   if(state.sale){url.searchParams.set('sale','1');if(window.SaleCollections?.groups[state.saleCollection])url.searchParams.set('collection',state.saleCollection)}
+   const next=url.pathname+url.search+url.hash;if(next!==location.pathname+location.search+location.hash)history.replaceState(history.state,'',next);
+  }
   if(inCatalog&&data.kind==='brand'&&state.brand!==data.brand){data={...content.pages.catalog,kind:'catalog'};updateURL('catalog',true);metadata()}
   const intro=document.getElementById('seoCatalogIntro'),show=inCatalog&&data.kind!=='product';
   if(intro){
@@ -52,8 +58,9 @@
    if(show){
     const page=data.kind==='brand'?data:content.pages.catalog,slug=page.path.split('/')[2],rich=data.kind==='brand'&&discovery?.definitions[slug];
     intro.classList.toggle('discovery-intro',Boolean(rich));
-    const html=rich?discovery.brand(slug,lang):`<h1>${escape(page.heading[lang])}</h1><p>${escape(page.intro[lang])}</p>`;
-    setHTML(intro,lang+'|'+page.path,html);
+    const sale=!rich&&state.sale?root.SaleCollections?.copy(lang,state.saleCollection):null;
+    const html=rich?discovery.brand(slug,lang):`<h1>${escape(sale?.heading||page.heading[lang])}</h1><p>${escape(sale?.intro||page.intro[lang])}</p>${sale?`<a class="discovery-text-link" href="${root.SaleCollections.url(lang)}">${lang==='en'?'All SALE pieces':'Все вещи SALE'} →</a>`:''}`;
+    setHTML(intro,lang+'|'+page.path+'|'+Boolean(sale)+'|'+(state.saleCollection||''),html);
    }
   }
   const outlet=document.getElementById('webOutletPage');if(outlet&&state.tab==='outlet')setHTML(outlet,lang,discovery.outlet(lang));

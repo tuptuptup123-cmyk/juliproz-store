@@ -43,7 +43,8 @@ const server=http.createServer((req,res)=>{const url=new URL(req.url,'http://loc
  await page.locator('#seoCatalogIntro .discovery-model summary').first().click();assert.equal(await page.locator('#seoCatalogIntro .discovery-model').first().getAttribute('open'),'');
  await page.locator('#seoCatalogIntro .discovery-model summary').first().click();
  await nav.locator('[data-tab=outlet]').click();await page.waitForURL(url=>url.pathname==='/outlet');
- assert.equal(await page.locator('#webOutletPage h1').innerText(),'Outlet');
+ assert.equal(await page.locator('#webOutletPage h1').innerText(),'Аутлеты и приватные сейлы');
+ assert.equal(await page.locator('#webOutletPage .discovery-breadcrumb, #webOutletPage .discovery-eyebrow').count(),0);
  assert.equal(await page.locator('#grid').isVisible(),false);
  assert.equal(await page.locator('#webOutletPage .discovery-channels a').first().getAttribute('href'),'https://t.me/+lz-ze3-GDEQ0YmFi');
  await page.goBack();await page.waitForURL(url=>url.pathname==='/brands/hermes');assert.equal(await nav.locator('[aria-current=page]').getAttribute('data-tab'),'hermes');
@@ -88,6 +89,32 @@ const server=http.createServer((req,res)=>{const url=new URL(req.url,'http://loc
  await page.locator('#backProduct').click();assert.equal(new URL(page.url()).pathname,'/catalog');
  await page.reload();await page.locator('#grid .product').first().waitFor();assert.equal(await page.locator('#productModal').isVisible(),false,'Reload after closing a direct product link stays in the catalog');
  assert.deepEqual(errors,[]);await context.close();console.log('PASS SEO hydration, links, brand filter, RU/EN switch, reload and mobile layout',width);
+ }
+ products[1].original_price=900;
+ products.push(
+  {id:99003,brand:'Gucci',name:'Куртка',category:'Куртки',size:'M',price:500,original_price:1500,currency:'EUR',available:true},
+  {id:99004,brand:'Gucci',name:'Куртка без скидки',category:'Куртки',size:'M',price:500,currency:'EUR',available:true},
+  {id:99005,brand:'Loro Piana',name:'Кепка',category:'Кепки',size:'M',price:100,original_price:200,currency:'EUR',available:true}
+ );
+ for(const width of [390,1280]){
+  const context=await browser.newContext({viewport:{width,height:900},reducedMotion:'reduce'});
+  await context.route('**/api/catalog',r=>r.fulfill({json:products}));await context.route('**/rest/v1/products?**',r=>r.fulfill({json:products}));await context.route('**/api/analytics',r=>r.fulfill({status:204}));
+  await context.addInitScript(()=>{localStorage.setItem('jpAnalyticsConsent','declined');localStorage.setItem('jpAntiScamSeenV1','1')});
+  const page=await context.newPage();
+  for(const [collection,id] of [['clothing','99003'],['shoes','99002'],['accessories','99005']]){
+   await page.goto(origin+'/outlet?lang=en');await page.locator('#webOutletPage [data-sale-collection="'+collection+'"]').click();
+   await page.waitForURL(url=>url.pathname==='/catalog'&&url.searchParams.get('collection')===collection);await page.locator('#grid .product').first().waitFor();
+   assert.deepEqual(await page.locator('#grid .product').evaluateAll(cards=>cards.map(c=>c.dataset.id)),[id]);
+   assert.match(await page.locator('#seoCatalogIntro h1').innerText(),/SALE/);assert.match(await page.locator('#filterSummary').innerText(),/SALE/);
+   await page.reload();await page.locator('#grid .product').first().waitFor();assert.equal(await page.locator('#grid .product').count(),1);assert.equal(await page.locator('#grid .product').getAttribute('data-id'),id);
+   await page.locator('.masthead-inner [data-site-language=ru]').click();assert.equal(new URL(page.url()).searchParams.get('collection'),collection);assert.equal(await page.locator('#grid .product').getAttribute('data-id'),id);
+   await page.goBack();await page.locator('#webOutletPage h1').waitFor();assert.equal(new URL(page.url()).pathname,'/outlet');
+   await page.goForward();await page.locator('#grid .product').first().waitFor();assert.equal(await page.locator('#grid .product').getAttribute('data-id'),id);
+  }
+  await page.locator('#seoCatalogIntro a').click();await page.locator('#grid .product').first().waitFor();assert.deepEqual((await page.locator('#grid .product').evaluateAll(cards=>cards.map(c=>c.dataset.id))).sort(),['99002','99003','99005']);
+  await page.locator('#reset').click();assert.equal(await page.locator('#grid .product').count(),products.length);assert.equal(new URL(page.url()).searchParams.has('sale'),false);assert.equal(new URL(page.url()).searchParams.has('collection'),false);
+  await page.reload();await page.locator('#grid .product').first().waitFor();assert.equal(await page.locator('#grid .product').count(),products.length);
+  await context.close();console.log('PASS Outlet SALE categories, exact discount matching, reload, language, Back/Forward and reset '+width);
  }
  const context=await browser.newContext({javaScriptEnabled:false}),page=await context.newPage();await page.goto(origin+'/brands/hermes?lang=en');assert.match(await page.locator('#serverLanding h1').innerText(),/Hermès/);assert.equal(await page.locator('#serverLanding a[href*="/product/"]').count(),1);await page.goto(origin+'/product/99001?lang=en');assert.match(await page.locator('#serverProduct h1').innerText(),/Oran sandals/);console.log('PASS source pages remain readable and linked without JavaScript');await context.close();
 }finally{await browser.close();server.close()}})().catch(e=>{console.error(e);server.close();process.exitCode=1});
