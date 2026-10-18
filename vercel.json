@@ -60,10 +60,6 @@
       "destination": "/api/site-page?page=home"
     },
     {
-      "source": "/index.html",
-      "destination": "/api/site-page?page=home"
-    },
-    {
       "source": "/catalog",
       "destination": "/api/site-page?page=catalog"
     },
@@ -120,6 +116,26 @@
         }
       ],
       "destination": "/product/:productId",
+      "permanent": true
+    },
+    {
+      "source": "/index.html",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/:page(catalog|outlet|services|sell)/",
+      "destination": "/:page",
+      "permanent": true
+    },
+    {
+      "source": "/brands/:slug/",
+      "destination": "/brands/:slug",
+      "permanent": true
+    },
+    {
+      "source": "/product/:id/",
+      "destination": "/product/:id",
       "permanent": true
     }
   ],

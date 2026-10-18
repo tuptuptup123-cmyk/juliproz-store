@@ -2,7 +2,8 @@
   "baseline": "supabase/schema/baseline-20261016.sql",
   "migrations": [
     "supabase/migrations/20261016144421_external_audit_security_and_logic.sql",
-    "supabase/migrations/20261017082140_remaining_audit_sessions_delivery_observability.sql"
+    "supabase/migrations/20261017082140_remaining_audit_sessions_delivery_observability.sql",
+    "supabase/migrations/20261018051207_analytics_acquisition_sources.sql"
   ],
   "postDeployment": [
     "supabase/rollout/private-product-photos.sql"

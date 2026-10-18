@@ -17,7 +17,7 @@ test('gateway records only daily keyed fingerprint and fixed event fields, with 
  const b={...event(),ip:'1.2.3.4',email:'private@example.invalid',secret:'evil'};
  assert.equal((await invoke(handler,{body:b})).statusCode,202);accepted=false;assert.equal((await invoke(handler,{body:b,headers:{'x-forwarded-for':'192.0.2.9'}})).statusCode,429);
  const one=JSON.parse(calls[0].o.body),two=JSON.parse(calls[1].o.body);assert.equal(one.p_fingerprint,two.p_fingerprint);assert.equal(one.p_secret,secret);
- assert.equal(calls[0].u,'https://qhgzzhgxwpcctafpzjid.supabase.co/rest/v1/rpc/store_analytics_gateway_ingest');assert.equal(calls[0].o.redirect,'error');
+ assert.equal(calls[0].u,'https://qhgzzhgxwpcctafpzjid.supabase.co/rest/v1/rpc/store_analytics_gateway_ingest_attributed');assert.equal(calls[0].o.redirect,'error');
  assert.equal(/203\.0\.113\.7|private@example|1\.2\.3\.4/.test(calls[0].o.body),false);assert.equal(one.p_event_id,b.event_id);
  day='2026-10-14';await invoke(handler,{body:b});assert.notEqual(JSON.parse(calls[2].o.body).p_fingerprint,one.p_fingerprint);
 });

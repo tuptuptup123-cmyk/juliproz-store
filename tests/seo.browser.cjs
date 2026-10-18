@@ -13,6 +13,15 @@ const server=http.createServer((req,res)=>{const url=new URL(req.url,'http://loc
  for(const width of [320,390,1280]){
  const context=await browser.newContext({viewport:{width,height:900},reducedMotion:'reduce'});await context.route('**/api/catalog',r=>r.fulfill({json:products}));await context.route('**/rest/v1/products?**',r=>r.fulfill({json:products}));await context.route('https://juliproz-store.vercel.app/images/**',r=>r.fulfill({path:root+'/images/brands/hermes-birkin.png',contentType:'image/png'}));await context.route('**/api/analytics',r=>r.fulfill({status:204}));await context.addInitScript(()=>{localStorage.setItem('jpAnalyticsConsent','declined');localStorage.setItem('jpAntiScamSeenV1','1')});
  const page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
+ const homeRequests=[];page.on('request',r=>{if(/\/images\/home-(boutique|lifestyle)\.jpg/.test(r.url()))homeRequests.push(r.url())});
+ await page.goto(origin+'/catalog?lang=en');await page.locator('html:not([data-server-view])').waitFor();
+ assert.equal(homeRequests.length,0,'Hidden homepage photos must not download in the catalogue');
+ assert.equal(await page.locator('.bottom-nav a[href][data-tab]').count(),9);
+ assert.equal(await page.locator('.bottom-nav [data-tab=hermes]').getAttribute('href'),'/brands/hermes?lang=en');
+ if(width>=900){const popupPromise=context.waitForEvent('page');await page.locator('.bottom-nav [data-tab=outlet]').click({modifiers:['Control']});const popup=await popupPromise;await popup.waitForURL(url=>url.pathname==='/outlet');assert.equal(new URL(popup.url()).pathname,'/outlet');assert.equal(new URL(page.url()).pathname,'/catalog');await popup.close();}
+ await page.locator('.bottom-nav [data-tab=home]').click();await page.waitForFunction(()=>[...document.querySelectorAll('.home-photographs img')].every(img=>img.complete&&img.naturalWidth>0));
+ assert.equal(new Set(homeRequests).size,2,'SPA home navigation must load both photographs');
+
  await page.goto(origin+'/');await page.locator('html:not([data-server-view])').waitFor();await page.evaluate(()=>document.fonts.ready);
  assert.match(await page.locator('#webHomeTitle').innerText(),/Buyer service/);
  assert.equal(await page.locator('#homeBuyerContent .home-buyer-steps>li').count(),3);
@@ -65,7 +74,7 @@ const server=http.createServer((req,res)=>{const url=new URL(req.url,'http://loc
  assert.equal(await page.locator('.discovery-directory').count(),0);
  assert.equal(await page.locator('#grid .product').count(),2);
  await page.locator('#openCatalogMenu').click();await page.locator('[data-menu-group=brand]').click();
- await page.locator('[data-menu-type=brand][data-menu-value="Hermès"]').click();await page.locator('#showMenuProducts').click();
+ assert.equal(await page.locator('[data-menu-type=brand][data-menu-value="Hermès"]').getAttribute('href'),'/brands/hermes');await page.locator('[data-menu-type=brand][data-menu-value="Hermès"]').click();await page.locator('#showMenuProducts').click();
  assert.equal(await page.locator('#grid .product').count(),1);
  await page.locator('#openCatalogMenu').click();await page.locator('#resetMenu').click();await page.locator('#showMenuProducts').click();
  assert.equal(await page.locator('#grid .product').count(),2);
@@ -76,7 +85,7 @@ const server=http.createServer((req,res)=>{const url=new URL(req.url,'http://loc
 
  await page.goto(origin+'/brands/hermes?lang=en');await page.locator('#grid .product').waitFor();assert.equal(await page.locator('#grid .product').count(),1);assert.match(await page.locator('#seoCatalogIntro h1').innerText(),/Hermès/);assert.equal(await page.locator('html').getAttribute('lang'),'en');assert.match(await page.locator('#grid .product-open').getAttribute('href'),/product\/99001\?lang=en$/);
  await page.locator('.masthead-inner [data-site-language=ru]').click();assert.match(await page.locator('#seoCatalogIntro p').first().innerText(),/сумок Hermès/);await page.reload();await page.locator('#grid .product').waitFor();assert.equal(await page.locator('#grid .product').count(),1);
- await page.locator('.product-open').click();await page.locator('#productContent h1').waitFor();await page.locator('#backProduct').click();
+ await page.locator('.product-open').click();await page.locator('#productContent h1').waitFor();assert.match(await page.locator('a.related-card').first().getAttribute('href'),/product\/99002$/);await page.locator('a.related-card').first().click();assert.match(await page.locator('#productContent h1').innerText(),/Кроссовки/);await page.locator('#backProduct').click();
  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));await page.screenshot({path:out+'/seo-brand-'+width+'.png',fullPage:true});
  for(const route of ['/?lang=en','/catalog?lang=en','/services?lang=en','/sell?lang=en','/product/99001?lang=en']){await page.goto(origin+route);await page.locator('html:not([data-server-view])').waitFor();assert.equal(await page.locator('html').getAttribute('lang'),'en');if(route.startsWith('/product/'))await page.locator('#productContent h1').waitFor();assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));}
  await nav.locator('[data-tab=outlet]').click();

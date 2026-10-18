@@ -1,0 +1,31 @@
+'use strict';
+const assert=require('node:assert/strict'),{randomUUID,createHash}=require('node:crypto');
+module.exports=async db=>{
+ const q=(s,a=[])=>db.query(s,a),value=async(s,a=[])=>(await q(s,a)).rows[0]?.v;
+ const owner=randomUUID(),authSession=randomUUID(),visitor=randomUUID(),session=randomUUID(),secret='4'.repeat(64),fingerprint='b'.repeat(64),event=randomUUID();
+ await db.exec('reset role');
+ await q('insert into auth.users(id) values($1)',[owner]);await q('insert into auth.sessions(id,user_id) values($1,$2)',[authSession,owner]);
+ await q("insert into public.store_admins(user_id,display_name,access_role) values($1,'SEO test','owner')",[owner]);
+ await q('insert into store_private.analytics_gateway_secret values(true,$1) on conflict(singleton) do update set secret_hash=excluded.secret_hash',[createHash('sha256').update(secret).digest()]);
+ const send=(source,e=event,kind='visit',v=visitor,s=session,key=secret)=>value("select public.store_analytics_gateway_ingest_attributed($1,$2,$3,$4,$5,null,null,$6,'website',$7) v",[key,e,v,s,kind,fingerprint,source]);
+ await db.exec('set role anon');
+ await assert.rejects(()=>send('google_organic',event,'visit',visitor,session,'0'.repeat(64)),e=>e.code==='42501');
+ await assert.rejects(()=>q('select source from store_private.analytics_events'),e=>e.code==='42501');
+ await assert.rejects(()=>q("select public.store_analytics_summary(1,'website')"),e=>e.code==='42501');
+ assert.equal(await send('https://invalid.example'),false);assert.equal(await send('telegram'),false);
+ assert.equal(await send('google_organic'),true);
+ assert.equal(await send('google_paid'),true); // Retry cannot change the original source.
+ assert.equal(await send('direct',randomUUID(),'manager_general'),true);
+ assert.equal(await send('google_paid',randomUUID(),'visit',visitor,randomUUID()),true);
+ assert.equal(await send('google_paid',event,'visit',randomUUID(),session),false);
+ await db.exec('reset role');
+ const rows=(await q('select source,event from store_private.analytics_events where session_id=$1',[session])).rows;
+ assert.equal(rows.length,2);assert.ok(rows.every(r=>r.source==='google_organic'));
+ await q("select set_config('request.jwt.claims',$1,false)",[JSON.stringify({sub:owner,session_id:authSession,role:'authenticated',aal:'aal2',amr:[{method:'totp',timestamp:Date.now()/1000}]})]);
+ await db.exec('set role authenticated');
+ const report=await value("select public.store_analytics_summary(1,'website') v"),organic=report.acquisition.find(x=>x.source==='google_organic');
+ assert.deepEqual(organic,{source:'google_organic',visitors:1,sessions:1,contacts:1,contact_visitors:1});
+ assert.ok(report.acquisition.some(x=>x.source==='unknown'),'Old events are not relabelled');
+ assert.equal((await value("select public.store_analytics_summary(1,'telegram') v")).acquisition,undefined);
+ await db.exec('reset role');console.log('PASS acquisition auth, isolation, first source, retry, reporting and legacy probes');
+};

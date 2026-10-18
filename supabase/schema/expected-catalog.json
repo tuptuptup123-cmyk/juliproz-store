@@ -2461,6 +2461,51 @@
   },
   {
     "kind": "column_grant",
+    "name": "store_private.analytics_events.source.authenticated.SELECT",
+    "definition": "NO"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.analytics_events.source.postgres.INSERT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.analytics_events.source.postgres.REFERENCES",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.analytics_events.source.postgres.SELECT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.analytics_events.source.postgres.UPDATE",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.analytics_events.source.service_role.INSERT",
+    "definition": "NO"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.analytics_events.source.service_role.REFERENCES",
+    "definition": "NO"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.analytics_events.source.service_role.SELECT",
+    "definition": "NO"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.analytics_events.source.service_role.UPDATE",
+    "definition": "NO"
+  },
+  {
+    "kind": "column_grant",
     "name": "store_private.analytics_events.visitor_id.authenticated.SELECT",
     "definition": "NO"
   },
@@ -2947,6 +2992,51 @@
   {
     "kind": "column_grant",
     "name": "store_private.analytics_sessions.session_id.service_role.UPDATE",
+    "definition": "NO"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.analytics_sessions.source.authenticated.SELECT",
+    "definition": "NO"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.analytics_sessions.source.postgres.INSERT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.analytics_sessions.source.postgres.REFERENCES",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.analytics_sessions.source.postgres.SELECT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.analytics_sessions.source.postgres.UPDATE",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.analytics_sessions.source.service_role.INSERT",
+    "definition": "NO"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.analytics_sessions.source.service_role.REFERENCES",
+    "definition": "NO"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.analytics_sessions.source.service_role.SELECT",
+    "definition": "NO"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.analytics_sessions.source.service_role.UPDATE",
     "definition": "NO"
   },
   {
@@ -6471,6 +6561,11 @@
   },
   {
     "kind": "constraint",
+    "name": "store_private.analytics_events.analytics_events_source_check",
+    "definition": "CHECK ((source = ANY (ARRAY['google_organic'::text, 'google_paid'::text, 'campaign'::text, 'referral'::text, 'direct'::text, 'unknown'::text, 'telegram'::text])))"
+  },
+  {
+    "kind": "constraint",
     "name": "store_private.analytics_events.analytics_events_visitor_id_not_null",
     "definition": "NOT NULL visitor_id"
   },
@@ -6598,6 +6693,11 @@
     "kind": "constraint",
     "name": "store_private.analytics_sessions.analytics_sessions_session_id_not_null",
     "definition": "NOT NULL session_id"
+  },
+  {
+    "kind": "constraint",
+    "name": "store_private.analytics_sessions.analytics_sessions_source_check",
+    "definition": "CHECK ((source = ANY (ARRAY['google_organic'::text, 'google_paid'::text, 'campaign'::text, 'referral'::text, 'direct'::text, 'unknown'::text, 'telegram'::text])))"
   },
   {
     "kind": "constraint",
@@ -7516,6 +7616,11 @@
   },
   {
     "kind": "function",
+    "name": "public.store_analytics_gateway_ingest_attributed(p_secret text, p_event_id uuid, p_visitor uuid, p_session uuid, p_event text, p_product bigint, p_page text, p_fingerprint text, p_channel text, p_source text)",
+    "definition": "CREATE OR REPLACE FUNCTION public.store_analytics_gateway_ingest_attributed(p_secret text, p_event_id uuid, p_visitor uuid, p_session uuid, p_event text, p_product bigint, p_page text, p_fingerprint text, p_channel text, p_source text)\n RETURNS boolean\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\ndeclare accepted boolean; session_source text;\nbegin\n if p_source is null or p_source not in ('google_organic','google_paid','campaign','referral','direct','unknown','telegram')\n  or (p_channel='website' and p_source='telegram') or (p_channel='telegram' and p_source<>'telegram') then return false;end if;\n accepted=public.store_analytics_gateway_ingest(p_secret,p_event_id,p_visitor,p_session,p_event,p_product,p_page,p_fingerprint,p_channel);\n if not accepted then return false;end if;\n update store_private.analytics_sessions s set source=coalesce(s.source,p_source)\n  where s.session_id=p_session and s.visitor_id=p_visitor and s.channel=p_channel returning s.source into session_source;\n -- First source wins, including concurrent and retried events. Never rewrite history.\n update store_private.analytics_events set source=session_source\n  where event_id=p_event_id and visitor_id=p_visitor and session_id=p_session and channel=p_channel and source is null;\n return true;\nend; $function$\n"
+  },
+  {
+    "kind": "function",
     "name": "public.store_analytics_health()",
     "definition": "CREATE OR REPLACE FUNCTION public.store_analytics_health()\n RETURNS boolean\n LANGUAGE sql\n STABLE\n SET search_path TO ''\nAS $function$select store_private.own_analytics_health();$function$\n"
   },
@@ -7542,7 +7647,7 @@
   {
     "kind": "function",
     "name": "public.store_analytics_summary(p_days integer, p_channel text)",
-    "definition": "CREATE OR REPLACE FUNCTION public.store_analytics_summary(p_days integer, p_channel text)\n RETURNS jsonb\n LANGUAGE plpgsql\n SET search_path TO ''\nAS $function$\ndeclare result jsonb; since timestamptz;\nbegin\n if not store_private.admin_mfa_satisfied() or not exists(select 1 from public.store_admins where user_id=auth.uid()) then raise exception 'admin required' using errcode='42501';end if;\n if p_channel is null or p_channel not in ('website','telegram','legacy') then raise exception 'invalid analytics channel' using errcode='22023';end if;\n since=now()-make_interval(days=>greatest(1,least(30,coalesce(p_days,7))));\n select coalesce(jsonb_object_agg(event,n),'{}'::jsonb) into result from(select event,count(*) n from store_private.analytics_events where channel=p_channel and created_at>=since group by event)t;\n result=result||jsonb_build_object(\n 'channel',p_channel,\n 'active',(select count(distinct visitor_id) from store_private.analytics_sessions where channel=p_channel and last_seen>=now()-interval '2 minutes'),\n 'visitors',(select count(distinct visitor_id) from store_private.analytics_sessions where channel=p_channel and last_seen>=since),\n 'sessions',(select count(*) from store_private.analytics_sessions where channel=p_channel and started_at>=since),\n 'event_visitors',coalesce((select jsonb_object_agg(event,n) from(select event,count(distinct visitor_id) n from store_private.analytics_events where channel=p_channel and created_at>=since group by event)t),'{}'::jsonb),\n 'daily',coalesce((select jsonb_agg(to_jsonb(t) order by \"day\") from(\n select (created_at at time zone store_private.business_time_zone())::date as \"day\",count(distinct visitor_id) visitors,\n count(*) filter(where event='product_view') views,\n count(*) filter(where event='cart_add') cart,\n count(*) filter(where event='checkout_open' or event like 'manager_%') contacts\n from store_private.analytics_events where channel=p_channel and created_at>=since group by 1)t),'[]'::jsonb),\n 'products',coalesce((select jsonb_agg(to_jsonb(t)) from(\n select p.id,p.brand,p.name,count(*) filter(where e.event='product_view') views,\n count(*) filter(where e.event='wishlist_add') wishlist,count(*) filter(where e.event='cart_add') cart,\n count(*) filter(where e.event='manager_product') contacts,\n count(*) filter(where e.event='manager_search_product') search_contacts\n from store_private.analytics_events e join public.products p on p.id=e.product_id where e.channel=p_channel and e.created_at>=since\n group by p.id,p.brand,p.name order by count(*) filter(where e.event='product_view') desc,p.id limit 20)t),'[]'::jsonb));\n return result;\nend; $function$\n"
+    "definition": "CREATE OR REPLACE FUNCTION public.store_analytics_summary(p_days integer, p_channel text)\n RETURNS jsonb\n LANGUAGE plpgsql\n SET search_path TO ''\nAS $function$\ndeclare result jsonb; since timestamptz;\nbegin\n if not store_private.admin_mfa_satisfied() or not exists(select 1 from public.store_admins where user_id=auth.uid()) then raise exception 'admin required' using errcode='42501';end if;\n if p_channel is null or p_channel not in ('website','telegram','legacy') then raise exception 'invalid analytics channel' using errcode='22023';end if;\n since=now()-make_interval(days=>greatest(1,least(30,coalesce(p_days,7))));\n select coalesce(jsonb_object_agg(event,n),'{}'::jsonb) into result from(select event,count(*) n from store_private.analytics_events where channel=p_channel and created_at>=since group by event)t;\n result=result||jsonb_build_object(\n 'channel',p_channel,\n 'active',(select count(distinct visitor_id) from store_private.analytics_sessions where channel=p_channel and last_seen>=now()-interval '2 minutes'),\n 'visitors',(select count(distinct visitor_id) from store_private.analytics_sessions where channel=p_channel and last_seen>=since),\n 'sessions',(select count(*) from store_private.analytics_sessions where channel=p_channel and started_at>=since),\n 'event_visitors',coalesce((select jsonb_object_agg(event,n) from(select event,count(distinct visitor_id) n from store_private.analytics_events where channel=p_channel and created_at>=since group by event)t),'{}'::jsonb),\n 'daily',coalesce((select jsonb_agg(to_jsonb(t) order by \"day\") from(\n select (created_at at time zone store_private.business_time_zone())::date as \"day\",count(distinct visitor_id) visitors,\n count(*) filter(where event='product_view') views,\n count(*) filter(where event='cart_add') cart,\n count(*) filter(where event='checkout_open' or event like 'manager_%') contacts\n from store_private.analytics_events where channel=p_channel and created_at>=since group by 1)t),'[]'::jsonb),\n 'products',coalesce((select jsonb_agg(to_jsonb(t)) from(\n select p.id,p.brand,p.name,count(*) filter(where e.event='product_view') views,\n count(*) filter(where e.event='wishlist_add') wishlist,count(*) filter(where e.event='cart_add') cart,\n count(*) filter(where e.event='manager_product') contacts,\n count(*) filter(where e.event='manager_search_product') search_contacts\n from store_private.analytics_events e join public.products p on p.id=e.product_id where e.channel=p_channel and e.created_at>=since\n group by p.id,p.brand,p.name order by count(*) filter(where e.event='product_view') desc,p.id limit 20)t),'[]'::jsonb));\n if p_channel='website' then\n  result=result||jsonb_build_object('acquisition',coalesce((select jsonb_agg(to_jsonb(t)) from (\n   select coalesce(source,'unknown') source,count(distinct visitor_id) visitors,\n    count(distinct session_id) sessions,\n    count(*) filter(where event='checkout_open' or event like 'manager_%') contacts,\n    count(distinct visitor_id) filter(where event='checkout_open' or event like 'manager_%') contact_visitors\n   from store_private.analytics_events where channel=p_channel and created_at>=since\n   group by coalesce(source,'unknown')\n  ) t),'[]'::jsonb));\n end if;\n return result;\nend; $function$\n"
   },
   {
     "kind": "function",
@@ -8047,6 +8152,11 @@
   {
     "kind": "function_acl",
     "name": "public.store_analytics_gateway_ingest(p_secret text, p_event_id uuid, p_visitor uuid, p_session uuid, p_event text, p_product bigint, p_page text, p_fingerprint text, p_channel text)",
+    "definition": "{postgres=X/postgres,anon=X/postgres}"
+  },
+  {
+    "kind": "function_acl",
+    "name": "public.store_analytics_gateway_ingest_attributed(p_secret text, p_event_id uuid, p_visitor uuid, p_session uuid, p_event text, p_product bigint, p_page text, p_fingerprint text, p_channel text, p_source text)",
     "definition": "{postgres=X/postgres,anon=X/postgres}"
   },
   {
@@ -10427,7 +10537,7 @@
   {
     "kind": "table",
     "name": "store_private.analytics_events",
-    "definition": "{\"rls\": true, \"columns\": [{\"name\": \"event_id\", \"type\": \"uuid\", \"default\": null, \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"visitor_id\", \"type\": \"uuid\", \"default\": null, \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"session_id\", \"type\": \"uuid\", \"default\": null, \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"event\", \"type\": \"text\", \"default\": null, \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"product_id\", \"type\": \"bigint\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"page\", \"type\": \"text\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"created_at\", \"type\": \"timestamp with time zone\", \"default\": \"now()\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"channel\", \"type\": \"text\", \"default\": \"'legacy'::text\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}], \"force_rls\": false}"
+    "definition": "{\"rls\": true, \"columns\": [{\"name\": \"event_id\", \"type\": \"uuid\", \"default\": null, \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"visitor_id\", \"type\": \"uuid\", \"default\": null, \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"session_id\", \"type\": \"uuid\", \"default\": null, \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"event\", \"type\": \"text\", \"default\": null, \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"product_id\", \"type\": \"bigint\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"page\", \"type\": \"text\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"created_at\", \"type\": \"timestamp with time zone\", \"default\": \"now()\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"channel\", \"type\": \"text\", \"default\": \"'legacy'::text\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"source\", \"type\": \"text\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}], \"force_rls\": false}"
   },
   {
     "kind": "table",
@@ -10452,7 +10562,7 @@
   {
     "kind": "table",
     "name": "store_private.analytics_sessions",
-    "definition": "{\"rls\": true, \"columns\": [{\"name\": \"session_id\", \"type\": \"uuid\", \"default\": null, \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"visitor_id\", \"type\": \"uuid\", \"default\": null, \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"started_at\", \"type\": \"timestamp with time zone\", \"default\": \"now()\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"last_seen\", \"type\": \"timestamp with time zone\", \"default\": \"now()\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"channel\", \"type\": \"text\", \"default\": \"'legacy'::text\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}], \"force_rls\": false}"
+    "definition": "{\"rls\": true, \"columns\": [{\"name\": \"session_id\", \"type\": \"uuid\", \"default\": null, \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"visitor_id\", \"type\": \"uuid\", \"default\": null, \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"started_at\", \"type\": \"timestamp with time zone\", \"default\": \"now()\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"last_seen\", \"type\": \"timestamp with time zone\", \"default\": \"now()\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"channel\", \"type\": \"text\", \"default\": \"'legacy'::text\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"source\", \"type\": \"text\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}], \"force_rls\": false}"
   },
   {
     "kind": "table",

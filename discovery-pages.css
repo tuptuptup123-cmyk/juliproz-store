@@ -1,14 +1,14 @@
 /* One global navigation, with readable, horizontally scrollable mobile tabs. */
 .bottom-nav.is-website-navigation{display:flex;max-width:920px;width:calc(100% - 24px);justify-content:flex-start;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;overscroll-behavior-x:contain;scroll-padding-inline:10px}
 .bottom-nav.is-website-navigation::-webkit-scrollbar{display:none}
-.bottom-nav.is-website-navigation button[data-tab]{flex:1 0 84px;width:auto;min-width:84px}
-.bottom-nav.is-website-navigation button.active::before{background:#f2dce7}
+.bottom-nav.is-website-navigation :is(button,a)[data-tab]{flex:1 0 84px;width:auto;min-width:84px}
+.bottom-nav.is-website-navigation :is(button,a).active::before{background:#f2dce7}
 .bottom-nav.is-website-navigation .nav-label-full{display:inline}
 .bottom-nav.is-website-navigation .nav-label-short{display:none}
 .bottom-nav.is-website-navigation small{font-size:10.5px;letter-spacing:normal}
 .bottom-nav.is-website-navigation .mobile-more{display:none!important}
 .bottom-nav.is-website-navigation .mobile-secondary:not(.hidden){display:flex!important}
-.bottom-nav.is-website-navigation button:focus-visible{outline-color:#222;outline-offset:-4px}
+.bottom-nav.is-website-navigation :is(button,a):focus-visible{outline-color:#222;outline-offset:-4px}
 .brand.is-discovery-page .home-shop-actions{display:flex}
 .brand.is-discovery-page .masthead-controls{display:none}
 .brand.is-discovery-page .buyer-education-card{display:none}
@@ -82,8 +82,8 @@
 }
 @media(max-width:680px){
  .bottom-nav.is-website-navigation{max-width:calc(100% - 16px);width:calc(100% - 16px);height:68px}
- .bottom-nav.is-website-navigation button[data-tab]{flex:0 0 72px;width:72px;min-width:72px}
- .bottom-nav.is-website-navigation button::before{width:44px}.bottom-nav.is-website-navigation small{font-size:10px}
+ .bottom-nav.is-website-navigation :is(button,a)[data-tab]{flex:0 0 72px;width:72px;min-width:72px}
+ .bottom-nav.is-website-navigation :is(button,a)::before{width:44px}.bottom-nav.is-website-navigation small{font-size:10px}
  .brand.is-discovery-page .home-shop-actions{display:none}
  .discovery-page{padding-top:0}.discovery-breadcrumb{margin:0 0 18px}
  .discovery-hero{grid-template-columns:minmax(0,1fr);gap:24px;padding-bottom:24px}

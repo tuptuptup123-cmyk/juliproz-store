@@ -20,7 +20,8 @@ async function readBody(req){
  for await(const chunk of req){bytes+=Buffer.byteLength(chunk);if(bytes>8192)throw Object.assign(Error(),{status:413});chunks.push(Buffer.from(chunk))}
  return JSON.parse(Buffer.concat(chunks).toString('utf8'));
 }
-function validEvent(b){return b&&typeof b==='object'&&!Array.isArray(b)&&uuid.test(b.event_id)&&uuid.test(b.visitor_id)&&uuid.test(b.session_id)&&events.has(b.event)&&(b.channel==null||['website','telegram'].includes(b.channel))&&(b.product_id==null||Number.isSafeInteger(b.product_id)&&b.product_id>0)&&(b.page==null||['catalog','wishlist','cart'].includes(b.page))}
+const sources=new Set(['google_organic','google_paid','campaign','referral','direct','unknown','telegram']);
+function validEvent(b){return b&&typeof b==='object'&&!Array.isArray(b)&&uuid.test(b.event_id)&&uuid.test(b.visitor_id)&&uuid.test(b.session_id)&&events.has(b.event)&&(b.source==null||sources.has(b.source))&&(b.channel==null||['website','telegram'].includes(b.channel))&&(b.product_id==null||Number.isSafeInteger(b.product_id)&&b.product_id>0)&&(b.page==null||['catalog','wishlist','cart'].includes(b.page))}
 function createHandler(env=process.env,request=fetch,now=()=>new Date()){
  return async(req,res)=>{
   const origin=req.headers.origin;
@@ -44,10 +45,10 @@ function createHandler(env=process.env,request=fetch,now=()=>new Date()){
    const digest=createHash('sha256').update(`juliproz:analytics-session:v1:${channel}:${b.session_id}`).digest('hex');
    const session=`${digest.slice(0,8)}-${digest.slice(8,12)}-4${digest.slice(13,16)}-a${digest.slice(17,20)}-${digest.slice(20,32)}`;
    const fingerprint=createHmac('sha256',secret).update(`juliproz:analytics-ip:v1:${now().toISOString().slice(0,10)}:${ip}`).digest('hex');
-   const response=await request(`${ORIGIN}/rest/v1/rpc/store_analytics_gateway_ingest`,{
+   const response=await request(`${ORIGIN}/rest/v1/rpc/store_analytics_gateway_ingest_attributed`,{
     method:'POST',redirect:'error',signal:AbortSignal.timeout(5000),
     headers:{apikey:config.key,'Content-Type':'application/json'},
-    body:JSON.stringify({p_secret:secret,p_event_id:b.event_id,p_visitor:b.visitor_id,p_session:session,p_event:b.event,p_product:b.product_id??null,p_page:b.page??null,p_fingerprint:fingerprint,p_channel:channel})
+    body:JSON.stringify({p_secret:secret,p_event_id:b.event_id,p_visitor:b.visitor_id,p_session:session,p_event:b.event,p_product:b.product_id??null,p_page:b.page??null,p_fingerprint:fingerprint,p_channel:channel,p_source:telegram?'telegram':b.source==='telegram'?'unknown':b.source??'unknown'})
    });
    if(!response.ok)return reply(503,{error:'unavailable'});
    let accepted;try{accepted=await response.json()}catch{return reply(503,{error:'unavailable'})}if(typeof accepted!=='boolean')return reply(503,{error:'unavailable'});
