@@ -37,9 +37,6 @@
    <div class="discovery-stock-heading" id="${id}brandStock"><h2>${en?d.name+' in the collection':d.name+' в каталоге'}</h2><p>${en?'Availability and details are shown on each product page.':'Наличие и характеристики указаны в карточках вещей.'}</p></div>
   </div>`;
  }
- function directory(lang='ru',brands=[]){
-  const en=lang==='en';return `<details class="discovery-directory"><summary><span>${en?'Explore brands':'Выбрать бренд'}</span><span aria-hidden="true">+</span></summary><div class="discovery-directory-content"><div class="discovery-brand-links">${['hermes','chanel','loro-piana'].map(slug=>{const d=definitions[slug];return `<a href="${route('/brands/'+slug,lang)}"><span>${e(d.name)}</span>${arrow}<small>${en?'Collection and sourcing':'Подборка и поиск под заказ'}</small></a>`}).join('')}</div><nav aria-label="${en?'All brands':'Все бренды'}">${brands.filter(b=>!definitions[b.slug]).map(b=>`<a href="${route('/brands/'+b.slug,lang)}">${e(b.name)}</a>`).join('')}</nav></div></details>`;
- }
  function outlet(lang='ru',prefix=''){
   const en=lang==='en',id=e(prefix),categories=en?['Clothing','Shoes','Accessories']:['Одежда','Обувь','Аксессуары'];
   const images=['covers-20261010/212.webp','approved-covers-20261012/358.webp','loro-cap-cleanup-20261011/339-cover.webp'];
@@ -53,5 +50,5 @@
    <section class="discovery-section discovery-faq"><h2>${en?'Before your order':'Перед заказом'}</h2>${questions.map(([question,answer])=>`<details><summary>${e(question)}<span aria-hidden="true">+</span></summary><p>${e(answer)}</p></details>`).join('')}</section></div>`;
  }
  const publicAssets=['hermes-kelly-to-go-black-gold-352.webp','chanel-quilted-cc-beige-transparent-v3.webp','approved-covers-20261012/358.webp','covers-20261010/212.webp','loro-cap-cleanup-20261011/339-cover.webp','editorial'];
- const api={brand,directory,outlet,definitions,publicAssets};root.DiscoveryPages=api;if(typeof module==='object')module.exports=api;
+ const api={brand,outlet,definitions,publicAssets};root.DiscoveryPages=api;if(typeof module==='object')module.exports=api;
 })(typeof window==='object'?window:globalThis);
