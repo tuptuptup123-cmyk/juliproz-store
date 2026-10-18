@@ -121,7 +121,7 @@ function initialStoreTab(){
  const linked=/^\/product\/[1-9]\d*\/?$/.test(location.pathname)||params.has('product')||params.get('startapp')?.startsWith('p_')||params.get('tgWebAppStartParam')?.startsWith('p_')||window.Telegram?.WebApp?.initDataUnsafe?.start_param?.startsWith('p_');
  return isTelegramStore()||linked||params.get('tab')==='catalog'?'catalog':'home';
 }
-function catalogSelectionFromURL(){return !isTelegramStore()&&location.pathname.replace(/\/$/,'')==='/catalog'&&window.SaleCollections?window.SaleCollections.fromSearch(location.search):{sale:false,saleCollection:null}}
+function catalogSelectionFromURL(){return !isTelegramStore()&&window.SaleCollections&&String(location.pathname||'').replace(/\/$/,'')==='/catalog'?window.SaleCollections.fromSearch(location.search):{sale:false,saleCollection:null}}
 let state={sort:"recommended",...catalogSelectionFromURL(),product_condition:null,gender:null,fulfillment_status:null,category:null,brand:window.SiteSEO?.page?.brand||null,size:null,search:"",favorites:new Set((()=>{try{return JSON.parse(localStorage.getItem("jpFav")||"[]").map(String)}catch{return []}})()),tab:initialStoreTab()};
 const grid=document.getElementById("grid"),count=document.getElementById("count"),sheet=document.getElementById("sheet"),options=document.getElementById("sheetOptions");
 let currentFilter=null,tempValue=null;
