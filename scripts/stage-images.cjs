@@ -3,7 +3,7 @@ const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypt
 const ui=['brand-paw.webp','home-boutique.jpg','home-lifestyle.jpg','ms-fashion-institute-logo.png','money-paw-v1.webp','admin-upload-standard-v1.webp','brands'];
 module.exports=function(root,out,{privateAssets=false}={}){
  fs.mkdirSync(path.join(out,'images'),{recursive:true});
- for(const asset of ui){const from=path.join(root,'images',asset);if(fs.existsSync(from))fs.cpSync(from,path.join(out,'images',asset),{recursive:true})}
+ for(const asset of [...ui,...(privateAssets?require('../discovery-pages.js').publicAssets:[])]){const from=path.join(root,'images',asset);if(fs.existsSync(from)){fs.mkdirSync(path.dirname(path.join(out,'images',asset)),{recursive:true});fs.cpSync(from,path.join(out,'images',asset),{recursive:true})}}
  if(!privateAssets)return;
  const target=path.join(root,'private-product-assets');fs.rmSync(target,{recursive:true,force:true});fs.mkdirSync(target,{recursive:true});
  const decoded=new Map();

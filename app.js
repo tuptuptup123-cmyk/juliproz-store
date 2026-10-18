@@ -111,12 +111,13 @@ function syncWebNavigation(){
  const web=!isTelegramStore();
  document.querySelectorAll('.bottom-nav .web-only').forEach(b=>b.classList.toggle('hidden',!web));
  document.querySelector('.bottom-nav')?.classList.toggle('is-website-navigation',web);
- if(!web&&['home','about'].includes(state.tab)){const untouched=navigationRevision===0;setTab('catalog');if(untouched)navigationRevision=0;}
+ if(!web&&['home','about','hermes','outlet'].includes(state.tab)){const untouched=navigationRevision===0;setTab('catalog');if(untouched)navigationRevision=0;}
 }
 
 function initialStoreTab(){
  const params=new URLSearchParams(location.search);
- const route=window.SiteSEO?.page?.kind;if(['brand','catalog','services','sell'].includes(route))return route==='brand'?'catalog':route;
+ const page=window.SiteSEO?.page,route=page?.kind;if(['brand','catalog','services','sell','outlet'].includes(route))return route==='brand'?(page.brand==='Hermès'?'hermes':'catalog'):route;
+ if(!isTelegramStore()&&['favorites','cart','about'].includes(params.get('tab')))return params.get('tab');
  const linked=/^\/product\/[1-9]\d*\/?$/.test(location.pathname)||params.has('product')||params.get('startapp')?.startsWith('p_')||params.get('tgWebAppStartParam')?.startsWith('p_')||window.Telegram?.WebApp?.initDataUnsafe?.start_param?.startsWith('p_');
  return isTelegramStore()||linked||params.get('tab')==='catalog'?'catalog':'home';
 }
@@ -161,7 +162,7 @@ function menuSizeLabel(value){
 function reconcileFilters(){
   if(!products.length&&firstLoad)return;
   if(state.category&&!valuesFor('category').includes(state.category))state.category=null;
-  if(state.brand&&!valuesFor('brand').includes(state.brand))state.brand=null;
+  if(state.brand&&!valuesFor('brand').includes(state.brand)&&!(window.SiteSEO?.page?.kind==='brand'&&window.SiteSEO.page.brand===state.brand))state.brand=null;
   if(state.size&&!valuesFor('size').includes(state.size))state.size=null;
 }
 let sortRevision=0;
@@ -228,32 +229,37 @@ function renderCatalogueRows(rows,empty){
   catalogueObserver=new IntersectionObserver(entries=>{if(entries.some(e=>e.isIntersecting))appendCatalogueRows()},{rootMargin:'800px'});
   catalogueObserver.observe(catalogueMore);
 }
+function isCatalogTab(){return ['catalog','hermes'].includes(state.tab)}
 function render(){
+  if(state.tab==='hermes'&&state.brand!=='Hermès')state.tab='catalog';
   window.SiteSEO?.sync(state);
   if(!['catalog','favorites'].includes(state.tab)||products.length)window.SiteSEO?.ready();
   document.querySelectorAll('.bottom-nav [data-tab]').forEach(b=>{const active=b.dataset.tab===state.tab;b.classList.toggle('active',active);b.setAttribute('aria-current',active?'page':'false')});
   document.querySelector(".brand")?.classList.toggle("is-home-page",state.tab==="home");
-  const inCart=state.tab==="cart",inSell=state.tab==="sell",inServices=state.tab==="services",inHome=state.tab==="home",inAbout=state.tab==="about",inWebPage=inHome||inAbout;
+  const inCart=state.tab==="cart",inSell=state.tab==="sell",inServices=state.tab==="services",inHome=state.tab==="home",inAbout=state.tab==="about",inOutlet=state.tab==="outlet",inWebPage=inHome||inAbout||inOutlet;
   document.getElementById("webHomePage").classList.toggle("hidden",!inHome);
   document.getElementById("webAboutPage").classList.toggle("hidden",!inAbout);
-  document.querySelector(".brand")?.classList.toggle("is-information-page",inSell||inServices||inWebPage);
-  document.querySelector(".brand")?.classList.toggle("is-catalog-page",state.tab==="catalog");
+  document.getElementById("webOutletPage").classList.toggle("hidden",!inOutlet);
+  const editorial=inOutlet||(isCatalogTab()&&window.DiscoveryPages?.definitions[window.SiteSEO?.page?.path?.split('/')[2]]);
+  document.querySelector(".brand")?.classList.toggle("is-discovery-page",Boolean(editorial));
+  document.querySelector(".brand")?.classList.toggle("is-information-page",inSell||inServices||inWebPage||Boolean(editorial));
+  document.querySelector(".brand")?.classList.toggle("is-catalog-page",state.tab==="catalog"&&!editorial);
   document.getElementById("servicesPage").classList.toggle("hidden",!inServices);
   document.getElementById("sellPage").classList.toggle("hidden",!inSell);
   document.getElementById("cartPage").classList.toggle("hidden",!inCart);
   grid.classList.toggle("hidden",inCart||inSell||inServices||inWebPage);
-  document.querySelector(".catalog-toolbar")?.classList.toggle("hidden",state.tab!=="catalog");
+  document.querySelector(".catalog-toolbar")?.classList.toggle("hidden",!isCatalogTab()||Boolean(editorial));
   document.querySelector(".catalog-head")?.classList.toggle("hidden",inCart||inSell||inServices||inWebPage);
-  document.getElementById("filterSummary").classList.toggle("hidden",state.tab!=="catalog"||!document.getElementById("filterSummary").textContent);
+  document.getElementById("filterSummary").classList.toggle("hidden",!isCatalogTab()||Boolean(editorial)||!document.getElementById("filterSummary").textContent);
   if(inSell||inServices||inWebPage)return;
   renderCart();
   if(inCart)return;
   syncCatalogSort();
-  if(state.tab==='catalog'){
+  if(isCatalogTab()){
     reconcileFilters();renderCatalogMenu();
     document.querySelectorAll("[data-gender]").forEach(b=>b.setAttribute("aria-pressed",String((b.dataset.gender||null)===state.gender)));
     document.querySelectorAll("[data-filter]").forEach(b=>{const type=b.dataset.filter;b.textContent=(type==='fulfillment_status'?statusLabels[state[type]]:state[type])||{fulfillment_status:"Наличие",category:"Категория",brand:"Бренд",size:"Размер"}[type];b.classList.toggle("selected",!!state[type])});
-    document.getElementById("filterSummary").classList.toggle("hidden",!document.getElementById("filterSummary").textContent);
+    document.getElementById("filterSummary").classList.toggle("hidden",Boolean(editorial)||!document.getElementById("filterSummary").textContent);
   }
   const list=filtered();
   count.textContent=state.tab==="favorites"?`Виш-лист · ${list.length}`:`В каталоге ${list.length} ${pluralRu(list.length,'товар','товара','товаров')}`;
@@ -455,12 +461,13 @@ function cartProduct(row){return products.find(p=>String(p.id)===row.id)||row.pr
 function liveCartProduct(row){const p=products.find(p=>String(p.id)===row.id);return p&&p.available!==false&&(row.size?sizesOf(p).includes(row.size):sizesOf(p).length===0)?p:null}
 function cartSnapshot(p){const snapshot=Object.fromEntries(['id','brand','name','category','price','currency','image_url','photos','size','fulfillment_status','reserved','stock_quantities','original_price'].map(k=>[k,['price','original_price'].includes(k)?window.ProductPricing.amount(p[k],p.currency):p[k]]));snapshot.price_basis=p.price_basis||{price:p.price,original_price:p.original_price};return snapshot}
 function saveCart(){cartRevision++;try{localStorage.setItem('jpCart',JSON.stringify(cart))}catch{document.getElementById('cartStatus').textContent='Корзина доступна в этом сеансе. Браузер не разрешил сохранить её.'}}
-function setTab(tab){
-  if(['home','about'].includes(tab)&&isTelegramStore())return;
-  if(!isTelegramStore())window.SiteSEO?.navigate(tab);
+function setTab(tab,options={}){
+  if(['home','about','hermes','outlet'].includes(tab)&&isTelegramStore())return;
+  if(tab==='hermes'){state.brand='Hermès';state.sale=false;state.product_condition=state.gender=state.fulfillment_status=state.category=state.size=null;state.search='';document.getElementById('search').value=''}
+  if(!isTelegramStore()&&options.history!==false)window.SiteSEO?.navigate(tab);
   setSortOpen(false);
   if(tab!=='catalog'){document.getElementById('catalogSearch').classList.add('hidden');document.getElementById('toggleSearch').setAttribute('aria-expanded','false');state.search='';document.getElementById('search').value=''}
-  if(state.tab!==tab)window.StoreAnalytics?.track("page_view",null,['sell','services','home','about'].includes(tab)?null:tab);
+  if(state.tab!==tab)window.StoreAnalytics?.track("page_view",null,['sell','services','home','about','hermes','outlet'].includes(tab)?null:tab);
   navigationRevision++;
   state.tab=tab;selectedProduct=null;selectedSize=null;hideProductModal();productReturnFocus=null;
   document.querySelectorAll('[data-tab]').forEach(b=>{b.classList.toggle('active',b.dataset.tab===tab);b.setAttribute('aria-current',b.dataset.tab===tab?'page':'false')});render();
@@ -628,7 +635,10 @@ document.getElementById('offerItem').onclick=()=>{
   if(openManager(text))window.StoreAnalytics?.track('manager_sell');
 };
 document.querySelectorAll('[data-web-section]').forEach(b=>b.onclick=()=>setTab(b.dataset.webSection));
-document.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>{setTab(b.dataset.tab);pressNavWithPaw(b)});
+document.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>{
+ const tab=b.dataset.tab;if(tab==='catalog'&&(state.tab==='hermes'||state.tab==='outlet'||window.SiteSEO?.page?.kind==='brand')){state.brand=null;state.sale=false;state.product_condition=state.gender=state.fulfillment_status=state.category=state.size=null;state.search='';document.getElementById('search').value=''}
+ setTab(tab);pressNavWithPaw(b);window.scrollTo({top:0,behavior:'instant'});
+});
 async function openLinkedProduct(id){
   const requestedNavigation=++navigationRevision;selectedProduct=null;selectedSize=null;
   id=String(id);if(/^\d+$/.test(id))id=id.replace(/^0+(?=\d)/,"");
@@ -767,3 +777,11 @@ if(typeof IntersectionObserver==='function'){
 document.addEventListener('site-language-change',()=>{window.SiteLanguage?.apply();window.SiteSEO?.sync(state);});
 
 document.addEventListener("click",event=>{if(event.target.closest('a[data-contact-event="manager_general"]'))window.StoreAnalytics?.track("manager_general")});
+
+// Restore the section and brand when the visitor uses browser Back/Forward.
+window.addEventListener('popstate',()=>{
+ if(isTelegramStore()||!window.SiteSEO)return;
+ const page=window.SiteSEO.restore();state.brand=page.brand||null;state.sale=false;state.product_condition=state.gender=state.fulfillment_status=state.category=state.size=null;
+ setTab(initialStoreTab(),{history:false});
+ const lang=new URLSearchParams(location.search).get('lang')==='en'?'en':'ru';if(window.SiteLanguage?.language!==lang)window.SiteLanguage?.set(lang);
+});

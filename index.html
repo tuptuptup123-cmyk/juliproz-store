@@ -22,6 +22,7 @@
   <link rel="preconnect" href="https://qhgzzhgxwpcctafpzjid.supabase.co" crossorigin>
 <link rel="stylesheet" href="home-buyer.css?v=20261018-home">
 <link rel="stylesheet" href="site-footer.css?v=20261018-footer">
+<link rel="stylesheet" href="discovery-pages.css?v=20261018-discovery">
 <link rel="stylesheet" href="product-sharing.css?v=20261014-site-language"><meta name="jp-release" content="development"><script src="runtime-errors.js" defer></script></head>
 <body>
     <header class="brand">
@@ -117,6 +118,7 @@
         </a>
       </div>
     </section>
+    <section id="webOutletPage" class="hidden" data-no-translate></section>
     <p id="filterSummary" class="filter-summary hidden" aria-live="polite"></p>
     <section class="filters hidden" aria-hidden="true">
       <button data-filter="category">Категория</button>
@@ -179,15 +181,16 @@
     </section>
   </div>
 
-  <nav class="bottom-nav">
+  <nav class="bottom-nav" aria-label="Основные разделы">
     <button class="web-only hidden" data-tab="home" type="button" aria-label="Главная"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7M5 9v12h14V9M9 21v-7h6v7"/></svg><small>Главная</small></button>
     <button class="active" data-tab="catalog" aria-current="page" aria-label="Каталог"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7M5 9v12h14V9"/></svg><small>Каталог</small></button>
+    <button class="web-only hidden" data-tab="hermes" type="button" aria-label="Hermès"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l2 13H3L5 8ZM8 8V6a4 4 0 0 1 8 0v2M3.8 13h16.4M11 12h2v3h-2z"/></svg><small>Hermès</small></button>
+    <button class="web-only hidden" data-tab="outlet" type="button" aria-label="Outlet"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 18 12-12"/><circle cx="7" cy="7" r="3"/><circle cx="17" cy="17" r="3"/></svg><small>Outlet</small></button>
     <button data-tab="favorites" aria-label="Виш-лист"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"/></svg><small>Виш-лист</small></button>
     <button data-tab="cart" aria-label="Корзина"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 3h3l3 12h10l3-9H6"/><path d="M8 15l-1 3h12"/><circle cx="9" cy="21" r="1"/><circle cx="18" cy="21" r="1"/></svg><small>Корзина <span id="cartBadge" class="cart-badge hidden">0</span></small></button>
     <button data-tab="sell" aria-label="Продать вещь"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3h8l10 10-8 8L3 11Z"/><circle cx="7.5" cy="7.5" r="1"/></svg><small>Продать</small></button>
     <button data-tab="services" aria-label="Услуги"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 8 3v6c0 5-8 9-8 9s-8-4-8-9V6Z"/><path d="m8 12 3 3 5-6"/></svg><small>Услуги</small></button>
   <button class="web-only hidden" data-tab="about" type="button" aria-label="Информация"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7h.01"/></svg><small><span class="nav-label-full">Информация</span><span class="nav-label-short" aria-hidden="true">Инфо</span></small></button>
-    <button id="moreNavigation" class="mobile-more" type="button" aria-label="Ещё" aria-controls="moreNavigationDialog" aria-expanded="false"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg><small>Ещё</small></button>
   </nav>
 
   <div id="sheet" class="sheet hidden">
@@ -224,7 +227,7 @@
   <script defer src="config.js?v=20261011-shared-cache"></script>
   <script defer src="image-policy.js"></script><script defer src="product-framing.js?v=20261012-consistent-margins"></script>
   <script defer src="catalog-taxonomy.js?v=20261012-full-audit"></script><script defer src="catalog-reader.js"></script>
-<script defer src="product-sizes.js?v=20261012-full-audit"></script><script defer src="analytics.js?v=20261015-channels"></script><script defer src="product-pricing.js?v=20261010-precise-discounts"></script><script defer src="product-sharing.js?v=20261015-whatsapp"></script><script defer src="seo-content.js?v=20261018-buyer-copy"></script><script defer src="site-seo.js?v=20261018-footer-phrase"></script><script defer src="home-buyer.js?v=20261018-anchor-focus"></script><script defer src="app.js?v=20261016-audit-fixes"></script>
+<script defer src="product-sizes.js?v=20261012-full-audit"></script><script defer src="analytics.js?v=20261015-channels"></script><script defer src="product-pricing.js?v=20261010-precise-discounts"></script><script defer src="product-sharing.js?v=20261015-whatsapp"></script><script defer src="seo-content.js?v=20261018-discovery"></script><script defer src="discovery-pages.js?v=20261018-discovery"></script><script defer src="site-seo.js?v=20261018-discovery"></script><script defer src="home-buyer.js?v=20261018-anchor-focus"></script><script defer src="app.js?v=20261018-discovery"></script>
   <script defer src="catalog-notice.js?v=20261014-once"></script>
-<dialog id="moreNavigationDialog" class="more-navigation-dialog"><div class="more-navigation-heading"><h2>Ещё</h2><button type="button" data-close-more aria-label="Закрыть">×</button></div><button type="button" data-more-tab="home"><strong>Главная</strong><span>О магазине и наших услугах</span></button><button type="button" data-more-tab="services"><strong>Услуги</strong><span>Аутентификация, ателье и уход</span></button><button type="button" data-more-tab="about"><strong>Информация</strong><span>Контакты, каналы и безопасность</span></button></dialog><script defer src="mobile-navigation.js"></script></body>
+<script defer src="mobile-navigation.js?v=20261018-discovery"></script></body>
 </html>
