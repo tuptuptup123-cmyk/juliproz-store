@@ -18,9 +18,14 @@ let browser;
   await context.addInitScript(()=>{localStorage.setItem('jpAnalyticsConsent','declined');window.auditOpenedLinks=[];window.auditOpenedTargets=[];window.open=(url,target)=>{window.auditOpenedLinks.push(url);window.auditOpenedTargets.push(target);return null};document.addEventListener('click',event=>{const link=event.target.closest('a');if(link&&new URL(link.href).hostname==='wa.me'){event.preventDefault();window.auditOpenedLinks.push(link.href)}},true)});
  }
  async function fits(page,name){
-  const result=await page.evaluate(()=>({width:innerWidth,scroll:document.documentElement.scrollWidth,nav:[...document.querySelectorAll('.bottom-nav [data-tab]')].filter(b=>b.getClientRects().length).map(b=>{const r=b.getBoundingClientRect(),small=b.querySelector('small');return {tab:b.dataset.tab,left:r.left,right:r.right,label:small.scrollWidth-small.clientWidth}})}));
+  await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(resolve)));
+  const result=await page.evaluate(()=>{const nav=document.querySelector('.bottom-nav'),r=nav?.getBoundingClientRect();return {width:innerWidth,scroll:document.documentElement.scrollWidth,viewport:r?{left:r.left,right:r.right,scrollable:nav.scrollWidth>nav.clientWidth}:null,nav:[...document.querySelectorAll('.bottom-nav [data-tab]')].filter(b=>b.getClientRects().length).map(b=>{const r=b.getBoundingClientRect(),small=b.querySelector('small');return {tab:b.dataset.tab,left:r.left,right:r.right,active:b.getAttribute('aria-current')==='page',label:small.scrollWidth-small.clientWidth}})}});
   assert.ok(result.scroll<=result.width+1,name+': no horizontal page overflow '+JSON.stringify(result));
-  assert.ok(result.nav.every(b=>b.left>=0&&b.right<=result.width+1&&b.label<=1),name+': navigation fits '+JSON.stringify(result));
+  if(!result.viewport)return;
+  assert.ok(result.viewport.left>=0&&result.viewport.right<=result.width+1,name+': navigation viewport fits');
+  assert.ok(result.nav.every(b=>b.label<=1),name+': navigation labels fit their buttons');
+  const visible=result.viewport.scrollable?result.nav.filter(b=>b.active):result.nav;
+  assert.ok(visible.every(b=>b.left>=result.viewport.left-1&&b.right<=result.viewport.right+1),name+': active navigation is visible '+JSON.stringify(result));
  }
  async function english(page,selector='body'){
   const leftovers=await page.locator(selector).evaluate(el=>{

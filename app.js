@@ -463,8 +463,9 @@ function cartSnapshot(p){const snapshot=Object.fromEntries(['id','brand','name',
 function saveCart(){cartRevision++;try{localStorage.setItem('jpCart',JSON.stringify(cart))}catch{document.getElementById('cartStatus').textContent='Корзина доступна в этом сеансе. Браузер не разрешил сохранить её.'}}
 function setTab(tab,options={}){
   if(['home','about','hermes','outlet'].includes(tab)&&isTelegramStore())return;
+  if(window.SiteSEO?.page?.kind==='brand'&&!['catalog','hermes'].includes(tab))state.brand=null;
   if(tab==='hermes'){state.brand='Hermès';state.sale=false;state.product_condition=state.gender=state.fulfillment_status=state.category=state.size=null;state.search='';document.getElementById('search').value=''}
-  if(!isTelegramStore()&&options.history!==false)window.SiteSEO?.navigate(tab);
+  if(!isTelegramStore()&&options.history!==false)window.SiteSEO?.navigate(tab,options);
   setSortOpen(false);
   if(tab!=='catalog'){document.getElementById('catalogSearch').classList.add('hidden');document.getElementById('toggleSearch').setAttribute('aria-expanded','false');state.search='';document.getElementById('search').value=''}
   if(state.tab!==tab)window.StoreAnalytics?.track("page_view",null,['sell','services','home','about','hermes','outlet'].includes(tab)?null:tab);
@@ -582,7 +583,10 @@ function showProductModal(){
  document.querySelector('.brand')?.toggleAttribute?.('inert',true);
  document.getElementById('backProduct').focus?.();
 }
-function closeProductModal(){navigationRevision++;selectedProduct=null;selectedSize=null;hideProductModal();productReturnFocus?.focus?.();productReturnFocus=null}
+function closeProductModal(){
+ if(!isTelegramStore()&&window.SiteSEO?.page?.kind==='product'){setTab('catalog',{replace:true});document.querySelector('.bottom-nav [data-tab="catalog"]')?.focus?.({preventScroll:true});return}
+ navigationRevision++;selectedProduct=null;selectedSize=null;hideProductModal();productReturnFocus?.focus?.();productReturnFocus=null;
+}
 document.addEventListener('keydown',e=>{
  const modal=document.getElementById('productModal');if(modal.classList.contains('hidden'))return;
  if(!document.getElementById('catalogMenu').classList.contains('hidden'))return;
@@ -634,7 +638,7 @@ document.getElementById('offerItem').onclick=()=>{
   const text='Здравствуйте! Хочу предложить вещь для выкупа или продажи на комиссии через ваш магазин.';
   if(openManager(text))window.StoreAnalytics?.track('manager_sell');
 };
-document.querySelectorAll('[data-web-section]').forEach(b=>b.onclick=()=>setTab(b.dataset.webSection));
+document.querySelectorAll('[data-web-section]').forEach(b=>b.onclick=()=>{if(b.dataset.webSection==='catalog'&&window.SiteSEO?.page?.kind==='brand')state.brand=null;setTab(b.dataset.webSection)});
 document.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>{
  const tab=b.dataset.tab;if(tab==='catalog'&&(state.tab==='hermes'||state.tab==='outlet'||window.SiteSEO?.page?.kind==='brand')){state.brand=null;state.sale=false;state.product_condition=state.gender=state.fulfillment_status=state.category=state.size=null;state.search='';document.getElementById('search').value=''}
  setTab(tab);pressNavWithPaw(b);window.scrollTo({top:0,behavior:'instant'});
@@ -784,4 +788,5 @@ window.addEventListener('popstate',()=>{
  const page=window.SiteSEO.restore();state.brand=page.brand||null;state.sale=false;state.product_condition=state.gender=state.fulfillment_status=state.category=state.size=null;
  setTab(initialStoreTab(),{history:false});
  const lang=new URLSearchParams(location.search).get('lang')==='en'?'en':'ru';if(window.SiteLanguage?.language!==lang)window.SiteLanguage?.set(lang);
+ const productId=/^\/product\/([1-9]\d*)\/?$/.exec(location.pathname)?.[1];if(productId)openLinkedProduct(productId);
 });

@@ -65,6 +65,8 @@ const server=http.createServer((req,res)=>{const url=new URL(req.url,'http://loc
  assert.equal(await page.locator('#grid .product').count(),1);
  await page.locator('#openCatalogMenu').click();await page.locator('#resetMenu').click();await page.locator('#showMenuProducts').click();
  assert.equal(await page.locator('#grid .product').count(),2);
+ await nav.locator('[data-tab=hermes]').click();await nav.locator('[data-tab=home]').click();await page.locator('[data-web-section=catalog]:visible').first().click();
+ assert.equal(await page.locator('#grid .product').count(),2,'The main shop must not retain the editorial Hermes filter');
  for(const slug of ['chanel','loro-piana']){await page.goto(origin+'/brands/'+slug+'?lang=en');await page.locator('html:not([data-server-view])').waitFor();assert.doesNotMatch(await page.locator('#seoCatalogIntro').innerText(),/[А-Яа-яЁё]/);assert.equal(await page.locator('#grid .product').count(),0);assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));}
  console.log('PASS nine tabs, Hermes/Outlet routing, reload, Back/Forward, contacts, existing brand filter and responsive overflow',width);
 
@@ -73,6 +75,18 @@ const server=http.createServer((req,res)=>{const url=new URL(req.url,'http://loc
  await page.locator('.product-open').click();await page.locator('#productContent h1').waitFor();await page.locator('#backProduct').click();
  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));await page.screenshot({path:out+'/seo-brand-'+width+'.png',fullPage:true});
  for(const route of ['/?lang=en','/catalog?lang=en','/services?lang=en','/sell?lang=en','/product/99001?lang=en']){await page.goto(origin+route);await page.locator('html:not([data-server-view])').waitFor();assert.equal(await page.locator('html').getAttribute('lang'),'en');if(route.startsWith('/product/'))await page.locator('#productContent h1').waitFor();assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));}
+ await nav.locator('[data-tab=outlet]').click();
+ assert.equal(await page.locator('meta[property="og:type"]').getAttribute('content'),'website');
+ assert.equal(await page.locator('meta[name="twitter:title"]').getAttribute('content'),await page.title());
+ assert.equal(await page.locator('script[type="application/ld+json"]').evaluateAll(items=>items.some(el=>JSON.parse(el.textContent)['@type']==='Product')),false,'Outlet must not keep product structured data');
+ await page.goBack();await page.locator('#productContent h1').waitFor();
+ assert.equal(await page.locator('#productModal').isVisible(),true,'Browser Back restores the product');
+ assert.equal(await page.locator('link[rel=canonical]').getAttribute('href'),'https://www.juliproz.com/product/99001?lang=en');
+ await page.locator('.product-toolbar [data-site-language=ru]').click();
+ assert.equal(await page.locator('meta[name="twitter:title"]').getAttribute('content'),await page.title());
+ assert.equal(await page.locator('script[type="application/ld+json"]').evaluateAll(items=>items.map(el=>JSON.parse(el.textContent)).find(x=>x['@type']==='Product').url),'https://www.juliproz.com/product/99001');
+ await page.locator('#backProduct').click();assert.equal(new URL(page.url()).pathname,'/catalog');
+ await page.reload();await page.locator('#grid .product').first().waitFor();assert.equal(await page.locator('#productModal').isVisible(),false,'Reload after closing a direct product link stays in the catalog');
  assert.deepEqual(errors,[]);await context.close();console.log('PASS SEO hydration, links, brand filter, RU/EN switch, reload and mobile layout',width);
  }
  const context=await browser.newContext({javaScriptEnabled:false}),page=await context.newPage();await page.goto(origin+'/brands/hermes?lang=en');assert.match(await page.locator('#serverLanding h1').innerText(),/Hermès/);assert.equal(await page.locator('#serverLanding a[href*="/product/"]').count(),1);await page.goto(origin+'/product/99001?lang=en');assert.match(await page.locator('#serverProduct h1').innerText(),/Oran sandals/);console.log('PASS source pages remain readable and linked without JavaScript');await context.close();

@@ -5,18 +5,39 @@
  const serverRendered=Boolean(document.getElementById('seoPageData'));
  let data;try{data=JSON.parse(document.getElementById('seoPageData')?.textContent||'null')}catch{}
  data=data||{...content.pages.home,kind:'home'};
+ const initialPage=data,initialLanguage=document.documentElement.dataset.seoLanguage||content.language(new URLSearchParams(location.search).get('lang'));
+ const initialSchemas=[...document.querySelectorAll('script[type="application/ld+json"]')].flatMap(el=>{try{return [JSON.parse(el.textContent)]}catch{return []}});
  function language(){return root.SiteLanguage?.language||content.language(new URLSearchParams(location.search).get('lang'))}
  function links(){
   const el=document.getElementById('seoBrowseLinks');if(!el)return;const lang=language(),en=lang==='en';
   const current=path=>data.path===path?' aria-current="page"':'';
   el.innerHTML=`<div class="site-footer-identity"><a class="site-footer-wordmark" href="${content.url('/',lang)}">JULI.PROZ</a><p>${en?'Buyer service worldwide':'Buyer service по всему миру'}</p></div><div class="site-footer-section"><h2 class="site-footer-label" id="footerNavigationTitle">${en?'Explore':'Навигация'}</h2><nav class="site-footer-navigation" aria-labelledby="footerNavigationTitle">${Object.entries(content.pages).map(([key,p])=>`<a href="${content.url(p.path,lang)}"${current(p.path)}>${escape(({home:en?'Home':'Главная',catalog:en?'Collection':'Каталог',services:en?'Services':'Услуги',sell:en?'Sell your piece':'Продать вещь',outlet:'Outlet'})[key])}</a>`).join('')}</nav></div><div class="site-footer-section site-footer-brand-section"><h2 class="site-footer-label" id="footerBrandsTitle">${en?'Brands':'Бренды'}</h2><nav class="site-footer-brands" aria-labelledby="footerBrandsTitle">${content.brands.map(b=>`<a href="${content.url('/brands/'+b.slug,lang)}"${current('/brands/'+b.slug)}>${escape(b.name)}</a>`).join('')}</nav></div>`;
  }
+ function schemas(lang){
+  if(data.path===initialPage.path&&lang===initialLanguage)return initialSchemas;
+  const url=content.url(data.path,lang),name=data.heading?.[lang]||data.title[lang].replace(/ \| JULI\.PROZ$/,'');
+  const breadcrumb={'@context':'https://schema.org','@type':'BreadcrumbList',itemListElement:[{'@type':'ListItem',position:1,name:'JULI.PROZ',item:content.url('/',lang)},{'@type':'ListItem',position:2,name,item:url}]};
+  if(data.kind==='product'){
+   const product=initialSchemas.find(schema=>schema['@type']==='Product');
+   if(!product)return [breadcrumb];
+   return [{...product,name,description:data.description[lang],url,...(product.offers?{offers:{...product.offers,url}}:{})},breadcrumb];
+  }
+  const organization={'@context':'https://schema.org','@type':'Organization','@id':content.origin+'/#organization',name:'JULI.PROZ',url:content.origin+'/',logo:content.origin+'/images/brand-paw.webp',sameAs:['https://www.instagram.com/juli.proz/','https://t.me/juli_proz','https://t.me/JuliProzBot']};
+  const result=[organization,{'@context':'https://schema.org','@type':['catalog','brand'].includes(data.kind)?'CollectionPage':'WebPage',name,description:data.description[lang],url,inLanguage:lang,isPartOf:{'@id':content.origin+'/#website'}}];
+  if(data.kind==='home')result.push({'@context':'https://schema.org','@type':'WebSite','@id':content.origin+'/#website',name:'JULI.PROZ',url:content.origin+'/',inLanguage:['ru','en'],publisher:{'@id':content.origin+'/#organization'}});
+  else result.push(breadcrumb);
+  return result;
+ }
  function metadata(){
   const lang=language();document.title=data.title[lang];
-  const values={'meta[name="description"]':data.description[lang],'meta[property="og:title"]':data.title[lang],'meta[property="og:description"]':data.description[lang],'meta[property="og:url"]':content.url(data.path,lang)};
+  const values={'meta[name="description"]':data.description[lang],'meta[property="og:title"]':data.title[lang],'meta[property="og:description"]':data.description[lang],'meta[property="og:url"]':content.url(data.path,lang),'meta[property="og:type"]':data.kind==='product'?'product':'website','meta[property="og:image"]':data.image||content.origin+'/images/brand-paw.webp','meta[name="twitter:title"]':data.title[lang],'meta[name="twitter:description"]':data.description[lang]};
   for(const [selector,value] of Object.entries(values)){const el=document.querySelector(selector);if(el)el.setAttribute('content',value)}
   document.querySelector('link[rel="canonical"]')?.setAttribute('href',content.url(data.path,lang));
   for(const link of document.querySelectorAll('link[rel="alternate"][hreflang]'))link.setAttribute('href',content.url(data.path,link.hreflang==='en'?'en':'ru'));
+  if(serverRendered){
+   document.querySelectorAll('script[type="application/ld+json"]').forEach(el=>el.remove());
+   for(const schema of schemas(lang)){const script=document.createElement('script');script.type='application/ld+json';script.textContent=JSON.stringify(schema);document.head.appendChild(script)}
+  }
   links();
  }
  function updateURL(tab,replace=false){
@@ -44,13 +65,13 @@
   const outlet=document.getElementById('webOutletPage');if(outlet&&state.tab==='outlet')setHTML(outlet,lang,discovery.outlet(lang));
   const browse=document.getElementById('seoBrowseLinks');if(browse)browse.hidden=!['home','catalog','services','sell','hermes','outlet'].includes(state.tab);
  }
- function navigate(tab){
+ function navigate(tab,options={}){
   const next=tab==='hermes'?{...content.page('brand','hermes'),kind:'brand'}:content.pages[tab]?{...content.pages[tab],kind:tab}:['favorites','cart','about'].includes(tab)?{...content.pages.home,kind:'home'}:null;
-  if(!next)return;data=next;updateURL(tab);metadata();
+  if(!next)return;data=next;updateURL(tab,Boolean(options.replace));metadata();
  }
  function restore(){
   const path=location.pathname.replace(/\/$/,'')||'/',slug=/^\/brands\/([^/]+)$/.exec(path)?.[1],kind=slug?'brand':Object.keys(content.pages).find(key=>content.pages[key].path===path)||'home';
-  data={...(content.page(kind,slug)||content.pages.home),kind};metadata();return data;
+  data=initialPage.kind==='product'&&initialPage.path===path?{...initialPage}:{...(content.page(kind,slug)||content.pages.home),kind};metadata();return data;
  }
  function ready(){document.getElementById('serverLanding')?.remove();document.documentElement.removeAttribute('data-server-view')}
  root.SiteSEO={sync,navigate,restore,ready,get page(){return data}};
