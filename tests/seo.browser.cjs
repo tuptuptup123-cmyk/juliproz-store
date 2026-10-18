@@ -57,11 +57,16 @@ const server=http.createServer((req,res)=>{const url=new URL(req.url,'http://loc
  assert.equal(await nav.evaluate(el=>el.scrollWidth>el.clientWidth),width<900);
  await page.locator('.masthead-inner [data-site-language=ru]').click();
  await page.evaluate(()=>scrollTo(0,0));await page.screenshot({path:out+'/hermes-ru-'+width+'.png',fullPage:true});await page.screenshot({path:out+'/hermes-first-'+width+'.png',fullPage:false});
- await nav.locator('[data-tab=catalog]').click();await page.locator('.discovery-directory summary').click();
- assert.equal(await page.locator('.discovery-brand-links a[href="/brands/hermes"]').count(),1);
+ await nav.locator('[data-tab=catalog]').click();
+ assert.equal(await page.locator('.discovery-directory').count(),0);
+ assert.equal(await page.locator('#grid .product').count(),2);
+ await page.locator('#openCatalogMenu').click();await page.locator('[data-menu-group=brand]').click();
+ await page.locator('[data-menu-type=brand][data-menu-value="Hermès"]').click();await page.locator('#showMenuProducts').click();
+ assert.equal(await page.locator('#grid .product').count(),1);
+ await page.locator('#openCatalogMenu').click();await page.locator('#resetMenu').click();await page.locator('#showMenuProducts').click();
  assert.equal(await page.locator('#grid .product').count(),2);
  for(const slug of ['chanel','loro-piana']){await page.goto(origin+'/brands/'+slug+'?lang=en');await page.locator('html:not([data-server-view])').waitFor();assert.doesNotMatch(await page.locator('#seoCatalogIntro').innerText(),/[А-Яа-яЁё]/);assert.equal(await page.locator('#grid .product').count(),0);assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));}
- console.log('PASS nine tabs, Hermes/Outlet routing, reload, Back/Forward, contacts, brand directory and responsive overflow',width);
+ console.log('PASS nine tabs, Hermes/Outlet routing, reload, Back/Forward, contacts, existing brand filter and responsive overflow',width);
 
  await page.goto(origin+'/brands/hermes?lang=en');await page.locator('#grid .product').waitFor();assert.equal(await page.locator('#grid .product').count(),1);assert.match(await page.locator('#seoCatalogIntro h1').innerText(),/Hermès/);assert.equal(await page.locator('html').getAttribute('lang'),'en');assert.match(await page.locator('#grid .product-open').getAttribute('href'),/product\/99001\?lang=en$/);
  await page.locator('.masthead-inner [data-site-language=ru]').click();assert.match(await page.locator('#seoCatalogIntro p').first().innerText(),/Поможем/);await page.reload();await page.locator('#grid .product').waitFor();assert.equal(await page.locator('#grid .product').count(),1);

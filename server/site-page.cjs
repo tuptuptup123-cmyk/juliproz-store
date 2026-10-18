@@ -12,7 +12,7 @@ function render(template,kind,slug,lang,rows=[]){
  const cards=filtered.map(p=>{const title=seo.translate([p.brand,p.name].filter(Boolean).join(' — '),lang),amount=pricing.amount(p.price,p.currency);return `<li><a href="${seo.url('/product/'+p.id,lang)}">${e(title)}</a><p>${e(seo.translate(p.size||'',lang))}${amount===null?'':` · ${e(amount)} €`}</p></li>`}).join('');
  const extra=kind==='home'?`<img class="seo-home-photo" src="/images/home-boutique.jpg" alt="${en?'Julia with a Hermès bag':'Юля с сумкой Hermès'}" width="1080" height="1620">${homeBuyer.render(lang,'server-')}`:'';
  const editorial=kind==='outlet'?discovery.outlet(lang,'server-'):kind==='brand'?discovery.brand(slug,lang,'server-'):'';
- const intro=editorial||`<h1>${e(page.heading[lang])}</h1><p>${e(page.intro[lang])}</p>${kind==='catalog'?discovery.directory(lang,seo.brands):''}`;
+ const intro=editorial||`<h1>${e(page.heading[lang])}</h1><p>${e(page.intro[lang])}</p>`;
  const body=`<article id="serverLanding" class="seo-landing" data-no-translate>${seo.nav(lang)}<nav class="seo-languages" aria-label="${en?'Language':'Язык'}"><a href="${seo.url(page.path,'ru')}" lang="ru">RU</a><a href="${seo.url(page.path,'en')}" lang="en">EN</a></nav>${intro}${extra}${cards?`<ul class="seo-product-list">${cards}</ul>`:''}<a class="seo-contact" href="${en?'https://wa.me/message/LX6SBE3QCQXKG1':'https://t.me/juliproz'}">${en?'Contact our team':'Связаться с менеджером'}</a>${seo.brandLinks(lang)}</article>`;
  return seo.decorate(template,page,lang,schemas).replace(/<body[^>]*>/i,m=>m+body);
 }
