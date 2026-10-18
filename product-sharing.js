@@ -15,7 +15,7 @@
   const text=title+(size?(english?'\nSize / option: ':'\nРазмер / вариант: ')+size:'')+(english?'\nReference: ':'\nАртикул: ')+id;
   const message=(english?'Hello! I would like to ask about this piece:\n':'Здравствуйте! Хочу уточнить по этой вещи:\n')+text+'\n'+url;
   const manager=root.SiteLanguage?.managerLink?root.SiteLanguage.managerLink(message,{language:english?'en':'ru',inTelegram:options.inTelegram}):'https://t.me/juliproz?text='+encodeURIComponent(message);
-  return {id,title,url,web,bot,telegram:'https://t.me/share/url?url='+encodeURIComponent(url)+'&text='+encodeURIComponent(text),manager};
+  return {id,title,size,url,web,bot,telegram:'https://t.me/share/url?url='+encodeURIComponent(url)+'&text='+encodeURIComponent(text),manager};
  }
  function inTelegram(){
   if(root.document?.documentElement?.dataset?.storefront==='telegram')return true;
@@ -28,6 +28,37 @@
   return Boolean(platform&&platform!=='unknown');
  }
  let dialog=null,current=null,opener=null,epoch=0;
+ function externalLink(url){
+  const link=document.createElement('a');link.href=url;link.target='_blank';link.rel='noopener noreferrer';link.hidden=true;dialog.append(link);link.click();link.remove();
+ }
+ async function shareTelegram(data,version,status,button){
+  const tg=root.Telegram?.WebApp;
+  // openTelegramLink(share/url) can silently do nothing in a Mini App. Use
+  // Telegram's recipient picker and wait for its real sent/cancelled callback.
+  if(inTelegram()&&tg?.initData&&tg?.shareMessage&&tg.isVersionAtLeast?.('8.0')){
+   button.disabled=true;status.textContent='Готовим вещь к отправке…';
+   try{
+    const response=await fetch('https://www.juliproz.com/api/telegram-share',{
+     method:'POST',headers:{'Content-Type':'application/json'},credentials:'omit',signal:AbortSignal.timeout(15000),
+     body:JSON.stringify({init_data:tg.initData,product_id:data.id,size:data.size})
+    });
+    if(!response.ok)throw Error();
+    const prepared=await response.json();
+    if(typeof prepared.id!=='string'||!prepared.id||!Number.isSafeInteger(prepared.expiration_date)||prepared.expiration_date<=Date.now()/1000)throw Error();
+    if(version!==epoch)return;
+    status.textContent='';
+    tg.shareMessage(prepared.id,sent=>{if(version===epoch)status.textContent=sent?'Вещь отправлена.':'Вещь не отправлена. Можно попробовать ещё раз.'});
+   }catch{if(version===epoch)status.textContent='Не удалось открыть отправку. Попробуйте ещё раз или скопируйте ссылку ниже.'}
+   finally{if(version===epoch)button.disabled=false}
+   return;
+  }
+  try{
+   // Older clients open the official sharing page outside the Mini App.
+   if(inTelegram()&&tg?.openLink)tg.openLink(data.telegram);
+   else externalLink(data.telegram);
+   status.textContent='Если Telegram не открылся, скопируйте ссылку ниже.';
+  }catch{status.textContent='Не удалось открыть Telegram. Скопируйте ссылку ниже.'}
+ }
  function close(){if(dialog?.open)dialog.close();current=null;epoch++}
  function create(){
   dialog=document.createElement('dialog');dialog.id='productShareDialog';dialog.className='product-share-dialog';
@@ -53,10 +84,11 @@
     catch{if(version!==epoch)return;const field=dialog.querySelector('#productShareUrl');field.focus();field.select();status.textContent='Не удалось скопировать автоматически. Скопируйте выделенную ссылку.'}
     return;
    }
-   const url=action==='telegram'?data.telegram:action==='manager'?data.manager:null;if(!url)return;
+   if(action==='telegram'){await shareTelegram(data,version,status,e.target.closest('[data-share-action]'));return}
+   const url=action==='manager'?data.manager:null;if(!url)return;
    try{
     if(inTelegram()&&root.Telegram?.WebApp?.openTelegramLink)root.Telegram.WebApp.openTelegramLink(url);
-    else {const link=document.createElement('a');link.href=url;link.target='_blank';link.rel='noopener noreferrer';link.hidden=true;dialog.append(link);link.click();link.remove()}
+    else externalLink(url);
     if(action==='manager')root.StoreAnalytics?.track('manager_product',data.id);
     status.textContent=action==='telegram'?'Выберите получателя и отправьте сообщение в Telegram.':'Отправьте подготовленное сообщение менеджеру в Telegram.';
    }catch{status.textContent=action==='manager'?'Не удалось открыть чат. Скопируйте ссылку ниже.':'Не удалось открыть Telegram. Скопируйте ссылку ниже.'}
@@ -66,6 +98,7 @@
   const telegram=inTelegram(),data=links(product,{...options,inTelegram:telegram});if(!data)return false;
   if(!dialog)create();
   current=data;epoch++;opener=document.activeElement;
+  dialog.querySelector('[data-share-action=telegram]').disabled=false;
   dialog.querySelector('.product-share-name').textContent=data.title;
   dialog.querySelector('#productShareUrl').value=data.url;
   dialog.querySelector('.product-share-label').textContent=telegram?'Ссылка на вещь в Telegram':'Ссылка на вещь на сайте';
