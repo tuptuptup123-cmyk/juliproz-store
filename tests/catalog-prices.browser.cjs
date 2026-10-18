@@ -130,13 +130,13 @@ const fixtures=[
     if(width<=600){const gap=await page.evaluate(()=>document.querySelector('#sellTitle').getBoundingClientRect().top-document.querySelector('.brand-lockup').getBoundingClientRect().bottom);assert.ok(gap>=48&&gap<=80,'Sell intro keeps a compact, readable logo gap');}
     if(width===390||width===529||width===1280)await page.screenshot({path:out+'/services-sell-'+width+'.png',fullPage:true});
    }
-   const nav=await page.locator('.bottom-nav button:visible').evaluateAll(es=>es.map(e=>({width:e.getBoundingClientRect().width,background:getComputedStyle(e).backgroundColor,iconWidth:e.querySelector('svg').getBoundingClientRect().width,outline:getComputedStyle(e.querySelector('svg')).outlineStyle})));
+   const nav=await page.locator('.bottom-nav [data-tab]:visible').evaluateAll(es=>es.map(e=>({width:e.getBoundingClientRect().width,background:getComputedStyle(e).backgroundColor,iconWidth:e.querySelector('svg').getBoundingClientRect().width,outline:getComputedStyle(e.querySelector('svg')).outlineStyle})));
    assert.ok(nav.every(n=>n.background==='rgba(0, 0, 0, 0)'&&n.iconWidth===24&&n.outline==='none'),'Navigation has no tile fills or icon borders');
    const floating=await page.locator('.bottom-nav').evaluate(e=>({height:e.getBoundingClientRect().height,left:e.getBoundingClientRect().left,right:e.getBoundingClientRect().right,bottom:e.getBoundingClientRect().bottom,radius:getComputedStyle(e).borderRadius,background:getComputedStyle(e).backgroundColor}));
    assert.equal(floating.height,68);assert.equal(floating.radius,'24px');assert.equal(floating.background,'rgb(255, 255, 255)');
-   assert.ok(floating.left>=12&&floating.right<=width-12,'Floating panel keeps side insets');
-   const oval=await page.locator('.bottom-nav button.active').evaluate(e=>({width:getComputedStyle(e,'::before').width,height:getComputedStyle(e,'::before').height,background:getComputedStyle(e,'::before').backgroundColor}));
-   assert.equal(oval.height,'29px');assert.equal(oval.background,'rgb(237, 237, 237)');
+   assert.ok(floating.left>=8&&floating.right<=width-8,'Floating panel keeps side insets with the scrollable nine-tab navigation');
+   const oval=await page.locator('.bottom-nav [data-tab].active').evaluate(e=>({width:getComputedStyle(e,'::before').width,height:getComputedStyle(e,'::before').height,background:getComputedStyle(e,'::before').backgroundColor}));
+   assert.equal(oval.height,'29px');assert.equal(oval.background,'rgb(242, 220, 231)');
    if(width<900){assert.ok(parseFloat(oval.width)>=32&&parseFloat(oval.width)<=nav[0].width,'Mobile selection marker fits its navigation column');}
    else assert.equal(oval.width,'48px');
    assert.ok(nav.every(n=>Math.abs(n.width-nav[0].width)<1),'Navigation columns are equal');
