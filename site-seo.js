@@ -48,7 +48,9 @@
   if(next!==current)history[replace?'replaceState':'pushState']({tab},'',next);
  }
  function setHTML(el,key,html){if(el&&el.dataset.renderKey!==key){el.innerHTML=html;el.dataset.renderKey=key}}
- function sync(state){
+ let outletRows=null;
+ function sync(state,rows=null){
+  if(rows!==null)outletRows=rows;
   const lang=language(),inCatalog=['catalog','hermes'].includes(state.tab);
   if(state.tab==='home')for(const img of document.querySelectorAll('img[data-home-src]')){img.src=img.dataset.homeSrc;delete img.dataset.homeSrc}
   if(serverRendered&&state.tab==='catalog'&&data.kind==='catalog'){
@@ -68,7 +70,10 @@
     setHTML(intro,lang+'|'+page.path,html);
    }
   }
-  const outlet=document.getElementById('webOutletPage');if(outlet&&state.tab==='outlet')setHTML(outlet,lang,discovery.outlet(lang));
+  const outlet=document.getElementById('webOutletPage');if(outlet&&state.tab==='outlet'){
+   const find=outletRows===null?initialPage.outletFind||null:discovery.outletFind(outletRows,root.publicProductImage);
+   setHTML(outlet,lang+'|'+JSON.stringify(find),discovery.outlet(lang,'',find,true));
+  }
  }
  function navigate(tab,options={}){
   const next=tab==='hermes'?{...content.page('brand','hermes'),kind:'brand'}:content.pages[tab]?{...content.pages[tab],kind:tab}:['favorites','cart','about'].includes(tab)?{...content.pages.home,kind:'home'}:null;

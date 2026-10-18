@@ -233,7 +233,8 @@ function renderCatalogueRows(rows,empty){
 function isCatalogTab(){return ['catalog','hermes'].includes(state.tab)}
 function render(){
   if(state.tab==='hermes'&&state.brand!=='Hermès')state.tab='catalog';
-  window.SiteSEO?.sync(state);
+  window.SiteSEO?.sync(state,lastCatalogLoadedAt||products.length?products:null);
+  syncOutletWishlist();
   if(!['catalog','favorites'].includes(state.tab)||products.length)window.SiteSEO?.ready();
   document.querySelectorAll('.bottom-nav [data-tab]').forEach(b=>{const active=b.dataset.tab===state.tab;b.classList.toggle('active',active);b.setAttribute('aria-current',active?'page':'false')});
   document.querySelector(".brand")?.classList.toggle("is-home-page",state.tab==="home");
@@ -476,10 +477,21 @@ function setTab(tab,options={}){
   document.querySelectorAll('[data-tab]').forEach(b=>{b.classList.toggle('active',b.dataset.tab===tab);b.setAttribute('aria-current',b.dataset.tab===tab?'page':'false')});render();
 }
 const wishlistClicks=new Map();
+function syncOutletWishlist(){
+  for(const button of document.querySelectorAll('[data-outlet-wishlist]')){
+    const saved=state.favorites.has(String(button.dataset.outletWishlist));
+    button.setAttribute('aria-pressed',String(saved));
+  }
+}
+document.getElementById('webOutletPage')?.addEventListener('click',event=>{
+  const button=event.target.closest('[data-outlet-wishlist]');
+  if(button)toggleWishlist(button.dataset.outletWishlist);
+});
 function toggleWishlist(id,fromCard=false){
   if(id==null)return;id=String(id);const now=Date.now();if(now-(wishlistClicks.get(id)??-Infinity)<450)return;wishlistClicks.set(id,now);if(wishlistClicks.size>200)wishlistClicks.delete(wishlistClicks.keys().next().value);const display=presentationProduct(id),ids=display?.variant_ids?Object.values(display.variant_ids):[id];if(ids.some(key=>state.favorites.has(key)))ids.forEach(key=>state.favorites.delete(key));else state.favorites.add(id);
   window.StoreAnalytics?.track(state.favorites.has(id)?'wishlist_add':'wishlist_remove',id);
   try{localStorage.setItem('jpFav',JSON.stringify([...state.favorites]))}catch{}
+  syncOutletWishlist();
   if(state.tab==='favorites')render();
   else for(const button of grid.querySelectorAll?.('[data-heart]')||[]){
     const p=catalogueRows.find(p=>String(p.id)===button.dataset.heart)||presentationProduct(button.dataset.heart);
@@ -782,7 +794,7 @@ if(typeof IntersectionObserver==='function'){
 }
 
 // Language changes retain filters, bag, wishlist and the selected variant.
-document.addEventListener('site-language-change',()=>{window.SiteLanguage?.apply();window.SiteSEO?.sync(state);});
+document.addEventListener('site-language-change',()=>{window.SiteLanguage?.apply();window.SiteSEO?.sync(state);syncOutletWishlist();});
 
 document.addEventListener("click",event=>{if(event.target.closest('a[data-contact-event="manager_general"]'))window.StoreAnalytics?.track("manager_general")});
 

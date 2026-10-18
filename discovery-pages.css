@@ -132,3 +132,19 @@
 .outlet-channels{margin-bottom:0;background:transparent;border-top:1px solid #ded7db;padding:26px 0 0}.outlet-channels h2{font-size:26px}.outlet-request{margin:32px 0}
 @media(max-width:900px){.outlet-intro{gap:32px}.discovery-outlet h1{font-size:46px}.outlet-sale-categories{gap:14px}.outlet-sale-categories>a{padding:22px 18px}.outlet-sale-categories h3{font-size:26px}.outlet-section-heading{align-items:start;flex-wrap:wrap;gap:8px}}
 @media(max-width:680px){.outlet-intro{grid-template-columns:minmax(0,1fr);gap:26px;padding-bottom:18px}.discovery-outlet h1{font-size:39px;margin-bottom:20px}.discovery-outlet .outlet-lead{font-size:16px}.outlet-sources>section{padding:16px 0}.outlet-sources h2{font-size:23px}.outlet-sale{padding-top:22px}.outlet-sale-categories{grid-template-columns:minmax(0,1fr);gap:12px}.outlet-sale-categories>a{padding:20px}.outlet-sale-categories h3{margin-bottom:8px}.outlet-sale-categories span{margin-top:12px}.outlet-channels{padding:22px 0 0}.outlet-channels h2{font-size:24px}}
+
+/* A live catalogue example, with the same restrained comparison as the approved preview. */
+.outlet-find{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:50px;align-items:center;border-top:1px solid #e5e5e5;padding:24px 0 30px}
+.outlet-find-photo{display:block;min-width:0;aspect-ratio:1.35;background:#fff;overflow:hidden}
+.outlet-find-photo img{display:block;width:100%;height:100%;object-fit:contain;transform:scale(1.28)}
+.outlet-find-copy{min-width:0}.outlet-find-brand{display:block;font-size:12px;letter-spacing:.2em;text-transform:uppercase;margin-bottom:12px}
+.outlet-find h3{font-size:clamp(26px,3.4vw,42px);margin:0 0 7px}.outlet-find .outlet-find-sizes{font-size:14px}
+.outlet-find-prices{display:flex;gap:26px;margin:24px 0 18px}.outlet-find-prices>div+div{padding-left:26px;border-left:1px solid #ddd}
+.outlet-find-prices dt{font-size:13px;color:#626262;margin-bottom:6px}.outlet-find-prices dd{margin:0;font:400 clamp(28px,3.5vw,44px)/1.15 "Playfair Display",Georgia,serif;white-space:nowrap}
+.outlet-find-prices del{color:#8a8a8a;text-decoration-thickness:1px}.outlet-find-prices strong{font-weight:500}
+.outlet-find-saving{display:inline-block;padding:6px 12px;background:#f2f2f2;border-radius:8px;font-size:13px;line-height:1.5}
+.outlet-find-actions{display:flex;align-items:center;gap:18px;margin:22px 0 12px}.outlet-find .outlet-find-open{display:inline-flex;align-items:center;justify-content:space-between;gap:28px;background:#202020;color:#fff;padding:14px 22px;min-height:48px;font-size:14px}
+.outlet-find-heart{display:inline-flex;align-items:center;justify-content:center;min-width:48px;min-height:48px;border:0;background:transparent;color:#c66b95;cursor:pointer;padding:10px}.outlet-find-heart[aria-pressed=true] svg{fill:currentColor}.outlet-find-heart:focus-visible{outline:2px solid #202020;outline-offset:3px}
+.outlet-find .outlet-find-note{font-size:12px;line-height:1.6}.outlet-sale-links{display:flex;flex-wrap:wrap;gap:0;border-top:1px solid #e5e5e5;padding-top:12px}.outlet-sale-links a{display:inline-flex;align-items:center;gap:12px;min-height:44px;padding:8px 24px;font-size:15px}.outlet-sale-links a:first-child{padding-left:0}.outlet-sale-links a+a{border-left:1px solid #e5e5e5}
+@media(max-width:900px){.outlet-find{gap:28px}.outlet-find-prices{gap:18px}.outlet-find-prices>div+div{padding-left:18px}}
+@media(max-width:680px){.outlet-find{grid-template-columns:minmax(0,1fr);gap:16px;padding:14px 0 24px}.outlet-find-photo{aspect-ratio:1.7}.outlet-find-photo img{transform:scale(1.6)}.outlet-find h3{font-size:32px}.outlet-find-brand{margin-bottom:8px;font-size:11px}.outlet-find-prices{margin-top:20px}.outlet-find-prices dd{font-size:34px}.outlet-find-actions{margin-top:18px}.outlet-find-open{flex:1}.outlet-sale-links{gap:0 20px}.outlet-sale-links a{padding:4px 0;font-size:14px;gap:6px}.outlet-sale-links a+a{border-left:0}}
