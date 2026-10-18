@@ -1029,3 +1029,7 @@ html[data-server-view] .brand,html[data-server-view] main.app,html[data-server-v
 /* Navigation links retain the existing button layout. */
 .bottom-nav a,.home-shop-link,.home-mobile-shop,.related-card,a.menu-choice{font-family:inherit;text-decoration:none}
 .bottom-nav a{text-align:center}
+
+/* Purchase terms stay available without interrupting the manager checkout. */
+.cart-summary .purchase-terms-link{display:inline-flex;align-items:center;min-height:44px;margin-top:4px;color:var(--ink);font-size:13px;text-underline-offset:4px}
+.cart-summary .purchase-terms-link:focus-visible{outline:2px solid var(--brand-blue);outline-offset:3px}
