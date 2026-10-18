@@ -121,7 +121,8 @@ function initialStoreTab(){
  const linked=/^\/product\/[1-9]\d*\/?$/.test(location.pathname)||params.has('product')||params.get('startapp')?.startsWith('p_')||params.get('tgWebAppStartParam')?.startsWith('p_')||window.Telegram?.WebApp?.initDataUnsafe?.start_param?.startsWith('p_');
  return isTelegramStore()||linked||params.get('tab')==='catalog'?'catalog':'home';
 }
-let state={sort:"recommended",sale:false,product_condition:null,gender:null,fulfillment_status:null,category:null,brand:window.SiteSEO?.page?.brand||null,size:null,search:"",favorites:new Set((()=>{try{return JSON.parse(localStorage.getItem("jpFav")||"[]").map(String)}catch{return []}})()),tab:initialStoreTab()};
+function catalogSelectionFromURL(){return !isTelegramStore()&&window.SaleCollections&&String(location.pathname||'').replace(/\/$/,'')==='/catalog'?window.SaleCollections.fromSearch(location.search):{sale:false,saleCollection:null}}
+let state={sort:"recommended",...catalogSelectionFromURL(),product_condition:null,gender:null,fulfillment_status:null,category:null,brand:window.SiteSEO?.page?.brand||null,size:null,search:"",favorites:new Set((()=>{try{return JSON.parse(localStorage.getItem("jpFav")||"[]").map(String)}catch{return []}})()),tab:initialStoreTab()};
 const grid=document.getElementById("grid"),count=document.getElementById("count"),sheet=document.getElementById("sheet"),options=document.getElementById("sheetOptions");
 let currentFilter=null,tempValue=null;
 
@@ -133,7 +134,7 @@ function priceMarkup(p){if(!['EUR','€'].includes(p.currency||'EUR'))return 'Ц
 function imageOf(p){return photosOf(p)[0]||""}
 function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
 function matchesAvailability(p){return !state.fulfillment_status||(state.fulfillment_status==='on_order'?onOrder(p):!onOrder(p)&&!p.reserved&&ProductSizes.stockUnits(p)>0)}
-function matchesSale(p){return !state.sale||Boolean(window.ProductPricing.discount(p))}
+function matchesSale(p){return !state.sale||(window.SaleCollections?window.SaleCollections.matches(p,state.saleCollection):Boolean(window.ProductPricing.discount(p)))}
 function matchesGender(p){return !state.gender||p.gender===state.gender||p.gender==='unisex'||!p.gender}
 function matchesContext(p,except){
   return matchesSale(p)&&matchesGender(p)&&matchesCondition(p)&&matchesAvailability(p)&&(except==='category'||!state.category||hasCategory(p,state.category))&&(except==='brand'||!state.brand||hasBrand(p,state.brand))&&(except==='size'||!state.size||sizesOf(p).includes(state.size));
@@ -271,7 +272,7 @@ const menuLabels={product_condition:'Раздел',category:'Категория'
 function renderCatalogMenu(){
   document.querySelectorAll('[data-hot-brand]').forEach(b=>b.setAttribute('aria-pressed',String(Boolean(state.brand)&&sameLabel(state.brand,b.dataset.hotBrand))));
   document.querySelectorAll('[data-sale]').forEach(b=>b.setAttribute('aria-pressed',String(state.sale)));
-  const labels=[state.sale?'SALE':null,state.product_condition?conditionLabels[state.product_condition]:null,state.gender?({men:'Мужское',women:'Женское'}[state.gender]):null,state.category,state.brand,state.size,state.fulfillment_status?statusLabels[state.fulfillment_status]:null].filter(Boolean);
+  const labels=[state.sale?'SALE':null,state.sale?window.SaleCollections?.groups[state.saleCollection]?.ru:null,state.product_condition?conditionLabels[state.product_condition]:null,state.gender?({men:'Мужское',women:'Женское'}[state.gender]):null,state.category,state.brand,state.size,state.fulfillment_status?statusLabels[state.fulfillment_status]:null].filter(Boolean);
   const badge=document.getElementById('menuBadge');badge.textContent=String(labels.length);badge.classList.toggle('hidden',!labels.length);
   const summary=document.getElementById('filterSummary');summary.textContent=labels.join(' · ');summary.classList.toggle('hidden',!labels.length);
   if(document.getElementById('catalogMenu').classList.contains('hidden'))return;
@@ -346,8 +347,8 @@ function showMoneyPaw(button){
 }
 ['closeCatalogMenu','menuBackdrop'].forEach(id=>document.getElementById(id).onclick=()=>setCatalogMenu(false));
 document.getElementById('showMenuProducts').onclick=()=>{setTab('catalog');setCatalogMenu(false)};
-document.querySelectorAll('[data-hot-brand]').forEach(b=>b.onclick=()=>{const brand=state.brand&&sameLabel(state.brand,b.dataset.hotBrand)?null:b.dataset.hotBrand;state.sale=false;state.product_condition=state.gender=state.fulfillment_status=state.category=state.size=null;state.search='';document.getElementById('search').value='';state.brand=brand;if(state.tab!=='catalog')setTab('catalog');else render()});
-document.querySelectorAll('[data-sale]').forEach(b=>b.onclick=()=>{state.sale=!state.sale;reconcileFilters();if(state.tab!=='catalog')setTab('catalog');else render()});
+document.querySelectorAll('[data-hot-brand]').forEach(b=>b.onclick=()=>{const brand=state.brand&&sameLabel(state.brand,b.dataset.hotBrand)?null:b.dataset.hotBrand;state.sale=false;state.saleCollection=null;state.product_condition=state.gender=state.fulfillment_status=state.category=state.size=null;state.search='';document.getElementById('search').value='';state.brand=brand;if(state.tab!=='catalog')setTab('catalog');else render()});
+document.querySelectorAll('[data-sale]').forEach(b=>b.onclick=()=>{state.sale=!state.sale;state.saleCollection=null;reconcileFilters();if(state.tab!=='catalog')setTab('catalog');else render()});
 document.getElementById('resetMenu').onclick=()=>{document.getElementById('reset').onclick();menuOpenGroup='category';renderCatalogMenu()};
 document.getElementById('menuGroups').onclick=e=>{
   const group=e.target.closest('[data-menu-group]');
@@ -442,7 +443,7 @@ function openFilter(type){
 options.onclick=e=>{if(!e.target.dataset.v)return;tempValue=e.target.dataset.v==="Все"?null:e.target.dataset.v;[...options.children].forEach(x=>x.classList.toggle("selected",(tempValue===x.dataset.v)||(!tempValue&&x.dataset.v==="Все")))};
 document.getElementById("applyFilter").onclick=()=>{state[currentFilter]=tempValue;sheet.classList.add("hidden");render()};
 document.getElementById("closeSheet").onclick=()=>sheet.classList.add("hidden");
-document.getElementById("reset").onclick=()=>{setSortOpen(false);sortRevision++;state.sort="recommended";document.getElementById("sortStatus").textContent="";state.sale=false;state.product_condition=state.gender=state.fulfillment_status=state.category=state.brand=state.size=null;state.search="";document.getElementById("search").value="";render()};
+document.getElementById("reset").onclick=()=>{setSortOpen(false);sortRevision++;state.sort="recommended";document.getElementById("sortStatus").textContent="";state.sale=false;state.saleCollection=null;state.product_condition=state.gender=state.fulfillment_status=state.category=state.brand=state.size=null;state.search="";document.getElementById("search").value="";render()};
 grid.onclick=e=>{
   if(e.target.id==="retryProducts"){loadProducts();return}
   const h=e.target.closest("[data-heart]");
@@ -464,7 +465,7 @@ function saveCart(){cartRevision++;try{localStorage.setItem('jpCart',JSON.string
 function setTab(tab,options={}){
   if(['home','about','hermes','outlet'].includes(tab)&&isTelegramStore())return;
   if(window.SiteSEO?.page?.kind==='brand'&&!['catalog','hermes'].includes(tab))state.brand=null;
-  if(tab==='hermes'){state.brand='Hermès';state.sale=false;state.product_condition=state.gender=state.fulfillment_status=state.category=state.size=null;state.search='';document.getElementById('search').value=''}
+  if(tab==='hermes'){state.brand='Hermès';state.sale=false;state.saleCollection=null;state.product_condition=state.gender=state.fulfillment_status=state.category=state.size=null;state.search='';document.getElementById('search').value=''}
   if(!isTelegramStore()&&options.history!==false)window.SiteSEO?.navigate(tab,options);
   setSortOpen(false);
   if(tab!=='catalog'){document.getElementById('catalogSearch').classList.add('hidden');document.getElementById('toggleSearch').setAttribute('aria-expanded','false');state.search='';document.getElementById('search').value=''}
@@ -640,7 +641,7 @@ document.getElementById('offerItem').onclick=()=>{
 };
 document.querySelectorAll('[data-web-section]').forEach(b=>b.onclick=()=>{if(b.dataset.webSection==='catalog'&&window.SiteSEO?.page?.kind==='brand')state.brand=null;setTab(b.dataset.webSection)});
 document.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>{
- const tab=b.dataset.tab;if(tab==='catalog'&&(state.tab==='hermes'||state.tab==='outlet'||window.SiteSEO?.page?.kind==='brand')){state.brand=null;state.sale=false;state.product_condition=state.gender=state.fulfillment_status=state.category=state.size=null;state.search='';document.getElementById('search').value=''}
+ const tab=b.dataset.tab;if(tab==='catalog'&&(state.tab==='hermes'||state.tab==='outlet'||window.SiteSEO?.page?.kind==='brand')){state.brand=null;state.sale=false;state.saleCollection=null;state.product_condition=state.gender=state.fulfillment_status=state.category=state.size=null;state.search='';document.getElementById('search').value=''}
  setTab(tab);pressNavWithPaw(b);window.scrollTo({top:0,behavior:'instant'});
 });
 async function openLinkedProduct(id){
@@ -785,7 +786,7 @@ document.addEventListener("click",event=>{if(event.target.closest('a[data-contac
 // Restore the section and brand when the visitor uses browser Back/Forward.
 window.addEventListener('popstate',()=>{
  if(isTelegramStore()||!window.SiteSEO)return;
- const page=window.SiteSEO.restore();state.brand=page.brand||null;state.sale=false;state.product_condition=state.gender=state.fulfillment_status=state.category=state.size=null;
+ const page=window.SiteSEO.restore();state.brand=page.brand||null;Object.assign(state,catalogSelectionFromURL());state.product_condition=state.gender=state.fulfillment_status=state.category=state.size=null;
  setTab(initialStoreTab(),{history:false});
  const lang=new URLSearchParams(location.search).get('lang')==='en'?'en':'ru';if(window.SiteLanguage?.language!==lang)window.SiteLanguage?.set(lang);
  const productId=/^\/product\/([1-9]\d*)\/?$/.exec(location.pathname)?.[1];if(productId)openLinkedProduct(productId);

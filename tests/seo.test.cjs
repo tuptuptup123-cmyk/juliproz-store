@@ -59,3 +59,24 @@ test('Outlet and brand guides are readable without JavaScript and expose only th
   assert.match(outlet,/https:\/\/t.me\/\+NWLPh8nc47kzMzI0/);
  }
 });
+
+
+test('SALE selection includes discounted subcategories and aliases, excluding full-price and unavailable pieces',()=>{
+ const sale=require('../sale-collections.js');
+ const saleRows=[
+  {id:101,brand:'Gucci',name:'Куртка',category:'Куртки',price:500,original_price:1000,available:true},
+  {id:102,brand:'Gucci',name:'Обувь',category:'Обувь',price:300,original_price:600,available:true},
+  {id:103,brand:'Loro Piana',name:'Кепка',category:'Кепки',price:100,original_price:200,available:true},
+  {id:104,brand:'Gucci',name:'Без скидки',category:'Куртки',price:500,available:true},
+  {id:105,brand:'Gucci',name:'Продано',category:'Куртки',price:500,original_price:1000,available:false},
+  {id:106,brand:'Gucci',name:'Цена по запросу',category:'Куртки',price:null,original_price:1000,available:true}
+ ];
+ for(const [collection,id] of [['clothing',101],['shoes',102],['accessories',103]]){
+  assert.deepEqual(saleRows.filter(p=>sale.matches(p,collection)).map(p=>p.id),[id]);
+  const html=site.render(template,'catalog',null,'en',saleRows,sale.fromSearch('?sale=1&collection='+collection)),body=html.match(/<article id="serverLanding"[\s\S]*?<\/article>/)[0];
+  assert.match(body,/SALE/);assert.deepEqual([...body.matchAll(/href="https:\/\/www.juliproz.com\/product\/(\d+)/g)].map(m=>Number(m[1])),[id]);
+ }
+ assert.deepEqual(sale.fromSearch('?sale=1&collection=__proto__'),{sale:true,saleCollection:null});
+ assert.deepEqual(sale.fromSearch('?collection=clothing'),{sale:false,saleCollection:null});
+ assert.equal(sale.url('en','shoes'),'/catalog?sale=1&collection=shoes&lang=en');
+});
