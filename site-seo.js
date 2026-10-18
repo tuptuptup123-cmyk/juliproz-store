@@ -8,11 +8,6 @@
  const initialPage=data,initialLanguage=document.documentElement.dataset.seoLanguage||content.language(new URLSearchParams(location.search).get('lang'));
  const initialSchemas=[...document.querySelectorAll('script[type="application/ld+json"]')].flatMap(el=>{try{return [JSON.parse(el.textContent)]}catch{return []}});
  function language(){return root.SiteLanguage?.language||content.language(new URLSearchParams(location.search).get('lang'))}
- function links(){
-  const el=document.getElementById('seoBrowseLinks');if(!el)return;const lang=language(),en=lang==='en';
-  const current=path=>data.path===path?' aria-current="page"':'';
-  el.innerHTML=`<div class="site-footer-identity"><a class="site-footer-wordmark" href="${content.url('/',lang)}">JULI.PROZ</a><p>${en?'Buyer service worldwide':'Buyer service по всему миру'}</p></div><div class="site-footer-section"><h2 class="site-footer-label" id="footerNavigationTitle">${en?'Explore':'Навигация'}</h2><nav class="site-footer-navigation" aria-labelledby="footerNavigationTitle">${Object.entries(content.pages).map(([key,p])=>`<a href="${content.url(p.path,lang)}"${current(p.path)}>${escape(({home:en?'Home':'Главная',catalog:en?'Collection':'Каталог',services:en?'Services':'Услуги',sell:en?'Sell your piece':'Продать вещь',outlet:'Outlet'})[key])}</a>`).join('')}</nav></div><div class="site-footer-section site-footer-brand-section"><h2 class="site-footer-label" id="footerBrandsTitle">${en?'Brands':'Бренды'}</h2><nav class="site-footer-brands" aria-labelledby="footerBrandsTitle">${content.brands.map(b=>`<a href="${content.url('/brands/'+b.slug,lang)}"${current('/brands/'+b.slug)}>${escape(b.name)}</a>`).join('')}</nav></div>`;
- }
  function schemas(lang){
   if(data.path===initialPage.path&&lang===initialLanguage)return initialSchemas;
   const url=content.url(data.path,lang),name=data.heading?.[lang]||data.title[lang].replace(/ \| JULI\.PROZ$/,'');
@@ -38,7 +33,6 @@
    document.querySelectorAll('script[type="application/ld+json"]').forEach(el=>el.remove());
    for(const schema of schemas(lang)){const script=document.createElement('script');script.type='application/ld+json';script.textContent=JSON.stringify(schema);document.head.appendChild(script)}
   }
-  links();
  }
  function updateURL(tab,replace=false){
   if(!serverRendered)return;
@@ -63,7 +57,6 @@
    }
   }
   const outlet=document.getElementById('webOutletPage');if(outlet&&state.tab==='outlet')setHTML(outlet,lang,discovery.outlet(lang));
-  const browse=document.getElementById('seoBrowseLinks');if(browse)browse.hidden=!['home','catalog','services','sell','hermes','outlet'].includes(state.tab);
  }
  function navigate(tab,options={}){
   const next=tab==='hermes'?{...content.page('brand','hermes'),kind:'brand'}:content.pages[tab]?{...content.pages[tab],kind:tab}:['favorites','cart','about'].includes(tab)?{...content.pages.home,kind:'home'}:null;
