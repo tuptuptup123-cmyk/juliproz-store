@@ -56,6 +56,14 @@
   "outputDirectory": "dist",
   "rewrites": [
     {
+      "source": "/terms.html",
+      "destination": "/api/legal-page?page=terms"
+    },
+    {
+      "source": "/privacy.html",
+      "destination": "/api/legal-page?page=privacy"
+    },
+    {
       "source": "/",
       "destination": "/api/site-page?page=home"
     },
@@ -102,6 +110,116 @@
   ],
   "redirects": [
     {
+      "source": "/",
+      "has": [
+        {
+          "type": "host",
+          "value": "juliproz-store.vercel.app"
+        }
+      ],
+      "destination": "https://www.juliproz.com/",
+      "statusCode": 301
+    },
+    {
+      "source": "/index.html",
+      "has": [
+        {
+          "type": "host",
+          "value": "juliproz-store.vercel.app"
+        }
+      ],
+      "destination": "https://www.juliproz.com/",
+      "statusCode": 301
+    },
+    {
+      "source": "/catalog",
+      "has": [
+        {
+          "type": "host",
+          "value": "juliproz-store.vercel.app"
+        }
+      ],
+      "destination": "https://www.juliproz.com/catalog",
+      "statusCode": 301
+    },
+    {
+      "source": "/outlet",
+      "has": [
+        {
+          "type": "host",
+          "value": "juliproz-store.vercel.app"
+        }
+      ],
+      "destination": "https://www.juliproz.com/outlet",
+      "statusCode": 301
+    },
+    {
+      "source": "/services",
+      "has": [
+        {
+          "type": "host",
+          "value": "juliproz-store.vercel.app"
+        }
+      ],
+      "destination": "https://www.juliproz.com/services",
+      "statusCode": 301
+    },
+    {
+      "source": "/sell",
+      "has": [
+        {
+          "type": "host",
+          "value": "juliproz-store.vercel.app"
+        }
+      ],
+      "destination": "https://www.juliproz.com/sell",
+      "statusCode": 301
+    },
+    {
+      "source": "/brands/:slug",
+      "has": [
+        {
+          "type": "host",
+          "value": "juliproz-store.vercel.app"
+        }
+      ],
+      "destination": "https://www.juliproz.com/brands/:slug",
+      "statusCode": 301
+    },
+    {
+      "source": "/product/:id",
+      "has": [
+        {
+          "type": "host",
+          "value": "juliproz-store.vercel.app"
+        }
+      ],
+      "destination": "https://www.juliproz.com/product/:id",
+      "statusCode": 301
+    },
+    {
+      "source": "/terms.html",
+      "has": [
+        {
+          "type": "host",
+          "value": "juliproz-store.vercel.app"
+        }
+      ],
+      "destination": "https://www.juliproz.com/terms.html",
+      "statusCode": 301
+    },
+    {
+      "source": "/privacy.html",
+      "has": [
+        {
+          "type": "host",
+          "value": "juliproz-store.vercel.app"
+        }
+      ],
+      "destination": "https://www.juliproz.com/privacy.html",
+      "statusCode": 301
+    },
+    {
       "source": "/telegram",
       "destination": "/telegram/",
       "permanent": false
@@ -147,10 +265,13 @@
       "maxDuration": 120
     },
     "api/product-page.js": {
-      "includeFiles": "{index.html,site-translations.js,product-translations.js,site-language.js}"
+      "includeFiles": "{index.html,site-translations.js,product-translations.js,product-copy.js,site-language.js}"
     },
     "api/site-page.js": {
-      "includeFiles": "{index.html,site-translations.js,product-translations.js,site-language.js}"
+      "includeFiles": "{index.html,site-translations.js,product-translations.js,product-copy.js,site-language.js}"
+    },
+    "api/legal-page.js": {
+      "includeFiles": "{terms.html,privacy.html,site-translations.js,product-translations.js,product-copy.js,site-language.js}"
     }
   },
   "crons": [

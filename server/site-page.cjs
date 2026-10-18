@@ -1,6 +1,6 @@
 'use strict';
 const fs=require('node:fs/promises'),path=require('node:path'),seo=require('./seo.cjs'),config=require('../config.js'),reader=require('../catalog-reader.js'),taxonomy=require('../catalog-taxonomy.js'),pricing=require('../product-pricing.js');
-const fields='id,created_at,available,brand,name,category,size,price,currency,image_url,photos,description,fulfillment_status,reserved,product_condition,stock_quantities,original_price';
+const fields='id,created_at,available,brand,name,name_en,description_en,category,size,price,currency,image_url,photos,description,fulfillment_status,reserved,product_condition,stock_quantities,original_price';
 const {escape:e}=seo;
 const homeBuyer=require('../home-buyer.js'),discovery=require('../discovery-pages.js'),saleCollections=require('../sale-collections.js');
 function render(template,kind,slug,lang,rows=[],selection={}){
@@ -10,7 +10,7 @@ function render(template,kind,slug,lang,rows=[],selection={}){
  if(kind==='home')schemas.push({'@context':'https://schema.org','@type':'WebSite','@id':seo.origin+'/#website',name:'JULI.PROZ',url:seo.origin+'/',inLanguage:['ru','en'],publisher:{'@id':seo.origin+'/#organization'}});
  if(kind!=='home')schemas.push({'@context':'https://schema.org','@type':'BreadcrumbList',itemListElement:[{'@type':'ListItem',position:1,name:'JULI.PROZ',item:seo.url('/',lang)},{'@type':'ListItem',position:2,name:page.heading[lang],item:seo.url(page.path,lang)}]});
  if(filtered.length)schemas.push({'@context':'https://schema.org','@type':'ItemList',itemListElement:filtered.map((p,i)=>({'@type':'ListItem',position:i+1,url:seo.url('/product/'+p.id,lang)}))});
- const cards=filtered.map(p=>{const title=seo.translate([p.brand,p.name].filter(Boolean).join(' — '),lang),amount=pricing.amount(p.price,p.currency);return `<li><a href="${seo.url('/product/'+p.id,lang)}">${e(title)}</a><p>${e(seo.translate(p.size||'',lang))}${amount===null?'':` · ${e(amount)} €`}</p></li>`}).join('');
+ const cards=filtered.map(p=>{const title=[p.brand,seo.productCopy(p,'name',lang)].filter(Boolean).join(' — '),amount=pricing.amount(p.price,p.currency);return `<li><a href="${seo.url('/product/'+p.id,lang)}">${e(title)}</a><p>${e(seo.translate(p.size||'',lang))}${amount===null?'':` · ${e(amount)} €`}</p></li>`}).join('');
  const extra=kind==='home'?`<img class="seo-home-photo" src="/images/home-boutique.jpg" alt="${en?'Julia with a Hermès bag':'Юля с сумкой Hermès'}" width="1080" height="1620">${homeBuyer.render(lang,'server-')}`:'';
  const editorial=kind==='outlet'?discovery.outlet(lang,'server-',page.outletFind):kind==='brand'?discovery.brand(slug,lang,'server-'):'';
  const intro=kind==='catalog'?(selection.sale?'':`<h1 class="seo-catalog-heading">${e(page.heading[lang])}</h1>`):editorial||`<h1>${e(page.heading[lang])}</h1><p>${e(page.intro[lang])}</p>`;
@@ -29,7 +29,7 @@ function createHandler({request=fetch,readTemplate=()=>fs.readFile(path.join(__d
    // If it cannot be verified, keep the service page available without a stale offer.
    try{const r=await request(config.url+'/rest/v1/products?select='+fields+'&id=eq.'+discovery.outletReference.id+'&available=eq.true&limit=1',{headers:{apikey:config.key},redirect:'error',signal:AbortSignal.timeout(5000)});if(r.ok){const data=await r.json();if(Array.isArray(data))rows=data}}catch{}
   }
-  const html=render(await readTemplate(),kind,slug,lang,rows,saleCollections.fromSearch(input.search));res.statusCode=200;return res.end(req.method==='HEAD'?undefined:html)
+  const html=render(await readTemplate(),kind,slug,lang,rows,saleCollections.fromSearch(input.search));return require('./public-response.cjs')(req,res,html,{staticPage:['home','services','sell'].includes(kind)})
  }catch{res.statusCode=503;res.setHeader('Retry-After','30');res.end('Catalogue temporarily unavailable')}
 }}
 module.exports={createHandler,render};

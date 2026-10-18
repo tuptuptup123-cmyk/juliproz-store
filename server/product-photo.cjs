@@ -1,5 +1,5 @@
 'use strict';
-const fs=require('node:fs/promises'),path=require('node:path'),config=require('../config.js'),manifest=new Set(require('../product-assets-manifest.json'));
+const fs=require('node:fs/promises'),path=require('node:path'),crypto=require('node:crypto'),config=require('../config.js'),manifest=new Set(require('../product-assets-manifest.json'));
 function createHandler({fetch:request=fetch,readFile=fs.readFile,root=path.resolve(__dirname,'../private-product-assets')}={}){
  return async(req,res)=>{
   res.setHeader('Cache-Control','no-store');res.setHeader('Vary','Origin, Authorization');res.setHeader('X-Content-Type-Options','nosniff');
@@ -16,7 +16,9 @@ function createHandler({fetch:request=fetch,readFile=fs.readFile,root=path.resol
    const response=await request(config.url+'/rest/v1/products?select=id&or='+encodeURIComponent(filter)+(auth?'':'&available=eq.true')+'&limit=1',{headers,redirect:'error',signal:AbortSignal.timeout(8000)});
    if(!response.ok)return deny(response.status===401?401:503);
    const rows=await response.json();if(!Array.isArray(rows)||!rows.length)return deny(404);
-   const bytes=await readFile(path.join(root,asset));res.setHeader('Content-Type',/\.png$/.test(asset)?'image/png':/\.webp$/.test(asset)?'image/webp':'image/jpeg');
+   const bytes=await readFile(path.join(root,asset));
+   if(!auth){const etag='"'+crypto.createHash('sha256').update(bytes).digest('hex')+'"';res.setHeader('ETag',etag);res.setHeader('Cache-Control','private, no-cache, must-revalidate');if(req.headers['if-none-match']===etag){res.statusCode=304;return res.end()}}
+   res.setHeader('Content-Type',/\.png$/.test(asset)?'image/png':/\.webp$/.test(asset)?'image/webp':'image/jpeg');
    res.setHeader('Content-Length',String(bytes.length));res.statusCode=200;return res.end(req.method==='HEAD'?undefined:bytes);
   }catch{return deny(503)}
  };

@@ -22,7 +22,7 @@ The authoritative schema order is `supabase/schema/manifest.json`. Full findings
 
 For a **fresh Supabase project**, restore `supabase/schema/baseline-20261016.sql`, then only the migrations listed in the manifest, then the fresh-project platform bootstrap. Auth, Storage, pgcrypto and pg_cron are platform dependencies. Provision the first confirmed owner with verified TOTP and new server secrets separately. No production data or credentials are included.
 
-For the **existing project**, do not restore the baseline or replay historical setup scripts. Apply only the new `20261016144421_external_audit_security_and_logic.sql` once, then coordinate Edge/front-end deployment and the post-deployment private-bucket change as documented. This review branch has not applied these changes to production. Auth password-policy settings require separate Management API verification.
+For the **existing project**, do not restore the baseline or replay historical setup scripts. The changes through the manifest were observed on production during the 18 October 2026 audit. Compare the target migration history and SQL before applying any new, unapplied change. Two historical local filenames have different applied identifiers; use the mapping and current release procedure in [the operations guide](docs/operations-2026-10-18.md). Auth password policy and real backup restoration still need operator verification; a desired-settings JSON file is not proof of their live state.
 
 A static-folder upload is incomplete: the website also needs its API handlers and `private-product-assets/**` function bundle, and Mini App needs its analytics relay. The old root-level SQL and earlier migrations below document historical changes, not an installation sequence.
 

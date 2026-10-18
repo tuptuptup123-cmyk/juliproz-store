@@ -7,7 +7,8 @@
     "supabase/migrations/20261018051207_analytics_acquisition_sources.sql",
     "supabase/migrations/20261018051735_statistics_owner_fail_closed.sql",
     "supabase/migrations/20261018051835_statistics_acquisition_owner_guard.sql",
-    "supabase/migrations/20261018054622_detailed_website_analytics.sql"
+    "supabase/migrations/20261018054622_detailed_website_analytics.sql",
+    "supabase/migrations/20261018085636_independent_audit_fixes.sql"
   ],
   "postDeployment": [
     "supabase/rollout/private-product-photos.sql"

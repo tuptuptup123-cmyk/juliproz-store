@@ -7,14 +7,16 @@
  data=data||{...content.pages.home,kind:'home'};
  const initialPage=data,initialLanguage=document.documentElement.dataset.seoLanguage||content.language(new URLSearchParams(location.search).get('lang'));
  const initialSchemas=[...document.querySelectorAll('script[type="application/ld+json"]')].flatMap(el=>{try{return [JSON.parse(el.textContent)]}catch{return []}});
+ const productPages=new Map();
+ if(data.kind==='product')productPages.set(data.path,{...data,productSchema:initialSchemas.find(schema=>schema['@type']==='Product')});
  function language(){return root.SiteLanguage?.language||content.language(new URLSearchParams(location.search).get('lang'))}
  function schemas(lang){
   if(data.path===initialPage.path&&lang===initialLanguage)return initialSchemas;
   const url=content.url(data.path,lang),name=data.heading?.[lang]||data.title[lang].replace(/ \| JULI\.PROZ$/,'');
   const breadcrumb={'@context':'https://schema.org','@type':'BreadcrumbList',itemListElement:[{'@type':'ListItem',position:1,name:'JULI.PROZ',item:content.url('/',lang)},{'@type':'ListItem',position:2,name,item:url}]};
   if(data.kind==='product'){
-   const product=initialSchemas.find(schema=>schema['@type']==='Product');
-   if(!product)return [breadcrumb];
+   const product=data.productSchema||productPages.get(data.path)?.productSchema;
+   if(!product||!product.offers)return [{'@context':'https://schema.org','@type':'WebPage',name,url,inLanguage:lang},breadcrumb];
    return [{...product,name,description:data.description[lang],url,...(product.offers?{offers:{...product.offers,url}}:{})},breadcrumb];
   }
   const organization={'@context':'https://schema.org','@type':'Organization','@id':content.origin+'/#organization',name:'JULI.PROZ',url:content.origin+'/',logo:content.origin+'/images/brand-paw.webp',sameAs:['https://www.instagram.com/juli.proz/','https://t.me/juli_proz','https://t.me/JuliProzBot']};
@@ -41,7 +43,7 @@
  function updateURL(tab,replace=false){
   if(!serverRendered)return;
   const url=new URL(location.href);url.pathname=data.path;url.hash='';
-  for(const key of ['product','tab','page','slug'])url.searchParams.delete(key);
+  for(const key of ['product','tab','page','slug','size'])url.searchParams.delete(key);
   if(tab!=='catalog')for(const key of ['sale','collection'])url.searchParams.delete(key);
   if(['favorites','cart','about'].includes(tab))url.searchParams.set('tab',tab);
   const next=url.pathname+url.search,current=location.pathname+location.search+location.hash;
@@ -79,11 +81,31 @@
   const next=tab==='hermes'?{...content.page('brand','hermes'),kind:'brand'}:content.pages[tab]?{...content.pages[tab],kind:tab}:['favorites','cart','about'].includes(tab)?{...content.pages.home,kind:'home'}:null;
   if(!next)return;data=next;updateURL(tab,Boolean(options.replace));metadata();
  }
+ function product(p,options={}){
+  if(!serverRendered)return;
+  const path='/product/'+p.id,title={},description={},translate=(s,lang)=>lang==='en'?root.SiteLanguage.english(s):String(s||'');
+  for(const lang of ['ru','en']){
+   const name=[p.brand,root.ProductCopy.value(p,'name',lang,s=>translate(s,lang))].filter(Boolean).join(' — ').slice(0,240),details=(root.ProductCopy.value(p,'description',lang,s=>translate(s,lang))||[name,translate(p.size,lang)].filter(Boolean).join(' · ')).slice(0,500);
+   title[lang]=name+' | JULI.PROZ';description[lang]=[...new Set([name,details,translate(p.size,lang)].filter(Boolean))].join(' · ').slice(0,320);
+  }
+  const image=p.image_url&&root.publicProductImage?.(p.image_url),price=root.ProductPricing.amount(p.price,p.currency),lang=language(),url=content.url(path,lang);
+  const availability=p.reserved?'OutOfStock':p.fulfillment_status==='on_order'?'PreOrder':root.ProductSizes.stockUnits(p)>0?'InStock':'OutOfStock';
+  const productSchema={'@context':'https://schema.org','@type':'Product',name:title[lang].replace(/ \| JULI\.PROZ$/,''),sku:String(p.id),url,description:description[lang],brand:{'@type':'Brand',name:p.brand},...(image?{image:[image]}:{}),itemCondition:'https://schema.org/'+(!p.product_condition||p.product_condition==='new'?'NewCondition':'UsedCondition')};
+  if(price!==null)productSchema.offers={'@type':'Offer',url,price,priceCurrency:'EUR',availability:'https://schema.org/'+availability,seller:{'@type':'Organization',name:'JULI.PROZ'}};
+  const wasProduct=/^\/product\/[1-9]\d*\/?$/.test(location.pathname);
+  data={kind:'product',path,title,description,image,productSchema};productPages.set(path,data);
+  if(serverRendered){
+   const next=new URL(content.url(path,lang));if(options.size)next.searchParams.set('size',options.size);
+   const target=next.pathname+next.search;
+   if(target!==location.pathname+location.search)history[wasProduct?'replaceState':'pushState']({...history.state,productReturn:wasProduct?Boolean(history.state?.productReturn):true},'',target);
+  }
+  metadata();
+ }
  function restore(){
   const path=location.pathname.replace(/\/$/,'')||'/',slug=/^\/brands\/([^/]+)$/.exec(path)?.[1],kind=slug?'brand':Object.keys(content.pages).find(key=>content.pages[key].path===path)||'home';
-  data=initialPage.kind==='product'&&initialPage.path===path?{...initialPage}:{...(content.page(kind,slug)||content.pages.home),kind};metadata();return data;
+  data=productPages.get(path)||{...(content.page(kind,slug)||content.pages.home),kind};metadata();return data;
  }
  function ready(){document.getElementById('serverLanding')?.remove();document.documentElement.removeAttribute('data-server-view')}
- root.SiteSEO={sync,navigate,restore,ready,get page(){return data}};
+ root.SiteSEO={sync,navigate,product,restore,ready,get page(){return data},get serverRendered(){return serverRendered}};
  metadata();document.addEventListener('site-language-change',metadata);
 })(window);

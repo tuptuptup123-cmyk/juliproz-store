@@ -641,6 +641,66 @@
   },
   {
     "kind": "column_grant",
+    "name": "public.products.description_en.anon.SELECT",
+    "definition": "NO"
+  },
+  {
+    "kind": "column_grant",
+    "name": "public.products.description_en.authenticated.INSERT",
+    "definition": "NO"
+  },
+  {
+    "kind": "column_grant",
+    "name": "public.products.description_en.authenticated.SELECT",
+    "definition": "NO"
+  },
+  {
+    "kind": "column_grant",
+    "name": "public.products.description_en.authenticated.UPDATE",
+    "definition": "NO"
+  },
+  {
+    "kind": "column_grant",
+    "name": "public.products.description_en.postgres.INSERT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "public.products.description_en.postgres.REFERENCES",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "public.products.description_en.postgres.SELECT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "public.products.description_en.postgres.UPDATE",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "public.products.description_en.service_role.INSERT",
+    "definition": "NO"
+  },
+  {
+    "kind": "column_grant",
+    "name": "public.products.description_en.service_role.REFERENCES",
+    "definition": "NO"
+  },
+  {
+    "kind": "column_grant",
+    "name": "public.products.description_en.service_role.SELECT",
+    "definition": "NO"
+  },
+  {
+    "kind": "column_grant",
+    "name": "public.products.description_en.service_role.UPDATE",
+    "definition": "NO"
+  },
+  {
+    "kind": "column_grant",
     "name": "public.products.fulfillment_status.anon.SELECT",
     "definition": "NO"
   },
@@ -927,6 +987,66 @@
   {
     "kind": "column_grant",
     "name": "public.products.name.service_role.UPDATE",
+    "definition": "NO"
+  },
+  {
+    "kind": "column_grant",
+    "name": "public.products.name_en.anon.SELECT",
+    "definition": "NO"
+  },
+  {
+    "kind": "column_grant",
+    "name": "public.products.name_en.authenticated.INSERT",
+    "definition": "NO"
+  },
+  {
+    "kind": "column_grant",
+    "name": "public.products.name_en.authenticated.SELECT",
+    "definition": "NO"
+  },
+  {
+    "kind": "column_grant",
+    "name": "public.products.name_en.authenticated.UPDATE",
+    "definition": "NO"
+  },
+  {
+    "kind": "column_grant",
+    "name": "public.products.name_en.postgres.INSERT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "public.products.name_en.postgres.REFERENCES",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "public.products.name_en.postgres.SELECT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "public.products.name_en.postgres.UPDATE",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "public.products.name_en.service_role.INSERT",
+    "definition": "NO"
+  },
+  {
+    "kind": "column_grant",
+    "name": "public.products.name_en.service_role.REFERENCES",
+    "definition": "NO"
+  },
+  {
+    "kind": "column_grant",
+    "name": "public.products.name_en.service_role.SELECT",
+    "definition": "NO"
+  },
+  {
+    "kind": "column_grant",
+    "name": "public.products.name_en.service_role.UPDATE",
     "definition": "NO"
   },
   {
@@ -6231,6 +6351,11 @@
   },
   {
     "kind": "constraint",
+    "name": "public.products.products_description_en_length",
+    "definition": "CHECK (((description_en IS NULL) OR (char_length(description_en) <= 5000)))"
+  },
+  {
+    "kind": "constraint",
     "name": "public.products.products_discount_price_check",
     "definition": "CHECK (((original_price IS NULL) OR ((price IS NOT NULL) AND (price >= (0)::numeric) AND (original_price > price) AND (original_price < 'Infinity'::numeric) AND (round(original_price) > round(price)))))"
   },
@@ -6273,6 +6398,11 @@
     "kind": "constraint",
     "name": "public.products.products_image_url_not_null",
     "definition": "NOT NULL image_url"
+  },
+  {
+    "kind": "constraint",
+    "name": "public.products.products_name_en_length",
+    "definition": "CHECK (((name_en IS NULL) OR (char_length(name_en) <= 250)))"
   },
   {
     "kind": "constraint",
@@ -7976,6 +8106,11 @@
   },
   {
     "kind": "function",
+    "name": "store_private.invalidate_product_translation()",
+    "definition": "CREATE OR REPLACE FUNCTION store_private.invalidate_product_translation()\n RETURNS trigger\n LANGUAGE plpgsql\n SET search_path TO ''\nAS $function$\nbegin\n if new.name is distinct from old.name and new.name_en is not distinct from old.name_en then new.name_en:=null; end if;\n if new.description is distinct from old.description and new.description_en is not distinct from old.description_en then new.description_en:=null; end if;\n return new;\nend $function$\n"
+  },
+  {
+    "kind": "function",
     "name": "store_private.link_finance_order(p_order uuid, p_sale uuid, p_order_revision bigint, p_sale_revision bigint)",
     "definition": "CREATE OR REPLACE FUNCTION store_private.link_finance_order(p_order uuid, p_sale uuid, p_order_revision bigint, p_sale_revision bigint)\n RETURNS jsonb\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\ndeclare o store_private.finance_entries%rowtype;s store_private.finance_entries%rowtype; sid bigint;k text;\nbegin\n perform store_private.require_workspace_admin(true);\n if p_order is null or p_sale is null or p_order=p_sale then raise exception 'Выберите заказ и продажу'; end if;\n select sale_id into sid from store_private.finance_entries where id=p_sale;\n if sid is null then raise exception 'Продажа не найдена'; end if;\n perform 1 from store_private.product_sales where id=sid for update;\n perform 1 from store_private.finance_entries where id in (p_order,p_sale) order by id for update;\n select * into o from store_private.finance_entries where id=p_order;select * into s from store_private.finance_entries where id=p_sale;\n if o.id is null or o.sale_id is not null or o.status in ('linked','cancelled') or s.sale_id is null or s.status<>'completed'\n  or exists(select 1 from store_private.finance_entries where merged_into=s.id) then raise exception 'Этот заказ или продажу уже нельзя связать'; end if;\n if p_order_revision is distinct from o.revision or p_sale_revision is distinct from s.revision then raise exception 'Запись изменилась. Обновите отчёт.' using errcode='40001'; end if;\n if o.amount<>s.amount or o.quantity<>s.quantity or o.on_commission<>s.on_commission or o.opened_on>s.completed_on\n  or (o.product_id is not null and o.product_id is distinct from s.product_id) then raise exception 'Сверьте сумму, количество, комиссию, дату заказа и артикул с выбранной продажей'; end if;\n foreach k in array array['received','purchase_cost','expenses','owner_due','owner_paid'] loop\n  if (to_jsonb(o)->>k) is not null and (to_jsonb(s)->>k) is not null and to_jsonb(o)->k<>to_jsonb(s)->k then raise exception 'В заказе и продаже разные финансовые данные (%). Сначала сверьте суммы.',k; end if;\n end loop;\n update store_private.finance_entries set kind='order',on_order=true,opened_on=o.opened_on,\n  received=coalesce(o.received,s.received),purchase_cost=coalesce(o.purchase_cost,s.purchase_cost),expenses=coalesce(o.expenses,s.expenses),\n  owner_due=coalesce(o.owner_due,s.owner_due),owner_paid=coalesce(o.owner_paid,s.owner_paid),owner_ref=coalesce(nullif(o.owner_ref,''),s.owner_ref),\n  client_ref=coalesce(nullif(o.client_ref,''),s.client_ref),note=left(concat_ws(E'\\n',nullif(s.note,''),nullif(o.note,'')),2000),\n  revision=revision+1,updated_at=now(),updated_by=auth.uid() where id=p_sale;\n update store_private.finance_entries set status='linked',merged_into=p_sale,revision=revision+1,updated_at=now(),updated_by=auth.uid() where id=p_order;\n return jsonb_build_object('saved',true,'id',p_sale);\nend $function$\n"
   },
@@ -8137,7 +8272,7 @@
   {
     "kind": "function",
     "name": "store_private.void_product_sale(p_sale_id bigint, p_revision bigint, p_reason text)",
-    "definition": "CREATE OR REPLACE FUNCTION store_private.void_product_sale(p_sale_id bigint, p_revision bigint, p_reason text)\n RETURNS jsonb\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\ndeclare s store_private.product_sales%rowtype; p public.products%rowtype; label text; target bigint;\nbegin\n perform store_private.require_workspace_admin(true);\n if p_reason is null or char_length(btrim(p_reason)) not between 3 and 1000 then raise exception 'Укажите причину отмены (от 3 до 1000 символов)'; end if;\n select product_id into target from store_private.product_sales where id=p_sale_id;\n -- Same lock order as recording: product first, then ledger.\n select * into p from public.products where id=target for update;\n select * into s from store_private.product_sales where id=p_sale_id for update;\n if not found then raise exception 'Продажа не найдена'; end if;\n if s.voided_at is not null then return jsonb_build_object('product',case when p.id is null then null else to_jsonb(p) end,'already_voided',true); end if;\n if p.id is not null then\n  if p_revision is null or p_revision<>p.revision then raise exception 'Карточка изменилась. Обновите список и повторите'; end if;\n  if exists(select 1 from store_private.product_sales where product_id=p.id and id>s.id and voided_at is null)\n  or jsonb_build_object('available',p.available,'archive_status',p.archive_status,'reserved',p.reserved,'stock_quantities',p.stock_quantities) is distinct from s.after_state then\n   raise exception 'После продажи остатки или статус изменились. Сначала отмените более поздние продажи и проверьте карточку';\n  end if;\n end if;\n select coalesce(nullif(a.display_name,''),u.email,auth.uid()::text) into label from public.store_admins a join auth.users u on u.id=a.user_id where a.user_id=auth.uid();\n update store_private.product_sales set voided_at=now(),voided_by=auth.uid(),voided_label=label,void_reason=btrim(p_reason) where id=s.id;\n if p.id is not null then\n  update public.products set available=(s.before_state->>'available')::boolean,archive_status=s.before_state->>'archive_status',reserved=false,stock_quantities=nullif(s.before_state->'stock_quantities','null'::jsonb) where id=p.id returning * into p;\n end if;\n return jsonb_build_object('product',case when p.id is null then null else to_jsonb(p) end);\nend $function$\n"
+    "definition": "CREATE OR REPLACE FUNCTION store_private.void_product_sale(p_sale_id bigint, p_revision bigint, p_reason text)\n RETURNS jsonb\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\ndeclare s store_private.product_sales%rowtype; p public.products%rowtype; label text; target bigint;\nbegin\n perform store_private.require_workspace_admin(true);\n if p_reason is null or char_length(btrim(p_reason)) not between 3 and 1000 then raise exception 'Укажите причину отмены (от 3 до 1000 символов)'; end if;\n select product_id into target from store_private.product_sales where id=p_sale_id;\n -- Same lock order as recording: product first, then ledger.\n select * into p from public.products where id=target for update;\n select * into s from store_private.product_sales where id=p_sale_id for update;\n if not found then raise exception 'Продажа не найдена'; end if;\n if s.voided_at is not null then return jsonb_build_object('product',case when p.id is null then null else to_jsonb(p) end,'already_voided',true); end if;\n if p.id is not null then\n  if p_revision is null or p_revision<>p.revision then raise exception 'Карточка изменилась. Обновите список и повторите'; end if;\n  if exists(select 1 from store_private.product_sales where product_id=p.id and id>s.id and voided_at is null)\n  or jsonb_build_object('available',p.available,'archive_status',p.archive_status,'reserved',p.reserved,'stock_quantities',p.stock_quantities) is distinct from s.after_state then\n   raise exception 'После продажи остатки или статус изменились. Сначала отмените более поздние продажи и проверьте карточку';\n  end if;\n end if;\n select coalesce(nullif(a.display_name,''),u.email,auth.uid()::text) into label from public.store_admins a join auth.users u on u.id=a.user_id where a.user_id=auth.uid();\n update store_private.product_sales set voided_at=now(),voided_by=auth.uid(),voided_label=label,void_reason=btrim(p_reason) where id=s.id;\n if p.id is not null then\n  update public.products set available=(s.before_state->>'available')::boolean,archive_status=s.before_state->>'archive_status',reserved=coalesce((s.before_state->>'reserved')::boolean,false),stock_quantities=nullif(s.before_state->'stock_quantities','null'::jsonb) where id=p.id returning * into p;\n end if;\n return jsonb_build_object('product',case when p.id is null then null else to_jsonb(p) end);\nend $function$\n"
   },
   {
     "kind": "function",
@@ -8527,6 +8662,11 @@
   {
     "kind": "function_acl",
     "name": "store_private.guard_product_financial_basis()",
+    "definition": "{postgres=X/postgres}"
+  },
+  {
+    "kind": "function_acl",
+    "name": "store_private.invalidate_product_translation()",
     "definition": "{postgres=X/postgres}"
   },
   {
@@ -10577,7 +10717,7 @@
   {
     "kind": "table",
     "name": "public.products",
-    "definition": "{\"rls\": true, \"columns\": [{\"name\": \"id\", \"type\": \"bigint\", \"default\": null, \"notnull\": true, \"identity\": \"d\", \"generated\": \"\"}, {\"name\": \"created_at\", \"type\": \"timestamp with time zone\", \"default\": \"now()\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"brand\", \"type\": \"text\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"name\", \"type\": \"text\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"category\", \"type\": \"text\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"size\", \"type\": \"text\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"price\", \"type\": \"numeric\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"currency\", \"type\": \"text\", \"default\": \"'EUR'::text\", \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"image_url\", \"type\": \"text\", \"default\": null, \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"available\", \"type\": \"boolean\", \"default\": \"true\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"description\", \"type\": \"text\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"photos\", \"type\": \"jsonb\", \"default\": \"'[]'::jsonb\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"revision\", \"type\": \"bigint\", \"default\": \"1\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"creation_key\", \"type\": \"uuid\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"fulfillment_status\", \"type\": \"text\", \"default\": \"'in_stock'::text\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"gender\", \"type\": \"text\", \"default\": \"'unisex'::text\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"reserved\", \"type\": \"boolean\", \"default\": \"false\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"product_condition\", \"type\": \"text\", \"default\": \"'new'::text\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"stock_quantities\", \"type\": \"jsonb\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"on_commission\", \"type\": \"boolean\", \"default\": \"false\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"original_price\", \"type\": \"numeric\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"wear_condition\", \"type\": \"text\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"archive_status\", \"type\": \"text\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"team_pick\", \"type\": \"boolean\", \"default\": \"false\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}], \"force_rls\": false}"
+    "definition": "{\"rls\": true, \"columns\": [{\"name\": \"id\", \"type\": \"bigint\", \"default\": null, \"notnull\": true, \"identity\": \"d\", \"generated\": \"\"}, {\"name\": \"created_at\", \"type\": \"timestamp with time zone\", \"default\": \"now()\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"brand\", \"type\": \"text\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"name\", \"type\": \"text\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"category\", \"type\": \"text\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"size\", \"type\": \"text\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"price\", \"type\": \"numeric\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"currency\", \"type\": \"text\", \"default\": \"'EUR'::text\", \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"image_url\", \"type\": \"text\", \"default\": null, \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"available\", \"type\": \"boolean\", \"default\": \"true\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"description\", \"type\": \"text\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"photos\", \"type\": \"jsonb\", \"default\": \"'[]'::jsonb\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"revision\", \"type\": \"bigint\", \"default\": \"1\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"creation_key\", \"type\": \"uuid\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"fulfillment_status\", \"type\": \"text\", \"default\": \"'in_stock'::text\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"gender\", \"type\": \"text\", \"default\": \"'unisex'::text\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"reserved\", \"type\": \"boolean\", \"default\": \"false\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"product_condition\", \"type\": \"text\", \"default\": \"'new'::text\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"stock_quantities\", \"type\": \"jsonb\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"on_commission\", \"type\": \"boolean\", \"default\": \"false\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"original_price\", \"type\": \"numeric\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"wear_condition\", \"type\": \"text\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"archive_status\", \"type\": \"text\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"team_pick\", \"type\": \"boolean\", \"default\": \"false\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"name_en\", \"type\": \"text\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"description_en\", \"type\": \"text\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}], \"force_rls\": false}"
   },
   {
     "kind": "table",
@@ -10768,6 +10908,11 @@
     "kind": "trigger",
     "name": "public.products.guard_product_financial_basis",
     "definition": "CREATE TRIGGER guard_product_financial_basis BEFORE INSERT OR UPDATE ON public.products FOR EACH ROW EXECUTE FUNCTION store_private.guard_product_financial_basis()"
+  },
+  {
+    "kind": "trigger",
+    "name": "public.products.invalidate_product_translation",
+    "definition": "CREATE TRIGGER invalidate_product_translation BEFORE UPDATE ON public.products FOR EACH ROW EXECUTE FUNCTION store_private.invalidate_product_translation()"
   },
   {
     "kind": "trigger",
