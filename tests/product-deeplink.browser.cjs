@@ -65,7 +65,7 @@ const types={'.html':'text/html','.js':'text/javascript','.css':'text/css','.png
     await page.evaluate(()=>Date.now=window.__originalNow);
     await page.evaluate(()=>window.__shareCallback(false));await page.locator('.product-share-status').filter({hasText:'Вещь не отправлена'}).waitFor();
     await button.click();await page.waitForFunction(()=>window.__prepared.length===2);await page.evaluate(()=>window.__shareCallback(true));await page.locator('.product-share-status').filter({hasText:'Вещь отправлена'}).waitFor();
-    await page.evaluate(()=>window.__sdkThrow=true);await button.click();await page.locator('.product-share-status').filter({hasText:'предыдущее окно отправки открытым'}).waitFor();assert.equal(await button.isEnabled(),true);
+    await page.evaluate(()=>window.__sdkThrow=true);await button.click();await page.locator('.product-share-status').filter({hasText:'Telegram не завершил предыдущую отправку'}).waitFor();assert.equal(await button.isEnabled(),true);
     await button.click();await page.waitForFunction(()=>window.__prepared.length===3);
     const failedReport=page.waitForResponse(response=>response.url().endsWith('/api/telegram-share')&&response.request().postDataJSON().result==='MESSAGE_SEND_FAILED');
     await page.evaluate(()=>window.__shareFailure('MESSAGE_SEND_FAILED'));await page.locator('.product-share-status').filter({hasText:'Telegram не смог отправить карточку'}).waitFor();await failedReport;
@@ -78,9 +78,17 @@ const types={'.html':'text/html','.js':'text/javascript','.css':'text/css','.png
     releaseShare();const response=await pendingResponse;await response.finished();shareGate=null;
     await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
     assert.equal(shareCalls,previous+1);assert.equal(await page.evaluate(()=>window.__prepared.length),3,'closed dialogs cannot open a late recipient picker');
-    await page.locator('[data-action=share]').click();await page.evaluate(()=>delete window.Telegram.WebApp.shareMessage);await button.click();
+    await page.locator('[data-action=share]').click();await page.clock.install();await button.click();await page.waitForFunction(()=>window.__prepared.length===4);
+    await page.clock.fastForward(31000);await page.locator('.product-share-status').filter({hasText:'Получить карточку в боте'}).waitFor();
+    const botCard=page.locator('[data-share-action=bot-card]');assert.equal(await botCard.isEnabled(),true);
+    if(process.env.QA_OUTPUT){fs.mkdirSync(process.env.QA_OUTPUT,{recursive:true});await page.screenshot({path:path.join(process.env.QA_OUTPUT,`share-recovery-${engine}-${width}.png`)})}
+    await botCard.click();assert.deepEqual(await page.evaluate(()=>window.__links.at(-1)),['telegram','https://t.me/JuliProzBot?start=share_501']);
+    assert.equal(await page.evaluate(()=>window.__prepared.length),4,'fallback does not launch another stuck native picker');
+    await page.locator('[data-share-close]').click();await dialog.waitFor({state:'hidden'});await page.locator('[data-action=share]').click();assert.equal(await button.isDisabled(),true);
+    await page.evaluate(()=>window.__shareCallback(true));await page.waitForFunction(()=>!document.querySelector('[data-share-action=telegram]').disabled);
+    await page.evaluate(()=>delete window.Telegram.WebApp.shareMessage);await button.click();
     assert.equal(await page.evaluate(()=>window.__links.at(-1)[0]),'external','old clients open a sharing page outside the Mini App');
-   }
+   }else assert.equal(await page.locator('[data-share-action=bot-card]').isVisible(),false);
    assert.ok(await dialog.evaluate(d=>d.scrollWidth<=d.clientWidth));await page.keyboard.press('Escape');await dialog.waitFor({state:'hidden'});
    await page.locator('#backProduct').click();assert.equal(await page.locator('main').evaluate(e=>getComputedStyle(e).visibility),'visible');
    await page.locator('.product[data-id="501"]').click();await assertLayers();

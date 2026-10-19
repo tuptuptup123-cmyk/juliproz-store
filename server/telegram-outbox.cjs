@@ -23,14 +23,17 @@ function createOutbox(env=process.env,request=fetch){
   for(const job of jobs){
    let state='retry',delay=Math.min(1800,15*2**Math.min(7,job.attempts)),code='network',messageId=null;
    try{
-    const {reply,callback_id}=box.open(job.payload,token,PURPOSE);
-    if(!['sendMessage','editMessageText'].includes(reply.method)||!Number.isSafeInteger(reply.chat_id))throw Error('Invalid envelope');
+    const {reply:queuedReply,callback_id}=box.open(job.payload,token,PURPOSE);
+    const product=queuedReply.method==='sendProductCard';
+    const reply=product?await require('./telegram-product-card.cjs').productCard(queuedReply,request):queuedReply;
+    if(!['sendMessage','editMessageText',...(product?['sendPhoto']:[])].includes(reply.method)||!Number.isSafeInteger(reply.chat_id))throw Error('Invalid envelope');
     if(callback_id)await api('answerCallbackQuery',{callback_query_id:callback_id},2500).catch(()=>{});
-    const {method,...body}=reply,result=await api(method,body);
+    const {method,...body}=reply,result=await api(method,body,method==='sendPhoto'?20000:8000);
     if(result.ok||(method==='editMessageText'&&result.status===400&&/message is not modified/i.test(result.data.description||''))){state='delivered';code=null;messageId=result.data.result?.message_id||reply.message_id||null;delivered++}
     else if(result.status===429){code='rate_limit';delay=Math.min(3600,Math.max(delay,Number(result.data.parameters?.retry_after)||60))}
     else if(result.status>=400&&result.status<500){state='failed';code='telegram_'+result.status}
     else code='telegram_unavailable';
+    if(product)console.warn('telegram-share',JSON.stringify({stage:'bot_card',product_id:queuedReply.product_id,result:state}));
    }catch{/* Never log a token-bearing URL, recipient or payload. */}
    await rpc('store_bot_finish',{p_update_id:job.update_id,p_lease:job.lease,p_state:state,p_delay:delay,p_code:code,p_message_id:messageId});
   }
