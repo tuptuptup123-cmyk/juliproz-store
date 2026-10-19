@@ -53,6 +53,16 @@ test('successful preparation is distinguishable from a client recipient-picker f
  assert.deepEqual(logs,[{stage:'prepared',product_id:'501',http_status:200,elapsed_ms:0}]);
  assert.doesNotMatch(JSON.stringify(logs),/prepared-fixture|auth_date|user_id|123456789/);
 });
+test('client outcomes require signed launch data and separate admission without calling Telegram',async()=>{
+ const logs=[],body={action:'report',init_data:signed(),product_id:501,result:'SDK_BUSY'};
+ const r=await invoke({log:event=>logs.push(event)},body);
+ assert.equal(r.status,202);assert.equal(r.calls.length,1);assert.equal(r.calls[0][1][0],'share-report:42');
+ assert.deepEqual(logs,[{stage:'client',product_id:'501',result:'SDK_BUSY'}]);
+ for(const extra of [{init_data:'invalid'},{result:token},{message:'PRIVATE'},{action:'sendMessage'}]){
+  const denied=await invoke({}, {...body,...extra});assert.ok([400,401].includes(denied.status));assert.equal(denied.calls.length,0);
+ }
+ assert.equal((await invoke({allow:async()=>false},body)).status,429);
+});
 test('rejects invalid origin, signature, expired session, unsigned identity and injected product before API calls',async()=>{
  for(const [body,headers,status] of [
   [{init_data:signed(),product_id:501},{origin:'https://evil.invalid'},403],

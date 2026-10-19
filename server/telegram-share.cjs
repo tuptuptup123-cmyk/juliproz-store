@@ -8,6 +8,7 @@ const config=require('../config.js');
 const sizes=require('../product-sizes.js');
 const origins=new Set(['https://www.juliproz.com','https://juliproz.com','https://juliproz-store.vercel.app','https://app.juliproz.com']);
 const telegramReasons=new Set(['BOT_INLINE_DISABLED','BUTTON_TYPE_INVALID','PHOTO_INVALID','PHOTO_INVALID_DIMENSIONS','PHOTO_CONTENT_TYPE_INVALID','WEBPAGE_CURL_FAILED','WEBPAGE_MEDIA_EMPTY','WEBPAGE_URL_INVALID','USER_ID_INVALID','USER_NOT_FOUND','RESULT_ID_INVALID','MEDIA_EMPTY']);
+const clientResults=new Set(['SENT','USER_DECLINED','UNSUPPORTED','MESSAGE_EXPIRED','MESSAGE_SEND_FAILED','UNKNOWN_ERROR','NO_RESPONSE','SDK_BUSY','SDK_ERROR','INVALID_RESPONSE','REQUEST_FAILED']);
 function safeReason(description){
  // Telegram can echo supplied URLs. Log only known enum values, never its raw
  // description, fetch errors, launch data, user IDs, or credentials.
@@ -38,11 +39,19 @@ function createHandler({env=process.env,request=fetch,now=Date.now,allow=createD
    if(!Number.isSafeInteger(user?.id)||user.id<=0||user.is_bot)return res.status(401).json({error:'telegram'});
    const id=String(body.product_id||''),size=body.size??'';
    if(!/^[1-9]\d{0,15}$/.test(id)||!Number.isSafeInteger(Number(id))||typeof size!=='string'||size.length>100)return res.status(400).json({error:'product'});
+   const report=body.action==='report';
+   if(body.action!==undefined&&!report||report&&(!clientResults.has(body.result)||Object.keys(body).some(k=>!['action','init_data','product_id','result'].includes(k))))return res.status(400).json({error:'action'});
    productId=id;stage='limiter';
    // Separate share admission from bot messages. High IDs do not collide with
    // Telegram's update IDs; the existing shared guard bounds all replicas.
-   if(!await allow('share:'+user.id,randomInt(2**46,2**47),'callback')){
+   if(!await allow((report?'share-report:':'share:')+user.id,randomInt(2**46,2**47),'callback')){
     res.setHeader('Retry-After','60');return res.status(429).json({error:'rate_limit'});
+   }
+   if(report){
+    // Authenticated, bounded operational feedback. Never accept arbitrary text
+    // or use client claims as proof of delivery or as financial/analytics data.
+    log({stage:'client',product_id:id,result:body.result});
+    return res.status(202).json({accepted:true});
    }
    stage='product';
    const response=await request(config.url+'/rest/v1/products?select=id,brand,name,size,available&id=eq.'+id+'&available=eq.true&limit=1',{
