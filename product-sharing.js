@@ -27,7 +27,7 @@
   const platform=new URLSearchParams(root.location?.hash?.slice(1)||'').get('tgWebAppPlatform');
   return Boolean(platform&&platform!=='unknown');
  }
- let dialog=null,current=null,opener=null,epoch=0;
+ let dialog=null,current=null,opener=null,epoch=0,nativeShare=null;
  function externalLink(url){
   const link=document.createElement('a');link.href=url;link.target='_blank';link.rel='noopener noreferrer';link.hidden=true;dialog.append(link);link.click();link.remove();
  }
@@ -36,20 +36,65 @@
   // openTelegramLink(share/url) can silently do nothing in a Mini App. Use
   // Telegram's recipient picker and wait for its real sent/cancelled callback.
   if(inTelegram()&&tg?.initData&&tg?.shareMessage&&tg.isVersionAtLeast?.('8.0')){
+   if(nativeShare){status.textContent='Отправка уже открывается. Завершите её в окне Telegram.';return}
    button.disabled=true;status.textContent='Готовим вещь к отправке…';
+   const attempt={};nativeShare=attempt;
+   let finished=false,timer=null,cancelTimer=null,stage='request';
+   const messages={
+    SENT:'Вещь отправлена.',USER_DECLINED:'Вещь не отправлена. Можно попробовать ещё раз.',
+    UNSUPPORTED:'Эта версия Telegram не поддерживает отправку карточки. Обновите Telegram или скопируйте ссылку ниже.',
+    MESSAGE_EXPIRED:'Telegram не смог открыть карточку. Нажмите «Отправить в Telegram» ещё раз.',
+    MESSAGE_SEND_FAILED:'Telegram не смог отправить карточку. Попробуйте ещё раз или выберите другой чат.',
+    UNKNOWN_ERROR:'Telegram сообщил об ошибке отправки. Закройте магазин и откройте его заново.',
+    NO_RESPONSE:'Telegram не открыл окно отправки. Полностью закройте магазин и откройте его заново.',
+    SDK_BUSY:'Telegram считает предыдущее окно отправки открытым. Полностью закройте магазин и откройте его заново.',
+    SDK_ERROR:'Не удалось открыть окно Telegram. Полностью закройте магазин и откройте его заново.',
+    INVALID_RESPONSE:'Не удалось подготовить карточку. Попробуйте ещё раз.',
+    REQUEST_FAILED:'Не удалось открыть отправку. Попробуйте ещё раз или скопируйте ссылку ниже.'
+   };
+   function report(result){
+    // Only a fixed result code and public product reference are reported.
+    fetch('https://www.juliproz.com/api/telegram-share',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'omit',keepalive:true,signal:AbortSignal.timeout(5000),
+     body:JSON.stringify({action:'report',init_data:tg.initData,product_id:data.id,result})}).catch(()=>{});
+   }
+   function finish(result){
+    if(finished)return;finished=true;clearTimeout(timer);clearTimeout(cancelTimer);
+    tg.offEvent?.('shareMessageFailed',failed);tg.offEvent?.('shareMessageSent',sent);
+    if(nativeShare===attempt)nativeShare=null;
+    if(version===epoch){status.textContent=messages[result];button.disabled=false}
+    report(result);
+   }
+   function failed(event){finish(['USER_DECLINED','UNSUPPORTED','MESSAGE_EXPIRED','MESSAGE_SEND_FAILED'].includes(event?.error)?event.error:'UNKNOWN_ERROR')}
+   function sent(){finish('SENT')}
    try{
     const response=await fetch('https://www.juliproz.com/api/telegram-share',{
      method:'POST',headers:{'Content-Type':'application/json'},credentials:'omit',signal:AbortSignal.timeout(15000),
      body:JSON.stringify({init_data:tg.initData,product_id:data.id,size:data.size})
     });
     if(!response.ok)throw Error();
+    stage='response';
     const prepared=await response.json();
-    if(typeof prepared.id!=='string'||!prepared.id||!Number.isSafeInteger(prepared.expiration_date)||prepared.expiration_date<=Date.now()/1000)throw Error();
-    if(version!==epoch)return;
-    status.textContent='';
-    tg.shareMessage(prepared.id,sent=>{if(version===epoch)status.textContent=sent?'Вещь отправлена.':'Вещь не отправлена. Можно попробовать ещё раз.'});
-   }catch{if(version===epoch)status.textContent='Не удалось открыть отправку. Попробуйте ещё раз или скопируйте ссылку ниже.'}
-   finally{if(version===epoch)button.disabled=false}
+    // Freshness is checked by the server and Telegram. A wrong device clock
+    // must not reject a valid, freshly prepared message before the SDK sees it.
+    if(typeof prepared.id!=='string'||!prepared.id||!Number.isSafeInteger(prepared.expiration_date)||prepared.expiration_date<=0)throw Error();
+    if(version!==epoch){if(nativeShare===attempt)nativeShare=null;return}
+    stage='sdk';status.textContent='Открываем окно отправки в Telegram…';
+    tg.onEvent?.('shareMessageFailed',failed);tg.onEvent?.('shareMessageSent',sent);
+    timer=setTimeout(()=>{
+     // A user can spend longer than 30s choosing a recipient. Keep listening
+     // and keep the button locked until the actual Telegram result arrives.
+     report('NO_RESPONSE');
+     if(version===epoch)status.textContent='Если окно Telegram не появилось, полностью закройте магазин и откройте его заново.';
+    },30000);
+    tg.shareMessage(prepared.id,shared=>{
+     if(shared)sent();
+     // The official SDK calls callback(false) before shareMessageFailed. Let
+     // that event supply the real reason instead of treating every error as cancel.
+     else if(!finished)cancelTimer=setTimeout(()=>finish('USER_DECLINED'),0);
+    });
+   }catch(error){
+    finish(stage==='request'?'REQUEST_FAILED':stage==='response'?'INVALID_RESPONSE':error?.message==='WebAppShareMessageOpened'?'SDK_BUSY':error?.message==='WebAppMethodUnsupported'?'UNSUPPORTED':'SDK_ERROR');
+   }
    return;
   }
   try{
