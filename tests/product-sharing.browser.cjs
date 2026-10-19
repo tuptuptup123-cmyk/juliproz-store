@@ -33,7 +33,13 @@ async function prepare(page,telegram){
    const expected=telegram?'https://t.me/JuliProzBot/shop?startapp=p_301':'https://www.juliproz.com/product/301';
    assert.equal(await page.locator('#productShareUrl').inputValue(),expected);
    await page.locator('[data-share-action=copy]').click();await page.waitForFunction(()=>window.__copied.length===1);assert.equal(await page.evaluate(()=>window.__copied[0]),expected);
-   await page.locator('[data-share-action=telegram]').click();let link=new URL(await page.evaluate(()=>window.__shared.at(-1)));assert.equal(link.searchParams.get('url'),expected);assert.match(link.searchParams.get('text'),/XXL/);
+   let link;
+   if(telegram){
+    assert.equal(await page.locator('[data-share-action=telegram]').isVisible(),false);
+    await page.locator('[data-share-action=bot-card]').click();assert.equal(await page.evaluate(()=>window.__shared.at(-1)),'https://t.me/JuliProzBot?start=share_301');
+   }else {
+    await page.locator('[data-share-action=telegram]').click();link=new URL(await page.evaluate(()=>window.__shared.at(-1)));assert.equal(link.searchParams.get('url'),expected);assert.match(link.searchParams.get('text'),/XXL/);
+   }
    await page.locator('[data-share-action=manager]').click();link=new URL(await page.evaluate(()=>window.__shared.at(-1)));assert.equal(link.pathname,'/juliproz');assert.ok(link.searchParams.get('text').includes(expected));
    await page.evaluate(()=>window.__clipboardDenied=true);await page.locator('[data-share-action=copy]').click();await page.locator('.product-share-status').filter({hasText:'Скопируйте выделенную ссылку'}).waitFor();assert.equal(await page.locator('#productShareUrl').evaluate(e=>e.selectionEnd-e.selectionStart),expected.length);
    for(let i=0;i<8;i++){await page.keyboard.press('Tab');assert.ok(await dialog.evaluate(d=>d.contains(document.activeElement)),'focus stays in share dialog')}
