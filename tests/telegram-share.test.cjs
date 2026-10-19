@@ -24,7 +24,13 @@ test('prepares a public card for the authenticated user without sending any mess
  const [url,options]=r.calls[2],payload=JSON.parse(options.body);
  assert.ok(url.endsWith('/savePreparedInlineMessage'));assert.equal(payload.user_id,42);
  assert.equal(payload.allow_channel_chats,true);assert.equal(payload.allow_user_chats,true);
- assert.equal(payload.result.input_message_content.message_text,'Hermès — Haccess\nРазмер / вариант: XL\nАртикул: 501\nhttps://t.me/JuliProzBot/shop?startapp=p_501');
+ assert.equal(payload.result.type,'photo');
+ assert.equal(payload.result.photo_url,'https://www.juliproz.com/api/telegram-product-photo?id=501');
+ assert.equal(payload.result.thumbnail_url,payload.result.photo_url);
+ assert.equal(payload.result.caption,'Hermès — Haccess\nРазмер / вариант: XL\nАртикул: 501\nhttps://t.me/JuliProzBot/shop?startapp=p_501');
+ assert.equal(payload.result.show_caption_above_media,true);
+ assert.equal(payload.result.input_message_content,undefined,'text must not replace the actual photo');
+ assert.deepEqual(payload.result.reply_markup.inline_keyboard,[[{text:'Открыть в боте',url:'https://t.me/JuliProzBot/shop?startapp=p_501'}]]);
  assert.doesNotMatch(JSON.stringify(payload),/PRIVATE|evil/);assert.equal(options.redirect,'error');assert.ok(options.signal);
  assert.deepEqual(Object.keys(r.body),['id','expiration_date']);
 });

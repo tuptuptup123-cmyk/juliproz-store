@@ -5,6 +5,7 @@ vendor/photo-editor/ort.min.js
 browser-qa/
 
 dist/
+/node_modules/
 .env
 .env.*
 !.env.example
