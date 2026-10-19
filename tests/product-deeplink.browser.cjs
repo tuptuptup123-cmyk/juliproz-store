@@ -54,6 +54,16 @@ const types={'.html':'text/html','.js':'text/javascript','.css':'text/css','.png
     assert.ok(bounds.contentBottom<=bounds.navTop,'scrolling controls stay above navigation');assert.equal(bounds.navWorks,true);assert.equal(bounds.overflow,false);
    }
    await assertLayers();
+   const badges=await page.locator('.product-badges').evaluate(el=>[...el.children].map(b=>{
+    const r=b.getBoundingClientRect(),s=getComputedStyle(b);return {top:r.top,bottom:r.bottom,height:r.height,font:s.font,fontSize:s.fontSize,margin:s.margin};
+   }));
+   assert.equal(badges.length,2,'team and commission labels share one layout group');
+   assert.equal(badges[0].top,badges[1].top,'product labels align at the top');
+   assert.equal(badges[0].height,badges[1].height,'product labels have equal height');
+   assert.equal(badges[0].font,badges[1].font,'product labels use the same typography');
+   assert.equal(badges[0].margin,'0px');assert.equal(badges[1].margin,'0px');
+   assert.ok(parseFloat(badges[0].fontSize)>=12,'detail labels remain readable on small screens');
+   assert.equal(await page.locator('.purchase-action').evaluate(el=>getComputedStyle(el).boxShadow),'none','resting action has no focus-like blue inset');
    await page.evaluate(async()=>{await loadProducts(true);document.getElementById('productContent').scrollTop=300});await assertLayers();
    await page.locator('[data-action=share]').click();const dialog=page.locator('#productShareDialog'),button=page.locator('[data-share-action=telegram]');
    assert.equal(await page.locator('#productShareUrl').inputValue(),telegram?'https://t.me/JuliProzBot/shop?startapp=p_501':'https://www.juliproz.com/product/501');
