@@ -70,6 +70,7 @@ function createHandler({env=process.env,request=fetch,now=Date.now,allow=createD
    if(!prepared.ok||data?.ok!==true){reason=safeReason(data?.description);throw Error()}
    stage='response';
    if(data?.ok!==true||typeof data.result?.id!=='string'||!data.result.id||data.result.id.length>512||!Number.isSafeInteger(data.result.expiration_date)||data.result.expiration_date<=now()/1000)throw Error();
+   log({stage:'prepared',product_id:productId,http_status:200,elapsed_ms:Math.max(0,now()-started)});
    return res.status(200).json({id:data.result.id,expiration_date:data.result.expiration_date});
   }catch(error){
    // Never expose request URLs, signed launch data, or bot credentials.

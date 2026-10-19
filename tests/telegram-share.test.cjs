@@ -47,6 +47,12 @@ test('records the failed boundary without logging Telegram credentials or reques
  const logs=[];await invoke({log:event=>logs.push(event),allow:async()=>{throw Error(token)}});
  assert.equal(logs[0].stage,'limiter');assert.ok(!JSON.stringify(logs).includes(token));
 });
+test('successful preparation is distinguishable from a client recipient-picker failure',async()=>{
+ const logs=[],r=await invoke({log:event=>logs.push(event)});
+ assert.equal(r.status,200);
+ assert.deepEqual(logs,[{stage:'prepared',product_id:'501',http_status:200,elapsed_ms:0}]);
+ assert.doesNotMatch(JSON.stringify(logs),/prepared-fixture|auth_date|user_id|123456789/);
+});
 test('rejects invalid origin, signature, expired session, unsigned identity and injected product before API calls',async()=>{
  for(const [body,headers,status] of [
   [{init_data:signed(),product_id:501},{origin:'https://evil.invalid'},403],
