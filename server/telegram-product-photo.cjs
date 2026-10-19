@@ -1,5 +1,5 @@
 'use strict';
-const config=require('../config.js'),{photo}=require('./product-page.cjs');
+const config=require('../config.js'),{photo}=require('./public-product-image.cjs');
 const maxInput=6*1024*1024;
 async function jpeg(bytes){
  // InlineQueryResultPhoto requires JPEG. Flatten transparent product photos on

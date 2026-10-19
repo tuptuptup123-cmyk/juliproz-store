@@ -1,7 +1,7 @@
 'use strict';
 const fs=require('node:fs/promises'),path=require('node:path'),config=require('../config.js'),pricing=require('../product-pricing.js'),sizes=require('../product-sizes.js'),seo=require('./seo.cjs');
 const {escape}=seo,origin=seo.origin,fields='id,brand,name,name_en,description_en,description,category,size,price,currency,image_url,photos,available,reserved,fulfillment_status,product_condition,stock_quantities';
-function photo(value){try{const u=new URL(value,'https://juliproz-store.vercel.app');if(u.username||u.password||u.search||u.hash)return null;if(u.origin==='https://juliproz-store.vercel.app'&&u.pathname.startsWith('/images/'))return u.href;if(u.origin===config.url&&/^\/(storage\/v1\/object\/public\/product-photos|functions\/v1\/product-photo)\//.test(u.pathname))return u.href.replace('/storage/v1/object/public/product-photos/','/functions/v1/product-photo/')}catch{}return null}
+const {photo}=require('./public-product-image.cjs');
 function render(template,p,lang='ru'){
  lang=seo.language(lang);const route='/product/'+p.id,canonical=seo.url(route,lang),titles={},descriptions={};
  for(const language of ['ru','en']){titles[language]=[p.brand,seo.productCopy(p,'name',language)].filter(Boolean).join(' — ').slice(0,240);descriptions[language]=(seo.productCopy(p,'description',language)||[titles[language],seo.translate(p.size,language)].filter(Boolean).join(' · ')).slice(0,500)}
