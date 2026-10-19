@@ -19,6 +19,7 @@ jobs:
       - run: node "$RUNNER_TEMP/jp-browser/node_modules/playwright/cli.js" install --with-deps chromium webkit
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" node tests/detailed-analytics.browser.cjs
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" node tests/owner-statistics.browser.cjs
+      - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" node tests/manager-commission.browser.cjs
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" node tests/admin-google-search.browser.cjs
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" node tests/seo.browser.cjs
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" node tests/audit-followup.browser.cjs

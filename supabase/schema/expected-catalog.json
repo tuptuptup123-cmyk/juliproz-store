@@ -8102,7 +8102,7 @@
   {
     "kind": "function",
     "name": "store_private.guard_product_financial_basis()",
-    "definition": "CREATE OR REPLACE FUNCTION store_private.guard_product_financial_basis()\n RETURNS trigger\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\nbegin\n if (tg_op='INSERT' and new.on_commission) or (tg_op='UPDATE' and new.on_commission is distinct from old.on_commission) then\n  if auth.uid() is not null or current_setting('role',true) in ('anon','authenticated') then perform store_private.require_workspace_admin(true);end if;\n end if;\n -- The existing audit trigger records the old/new flag and authenticated actor.\n new.stock_quantities:=store_private.normalize_stock(new.stock_quantities);return new;\nend $function$\n"
+    "definition": "CREATE OR REPLACE FUNCTION store_private.guard_product_financial_basis()\n RETURNS trigger\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\nbegin\n if (tg_op='INSERT' and new.on_commission) or (tg_op='UPDATE' and new.on_commission is distinct from old.on_commission) then\n  if auth.uid() is not null or current_setting('role',true) in ('anon','authenticated') then\n   perform store_private.require_workspace_admin(false);\n  end if;\n end if;\n -- Existing RLS and audit triggers enforce staff access and record the actor.\n new.stock_quantities:=store_private.normalize_stock(new.stock_quantities);\n return new;\nend $function$\n"
   },
   {
     "kind": "function",

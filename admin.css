@@ -435,6 +435,17 @@ dialog.sale-dialog{width:min(580px,calc(100vw - 24px));max-width:580px;max-heigh
 @media(max-width:700px){.category-metrics dt{font-size:11px}.category-row-heading h3{font-size:16px}.category-row-heading>span{font-size:11px}.category-sort-label select{font-size:13px}}
 
 /* In-context writing help; no product fields or publication rules are changed. */
+/* Always-visible ownership reminder beside the card-writing guide. */
+.product-ownership-guide{margin:0 0 16px;padding:20px 24px;border:1px solid #ddc9d7;border-left:4px solid #b78aa6;border-radius:16px;background:#fcf8fb;min-width:0;overflow-wrap:anywhere}
+.product-ownership-guide h2{font-size:20px;font-weight:500;margin:8px 0 16px}
+.ownership-guide-rules{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.ownership-guide-rules>div{min-width:0;padding:14px 16px;border:1px solid #e8dce4;border-radius:12px;background:#fff}
+.ownership-guide-rules strong{display:block;font-size:14px;line-height:1.5;color:#56394d}
+.ownership-guide-rules p{margin:6px 0 0;font-size:13px;line-height:1.65}
+.ownership-guide-note,.ownership-guide-access{font-size:12px;line-height:1.65;margin:14px 0 0}
+.ownership-guide-access{margin-top:8px;color:var(--muted)}
+@media(max-width:700px){.product-ownership-guide{padding:18px 16px}.ownership-guide-rules{grid-template-columns:minmax(0,1fr)}.ownership-guide-rules>div{padding:12px}.product-ownership-guide .writing-guide-eyebrow{line-height:1.6}}
+
 .product-seo-guide{margin:0 0 18px;border:1px solid #ddc9d7;border-radius:20px;background:#fff;min-width:0;overflow:hidden}
 .product-seo-guide>summary{display:flex;align-items:center;gap:16px;list-style:none;cursor:pointer;padding:22px 24px;background:linear-gradient(110deg,#f7edf3,#f1f5fa);overflow-wrap:anywhere}
 .product-seo-guide>summary::-webkit-details-marker{display:none}
