@@ -40,6 +40,7 @@ async function configureTelegram(env = process.env, request = fetch, log = conso
   if (me?.is_bot !== true || me.username?.toLowerCase() !== BOT_USERNAME.toLowerCase()) {
     throw new SetupError(`The token must belong to @${BOT_USERNAME}. No bot settings were changed.`);
   }
+  log(`Telegram capabilities: inline_queries=${me.supports_inline_queries === true}, main_web_app=${me.has_main_web_app === true}.`);
   const before = await call('getWebhookInfo');
   if (!before || typeof before.url !== 'string') throw new SetupError('Could not verify the existing webhook. No bot settings were changed.');
   if (before.url && before.url !== WEBHOOK_URL) {
