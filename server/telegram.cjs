@@ -58,6 +58,8 @@ function messageResponse(update) {
   if (typeof msg.text !== 'string' || msg.text.length > 4096) return null;
   const command = /^\/(start|shop|help|manager|about|sell|buyout|commission|services|authentication|atelier)(?:@([A-Za-z0-9_]+))?(?:\s|$)/i.exec(msg.text);
   if (command?.[2] && command[2].toLowerCase() !== BOT_USERNAME.toLowerCase()) return null;
+  const share=/^\/start(?:@JuliProzBot)?\s+share_([1-9]\d{0,15})\s*$/i.exec(msg.text);
+  if(share&&Number.isSafeInteger(Number(share[1])))return {method:'sendProductCard',chat_id:msg.chat.id,product_id:share[1]};
   const route = { start: 'menu', about: 'about', sell: 'sell', buyout: 'buyout', commission: 'commission', services: 'services', authentication: 'authentication', atelier: 'atelier' }[command?.[1].toLowerCase()];
   const selected = screen(route || 'menu');
   if (command?.[1].toLowerCase() === 'manager') selected.keyboard = [[{ text: 'Связаться с менеджером', url: MANAGER_URL }], back];
@@ -188,7 +190,9 @@ function createHandler(env = process.env, allowReply = createReplyGuard(), apiRe
     }
     const reply = messageResponse(update);
     // Acknowledge suppressed updates to avoid Telegram retry storms.
-    return admit(reply, 'message', allowReply, () => res.status(200).json(reply));
+    return admit(reply, 'message', allowReply, () => reply.method==='sendProductCard'
+      ? require('./telegram-product-card.cjs').productCard(reply,apiRequest).then(card=>res.status(200).json(card)).catch(()=>{allowReply.release?.(reply.chat_id,update.update_id);res.setHeader('Retry-After','5');return res.status(503).json({error:'Bot temporarily unavailable'})})
+      : res.status(200).json(reply));
   };
 }
 

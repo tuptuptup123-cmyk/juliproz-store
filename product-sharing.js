@@ -36,7 +36,7 @@
   // openTelegramLink(share/url) can silently do nothing in a Mini App. Use
   // Telegram's recipient picker and wait for its real sent/cancelled callback.
   if(inTelegram()&&tg?.initData&&tg?.shareMessage&&tg.isVersionAtLeast?.('8.0')){
-   if(nativeShare){status.textContent='Отправка уже открывается. Завершите её в окне Telegram.';return}
+   if(nativeShare){status.textContent='Если окно отправки не появилось, нажмите «Получить карточку в боте».';return}
    button.disabled=true;status.textContent='Готовим вещь к отправке…';
    const attempt={};nativeShare=attempt;
    let finished=false,timer=null,cancelTimer=null,stage='request';
@@ -46,9 +46,9 @@
     MESSAGE_EXPIRED:'Telegram не смог открыть карточку. Нажмите «Отправить в Telegram» ещё раз.',
     MESSAGE_SEND_FAILED:'Telegram не смог отправить карточку. Попробуйте ещё раз или выберите другой чат.',
     UNKNOWN_ERROR:'Telegram сообщил об ошибке отправки. Закройте магазин и откройте его заново.',
-    NO_RESPONSE:'Telegram не открыл окно отправки. Полностью закройте магазин и откройте его заново.',
-    SDK_BUSY:'Telegram считает предыдущее окно отправки открытым. Полностью закройте магазин и откройте его заново.',
-    SDK_ERROR:'Не удалось открыть окно Telegram. Полностью закройте магазин и откройте его заново.',
+    NO_RESPONSE:'Если окно отправки не появилось, нажмите «Получить карточку в боте» и перешлите её из чата.',
+    SDK_BUSY:'Telegram не завершил предыдущую отправку. Нажмите «Получить карточку в боте» и перешлите её из чата.',
+    SDK_ERROR:'Не удалось открыть окно Telegram. Нажмите «Получить карточку в боте».',
     INVALID_RESPONSE:'Не удалось подготовить карточку. Попробуйте ещё раз.',
     REQUEST_FAILED:'Не удалось открыть отправку. Попробуйте ещё раз или скопируйте ссылку ниже.'
    };
@@ -61,6 +61,7 @@
     if(finished)return;finished=true;clearTimeout(timer);clearTimeout(cancelTimer);
     tg.offEvent?.('shareMessageFailed',failed);tg.offEvent?.('shareMessageSent',sent);
     if(nativeShare===attempt)nativeShare=null;
+    if(dialog?.open)dialog.querySelector('[data-share-action=telegram]').disabled=Boolean(nativeShare);
     if(version===epoch){status.textContent=messages[result];button.disabled=false}
     report(result);
    }
@@ -84,7 +85,7 @@
      // A user can spend longer than 30s choosing a recipient. Keep listening
      // and keep the button locked until the actual Telegram result arrives.
      report('NO_RESPONSE');
-     if(version===epoch)status.textContent='Если окно Telegram не появилось, полностью закройте магазин и откройте его заново.';
+     if(version===epoch)status.textContent=messages.NO_RESPONSE;
     },30000);
     tg.shareMessage(prepared.id,shared=>{
      if(shared)sent();
@@ -109,11 +110,15 @@
   dialog=document.createElement('dialog');dialog.id='productShareDialog';dialog.className='product-share-dialog';
   dialog.setAttribute('aria-labelledby','productShareTitle');
   dialog.innerHTML='<div class="product-share-heading"><h2 id="productShareTitle">Поделиться вещью</h2><button type="button" data-share-close aria-label="Закрыть">✕</button></div><p class="product-share-name"></p><div class="product-share-actions"><button type="button" data-share-action="telegram">Отправить в Telegram <svg class="inline-arrow" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg></button><button type="button" data-share-action="manager">Написать менеджеру <svg class="inline-arrow" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg></button></div><label class="product-share-label" for="productShareUrl">Ссылка на вещь на сайте</label><input id="productShareUrl" readonly type="url"><button type="button" class="product-share-copy" data-share-action="copy">Скопировать ссылку</button><p class="product-share-status" role="status" aria-live="polite"></p>';
+  const botCard=document.createElement('button');botCard.type='button';botCard.dataset.shareAction='bot-card';botCard.hidden=true;botCard.textContent='Получить карточку в боте';
+  dialog.querySelector('[data-share-action=telegram]').insertAdjacentElement('afterend',botCard);
+  const botHint=document.createElement('p');botHint.className='product-share-bot-hint';botHint.hidden=true;botHint.textContent='Бот пришлёт фото и ссылку на вещь. Перешлите карточку нужному человеку из чата.';
+  dialog.querySelector('.product-share-actions').insertAdjacentElement('afterend',botHint);
   document.body.append(dialog);
   dialog.addEventListener('keydown',e=>{
    e.stopPropagation(); // Do not trigger the underlying product's Escape/Tab handlers.
    if(e.key==='Tab'){
-    const nodes=[...dialog.querySelectorAll('button:not([disabled]),input')],first=nodes[0],last=nodes.at(-1);
+    const nodes=[...dialog.querySelectorAll('button:not([disabled]):not([hidden]),input')],first=nodes[0],last=nodes.at(-1);
     if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}
     else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}
    }
@@ -130,6 +135,15 @@
     return;
    }
    if(action==='telegram'){await shareTelegram(data,version,status,e.target.closest('[data-share-action]'));return}
+   if(action==='bot-card'){
+    if(!inTelegram()||!/^[1-9]\d{0,15}$/.test(data.id)||!Number.isSafeInteger(Number(data.id)))return;
+    try{
+     const url='https://t.me/JuliProzBot?start=share_'+data.id;
+     if(tgLinkAvailable())root.Telegram.WebApp.openTelegramLink(url);else externalLink(url);
+     status.textContent='В чате бота нажмите «Начать», если Telegram попросит. Затем перешлите карточку нужному человеку.';
+    }catch{status.textContent='Не удалось открыть чат бота. Скопируйте ссылку на вещь ниже.'}
+    return;
+   }
    const url=action==='manager'?data.manager:null;if(!url)return;
    try{
     if(inTelegram()&&root.Telegram?.WebApp?.openTelegramLink)root.Telegram.WebApp.openTelegramLink(url);
@@ -139,15 +153,19 @@
    }catch{status.textContent=action==='manager'?'Не удалось открыть чат. Скопируйте ссылку ниже.':'Не удалось открыть Telegram. Скопируйте ссылку ниже.'}
   });
  }
+ function tgLinkAvailable(){return typeof root.Telegram?.WebApp?.openTelegramLink==='function'}
  function open(product,options={}){
   const telegram=inTelegram(),data=links(product,{...options,inTelegram:telegram});if(!data)return false;
   if(!dialog)create();
   current=data;epoch++;opener=document.activeElement;
-  dialog.querySelector('[data-share-action=telegram]').disabled=false;
+  dialog.querySelector('[data-share-action=telegram]').disabled=Boolean(nativeShare);
+  const botCardAvailable=telegram&&/^[1-9]\d{0,15}$/.test(data.id)&&Number.isSafeInteger(Number(data.id));
+  dialog.querySelector('[data-share-action=bot-card]').hidden=!botCardAvailable;
+  dialog.querySelector('.product-share-bot-hint').hidden=!botCardAvailable;
   dialog.querySelector('.product-share-name').textContent=data.title;
   dialog.querySelector('#productShareUrl').value=data.url;
   dialog.querySelector('.product-share-label').textContent=telegram?'Ссылка на вещь в Telegram':'Ссылка на вещь на сайте';
-  dialog.querySelector('.product-share-status').textContent=options.note||'';
+  dialog.querySelector('.product-share-status').textContent=nativeShare?'Если окно отправки не появилось, нажмите «Получить карточку в боте».':options.note||'';
   if(!dialog.open)dialog.showModal();
   return true;
  }
