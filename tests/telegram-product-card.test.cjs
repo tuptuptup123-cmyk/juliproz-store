@@ -6,7 +6,7 @@ const {createOutbox}=require('../server/telegram-outbox.cjs');
 const env={VERCEL_ENV:'production',TELEGRAM_BOT_TOKEN:'123456789:'+'x'.repeat(35),TELEGRAM_LIMIT_SECRET:'1'.repeat(64)};
 const update=text=>({update_id:23,message:{message_id:1,from:{id:42,is_bot:false},chat:{id:42,type:'private'},text}});
 const requestCard={method:'sendProductCard',chat_id:42,product_id:'501'};
-const product={id:501,brand:'Hermès',name:'Haccess',image_url:'images/product.jpg',available:true,internal_note:'PRIVATE',purchase_price:100};
+const product={id:501,brand:'Hermès',name:'Haccess',image_url:'images/product.jpg',available:true,price:14500,currency:'EUR',internal_note:'PRIVATE',purchase_price:100};
 test('only an explicit private start payload requests a card, with recipient from verified update',()=>{
  assert.deepEqual(messageResponse(update('/start share_501')),requestCard);
  assert.deepEqual(messageResponse(update('/start@JuliProzBot share_501')),requestCard);
@@ -17,9 +17,23 @@ test('only an explicit private start payload requests a card, with recipient fro
 test('resolves only a public product and constructs a photo card without client text or private fields',async()=>{
  let call;const card=await productCard({...requestCard,url:'https://evil.invalid',title:'PRIVATE'},async(url,options)=>{call={url,options};return Response.json([product])});
  assert.equal(card.method,'sendPhoto');assert.equal(card.chat_id,42);assert.equal(card.photo,'https://www.juliproz.com/api/telegram-product-photo?id=501');
- assert.equal(card.caption,'Hermès — Haccess\nАртикул: 501\nhttps://t.me/JuliProzBot/shop?startapp=p_501');
+ assert.equal(card.caption,'Hermès — Haccess\nЦена: € 14\u00a0500\nАртикул: 501\nhttps://t.me/JuliProzBot/shop?startapp=p_501');
  assert.equal(card.reply_markup.inline_keyboard[0][0].url,'https://t.me/JuliProzBot/shop?startapp=p_501');
  assert.doesNotMatch(JSON.stringify(card),/PRIVATE|purchase_price|evil/);assert.ok(call.url.includes('available=eq.true'));assert.equal(call.options.redirect,'error');assert.equal(call.options.headers.Authorization,undefined);
+ assert.equal(new URL(call.url).searchParams.get('select'),'id,brand,name,image_url,available,price,currency');
+});
+test('card uses the current public euro price with storefront rounding and price-on-request fallback',async()=>{
+ for(const [change,expected] of [
+  [{price:299.6,original_price:450,purchase_price:150,actual_sale_price:200},'Цена: € 300'],
+  [{price:'1250',currency:'€'},'Цена: € 1\u00a0250'],
+  [{price:1250,currency:null},'Цена: € 1\u00a0250'],
+  [{price:null},'Цена по запросу'],[{price:''},'Цена по запросу'],
+  [{price:-1},'Цена по запросу'],[{price:'invalid'},'Цена по запросу'],
+  [{currency:'USD'},'Цена по запросу']
+ ])for(const image_url of ['images/product.jpg',null]){
+  const card=await productCard({...requestCard,price:99999},async()=>Response.json([{...product,...change,image_url}]));
+  assert.equal(card.caption||card.text,'Hermès — Haccess\n'+expected+'\nАртикул: 501\nhttps://t.me/JuliProzBot/shop?startapp=p_501');
+ }
 });
 test('hidden, removed or mismatched products never disclose their title or photo',async()=>{
  for(const rows of [[],[{...product,available:false}],[{...product,id:999}]]){
