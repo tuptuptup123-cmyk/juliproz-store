@@ -11,7 +11,7 @@ function signed(user={id:42},date=Math.floor(now/1000)){
 }
 async function invoke(options={},body={init_data:signed(),product_id:'501',size:'XL'},headers={},method='POST'){
  const out={headers:{}},calls=[];
- const handler=createHandler({env,now:()=>now,allow:async(...args)=>{calls.push(['guard',args]);return true},request:async(url,o)=>{
+ const handler=createHandler({env,now:()=>now,log:()=>{},allow:async(...args)=>{calls.push(['guard',args]);return true},request:async(url,o)=>{
   calls.push([url,o]);return {ok:true,json:async()=>url.includes('/rest/')?[{id:501,brand:'Hermès',name:'Haccess',size:'XL',available:true,internal_note:'PRIVATE'}]:{ok:true,result:{id:'prepared-fixture',expiration_date:Math.floor(now/1000)+300}}};
  },...options});
  await handler({method,headers:{origin:'https://app.juliproz.com',...headers},body},{setHeader(k,v){out.headers[k]=v},status(n){out.status=n;return this},json(value){out.body=value},end(){out.status=this.statusCode}});
@@ -33,6 +33,19 @@ test('prepares a public card for the authenticated user without sending any mess
  assert.deepEqual(payload.result.reply_markup.inline_keyboard,[[{text:'Открыть в боте',url:'https://t.me/JuliProzBot/shop?startapp=p_501'}]]);
  assert.doesNotMatch(JSON.stringify(payload),/PRIVATE|evil/);assert.equal(options.redirect,'error');assert.ok(options.signal);
  assert.deepEqual(Object.keys(r.body),['id','expiration_date']);
+});
+test('records the failed boundary without logging Telegram credentials or request data',async()=>{
+ for(const description of ['Bad Request: WEBPAGE_CURL_FAILED','Bad Request: '+token+' '+signed()]){
+  const logs=[];
+  const r=await invoke({log:event=>logs.push(event),request:async url=>url.includes('/rest/')?
+   {ok:true,status:200,json:async()=>[{id:501,brand:'Hermès',name:'Haccess',size:null,available:true}]}:
+   {ok:false,status:400,json:async()=>({ok:false,description})}}, {init_data:signed(),product_id:501});
+  assert.equal(r.status,503);assert.equal(logs.length,1);
+  assert.deepEqual(logs[0],{stage:'telegram',product_id:'501',http_status:400,reason:description.endsWith('WEBPAGE_CURL_FAILED')?'WEBPAGE_CURL_FAILED':'unclassified',elapsed_ms:0});
+  assert.doesNotMatch(JSON.stringify(logs),/auth_date|user_id|123456789|Haccess/);
+ }
+ const logs=[];await invoke({log:event=>logs.push(event),allow:async()=>{throw Error(token)}});
+ assert.equal(logs[0].stage,'limiter');assert.ok(!JSON.stringify(logs).includes(token));
 });
 test('rejects invalid origin, signature, expired session, unsigned identity and injected product before API calls',async()=>{
  for(const [body,headers,status] of [
