@@ -18,17 +18,31 @@ module.exports=async db=>{
  const add=async(id,available=true,stock=null)=>q('insert into public.products(id,brand,name,category,image_url,available,stock_quantities,size) values($1,\'Brand\',\'Complete Model Ref 123\',\'Обувь\',$2,$3,$4,\'XL; M\')',[id,photo,available,stock]);
  await as(owner);await db.exec('reset role');await add(100,true,{XL:2,M:1});await add(101,false);await add(102,true);await add(103,false);
  await as(staff);
- await denied(()=>q('update public.products set on_commission=true where id=100'),'42501');
+ // Product ownership is staff-editable; financial reports and terms remain owner-only.
+ await q('update public.products set on_commission=true where id=100');
+ assert.equal((await one('select on_commission from public.products where id=100')).on_commission,true);checks++;
+ await q('update public.products set on_commission=false where id=100');
+ assert.equal((await one('select on_commission from public.products where id=100')).on_commission,false);checks++;
+ const commissionDraft=await one("insert into public.products(brand,name,category,on_commission,available,image_url) values('Brand','Client item','Сумки',true,false,$1) returning id,on_commission",[photo]);
+ assert.equal(commissionDraft.on_commission,true);checks++;
+ await denied(()=>q("select public.store_save_commission_terms(100,0,'Owner',10)"),'42501');
+ await as(staff,0,'aal1');
+ await denied(()=>q("insert into public.products(brand,name,on_commission) values('Brand','Unauthenticated item',true)"),'42501');
+ await as(staff);
+
  await denied(()=>q('select public.store_void_product_sale(999,1,\'mistake\')'),'42501');
  await denied(()=>q('select public.store_finance_report(current_date,current_date)'),'42501');
  await as(owner,901);
  await denied(()=>q('select public.store_finance_report(current_date,current_date)'),'PT403');
- await denied(()=>q('update public.products set on_commission=true where id=100'),'PT403');
+ await q('update public.products set on_commission=true where id=100');checks++; // Routine classification needs no owner step-up.
  await denied(()=>q('select public.store_workspace_team_secure()'),'PT403');
  // Refreshing an access token is deliberately insufficient to refresh the TOTP timestamp.
  await as(owner,60);await q('select public.store_finance_report(current_date,current_date)');checks++;
  await q('update public.products set on_commission=true where id=100');
- await as(outsider);assert.equal((await q('select id from public.products where id=101')).rows.length,0);checks++;
+ await as(outsider);
+ assert.equal((await q('update public.products set on_commission=false where id=100 returning id')).rows.length,0);checks++;
+ await denied(()=>q("insert into public.products(brand,name,on_commission) values('Brand','Outsider item',true)"),'42501');
+ assert.equal((await q('select id from public.products where id=101')).rows.length,0);checks++;
  await denied(()=>q('select public.store_workspace_team_secure()'),'42501');
  await db.exec('reset role');await q("select set_config('request.jwt.claims','{}',false)");await db.exec('set role anon');
  assert.equal((await q('select id from public.products where id=101')).rows.length,0);checks++;
