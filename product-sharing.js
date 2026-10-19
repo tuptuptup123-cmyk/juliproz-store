@@ -112,7 +112,7 @@
   dialog.innerHTML='<div class="product-share-heading"><h2 id="productShareTitle">Поделиться вещью</h2><button type="button" data-share-close aria-label="Закрыть">✕</button></div><p class="product-share-name"></p><div class="product-share-actions"><button type="button" data-share-action="telegram">Отправить в Telegram <svg class="inline-arrow" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg></button><button type="button" data-share-action="manager">Написать менеджеру <svg class="inline-arrow" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg></button></div><label class="product-share-label" for="productShareUrl">Ссылка на вещь на сайте</label><input id="productShareUrl" readonly type="url"><button type="button" class="product-share-copy" data-share-action="copy">Скопировать ссылку</button><p class="product-share-status" role="status" aria-live="polite"></p>';
   const botCard=document.createElement('button');botCard.type='button';botCard.dataset.shareAction='bot-card';botCard.hidden=true;botCard.textContent='Получить карточку в боте';
   dialog.querySelector('[data-share-action=telegram]').insertAdjacentElement('afterend',botCard);
-  const botHint=document.createElement('p');botHint.className='product-share-bot-hint';botHint.hidden=true;botHint.textContent='Бот пришлёт фото и ссылку на вещь. Перешлите карточку нужному человеку из чата.';
+  const botHint=document.createElement('p');botHint.className='product-share-bot-hint';botHint.hidden=true;botHint.textContent='Карточка придёт в ваш чат с JULI.PROZ Store. Откройте её меню → «Переслать» → выберите получателя.';
   dialog.querySelector('.product-share-actions').insertAdjacentElement('afterend',botHint);
   document.body.append(dialog);
   dialog.addEventListener('keydown',e=>{
@@ -134,7 +134,12 @@
     catch{if(version!==epoch)return;const field=dialog.querySelector('#productShareUrl');field.focus();field.select();status.textContent='Не удалось скопировать автоматически. Скопируйте выделенную ссылку.'}
     return;
    }
-   if(action==='telegram'){await shareTelegram(data,version,status,e.target.closest('[data-share-action]'));return}
+   if(action==='telegram'){
+    // Desktop and mobile clients can leave the prepared-message picker stuck.
+    // Keep it out of the Mini App until native delivery is confirmed working.
+    if(inTelegram())return;
+    await shareTelegram(data,version,status,e.target.closest('[data-share-action]'));return;
+   }
    if(action==='bot-card'){
     if(!inTelegram()||!/^[1-9]\d{0,15}$/.test(data.id)||!Number.isSafeInteger(Number(data.id)))return;
     try{
@@ -159,6 +164,7 @@
   if(!dialog)create();
   current=data;epoch++;opener=document.activeElement;
   dialog.querySelector('[data-share-action=telegram]').disabled=Boolean(nativeShare);
+  dialog.querySelector('[data-share-action=telegram]').hidden=telegram;
   const botCardAvailable=telegram&&/^[1-9]\d{0,15}$/.test(data.id)&&Number.isSafeInteger(Number(data.id));
   dialog.querySelector('[data-share-action=bot-card]').hidden=!botCardAvailable;
   dialog.querySelector('.product-share-bot-hint').hidden=!botCardAvailable;

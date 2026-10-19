@@ -58,42 +58,24 @@ const types={'.html':'text/html','.js':'text/javascript','.css':'text/css','.png
    await page.locator('[data-action=share]').click();const dialog=page.locator('#productShareDialog'),button=page.locator('[data-share-action=telegram]');
    assert.equal(await page.locator('#productShareUrl').inputValue(),telegram?'https://t.me/JuliProzBot/shop?startapp=p_501':'https://www.juliproz.com/product/501');
    if(telegram){
-    await page.evaluate(()=>{window.__originalNow=Date.now;Date.now=()=>window.__originalNow()+7*86400000});
-    await button.click();await page.waitForFunction(()=>window.__prepared.length===1);assert.equal(await page.evaluate(()=>window.__links.length),0);
-    assert.equal(await button.isDisabled(),true,'preparing a message does not unlock the button while the native picker is pending');
-    await button.evaluate(b=>b.click());assert.equal(shareCalls,1,'a second tap cannot collide with the open Telegram picker');
-    await page.evaluate(()=>Date.now=window.__originalNow);
-    await page.evaluate(()=>window.__shareCallback(false));await page.locator('.product-share-status').filter({hasText:'Вещь не отправлена'}).waitFor();
-    await button.click();await page.waitForFunction(()=>window.__prepared.length===2);await page.evaluate(()=>window.__shareCallback(true));await page.locator('.product-share-status').filter({hasText:'Вещь отправлена'}).waitFor();
-    await page.evaluate(()=>window.__sdkThrow=true);await button.click();await page.locator('.product-share-status').filter({hasText:'Telegram не завершил предыдущую отправку'}).waitFor();assert.equal(await button.isEnabled(),true);
-    await button.click();await page.waitForFunction(()=>window.__prepared.length===3);
-    const failedReport=page.waitForResponse(response=>response.url().endsWith('/api/telegram-share')&&response.request().postDataJSON().result==='MESSAGE_SEND_FAILED');
-    await page.evaluate(()=>window.__shareFailure('MESSAGE_SEND_FAILED'));await page.locator('.product-share-status').filter({hasText:'Telegram не смог отправить карточку'}).waitFor();await failedReport;
-    assert.ok(reports.includes('SDK_BUSY'));assert.ok(reports.includes('SENT'));
-    fail=true;await button.click();await page.locator('.product-share-status').filter({hasText:'Не удалось открыть отправку'}).waitFor();assert.equal(await button.isEnabled(),true);fail=false;
-    // Hold the response until the dialog is closed; elapsed delays race slow CI clicks.
-    let releaseShare;shareGate=new Promise(resolve=>releaseShare=resolve);
-    const previous=shareCalls,pendingResponse=page.waitForResponse('**/api/telegram-share');
-    await button.click();assert.equal(await button.isDisabled(),true);await page.locator('[data-share-close]').click();await dialog.waitFor({state:'hidden'});
-    releaseShare();const response=await pendingResponse;await response.finished();shareGate=null;
-    await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
-    assert.equal(shareCalls,previous+1);assert.equal(await page.evaluate(()=>window.__prepared.length),3,'closed dialogs cannot open a late recipient picker');
-    await page.locator('[data-action=share]').click();await page.clock.install();await button.click();await page.waitForFunction(()=>window.__prepared.length===4);
-    await page.clock.fastForward(31000);await page.locator('.product-share-status').filter({hasText:'Получить карточку в боте'}).waitFor();
-    const botCard=page.locator('[data-share-action=bot-card]');assert.equal(await botCard.isEnabled(),true);
-    if(process.env.QA_OUTPUT){fs.mkdirSync(process.env.QA_OUTPUT,{recursive:true});await page.screenshot({path:path.join(process.env.QA_OUTPUT,`share-recovery-${engine}-${width}.png`)})}
+    const botCard=page.locator('[data-share-action=bot-card]');
+    assert.equal(await button.isVisible(),false,'stalled native sharing is not offered in the Mini App');
+    assert.equal(await botCard.isEnabled(),true);
+    if(process.env.QA_OUTPUT){fs.mkdirSync(process.env.QA_OUTPUT,{recursive:true});await page.screenshot({path:path.join(process.env.QA_OUTPUT,`share-primary-${engine}-${width}.png`)})}
     await botCard.click();assert.deepEqual(await page.evaluate(()=>window.__links.at(-1)),['telegram','https://t.me/JuliProzBot?start=share_501']);
-    assert.equal(await page.evaluate(()=>window.__prepared.length),4,'fallback does not launch another stuck native picker');
-    await page.locator('[data-share-close]').click();await dialog.waitFor({state:'hidden'});await page.locator('[data-action=share]').click();assert.equal(await button.isDisabled(),true);
-    await page.evaluate(()=>window.__shareCallback(true));await page.waitForFunction(()=>!document.querySelector('[data-share-action=telegram]').disabled);
-    await page.evaluate(()=>delete window.Telegram.WebApp.shareMessage);await button.click();
-    assert.equal(await page.evaluate(()=>window.__links.at(-1)[0]),'external','old clients open a sharing page outside the Mini App');
-   }else assert.equal(await page.locator('[data-share-action=bot-card]').isVisible(),false);
+    assert.match(await page.locator('.product-share-status').innerText(),/перешлите карточку/);
+    await button.evaluate(b=>b.click());assert.equal(shareCalls,0,'the hidden native action cannot start a stalled request');
+    assert.equal(await page.evaluate(()=>window.__prepared.length),0);
+    await page.locator('[data-share-close]').click();await dialog.waitFor({state:'hidden'});await page.locator('[data-action=share]').click();
+    assert.equal(await botCard.isEnabled(),true);assert.equal(await button.isVisible(),false);
+    await page.evaluate(()=>delete window.Telegram.WebApp.shareMessage);await botCard.click();
+    assert.deepEqual(await page.evaluate(()=>window.__links.at(-1)),['telegram','https://t.me/JuliProzBot?start=share_501'],'older clients use the same bot card path');
+   }else {assert.equal(await page.locator('[data-share-action=bot-card]').isVisible(),false);assert.equal(await button.isVisible(),true)}
    assert.ok(await dialog.evaluate(d=>d.scrollWidth<=d.clientWidth));await page.keyboard.press('Escape');await dialog.waitFor({state:'hidden'});
    await page.locator('#backProduct').click();assert.equal(await page.locator('main').evaluate(e=>getComputedStyle(e).visibility),'visible');
    await page.locator('.product[data-id="501"]').click();await assertLayers();
    if(process.env.QA_OUTPUT){fs.mkdirSync(process.env.QA_OUTPUT,{recursive:true});await page.screenshot({path:path.join(process.env.QA_OUTPUT,`product-link-${engine}-${telegram?'telegram':'website'}-${width}.png`)})}
-   assert.deepEqual(errors,[]);await context.close();console.log(`PASS ${engine} ${width} ${telegram?'Mini App':'website'} direct link, scroll, back, reopen${telegram?', native share/cancel/error/stale response and legacy fallback':''}`);
+   assert.deepEqual(errors,[]);await context.close();console.log(`PASS ${engine} ${width} ${telegram?'Mini App':'website'} direct link, scroll, back, reopen${telegram?', bot card sharing and no stalled native requests':''}`);
   }
  }finally{await browser.close()}
 })().catch(e=>{console.error(e);process.exitCode=1});
