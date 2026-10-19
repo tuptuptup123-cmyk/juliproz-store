@@ -16,7 +16,7 @@ const types={'.html':'text/html','.js':'text/javascript','.css':'text/css','.png
     if(telegram)window.Telegram={WebApp:{ready(){},expand(){},initData:'signed-fixture',initDataUnsafe:{start_param:'p_501'},platform:'ios',isVersionAtLeast:()=>true,
      shareMessage:(id,callback)=>{window.__prepared.push(id);window.__shareCallback=callback},openTelegramLink:url=>window.__links.push(['telegram',url]),openLink:url=>window.__links.push(['external',url])}};
    },telegram);
-   let fail=false,delay=0,shareCalls=0;
+   let fail=false,shareGate=null,shareCalls=0;
    await context.route('https://www.juliproz.com/**',serve);
    await context.route('https://app.juliproz.com/**',serve);
    async function serve(route){
@@ -24,7 +24,7 @@ const types={'.html':'text/html','.js':'text/javascript','.css':'text/css','.png
     if(url.pathname==='/api/catalog')return route.fulfill({json:rows});
     if(url.pathname==='/api/telegram-share'){
      shareCalls++;const body=route.request().postDataJSON();assert.equal(body.product_id,'501');assert.equal(body.init_data,'signed-fixture');
-     if(delay)await new Promise(r=>setTimeout(r,delay));
+     if(shareGate)await shareGate;
      return route.fulfill({status:fail?503:200,json:fail?{error:'unavailable'}:{id:'prepared-fixture',expiration_date:Math.floor(Date.now()/1000)+300}});
     }
     const basePath=url.hostname==='app.juliproz.com'?path.join(root,'apps/telegram/dist'):root;
@@ -58,7 +58,13 @@ const types={'.html':'text/html','.js':'text/javascript','.css':'text/css','.png
     await page.evaluate(()=>window.__shareCallback(false));await page.locator('.product-share-status').filter({hasText:'Вещь не отправлена'}).waitFor();
     await button.click();await page.waitForFunction(()=>window.__prepared.length===2);await page.evaluate(()=>window.__shareCallback(true));await page.locator('.product-share-status').filter({hasText:'Вещь отправлена'}).waitFor();
     fail=true;await button.click();await page.locator('.product-share-status').filter({hasText:'Не удалось открыть отправку'}).waitFor();assert.equal(await button.isEnabled(),true);fail=false;
-    delay=200;const previous=shareCalls;await button.click();assert.equal(await button.isDisabled(),true);await page.locator('[data-share-close]').click();await page.waitForTimeout(250);assert.equal(shareCalls,previous+1);assert.equal(await page.evaluate(()=>window.__prepared.length),2,'closed dialogs cannot open a late recipient picker');
+    // Hold the response until the dialog is closed; elapsed delays race slow CI clicks.
+    let releaseShare;shareGate=new Promise(resolve=>releaseShare=resolve);
+    const previous=shareCalls,pendingResponse=page.waitForResponse('**/api/telegram-share');
+    await button.click();assert.equal(await button.isDisabled(),true);await page.locator('[data-share-close]').click();await dialog.waitFor({state:'hidden'});
+    releaseShare();const response=await pendingResponse;await response.finished();shareGate=null;
+    await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
+    assert.equal(shareCalls,previous+1);assert.equal(await page.evaluate(()=>window.__prepared.length),2,'closed dialogs cannot open a late recipient picker');
     await page.locator('[data-action=share]').click();await page.evaluate(()=>delete window.Telegram.WebApp.shareMessage);await button.click();
     assert.equal(await page.evaluate(()=>window.__links.at(-1)[0]),'external','old clients open a sharing page outside the Mini App');
    }

@@ -47,7 +47,11 @@ function createHandler({env=process.env,request=fetch,now=Date.now,allow=createD
    const prepared=await request('https://api.telegram.org/bot'+token+'/savePreparedInlineMessage',{
     method:'POST',headers:{'Content-Type':'application/json'},redirect:'error',signal:AbortSignal.timeout(8000),
     body:JSON.stringify({user_id:user.id,allow_user_chats:true,allow_bot_chats:true,allow_group_chats:true,allow_channel_chats:true,
-     result:{type:'article',id:'product_'+id,title,input_message_content:{message_text:text},reply_markup:{inline_keyboard:[[{text:'Открыть вещь',url}]]}}})
+     result:{type:'photo',id:'product_'+id,title,
+      photo_url:'https://www.juliproz.com/api/telegram-product-photo?id='+id,
+      thumbnail_url:'https://www.juliproz.com/api/telegram-product-photo?id='+id,
+      caption:text,show_caption_above_media:true,
+      reply_markup:{inline_keyboard:[[{text:'Открыть в боте',url}]]}}})
    });
    if(!prepared.ok)throw Error();
    const data=await prepared.json();
