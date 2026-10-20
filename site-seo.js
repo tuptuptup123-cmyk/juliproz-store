@@ -27,7 +27,7 @@
  }
  function metadata(){
   const lang=language();document.title=data.title[lang];
-  const paths={home:'/',catalog:'/catalog',hermes:'/brands/hermes',chanel:'/brands/chanel',outlet:'/outlet',favorites:'/?tab=favorites',cart:'/?tab=cart',sell:'/sell',services:'/services',about:'/?tab=about'};
+  const paths={home:'/',catalog:'/catalog',hermes:'/brands/hermes',chanel:'/brands/chanel',watches:'/catalog?category=watches',outlet:'/outlet',favorites:'/?tab=favorites',cart:'/?tab=cart',sell:'/sell',services:'/services',about:'/?tab=about'};
   for(const link of document.querySelectorAll('a[data-tab],a[data-web-section]')){
    const path=paths[link.dataset.tab||link.dataset.webSection];if(path)link.setAttribute('href',path+(lang==='en'?(path.includes('?')?'&':'?')+'lang=en':''));
   }
@@ -44,6 +44,7 @@
   if(!serverRendered)return;
   const url=new URL(location.href);url.pathname=data.path;url.hash='';
   for(const key of ['product','tab','page','slug','size'])url.searchParams.delete(key);
+  url.searchParams.delete('category');if(tab==='watches')url.searchParams.set('category','watches');
   if(tab!=='catalog')for(const key of ['sale','collection'])url.searchParams.delete(key);
   if(['favorites','cart','about'].includes(tab))url.searchParams.set('tab',tab);
   const next=url.pathname+url.search,current=location.pathname+location.search+location.hash;
@@ -53,10 +54,10 @@
  let outletRows=null;
  function sync(state,rows=null){
   if(rows!==null)outletRows=rows;
-  const lang=language(),inCatalog=['catalog','hermes','chanel'].includes(state.tab);
+  const lang=language(),inCatalog=['catalog','hermes','chanel','watches'].includes(state.tab);
   if(state.tab==='home')for(const img of document.querySelectorAll('img[data-home-src]')){img.src=img.dataset.homeSrc;delete img.dataset.homeSrc}
-  if(serverRendered&&state.tab==='catalog'&&data.kind==='catalog'){
-   const url=new URL(location.href);url.searchParams.delete('sale');url.searchParams.delete('collection');
+  if(serverRendered&&inCatalog&&data.kind==='catalog'){
+   const url=new URL(location.href);url.searchParams.delete('sale');url.searchParams.delete('collection');url.searchParams.delete('category');if(state.tab==='watches')url.searchParams.set('category','watches');
    if(state.sale){url.searchParams.set('sale','1');if(window.SaleCollections?.groups[state.saleCollection])url.searchParams.set('collection',state.saleCollection)}
    const next=url.pathname+url.search+url.hash;if(next!==location.pathname+location.search+location.hash)history.replaceState(history.state,'',next);
   }
@@ -78,7 +79,7 @@
   }
  }
  function navigate(tab,options={}){
-  const next=['hermes','chanel'].includes(tab)?{...content.page('brand',tab),kind:'brand'}:content.pages[tab]?{...content.pages[tab],kind:tab}:['favorites','cart','about'].includes(tab)?{...content.pages.home,kind:'home'}:null;
+  const next=tab==='watches'?{...content.pages.catalog,kind:'catalog'}:['hermes','chanel'].includes(tab)?{...content.page('brand',tab),kind:'brand'}:content.pages[tab]?{...content.pages[tab],kind:tab}:['favorites','cart','about'].includes(tab)?{...content.pages.home,kind:'home'}:null;
   if(!next)return;data=next;updateURL(tab,Boolean(options.replace));metadata();
  }
  function product(p,options={}){
