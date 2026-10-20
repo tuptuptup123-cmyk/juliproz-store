@@ -92,7 +92,7 @@
     blue:['Hermès HAC à Dos PM','Hermès HAC à Dos PM','Нашли и выкупили Hermès HAC à Dos PM в синем цвете.','We sourced and purchased this Hermès HAC à Dos PM in blue.'],
     pockets:['Hermès Luggage Cargo','Hermès Luggage Cargo','Наш выкуп Hermès Luggage Cargo с наружными карманами.','Our purchase of a Hermès Luggage Cargo with exterior pockets.'],
     collection:['Hermès Birkin 25','Hermès Birkin 25','Hermès Birkin 25 из наших выкупов — на фото вместе с другими покупками Hermès.','A Hermès Birkin 25 from our purchases, pictured with other Hermès pieces.'],
-    flowers:['Hermès — цветочный рисунок','Hermès — floral design','Наш выкуп Hermès с цветочным рисунком и золотистой фурнитурой.','Our Hermès purchase with a floral design and gold-tone hardware.']
+    flowers:['Hermès Daisy','Hermès Daisy','Наш выкуп Hermès Daisy с цветочным рисунком и золотистой фурнитурой.','Our Hermès Daisy purchase with a floral design and gold-tone hardware.']
    },
    chanel:{
     shopping:['Выкупы Chanel','Chanel purchases','Наши покупки Chanel — живой кадр после выкупа.','Our Chanel purchases, photographed after shopping.'],
@@ -142,7 +142,7 @@
    ['blue',en?'Blue Hermès HAC à Dos PM from our purchases':'Синяя Hermès HAC à Dos PM из наших выкупов'],
    ['pockets',en?'Hermès Luggage Cargo with exterior pockets in its box':'Hermès Luggage Cargo с наружными карманами в коробке'],
    ['collection',en?'Hermès Birkin 25 with other Hermès purchases':'Hermès Birkin 25 вместе с другими нашими выкупами'],
-   ['flowers',en?'Hermès bag with a floral design from our purchases':'Сумка Hermès с цветочным рисунком из наших выкупов']
+   ['flowers',en?'Hermès Daisy with a floral design from our purchases':'Hermès Daisy с цветочным рисунком из наших выкупов']
   ];
   return `<section class="discovery-section hermes-portfolio" aria-labelledby="${e(prefix)}brandPortfolio"><div class="hermes-portfolio-heading"><h2 id="${e(prefix)}brandPortfolio">${en?'Hermès bags we’ve sourced':'Наши выкупы Hermès'}</h2><p>${en?'A selection of our Hermès purchases, across different styles, colours and finishes. Share a photograph of the bag you’re looking for and your preferences. We’ll check available options and discuss sourcing it for you.':'Часть наших выкупов Hermès. Разные модели, оттенки и исполнения — за каждой находкой стоит конкретный запрос. Пришлите фотографию сумки, которую ищете, и ваши пожелания: проверим доступные варианты и обсудим выкуп.'}</p></div><div class="hermes-portfolio-gallery">${pictures.map(([file,alt])=>`<figure><img src="/images/editorial/hermes-sourced-${file}.webp" alt="${e(alt)}" width="600" height="800" loading="lazy" decoding="async">${purchaseCaption('hermes',file,alt,lang)}${file==='flowers'?`<a class="purchase-extra-photo" href="/images/editorial/hermes-sourced-group.webp" target="_blank" rel="noopener">${en?'Another photograph from the purchase':'Ещё фото выкупа'} ${arrow}</a>`:''}</figure>`).join('')}</div><div class="hermes-portfolio-footer"><p>${en?'Examples of our purchases. These bags are not a live stock listing.':'Примеры наших выкупов. Эти сумки не являются предложениями из наличия.'}</p>${action(en?'Find my bag':'Найти мою сумку',lang,en?'a Hermès bag':'сумки Hermès')}</div></section>`;
  }
