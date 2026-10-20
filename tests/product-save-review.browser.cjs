@@ -16,7 +16,7 @@ const server=http.createServer((req,res)=>{
   page.on('pageerror',e=>errors.push(e.message));
   await page.route('https://qhgzzhgxwpcctafpzjid.supabase.co/**',r=>{
    const req=r.request(),url=new URL(req.url());
-   if(['POST','PATCH','PUT','DELETE'].includes(req.method())&&!url.pathname.includes('/auth/'))writes.push({path:url.pathname,body:req.postDataJSON()});
+   if(['POST','PATCH','PUT','DELETE'].includes(req.method())&&(/\/rest\/v1\/(products|product_admin_notes)$/.test(url.pathname)||/\/storage\/v1\/object\/|store_save_product_costs/.test(url.pathname)))writes.push({path:url.pathname,body:req.postDataJSON()});
    if(url.pathname==='/rest/v1/products'){
     if(['POST','PATCH'].includes(req.method())){
      if(failNext){failNext=false;return r.fulfill({status:503,json:{message:'Synthetic save failure'}})}
