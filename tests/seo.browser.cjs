@@ -14,6 +14,11 @@ const server=http.createServer((req,res)=>{const url=new URL(req.url,'http://loc
  for(const width of [320,390,1280]){
  const context=await browser.newContext({viewport:{width,height:900},reducedMotion:'reduce'});await context.route('**/api/catalog',r=>r.fulfill({json:products}));await context.route('**/rest/v1/products?**',r=>r.fulfill({json:products}));await context.route('https://juliproz-store.vercel.app/images/**',r=>r.fulfill({path:root+'/images/brands/hermes-birkin.png',contentType:'image/png'}));await context.route('**/api/analytics',r=>r.fulfill({status:204}));await context.addInitScript(()=>{localStorage.setItem('jpAnalyticsConsent','declined');localStorage.setItem('jpAntiScamSeenV1','1')});
  const page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
+ async function checkHomeAccessibility(language){
+  await page.addScriptTag({path:require.resolve('axe-core/axe.min.js')});
+  const violations=await page.evaluate(async()=>{const r=await axe.run(document,{runOnly:{type:'tag',values:['wcag2a','wcag2aa','wcag21a','wcag21aa']}});return r.violations.map(v=>({id:v.id,targets:v.nodes.map(n=>n.target)}))});
+  assert.deepEqual(violations,[],'Homepage accessibility '+language+' '+width);
+ }
  const homeRequests=[];page.on('request',r=>{if(/\/images\/home-(boutique|lifestyle)\.jpg/.test(r.url()))homeRequests.push(r.url())});
  await page.goto(origin+'/catalog?lang=en');await page.locator('html:not([data-server-view])').waitFor();
  assert.equal(homeRequests.length,0,'Hidden homepage photos must not download in the catalogue');
@@ -32,6 +37,7 @@ const server=http.createServer((req,res)=>{const url=new URL(req.url,'http://loc
  await question.locator('summary').focus();await page.keyboard.press('Enter');assert.equal(await question.getAttribute('open'),'');
  await page.locator('.home-hero-actions a[href="#homeHowItWorks"]').click();assert.ok(await page.locator('#homeHowItWorks').evaluate(el=>el.getBoundingClientRect().top<innerHeight));
  await page.evaluate(()=>scrollTo(0,0));assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+ await checkHomeAccessibility('ru');
  await page.screenshot({path:out+'/home-buyer-ru-'+width+'.png',fullPage:true});
  await page.locator('.masthead-inner [data-site-language=en]').click();
  assert.match(await page.locator('#webHomeTitle').innerText(),/Buyer service/);
@@ -40,6 +46,7 @@ const server=http.createServer((req,res)=>{const url=new URL(req.url,'http://loc
  assert.match(await page.locator('#homeBuyerContent a[data-contact-event]').getAttribute('href'),/^https:\/\/wa.me\//);
  assert.equal(await page.locator('#homeBuyerContent a[href^="/services"]').getAttribute('href'),'/services?lang=en');
  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+ await checkHomeAccessibility('en');
  await page.screenshot({path:out+'/home-buyer-en-'+width+'.png',fullPage:true});
  await page.reload();await page.locator('html:not([data-server-view])').waitFor();assert.match(await page.locator('#homeBuyerContent').innerText(),/How personal shopping works/);
  await page.locator('.masthead-inner [data-site-language=ru]').click();assert.match(await page.locator('#homeBuyerContent').innerText(),/Как заказать через байера/);

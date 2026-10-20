@@ -19,7 +19,7 @@ html[data-storefront="website"] #webHomePage{column-gap:40px;row-gap:32px;paddin
 .home-buyer-steps>li{padding:0 28px;min-width:0}
 .home-buyer-steps>li:first-child{padding-left:0}.home-buyer-steps>li:last-child{padding-right:0}
 .home-buyer-steps>li+li{border-left:1px solid #e6e0e3}
-.home-step-number{display:block;margin-bottom:8px;font:500 italic 34px/1 "Playfair Display",Georgia,serif;color:#c68eaf}
+.home-step-number{display:block;margin-bottom:8px;font:500 italic 34px/1 "Playfair Display",Georgia,serif;color:#9f5f83}
 .home-buyer-steps h3{font:400 clamp(22px,2vw,28px)/1.25 "Playfair Display",Georgia,serif;letter-spacing:-.01em;margin:0 0 12px}
 .home-buyer-steps p,.home-buyer-request p,.home-buyer-faq p{font:300 15px/1.65 Roboto,Arial,sans-serif;color:#686268;margin:0}
 .home-buyer-request{display:flex;align-items:center;justify-content:space-between;gap:28px;padding:30px 32px;background:#f1e0e9}
