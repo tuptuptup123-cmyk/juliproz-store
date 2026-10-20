@@ -1,0 +1,23 @@
+/* Short, non-blocking motion shared by the public storefront. */
+@view-transition{navigation:auto}
+::view-transition-old(root){animation:store-fade-out 130ms ease-out both}
+::view-transition-new(root){animation:store-fade-in 220ms ease-out both}
+@keyframes store-fade-out{to{opacity:0}}
+@keyframes store-fade-in{from{opacity:0}to{opacity:1}}
+@keyframes store-panel-in{from{opacity:.3;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+@keyframes store-overlay-in{from{opacity:0}to{opacity:1}}
+:where(.primary,.discovery-button,.home-shop-button,.filters button,.options button,.size-options button,.heart,.bottom-nav a,.bottom-nav button){transition:background-color .18s ease,color .18s ease,box-shadow .2s ease,transform .18s ease}
+:where(.primary,.discovery-button,.filters button,.options button,.size-options button):active{transform:scale(.97)}
+.bottom-nav :is(a,button):active{transform:translateY(2px)}
+.product{transition:transform .24s ease,box-shadow .24s ease}
+.product .photo img,.discovery-model-photo img{transition:transform .45s cubic-bezier(.22,1,.36,1)}
+@media(hover:hover) and (pointer:fine){.product:hover{transform:translateY(-3px)}.product:hover .photo img,.discovery-model:hover .discovery-model-photo img{transform:scale(1.025)}.discovery-button:hover,.primary:hover{transform:translateY(-2px);box-shadow:0 6px 16px #62405212}}
+#productModal:not(.hidden){animation:store-fade-in .2s ease-out}
+#productModal:not(.hidden) .product-layout{animation:store-panel-in .3s cubic-bezier(.22,1,.36,1)}
+.sheet:not(.hidden){animation:store-overlay-in .18s ease-out}
+.sheet:not(.hidden) .sheet-card,dialog[open]{animation:store-panel-in .28s cubic-bezier(.22,1,.36,1)}
+details[open] .discovery-model-copy{animation:store-panel-in .24s ease-out}
+@media(prefers-reduced-motion:reduce){
+ @view-transition{navigation:none}
+ *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+}
