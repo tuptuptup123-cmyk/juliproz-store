@@ -23,7 +23,11 @@ const root=path.resolve(__dirname,'..'),server=http.createServer((req,res)=>{con
   await page.locator('#financeForm [name=product_label]').fill('Pending order');await page.locator('#financeForm [name=amount]').fill('100');await page.locator('#financeSave').click();await page.locator('#stepUpDialog').waitFor();assert.equal(writes,0);
   await page.locator('#stepUpForm [name=code]').fill('000000');await page.locator('#stepUpForm button[type=submit]').click();await page.locator('#stepUpError').filter({hasText:'Неверный код'}).waitFor();assert.equal(writes,0);assert.equal(await page.locator('#financeForm [name=product_label]').inputValue(),'Pending order');
   await page.locator('#stepUpForm [name=code]').fill('123456');await page.locator('#stepUpForm button[type=submit]').click();await page.locator('#financeDialog').waitFor({state:'hidden'});assert.equal(writes,1);assert.equal(attempts,2);
-  await page.evaluate(()=>{AdminFinance.openEntry(null);session.amr=[{method:'token_refresh',timestamp:Date.now()/1000},{method:'totp',timestamp:Date.now()/1000-901}]});
+  // The save closes its dialog before refreshing the report and releasing busy.
+  // Wait for that operation before opening the next form through its real guard.
+  await page.waitForFunction(()=>!busy);
+  await page.evaluate(()=>AdminFinance.openEntry(null));await page.locator('#financeDialog').waitFor();
+  await page.evaluate(()=>{session.amr=[{method:'token_refresh',timestamp:Date.now()/1000},{method:'totp',timestamp:Date.now()/1000-901}]});
   await page.waitForFunction(()=>document.body.classList.contains('mfa-stale'));assert.equal(await page.locator('#financeForm').evaluate(el=>el.inert),true);
   await page.locator('#financeDialog [data-unlock-sensitive]').click();await page.locator('#stepUpDialog').waitFor();await page.locator('#cancelStepUp').click();assert.equal(writes,1);assert.equal(await page.evaluate(()=>Boolean(session)),true);
   await page.evaluate(()=>endSession());assert.deepEqual(errors,[]);await page.close();console.log(width+' PASS stale-mask, failed-code, fresh-code, single write retry, form preservation and cancellation');
