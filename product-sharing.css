@@ -6,3 +6,5 @@
 .detail-share{border:0;background:transparent;color:var(--brand-blue);border-radius:0}.detail-share svg{stroke-width:1.5}
 #shareEditorProduct{width:100%;margin:0 0 14px;border-radius:12px}
 .product-share-dialog [data-share-action][hidden]{display:none}.product-share-bot-hint{margin:-10px 0 20px;font-size:12px;line-height:1.5;color:var(--muted,#666)}.product-share-dialog [data-share-action]:disabled{opacity:.55;cursor:wait}
+
+html[data-storefront="telegram"] .product-share-dialog [data-share-action=manager]{background:var(--ink,#333);color:var(--bg,#fff);border-color:transparent}

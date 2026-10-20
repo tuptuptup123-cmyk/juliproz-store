@@ -70,22 +70,16 @@ const types={'.html':'text/html','.js':'text/javascript','.css':'text/css','.png
    if(telegram){
     const botCard=page.locator('[data-share-action=bot-card]');
     assert.equal(await button.isVisible(),false,'stalled native sharing is not offered in the Mini App');
-    assert.equal(await botCard.isEnabled(),true);
-    if(process.env.QA_OUTPUT){fs.mkdirSync(process.env.QA_OUTPUT,{recursive:true});await page.screenshot({path:path.join(process.env.QA_OUTPUT,`share-primary-${engine}-${width}.png`)})}
-    await botCard.click();assert.deepEqual(await page.evaluate(()=>window.__links.at(-1)),['telegram','https://t.me/JuliProzBot?start=share_501']);
-    assert.match(await page.locator('.product-share-status').innerText(),/перешлите карточку/);
+    assert.equal(await botCard.isVisible(),false,'staff card retrieval is absent from the customer UI');
+    await botCard.evaluate(b=>b.click());assert.equal(await page.evaluate(()=>window.__links.length),0,'a hidden staff action cannot be triggered by a public client');
     await button.evaluate(b=>b.click());assert.equal(shareCalls,0,'the hidden native action cannot start a stalled request');
     assert.equal(await page.evaluate(()=>window.__prepared.length),0);
-    await page.locator('[data-share-close]').click();await dialog.waitFor({state:'hidden'});await page.locator('[data-action=share]').click();
-    assert.equal(await botCard.isEnabled(),true);assert.equal(await button.isVisible(),false);
-    await page.evaluate(()=>delete window.Telegram.WebApp.shareMessage);await botCard.click();
-    assert.deepEqual(await page.evaluate(()=>window.__links.at(-1)),['telegram','https://t.me/JuliProzBot?start=share_501'],'older clients use the same bot card path');
    }else {assert.equal(await page.locator('[data-share-action=bot-card]').isVisible(),false);assert.equal(await button.isVisible(),true)}
    assert.ok(await dialog.evaluate(d=>d.scrollWidth<=d.clientWidth));await page.keyboard.press('Escape');await dialog.waitFor({state:'hidden'});
    await page.locator('#backProduct').click();assert.equal(await page.locator('main').evaluate(e=>getComputedStyle(e).visibility),'visible');
    await page.locator('.product[data-id="501"]').click();await assertLayers();
    if(process.env.QA_OUTPUT){fs.mkdirSync(process.env.QA_OUTPUT,{recursive:true});await page.screenshot({path:path.join(process.env.QA_OUTPUT,`product-link-${engine}-${telegram?'telegram':'website'}-${width}.png`)})}
-   assert.deepEqual(errors,[]);await context.close();console.log(`PASS ${engine} ${width} ${telegram?'Mini App':'website'} direct link, scroll, back, reopen${telegram?', bot card sharing and no stalled native requests':''}`);
+   assert.deepEqual(errors,[]);await context.close();console.log(`PASS ${engine} ${width} ${telegram?'Mini App':'website'} direct link, scroll, back, reopen${telegram?', no staff-only controls or stalled native requests':''}`);
   }
  }finally{await browser.close()}
 })().catch(e=>{console.error(e);process.exitCode=1});

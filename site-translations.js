@@ -2,6 +2,7 @@
 (function(root){
  'use strict';
  const ui={
+  "Написать менеджеру по этой вещи":"Ask about this piece",
   "Buyer service — поиск и выкуп люксовых вещей по миру":"Buyer service — worldwide luxury sourcing",
   "Ваш персональный байер: ищем и выкупаем люксовые сумки, одежду, обувь, часы и украшения по всему миру. Стоимость, проверку подлинности и доставку согласуем до оплаты.":"Your luxury personal shopper for designer bags, clothing, shoes, watches and jewellery. We source worldwide and agree on the cost, authentication and delivery before payment.",
   "Отправить запрос байеру":"Send a sourcing request",
