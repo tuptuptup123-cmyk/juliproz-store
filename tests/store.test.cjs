@@ -6,7 +6,7 @@ function element(){return {innerHTML:'',textContent:'',value:'',disabled:false,d
 function setup(file,fetch,query='?tab=catalog'){
  const nodes=new Map();const get=id=>{if(!nodes.has(id))nodes.set(id,element());return nodes.get(id)};
  const document={getElementById:get,querySelectorAll:()=>[],querySelector:()=>element(),addEventListener(){}};
- const links=[];const window={scrollY:0,scrollTo(){},addEventListener(){},open:u=>links.push(u),STORE_CONFIG:{url:'https://test.supabase.co',key:'publishable'},Telegram:{WebApp:{ready(){},expand(){},openTelegramLink:u=>links.push(u),initDataUnsafe:{}}}};
+ const links=[];const window={scrollY:0,scrollTo(){},addEventListener(){},ManagerContact:{open:u=>{links.push(u);return true},close(){}},open:u=>links.push(u),STORE_CONFIG:{url:'https://test.supabase.co',key:'publishable'},Telegram:{WebApp:{ready(){},expand(){},openTelegramLink:u=>links.push(u),initDataUnsafe:{}}}};
  const context=vm.createContext({AdminImages:{attrs:v=>'src="'+v+'"'},document,window,Telegram:window.Telegram,fetch,console:{...console,error(){}},URL,URLSearchParams,atob,AbortSignal,AbortController,setTimeout,clearTimeout,structuredClone,Intl,Set,Number,String,Array,JSON,Date,crypto:{randomUUID:crypto.randomUUID},location:{search:query},navigator:{clipboard:{writeText:async u=>links.push(u)}},localStorage:{getItem:()=>'{broken',setItem(){throw Error('storage denied')}}});
  vm.runInContext(fs.readFileSync(__dirname+'/../catalog-reader.js','utf8'),context);context.CatalogReader=context.window.CatalogReader;
  vm.runInContext(fs.readFileSync(__dirname+'/../product-pricing.js','utf8'),context);
