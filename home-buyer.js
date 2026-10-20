@@ -32,6 +32,7 @@
  function render(language='ru',prefix=''){
   const en=language==='en',c=copy[en?'en':'ru'],id=escape(prefix),contact=en?'https://wa.me/message/LX6SBE3QCQXKG1':'https://t.me/juliproz';
   return `<ul class="home-buyer-categories" aria-label="${c.categoriesLabel}">${c.categories.map(label=>`<li>${label}</li>`).join('')}</ul>
+   <section class="home-chanel" aria-labelledby="${id}homeChanelTitle"><div><h2 id="${id}homeChanelTitle">Chanel</h2><p class="home-chanel-subtitle">${en?'Iconic bags and rare finds':'Культовые сумки и редкие находки'}</p><p>${en?'Classic 11.12, Chanel 25, Chanel 19 and special editions. Explore the collection or ask us to find a particular model, colour or size.':'Classic 11.12, Chanel 25, Chanel 19 и особенные выпуски. Смотрите вещи в каталоге или отправьте запрос на поиск нужной модели, цвета и размера.'}</p></div><a class="home-buyer-button" href="/brands/chanel${en?'?lang=en':''}">${en?'Explore Chanel':'Смотреть Chanel'}${arrow}</a></section>
    <section class="home-buyer-process" id="${id}homeHowItWorks" aria-labelledby="${id}homeProcessTitle">
     <div class="home-section-heading"><h2 id="${id}homeProcessTitle">${c.process}</h2><a class="home-text-link" href="/services${en?'?lang=en':''}">${c.more}${arrow}</a></div>
     <ol class="home-buyer-steps">${c.steps.map(([title,description],i)=>`<li><span class="home-step-number" aria-hidden="true">0${i+1}</span><h3>${title}</h3><p>${description}</p></li>`).join('')}</ol>
