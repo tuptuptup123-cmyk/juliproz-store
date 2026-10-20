@@ -18,6 +18,7 @@ const root=path.resolve(__dirname,'../..');
  await require('./acquisition-probes.cjs')(db);
  await require('./website-analytics-probes.cjs')(db);
  await require('./finance-completeness-probes.cjs')(db);
+ await require('./cleanup-retention-probes.cjs')(db);
  await db.exec(fs.readFileSync(path.join(root,'supabase/owner-statistics-probes.sql'),'utf8'));
  console.log('PASS owner-only statistics, manager isolation and existing sales permissions');
  await db.close();console.log('PASS schema restore and permission probes');
