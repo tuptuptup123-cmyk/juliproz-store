@@ -248,3 +248,20 @@
 .hermes-motion-messenger{left:calc(50% - 90px);bottom:0;width:180px;--bag-angle:4deg}
 .hermes-motion-messenger .hermes-motion-art{background-position:100% 50%}
 @media(max-width:680px){.hermes-motion-messenger{left:auto;bottom:auto;width:100%}}
+
+/* Rounded surfaces match the existing service cards on all screen sizes. */
+.discovery-page .discovery-button{border-radius:16px}
+.discovery-page :is(.discovery-hero-photo,.discovery-model-photo,.discovery-model,.discovery-request,.outlet-find,.jewellery-services>div){border-radius:22px;overflow:hidden}
+.discovery-page :is(.hermes-portfolio-gallery,.chanel-portfolio-gallery) img{border-radius:18px}
+.discovery-page .purchase-case .discovery-button{border-radius:0}
+@media(max-width:680px){
+ .discovery-brand[data-brand="hermes"] .discovery-hero{padding:100px 0 125px}
+ .hermes-motion{position:absolute;inset:0;display:block;margin:0;overflow:hidden}
+ .hermes-motion-item{position:absolute;min-width:0}
+ .hermes-motion-kelly{left:3%;top:0;bottom:auto;right:auto;width:82px;--bag-angle:-13deg}
+ .hermes-motion-birkin{right:2%;top:23px;bottom:auto;left:auto;width:78px;--bag-angle:11deg}
+ .hermes-motion-mini-kelly{left:0;bottom:35px;top:auto;right:auto;width:82px;--bag-angle:-8deg}
+ .hermes-motion-hac{right:1%;bottom:3px;top:auto;left:auto;width:78px;--bag-angle:12deg}
+ .hermes-motion-messenger{left:39%;bottom:24px;top:auto;right:auto;width:86px;--bag-angle:-7deg}
+ .hermes-motion-art{transform:rotate(var(--bag-angle))}
+}
