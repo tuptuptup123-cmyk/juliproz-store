@@ -514,3 +514,25 @@ dialog.sale-dialog{width:min(580px,calc(100vw - 24px));max-width:580px;max-heigh
 @media(max-width:700px){.product-seo-guide>summary{padding:18px 16px;gap:12px}.writing-guide-expand>span{display:none}.writing-guide-mark{width:44px;height:44px;border-radius:13px;font-size:24px}.writing-guide-intro strong{font-size:23px}.writing-guide-body{padding:16px 16px 0}.writing-guide-tabs{grid-template-columns:repeat(2,minmax(0,1fr));margin-bottom:20px}.writing-guide-tabs button{justify-content:flex-start;padding:10px 12px}.writing-guide-examples,.writing-guide-checks{grid-template-columns:minmax(0,1fr)}.writing-guide-heading h3{font-size:22px}.writing-guide-template{grid-template-columns:minmax(0,1fr);padding:14px}.writing-guide-template button{justify-self:start}.writing-guide-footer{display:block}.writing-guide-footer a{display:inline-block;min-height:44px;padding-top:10px}.writing-guide-panel{font-size:13px}.writing-guide-formula{gap:6px}.writing-guide-formula span{padding:6px 9px;font-size:12px}}
 @media(max-width:360px){.writing-guide-mark{display:none}.writing-guide-intro strong{font-size:22px}.writing-guide-eyebrow{font-size:8px;letter-spacing:.08em}.writing-guide-tabs button{font-size:12px;gap:5px}.writing-guide-body{padding:14px 12px 0}}
 @media(prefers-reduced-motion:reduce){.writing-guide-expand svg{transition:none}}
+
+
+/* Mandatory, per-save product review. Native dialog keeps the editor inert. */
+.product-save-review{width:min(920px,calc(100vw - 48px));max-width:none;max-height:calc(100dvh - 48px);padding:0;border:1px solid var(--line);border-radius:24px;background:var(--surface);color:var(--ink);box-shadow:0 28px 90px #25394f40;overscroll-behavior:contain}
+.product-save-review::backdrop{background:#182a40b8;backdrop-filter:blur(5px)}
+.product-save-review form{margin:0;padding:32px 36px 0}
+.product-save-review-heading h2{font-size:clamp(29px,4vw,42px);line-height:1.15;margin:12px 0}
+.product-save-review-heading p{color:var(--muted);margin:10px 0;max-width:65ch}
+.product-save-review-heading .product-save-review-name{font-weight:600;color:var(--ink);padding:12px 16px;border-radius:12px;background:var(--bg);overflow-wrap:anywhere}
+.product-save-review-checks{display:grid;gap:10px;margin:22px 0}
+.product-save-review-checks label{display:flex;align-items:flex-start;gap:14px;margin:0;padding:14px 16px;border:1px solid var(--line);border-radius:14px;cursor:pointer}
+.product-save-review-checks label:has(input:checked){background:#f0f5fa;border-color:var(--brand-blue)}
+.product-save-review-checks input[type=checkbox]{flex:0 0 22px;width:22px;height:22px;min-height:22px;margin:2px 0 0;padding:0;accent-color:var(--brand-blue)}
+.product-save-review-checks strong{display:block;font-size:15px;font-weight:600}
+.product-save-review-checks small{display:block;margin-top:4px;font-size:13px;line-height:1.55;color:var(--muted)}
+.product-save-review-warning{padding:16px 18px;background:#f8eef3;border:1px solid #dfc4d2;border-radius:14px;color:#57384b}
+.product-save-review-warning p{margin:6px 0 0;font-size:13px;line-height:1.6}
+.product-save-review-footer{position:sticky;bottom:0;background:var(--surface);padding:16px 0 24px;margin-top:18px;border-top:1px solid var(--line)}
+.product-save-review-footer p{margin:0 0 10px;font-size:12px;color:var(--muted)}
+.product-save-review-footer>div{display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap}
+.product-save-review button:focus-visible,.product-save-review input:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+@media(max-width:600px){.product-save-review{width:100%;height:100%;height:100dvh;max-height:100dvh;margin:0;border:0;border-radius:0}.product-save-review form{padding:24px 18px 0;padding-top:max(24px,env(safe-area-inset-top))}.product-save-review-checks label{padding:13px 12px;gap:12px}.product-save-review-footer{padding-bottom:max(18px,env(safe-area-inset-bottom))}.product-save-review-footer>div{display:grid;grid-template-columns:1fr}.product-save-review-footer button{width:100%;white-space:normal}}
