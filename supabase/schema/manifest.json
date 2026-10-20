@@ -9,7 +9,8 @@
     "supabase/migrations/20261018051835_statistics_acquisition_owner_guard.sql",
     "supabase/migrations/20261018054622_detailed_website_analytics.sql",
     "supabase/migrations/20261018085636_independent_audit_fixes.sql",
-    "supabase/migrations/20261019062938_manager_product_commission.sql"
+    "supabase/migrations/20261019062938_manager_product_commission.sql",
+    "supabase/migrations/20261020065527_audit_finance_completeness.sql"
   ],
   "postDeployment": [
     "supabase/rollout/private-product-photos.sql"

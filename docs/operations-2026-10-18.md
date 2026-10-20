@@ -30,6 +30,8 @@ A source ZIP and a schema reconstruction do not back up live data, authenticatio
 
 The project owner should record the last successful database backup, retention, recovery point objective and recovery time objective. Check Storage file preservation separately. Restore into an isolated project, with mail/webhooks/delivery jobs disabled there. Compare counts, sample photos, stock, sales and commission records; check owner/member access and MFA recovery. Record the restore date, duration, validation results and operator. Do not mark this complete from a schema-only test.
 
+For an additional private snapshot of actual business rows, use the [business data export and offline restore verification](backup-business-data.md). This supplements source and platform backups; it does not include Auth or Storage file bytes.
+
 ## Authentication settings — verification outstanding
 
 The browser form and BFF enforce a 12-character minimum. `supabase/rollout/auth-settings.json` records desired platform settings. Use `scripts/check-auth-settings.cjs` with an operator-supplied Management API credential to read actual settings; it prints only comparisons. `--apply` changes the settings and must be part of an intentional operations change, not a normal frontend build. Never put the credential in source, browser config or screenshots. Verify recovery on an isolated account without disrupting staff sessions.
