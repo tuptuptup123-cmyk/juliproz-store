@@ -55,7 +55,7 @@ const server=http.createServer((req,res)=>{const url=new URL(req.url,'http://loc
  assert.equal(await page.locator('#homeBuyerContent a[data-contact-event]').getAttribute('href'),'https://t.me/juliproz');
  console.log('PASS homepage steps, FAQ keyboard, anchor, RU/EN contacts, reload and layout',width);
  const nav=page.locator('.bottom-nav');
- assert.deepEqual(await nav.locator('[data-tab]:visible').evaluateAll(items=>items.map(x=>x.dataset.tab)),width<900?['home','catalog','favorites','cart']:['home','catalog','hermes','outlet','favorites','cart','sell','services','about']);
+ assert.deepEqual(await nav.locator('[data-tab]:visible').evaluateAll(items=>items.map(x=>x.dataset.tab)),width<900?['home','catalog','favorites','cart']:['home','catalog','hermes','chanel','outlet','favorites','cart','sell','services','about']);
  await clickSiteTab(page,'hermes');await page.waitForURL(url=>url.pathname==='/brands/hermes');
  assert.equal(await nav.locator('[aria-current=page]').getAttribute('data-tab'),'hermes');
  assert.equal(await page.locator('#seoCatalogIntro .discovery-model').count(),3);
@@ -74,7 +74,7 @@ const server=http.createServer((req,res)=>{const url=new URL(req.url,'http://loc
  assert.equal(await page.locator('meta[property="og:locale"]').getAttribute('content'),'en_US');
  assert.equal(await page.locator('link[hreflang=ru]').getAttribute('href'),'https://www.juliproz.com/outlet');
  await page.evaluate(()=>scrollTo(0,0));await page.screenshot({path:out+'/outlet-en-'+width+'.png',fullPage:true});await page.screenshot({path:out+'/outlet-first-'+width+'.png',fullPage:false});
- for(const tab of ['about','services','sell','cart','favorites','home','catalog','hermes']){await clickSiteTab(page,tab);assert.equal(await nav.locator('[aria-current=page]').getAttribute('data-tab'),tab);assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));}
+ for(const tab of ['about','services','sell','cart','favorites','home','catalog','chanel','hermes']){await clickSiteTab(page,tab);assert.equal(await nav.locator('[aria-current=page]').getAttribute('data-tab'),tab);assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));}
  assert.equal(await nav.evaluate(el=>el.scrollWidth>el.clientWidth),false);
  await page.locator('.masthead-inner [data-site-language=ru]').click();
  await page.evaluate(()=>scrollTo(0,0));await page.screenshot({path:out+'/hermes-ru-'+width+'.png',fullPage:true});await page.screenshot({path:out+'/hermes-first-'+width+'.png',fullPage:false});
