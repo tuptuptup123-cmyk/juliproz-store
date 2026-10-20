@@ -27,7 +27,7 @@ module.exports=async db=>{
   await entry({status:'active',completed_on:null});await entry({status:'cancelled'});
   await entry({opened_on:'2001-01-31',completed_on:'2001-01-31'});await entry({opened_on:'2001-03-01',completed_on:'2001-03-01'});
   let saved=await value("select public.store_save_monthly_financials('2001-02-01',0,5000,null) as v");assert.equal(saved.revision,1);
-  result=await read();assert.equal(result.sales.revenue,2000);assert.equal(result.sales.profit,550);assert.equal(result.sales.net_profit,null);assert.equal(result.goal.minimum,500);assert.equal(result.goal.stretch,1000);assert.equal(result.goal.return_percent,null,'unknown monthly expenses never become zero');
+  result=await read();assert.equal(result.sales.revenue,2000);assert.equal(result.sales.profit,550);assert.equal(result.sales.net_profit,null);assert.equal(result.goal.target,500);assert.equal(result.goal.target_percent,10);assert.equal(result.goal.return_percent,null,'unknown monthly expenses never become zero');
   await value("select public.store_save_monthly_financials('2001-02-01',1,5000,50) as v");result=await read();assert.equal(result.sales.net_profit,500);assert.equal(result.goal.return_percent,10,'monthly expenses are subtracted once, after deal costs');
   await value("select public.store_save_monthly_financials('2001-02-01',2,5000,0) as v");result=await read();assert.equal(result.sales.net_profit,550);assert.equal(result.goal.return_percent,11,'explicit zero monthly expenses is valid');
   const missing=await entry({purchase_cost:null,expenses:null});result=await read();assert.equal(result.sales.profit,null);assert.equal(result.sales.net_profit,null);assert.equal(result.sales.profit_known,550);assert.equal(result.sales.profit_missing,1);assert.equal(result.goal.return_percent,null);
@@ -38,9 +38,9 @@ module.exports=async db=>{
   for(const amount of [-1,1.5,1000000000])await rejected(()=>value("select public.store_save_monthly_financials('2001-02-01',3,5000,$1) as v",[amount]),'22023');
   await rejected(()=>value("select public.store_save_monthly_financials('2001-02-01',3,null,null) as v"),'22023');
   await rejected(()=>value("select public.store_save_monthly_financials('2001-02-02',0,1000,0) as v"),'22023');
-  await value("select public.store_save_monthly_financials('2001-02-01',3,10000,100) as v");result=await read();assert.equal(result.capital.revision,4);assert.equal(result.goal.minimum,1000);assert.equal(result.sales.net_profit,-450);assert.equal(result.goal.return_percent,-4.5);
+  await value("select public.store_save_monthly_financials('2001-02-01',3,10000,100) as v");result=await read();assert.equal(result.capital.revision,4);assert.equal(result.goal.target,1000);assert.equal(result.sales.net_profit,-450);assert.equal(result.goal.return_percent,-4.5);
   const other=await value("select public.store_business_overview('2001-04-01') as v");assert.equal(other.capital.invested_capital,null);assert.equal(other.sales.revenue,0);assert.equal(other.sales.profit,0);assert.equal(other.sales.net_profit,null);
-  await value("select public.store_save_monthly_financials('2001-04-01',0,null,200) as v");const expensesOnly=await value("select public.store_business_overview('2001-04-01') as v");assert.equal(expensesOnly.sales.net_profit,-200);assert.equal(expensesOnly.goal.return_percent,null);assert.equal(expensesOnly.goal.minimum,null);
+  await value("select public.store_save_monthly_financials('2001-04-01',0,null,200) as v");const expensesOnly=await value("select public.store_business_overview('2001-04-01') as v");assert.equal(expensesOnly.sales.net_profit,-200);assert.equal(expensesOnly.goal.return_percent,null);assert.equal(expensesOnly.goal.target,null);
   await as(staff);await rejected(read,'42501');await rejected(()=>value("select public.store_save_monthly_financials('2001-02-01',4,9000,0) as v"),'42501');
   await as(owner,901);await rejected(read,'PT403');await as(owner,0,'aal1');await rejected(read,'42501');
   await as(owner);await rejected(()=>q('select * from store_private.monthly_capital'),'42501');
