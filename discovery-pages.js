@@ -88,10 +88,11 @@
   const en=lang==='en';
   const cases={
    hermes:{
-    selection:['Сумки Hermès разных оттенков','Hermès bags in different colours','Наш выкуп нескольких сумок Hermès. Разные оттенки и исполнения в одной подборке.','Our purchase of several Hermès bags in different colours and styles.'],
-    blue:['Синяя сумка Hermès','Blue Hermès bag','Нашли и выкупили синюю сумку Hermès с плечевым ремнём.','We sourced and purchased this blue Hermès bag with a shoulder strap.'],
-    pockets:['Hermès с наружными карманами','Hermès with exterior pockets','Выкуп сумки Hermès в необычном исполнении с наружными карманами.','A Hermès bag we purchased in a distinctive design with exterior pockets.'],
-    collection:['Сумки и обувь Hermès','Hermès bags and shoes','Часть наших выкупов Hermès: сумки и обувь.','A selection of our Hermès purchases, including bags and shoes.']
+    selection:['Hermès Dépêches 25','Hermès Dépêches 25','Выкупили Hermès Dépêches 25 в разных оттенках. На фото — наши реальные покупки.','We purchased Hermès Dépêches 25 bags in different colours. These are our own purchase photographs.'],
+    blue:['Hermès HAC à Dos PM','Hermès HAC à Dos PM','Нашли и выкупили Hermès HAC à Dos PM в синем цвете.','We sourced and purchased this Hermès HAC à Dos PM in blue.'],
+    pockets:['Hermès Luggage Cargo','Hermès Luggage Cargo','Наш выкуп Hermès Luggage Cargo с наружными карманами.','Our purchase of a Hermès Luggage Cargo with exterior pockets.'],
+    collection:['Hermès Birkin 25','Hermès Birkin 25','Hermès Birkin 25 из наших выкупов — на фото вместе с другими покупками Hermès.','A Hermès Birkin 25 from our purchases, pictured with other Hermès pieces.'],
+    black:['Чёрная сумка Hermès','Black Hermès bag','Ещё один наш выкуп Hermès — чёрная сумка с золотистой фурнитурой.','Another Hermès purchase by our team: a black bag with gold-tone hardware.']
    },
    chanel:{
     shopping:['Выкупы Chanel','Chanel purchases','Наши покупки Chanel — живой кадр после выкупа.','Our Chanel purchases, photographed after shopping.'],
@@ -137,10 +138,11 @@
  function hermesPortfolio(lang,prefix){
   const en=lang==='en';
   const pictures=[
-   ['selection',en?'Three Hermès bags in different colours, photographed during our purchases':'Три сумки Hermès разных оттенков — фото наших выкупов'],
-   ['blue',en?'Blue Hermès bag with a shoulder strap in the boutique':'Синяя сумка Hermès с плечевым ремнём в бутике'],
-   ['pockets',en?'Hermès bag with exterior pockets in its orange box':'Сумка Hermès с наружными карманами в оранжевой коробке'],
-   ['collection',en?'Hermès bags and shoes from our purchases':'Сумки и обувь Hermès из наших выкупов']
+   ['selection',en?'Hermès Dépêches 25 bags in different colours from our purchases':'Hermès Dépêches 25 разных оттенков — фото наших выкупов'],
+   ['blue',en?'Blue Hermès HAC à Dos PM from our purchases':'Синяя Hermès HAC à Dos PM из наших выкупов'],
+   ['pockets',en?'Hermès Luggage Cargo with exterior pockets in its box':'Hermès Luggage Cargo с наружными карманами в коробке'],
+   ['collection',en?'Hermès Birkin 25 with other Hermès purchases':'Hermès Birkin 25 вместе с другими нашими выкупами'],
+   ['black',en?'Black Hermès bag with gold-tone hardware, photographed in a car':'Чёрная сумка Hermès с золотистой фурнитурой в машине']
   ];
   return `<section class="discovery-section hermes-portfolio" aria-labelledby="${e(prefix)}brandPortfolio"><div class="hermes-portfolio-heading"><h2 id="${e(prefix)}brandPortfolio">${en?'Hermès bags we’ve sourced':'Наши выкупы Hermès'}</h2><p>${en?'A selection of our Hermès purchases, across different styles, colours and finishes. Share a photograph of the bag you’re looking for and your preferences. We’ll check available options and discuss sourcing it for you.':'Часть наших выкупов Hermès. Разные модели, оттенки и исполнения — за каждой находкой стоит конкретный запрос. Пришлите фотографию сумки, которую ищете, и ваши пожелания: проверим доступные варианты и обсудим выкуп.'}</p></div><div class="hermes-portfolio-gallery">${pictures.map(([file,alt])=>`<figure><img src="/images/editorial/hermes-sourced-${file}.webp" alt="${e(alt)}" width="600" height="800" loading="lazy" decoding="async">${purchaseCaption('hermes',file,alt,lang)}</figure>`).join('')}</div><div class="hermes-portfolio-footer"><p>${en?'Examples of our purchases. These bags are not a live stock listing.':'Примеры наших выкупов. Эти сумки не являются предложениями из наличия.'}</p>${action(en?'Find my bag':'Найти мою сумку',lang,en?'a Hermès bag':'сумки Hermès')}</div></section>`;
  }
@@ -228,7 +230,7 @@
    <aside class="discovery-channels outlet-channels"><div><h2>${en?'More finds in our channels':'Больше находок — в наших каналах'}</h2><p>${en?'Outlet offers and private sale selections from Julia and Vasya.':'Предложения из аутлетов и подборки с приватных сейлов от Юли и Васи.'}</p></div><a href="https://t.me/+lz-ze3-GDEQ0YmFi" target="_blank" rel="noopener">${en?'Julia · Outlet':'Юля · Аутлет'}${arrow}</a><a href="https://t.me/+NWLPh8nc47kzMzI0" target="_blank" rel="noopener">${en?'Vasya · Outlet':'Вася · Аутлет'}${arrow}</a></aside></div>`;
  }
  const editorialImages={
-  '/brands/hermes':['selection','blue','pockets','collection'].map(name=>'/images/editorial/hermes-sourced-'+name+'.webp'),
+  '/brands/hermes':['selection','blue','pockets','collection','black'].map(name=>'/images/editorial/hermes-sourced-'+name+'.webp'),
   '/brands/chanel':['shopping','black-bag','giraffe-bag','tweed-bag','pink-bag'].map(name=>'/images/editorial/chanel-journal-'+name+'.webp'),
   '/watches':['rolex-green','rolex-blue','audemars-piguet','cartier-rolex'].map(name=>'/images/editorial/watches-journal-'+name+'.webp')
  };
