@@ -151,7 +151,7 @@
 
 /* Keep the bag visible without requiring a horizontal swipe. */
 @media(max-width:899px){
- .bottom-nav.is-website-navigation{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));width:calc(100% - 16px);max-width:520px;overflow:visible;justify-content:normal}
+ .bottom-nav.is-website-navigation{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));width:calc(100% - 16px);max-width:520px;overflow:visible;justify-content:normal}
  .bottom-nav.is-website-navigation .mobile-secondary:not(.hidden){display:none!important}
  .bottom-nav.is-website-navigation .mobile-more{display:flex!important;height:66px;padding:10px 0 0;gap:0;justify-content:flex-start}
  .bottom-nav.is-website-navigation :is(button,a):is([data-tab],.mobile-more){width:100%;min-width:0;flex:initial}
