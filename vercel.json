@@ -56,6 +56,10 @@
   "outputDirectory": "dist",
   "rewrites": [
     {
+      "source": "/jewellery",
+      "destination": "/api/site-page?page=jewellery"
+    },
+    {
       "source": "/watches",
       "destination": "/api/site-page?page=watches"
     },
@@ -240,7 +244,7 @@
       "permanent": true
     },
     {
-      "source": "/:page(catalog|watches|outlet|services|sell)/",
+      "source": "/:page(catalog|watches|jewellery|outlet|services|sell)/",
       "destination": "/:page",
       "permanent": true
     },
@@ -263,6 +267,17 @@
         }
       ],
       "destination": "https://www.juliproz.com/watches",
+      "statusCode": 301
+    },
+    {
+      "source": "/jewellery",
+      "has": [
+        {
+          "type": "host",
+          "value": "juliproz-store.vercel.app"
+        }
+      ],
+      "destination": "https://www.juliproz.com/jewellery",
       "statusCode": 301
     }
   ],

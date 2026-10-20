@@ -111,19 +111,19 @@ function syncWebNavigation(){
  const web=!isTelegramStore();
  document.querySelectorAll('.bottom-nav .web-only').forEach(b=>b.classList.toggle('hidden',!web));
  document.querySelector('.bottom-nav')?.classList.toggle('is-website-navigation',web);
- if(!web&&['home','about','hermes','chanel','watches','outlet'].includes(state.tab)){const untouched=navigationRevision===0;setTab('catalog');if(untouched)navigationRevision=0;}
+ if(!web&&['home','about','hermes','chanel','watches','jewellery','outlet'].includes(state.tab)){const untouched=navigationRevision===0;setTab('catalog');if(untouched)navigationRevision=0;}
 }
 
 function initialStoreTab(){
  const params=new URLSearchParams(location.search);
  if(!isTelegramStore()&&String(location.pathname||'').replace(/\/$/,'')==='/catalog'&&params.get('category')==='watches')return 'watches';
- const page=window.SiteSEO?.page,route=page?.kind;if(['brand','catalog','watches','services','sell','outlet'].includes(route))return route==='brand'?(page.brand==='Hermès'?'hermes':page.brand==='Chanel'?'chanel':'catalog'):route;
+ const page=window.SiteSEO?.page,route=page?.kind;if(['brand','catalog','watches','jewellery','services','sell','outlet'].includes(route))return route==='brand'?(page.brand==='Hermès'?'hermes':page.brand==='Chanel'?'chanel':'catalog'):route;
  if(!isTelegramStore()&&['favorites','cart','about'].includes(params.get('tab')))return params.get('tab');
  const linked=/^\/product\/[1-9]\d*\/?$/.test(location.pathname)||params.has('product')||params.get('startapp')?.startsWith('p_')||params.get('tgWebAppStartParam')?.startsWith('p_')||window.Telegram?.WebApp?.initDataUnsafe?.start_param?.startsWith('p_');
  return isTelegramStore()||linked||params.get('tab')==='catalog'?'catalog':'home';
 }
 function catalogSelectionFromURL(){return !isTelegramStore()&&window.SaleCollections&&String(location.pathname||'').replace(/\/$/,'')==='/catalog'?window.SaleCollections.fromSearch(location.search):{sale:false,saleCollection:null}}
-let state={sort:"recommended",...catalogSelectionFromURL(),product_condition:null,gender:null,fulfillment_status:null,category:initialStoreTab()==='watches'?'Часы':null,brand:window.SiteSEO?.page?.brand||null,size:null,search:"",favorites:new Set((()=>{try{return JSON.parse(localStorage.getItem("jpFav")||"[]").map(String)}catch{return []}})()),tab:initialStoreTab()};
+let state={sort:"recommended",...catalogSelectionFromURL(),product_condition:null,gender:null,fulfillment_status:null,category:initialStoreTab()==='watches'?'Часы':initialStoreTab()==='jewellery'?'Украшения':null,brand:window.SiteSEO?.page?.brand||null,size:null,search:"",favorites:new Set((()=>{try{return JSON.parse(localStorage.getItem("jpFav")||"[]").map(String)}catch{return []}})()),tab:initialStoreTab()};
 const grid=document.getElementById("grid"),count=document.getElementById("count"),sheet=document.getElementById("sheet"),options=document.getElementById("sheetOptions");
 let currentFilter=null,tempValue=null;
 
@@ -163,7 +163,7 @@ function menuSizeLabel(value){
 }
 function reconcileFilters(){
   if(!products.length&&firstLoad)return;
-  if(state.tab!=='watches'&&state.category&&!valuesFor('category').includes(state.category))state.category=null;
+  if(!['watches','jewellery'].includes(state.tab)&&state.category&&!valuesFor('category').includes(state.category))state.category=null;
   if(state.brand&&!valuesFor('brand').includes(state.brand)&&!(window.SiteSEO?.page?.kind==='brand'&&window.SiteSEO.page.brand===state.brand))state.brand=null;
   if(state.size&&!valuesFor('size').includes(state.size))state.size=null;
 }
@@ -231,9 +231,9 @@ function renderCatalogueRows(rows,empty){
   catalogueObserver=new IntersectionObserver(entries=>{if(entries.some(e=>e.isIntersecting))appendCatalogueRows()},{rootMargin:'800px'});
   catalogueObserver.observe(catalogueMore);
 }
-function isCatalogTab(){return ['catalog','hermes','chanel','watches'].includes(state.tab)}
+function isCatalogTab(){return ['catalog','hermes','chanel','watches','jewellery'].includes(state.tab)}
 function render(){
-  if(state.tab==='watches'&&state.category!=='Часы')state.tab='catalog';
+  if((state.tab==='watches'&&state.category!=='Часы')||(state.tab==='jewellery'&&state.category!=='Украшения'))state.tab='catalog';
   if((state.tab==='hermes'&&state.brand!=='Hermès')||(state.tab==='chanel'&&state.brand!=='Chanel'))state.tab='catalog';
   window.SiteSEO?.sync(state,lastCatalogLoadedAt||products.length?products:null);
   syncOutletWishlist();
@@ -244,7 +244,7 @@ function render(){
   document.getElementById("webHomePage").classList.toggle("hidden",!inHome);
   document.getElementById("webAboutPage").classList.toggle("hidden",!inAbout);
   document.getElementById("webOutletPage").classList.toggle("hidden",!inOutlet);
-  const editorial=inOutlet||state.tab==='watches'||(isCatalogTab()&&window.DiscoveryPages?.definitions[window.SiteSEO?.page?.path?.split('/')[2]]);
+  const editorial=inOutlet||['watches','jewellery'].includes(state.tab)||(isCatalogTab()&&window.DiscoveryPages?.definitions[window.SiteSEO?.page?.path?.split('/')[2]]);
   document.querySelector(".brand")?.classList.toggle("is-discovery-page",Boolean(editorial));
   document.querySelector(".brand")?.classList.toggle("is-information-page",inSell||inServices||inWebPage||Boolean(editorial));
   document.querySelector(".brand")?.classList.toggle("is-catalog-page",isCatalogTab()&&!editorial);
@@ -255,13 +255,13 @@ function render(){
   document.querySelector(".catalog-toolbar")?.classList.toggle("hidden",!isCatalogTab()||Boolean(editorial));
   document.querySelector(".catalog-head")?.classList.toggle("hidden",inCart||inSell||inServices||inWebPage);
   document.getElementById("filterSummary").classList.toggle("hidden",!isCatalogTab()||Boolean(editorial)||!document.getElementById("filterSummary").textContent);
-  window.StoreAnalytics?.view?.(['chanel','watches'].includes(state.tab)?'catalog':state.tab,isCatalogTab()?state.category:null);
+  window.StoreAnalytics?.view?.(['chanel','watches','jewellery'].includes(state.tab)?'catalog':state.tab,isCatalogTab()?state.category:null);
   if(inSell||inServices||inWebPage)return;
   renderCart();
   if(inCart)return;
   syncCatalogSort();
   if(isCatalogTab()){
-    reconcileFilters();window.StoreAnalytics?.view?.(['chanel','watches'].includes(state.tab)?'catalog':state.tab,state.category);renderCatalogMenu();
+    reconcileFilters();window.StoreAnalytics?.view?.(['chanel','watches','jewellery'].includes(state.tab)?'catalog':state.tab,state.category);renderCatalogMenu();
     document.querySelectorAll("[data-gender]").forEach(b=>b.setAttribute("aria-pressed",String((b.dataset.gender||null)===state.gender)));
     document.querySelectorAll("[data-filter]").forEach(b=>{const type=b.dataset.filter;b.textContent=(type==='fulfillment_status'?statusLabels[state[type]]:state[type])||{fulfillment_status:"Наличие",category:"Категория",brand:"Бренд",size:"Размер"}[type];b.classList.toggle("selected",!!state[type])});
     document.getElementById("filterSummary").classList.toggle("hidden",Boolean(editorial)||!document.getElementById("filterSummary").textContent);
@@ -468,11 +468,11 @@ function liveCartProduct(row){const p=products.find(p=>String(p.id)===row.id);re
 function cartSnapshot(p){const snapshot=Object.fromEntries(['id','brand','name','category','price','currency','image_url','photos','size','fulfillment_status','reserved','stock_quantities','original_price'].map(k=>[k,['price','original_price'].includes(k)?window.ProductPricing.amount(p[k],p.currency):p[k]]));snapshot.price_basis=p.price_basis||{price:p.price,original_price:p.original_price};return snapshot}
 function saveCart(){cartRevision++;try{localStorage.setItem('jpCart',JSON.stringify(cart))}catch{document.getElementById('cartStatus').textContent='Корзина доступна в этом сеансе. Браузер не разрешил сохранить её.'}}
 function setTab(tab,options={}){
-  if(state.tab==='watches'&&tab!=='watches'){state.category=null;state.size=null}
-  if(['home','about','hermes','chanel','watches','outlet'].includes(tab)&&isTelegramStore())return;
-  if(window.SiteSEO?.page?.kind==='brand'&&!['catalog','hermes','chanel','watches'].includes(tab))state.brand=null;
+  if(['watches','jewellery'].includes(state.tab)&&tab!==state.tab){state.category=null;state.size=null}
+  if(['home','about','hermes','chanel','watches','jewellery','outlet'].includes(tab)&&isTelegramStore())return;
+  if(window.SiteSEO?.page?.kind==='brand'&&!['catalog','hermes','chanel','watches','jewellery'].includes(tab))state.brand=null;
   if(tab==='hermes'||tab==='chanel'){state.brand=tab==='hermes'?'Hermès':'Chanel';state.sale=false;state.saleCollection=null;state.product_condition=state.gender=state.fulfillment_status=state.category=state.size=null;state.search='';document.getElementById('search').value=''}
-  if(tab==='watches'){state.brand=null;state.sale=false;state.saleCollection=null;state.product_condition=state.gender=state.fulfillment_status=state.size=null;state.category='Часы';state.search='';document.getElementById('search').value=''}
+  if(['watches','jewellery'].includes(tab)){state.brand=null;state.sale=false;state.saleCollection=null;state.product_condition=state.gender=state.fulfillment_status=state.size=null;state.category=tab==='watches'?'Часы':'Украшения';state.search='';document.getElementById('search').value=''}
   if(!isTelegramStore()&&options.history!==false)window.SiteSEO?.navigate(tab,options);
   setSortOpen(false);
   if(tab!=='catalog'){document.getElementById('catalogSearch').classList.add('hidden');document.getElementById('toggleSearch').setAttribute('aria-expanded','false');state.search='';document.getElementById('search').value=''}
@@ -676,7 +676,7 @@ function followInPlace(e){return !e.defaultPrevented&&!(e.button>0||e.ctrlKey||e
 document.querySelectorAll('[data-web-section]').forEach(b=>b.onclick=e=>{if(!followInPlace(e))return;e.preventDefault();if(b.dataset.webSection==='catalog'&&window.SiteSEO?.page?.kind==='brand')state.brand=null;setTab(b.dataset.webSection)});
 document.querySelectorAll("[data-tab]").forEach(b=>b.onclick=e=>{
  if(!followInPlace(e))return;e.preventDefault();
- const tab=b.dataset.tab;if(tab==='catalog'&&(state.tab==='hermes'||state.tab==='chanel'||state.tab==='watches'||state.tab==='outlet'||window.SiteSEO?.page?.kind==='brand')){state.brand=null;state.sale=false;state.saleCollection=null;state.product_condition=state.gender=state.fulfillment_status=state.category=state.size=null;state.search='';document.getElementById('search').value=''}
+ const tab=b.dataset.tab;if(tab==='catalog'&&(state.tab==='hermes'||state.tab==='chanel'||state.tab==='watches'||state.tab==='jewellery'||state.tab==='outlet'||window.SiteSEO?.page?.kind==='brand')){state.brand=null;state.sale=false;state.saleCollection=null;state.product_condition=state.gender=state.fulfillment_status=state.category=state.size=null;state.search='';document.getElementById('search').value=''}
  setTab(tab);pressNavWithPaw(b);window.scrollTo({top:0,behavior:'instant'});
 });
 async function openLinkedProduct(id){

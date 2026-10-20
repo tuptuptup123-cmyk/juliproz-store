@@ -55,7 +55,7 @@ const server=http.createServer((req,res)=>{const url=new URL(req.url,'http://loc
  assert.equal(await page.locator('#homeBuyerContent a[data-contact-event]').getAttribute('href'),'https://t.me/juliproz');
  console.log('PASS homepage steps, FAQ keyboard, anchor, RU/EN contacts, reload and layout',width);
  const nav=page.locator('.bottom-nav');
- assert.deepEqual(await nav.locator('[data-tab]:visible').evaluateAll(items=>items.map(x=>x.dataset.tab)),width<900?['home','catalog','watches','favorites','cart']:['home','catalog','hermes','chanel','watches','outlet','favorites','cart','sell','services','about']);
+ assert.deepEqual(await nav.locator('[data-tab]:visible').evaluateAll(items=>items.map(x=>x.dataset.tab)),width<900?['home','catalog','watches','favorites','cart']:['home','catalog','hermes','chanel','watches','jewellery','outlet','favorites','cart','sell','services','about']);
  await clickSiteTab(page,'hermes');await page.waitForURL(url=>url.pathname==='/brands/hermes');
  assert.equal(await nav.locator('[aria-current=page]').getAttribute('data-tab'),'hermes');
  assert.equal(await page.locator('#seoCatalogIntro .discovery-model').count(),3);
