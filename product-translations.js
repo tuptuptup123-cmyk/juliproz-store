@@ -385,5 +385,11 @@ Object.assign(window.SiteTranslations.products, {
   "Чёрные туфли из кожи Nappa с острым мысом, ремешком и пряжкой Kelly. Каблук 4 см. Размер 38.5. В наличии.": "Black Nappa leather shoes with a pointed toe, strap and Kelly buckle. Heel: 4 cm. Size 38.5. In stock.",
   "Чёрный картхолдер с бирюзово-зелёным рисунком.": "Black cardholder with a turquoise-green pattern.",
   "Чёрный кожаный верх, текстильный корпус с чёрно-белым рисунком и фурнитура золотистого цвета.": "Black leather upper, textile body with a black and white pattern, and gold-tone hardware.",
-  "Это ожерелье Gucci Lion Head Necklace с черным кристаллом Swarovski в виде головы рычащего льва.": "Gucci Lion Head Necklace with a black Swarovski crystal in the form of a roaring lion’s head."
+  "Это ожерелье Gucci Lion Head Necklace с черным кристаллом Swarovski в виде головы рычащего льва.": "Gucci Lion Head Necklace with a black Swarovski crystal in the form of a roaring lion’s head.",
+  "Часы Cosmograph Daytona, 40mm, платина, голубой циферблат, ref. 126506-0001": "Cosmograph Daytona watch, 40 mm, platinum, light blue dial, ref. 126506-0001",
+  "Часы Cosmograph Daytona, 40мм, сталь, циферблат “Panda”, ref. 126500LN-0001": "Cosmograph Daytona watch, 40 mm, steel, “Panda” dial, ref. 126500LN-0001",
+  "Часы Cosmograph Daytona, 40mm, сталь, черный циферблат, ref. 126500LN-0002": "Cosmograph Daytona watch, 40 mm, steel, black dial, ref. 126500LN-0002",
+  "Часы Cosmograph Daytona, 40 mm, желтое золото, белый циферблат, ref. 126508-0001": "Cosmograph Daytona watch, 40 mm, yellow gold, white dial, ref. 126508-0001",
+  "Часы Cosmograph Daytona, 40 mm, сталь и желтое золото, белый циферблат, ref. 126503-0001": "Cosmograph Daytona watch, 40 mm, steel and yellow gold, white dial, ref. 126503-0001",
+  "Часы Cosmograph Daytona, 40 mm, розовое золото, циферблат метеорит, ref. 126515LN-0008": "Cosmograph Daytona watch, 40 mm, rose gold, meteorite dial, ref. 126515LN-0008"
 });
