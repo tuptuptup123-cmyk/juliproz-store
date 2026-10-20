@@ -68,7 +68,7 @@ const fixtures=[
 
   assert.match(await page.locator('[data-id="900001"] .card-meta').innerText(),/Комиссия/);
   const infoBadges=await page.locator('.product .condition-badge').evaluateAll(es=>es.map(e=>({bg:getComputedStyle(e).backgroundColor,border:getComputedStyle(e).borderColor,weight:getComputedStyle(e).fontWeight})));
-  assert.ok(infoBadges.every(b=>b.bg==='rgb(246, 246, 246)'&&b.border==='rgb(216, 216, 216)'&&b.weight==='700'),'Informational badges are neutral with bold text');
+  assert.ok(infoBadges.every(b=>b.bg==='rgb(246, 246, 246)'&&b.border==='rgb(216, 216, 216)'&&b.weight==='500'),'Informational badges are neutral and use the current medium-weight typography');
   const cards=await page.locator('.product').evaluateAll(els=>els.map(el=>{
    const rect=x=>{const b=x.getBoundingClientRect();return {x:b.x,y:b.y,right:b.right,bottom:b.bottom}};
    return {photo:rect(el.querySelector('.photo')),price:rect(el.querySelector('.price')),meta:el.querySelector('.card-meta')?.children.length?rect(el.querySelector('.card-meta')):null,size:rect(el.querySelector('.card-size')),card:rect(el),parts:[...el.querySelectorAll('.sale-price>*')].map(rect).sort((a,b)=>a.y-b.y)};
@@ -107,7 +107,7 @@ const fixtures=[
   assert.equal(await page.locator('.detail .product-eyebrow span').count(),0,'Do not repeat positive in-stock status in detail');
   assert.equal(await page.locator('.detail .discount-badge').count(),0,'Detail hides percentage badges too');
   assert.equal(await page.locator('.detail .price-original').count(),1,'Detail retains former price');
-  const detailBadge=await page.locator('.detail .condition-badge').first().evaluate(e=>({bg:getComputedStyle(e).backgroundColor,weight:getComputedStyle(e).fontWeight}));assert.deepEqual(detailBadge,{bg:'rgb(246, 246, 246)',weight:'700'});
+  const detailBadge=await page.locator('.detail .condition-badge').first().evaluate(e=>({bg:getComputedStyle(e).backgroundColor,weight:getComputedStyle(e).fontWeight}));assert.deepEqual(detailBadge,{bg:'rgb(246, 246, 246)',weight:'500'});
   assert.equal(await page.locator('.purchase-action').evaluate(e=>getComputedStyle(e).backgroundColor),'rgb(228, 202, 221)');
   const managerCta=await page.locator('.product-sourcing .sourcing-link').evaluate(e=>({background:getComputedStyle(e).backgroundColor,color:getComputedStyle(e).color,height:e.getBoundingClientRect().height}));
   assert.equal(managerCta.background,'rgb(228, 202, 221)');assert.equal(managerCta.color,'rgb(37, 57, 79)');assert.ok(managerCta.height>=48);
