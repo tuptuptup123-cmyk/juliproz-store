@@ -1,5 +1,5 @@
 'use strict';
-const fs=require('node:fs'),path=require('node:path'),http=require('node:http'),assert=require('node:assert/strict'),playwright=require('playwright');
+const fs=require('node:fs'),path=require('node:path'),https=require('node:https'),os=require('node:os'),{execFileSync}=require('node:child_process'),assert=require('node:assert/strict'),playwright=require('playwright');
 const root=path.resolve(__dirname,'..'),config=JSON.parse(fs.readFileSync(process.env.QA_REDIRECT_CONFIG||path.join(root,'vercel.json'))),engine=process.env.QA_BROWSER||'chromium';
 const row={id:281,brand:'Babolat × Lamborghini',name:'Ракетка для падела',size:'One Size',category:'Аксессуары',available:true,price:300,currency:'EUR',stock_quantities:{'One Size':1}};
 const types={'.html':'text/html','.js':'text/javascript','.css':'text/css','.woff2':'font/woff2'};
@@ -20,9 +20,13 @@ function redirect(url){
 }
 (async()=>{
  const sdk=process.env.QA_TELEGRAM_SDK?fs.readFileSync(process.env.QA_TELEGRAM_SDK,'utf8'):await fetch('https://telegram.org/js/telegram-web-app.js').then(r=>{assert.ok(r.ok);return r.text()});
- const origins={},servers=[];
+ const origins={},servers=[],tlsDir=fs.mkdtempSync(path.join(os.tmpdir(),'jp-origin-tls-'));
+ // Match production HTTPS so WebKit's upgrade-insecure-requests does not
+ // upgrade HTTP loopback assets to an HTTP-only test server.
+ execFileSync('openssl',['req','-x509','-newkey','rsa:2048','-nodes','-days','1','-subj','/CN=localhost','-keyout',path.join(tlsDir,'key.pem'),'-out',path.join(tlsDir,'cert.pem')],{stdio:'ignore'});
+ const tls={key:fs.readFileSync(path.join(tlsDir,'key.pem')),cert:fs.readFileSync(path.join(tlsDir,'cert.pem'))};
  for(const host of ['juliproz-store.vercel.app','www.juliproz.com']){
-  const server=http.createServer((req,res)=>{
+  const server=https.createServer(tls,(req,res)=>{
    const url=new URL(req.url,'https://'+host),move=redirect(url);
    if(move){const target=new URL(move.url);res.writeHead(move.status,{location:(origins[target.hostname]||target.origin)+target.pathname+target.search});return res.end()}
    if(url.pathname.endsWith('/api/catalog')){res.setHeader('Content-Type','application/json');return res.end(JSON.stringify([row]))}
@@ -38,13 +42,13 @@ function redirect(url){
    if(path.basename(file)==='telegram-entry.js')body=body.toString().replace("'juliproz.com',", "'127.0.0.1', 'juliproz.com',");
    res.writeHead(200,{'Content-Security-Policy':config.headers[0].headers[0].value,'Content-Type':types[path.extname(file)]||'application/octet-stream'});res.end(body);
   });
-  await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));servers.push(server);origins[host]='http://127.0.0.1:'+server.address().port;
+  await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));servers.push(server);origins[host]='https://127.0.0.1:'+server.address().port;
  }
  const launchOrigin=origins['juliproz-store.vercel.app'],browser=await playwright[engine].launch();
  try{
   for(const width of [320,390,1440])for(const entry of ['/', '/index.html', '/?product=281', '/telegram/']){
-   const context=await browser.newContext({viewport:{width,height:width===320?568:844}}),page=await context.newPage(),accepted=[],blocked=[],errors=[];
-   page.on('pageerror',e=>errors.push(e.message));
+   const context=await browser.newContext({ignoreHTTPSErrors:true,viewport:{width,height:width===320?568:844}}),page=await context.newPage(),accepted=[],blocked=[],errors=[],networkErrors=[];
+   page.on('pageerror',e=>errors.push(e.message));page.on('requestfailed',r=>{if(new URL(r.url()).hostname==='127.0.0.1'&&r.failure()?.errorText!=='net::ERR_ABORTED')networkErrors.push(r.failure()?.errorText)});
    await context.exposeBinding('__recordBridge',({frame},name,data)=>{(new URL(frame.url()).origin===launchOrigin?accepted:blocked).push({name,data})});
    await context.addInitScript(()=>{
     try{localStorage.setItem('jpAnalyticsConsent','declined');localStorage.setItem('jpAntiScamSeenV1','1')}catch{}
@@ -59,7 +63,7 @@ function redirect(url){
    });
    const fragment='#tgWebAppVersion=10.2&tgWebAppPlatform='+(width===1440?'macos':'ios')+'&tgWebAppStartParam=p_281';
    await page.goto(launchOrigin+entry+(entry.includes('?')?'':'?startapp=p_281')+fragment);
-   await page.waitForURL(u=>u.pathname==='/telegram/',{timeout:10000}).catch(error=>{console.error({url:page.url(),errors});throw error});
+   await page.waitForURL(u=>u.pathname==='/telegram/',{timeout:10000}).catch(error=>{console.error({url:page.url(),errors,networkErrors});throw error});
    assert.equal(new URL(page.url()).origin,launchOrigin,'the Mini App must stay on its launch origin; Telegram rejects commands after cross-origin redirects');
    assert.equal(new URL(page.url()).hash,fragment);
    await page.locator('#productModal:not(.hidden) [data-action=contact]').waitFor();
@@ -76,5 +80,5 @@ function redirect(url){
    assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
    await context.close();console.log(`PASS ${engine} ${width} ${entry}: deployed redirects, original origin, product draft and cart draft`);
   }
- }finally{await browser.close();await Promise.all(servers.map(server=>new Promise(resolve=>server.close(resolve))))}
+ }finally{await browser.close();await Promise.all(servers.map(server=>new Promise(resolve=>server.close(resolve))));fs.rmSync(tlsDir,{recursive:true,force:true})}
 })().catch(e=>{console.error(e);process.exitCode=1});
