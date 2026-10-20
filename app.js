@@ -117,7 +117,7 @@ function syncWebNavigation(){
 function initialStoreTab(){
  const params=new URLSearchParams(location.search);
  if(!isTelegramStore()&&String(location.pathname||'').replace(/\/$/,'')==='/catalog'&&params.get('category')==='watches')return 'watches';
- const page=window.SiteSEO?.page,route=page?.kind;if(['brand','catalog','services','sell','outlet'].includes(route))return route==='brand'?(page.brand==='Hermès'?'hermes':page.brand==='Chanel'?'chanel':'catalog'):route;
+ const page=window.SiteSEO?.page,route=page?.kind;if(['brand','catalog','watches','services','sell','outlet'].includes(route))return route==='brand'?(page.brand==='Hermès'?'hermes':page.brand==='Chanel'?'chanel':'catalog'):route;
  if(!isTelegramStore()&&['favorites','cart','about'].includes(params.get('tab')))return params.get('tab');
  const linked=/^\/product\/[1-9]\d*\/?$/.test(location.pathname)||params.has('product')||params.get('startapp')?.startsWith('p_')||params.get('tgWebAppStartParam')?.startsWith('p_')||window.Telegram?.WebApp?.initDataUnsafe?.start_param?.startsWith('p_');
  return isTelegramStore()||linked||params.get('tab')==='catalog'?'catalog':'home';
@@ -244,7 +244,7 @@ function render(){
   document.getElementById("webHomePage").classList.toggle("hidden",!inHome);
   document.getElementById("webAboutPage").classList.toggle("hidden",!inAbout);
   document.getElementById("webOutletPage").classList.toggle("hidden",!inOutlet);
-  const editorial=inOutlet||(isCatalogTab()&&window.DiscoveryPages?.definitions[window.SiteSEO?.page?.path?.split('/')[2]]);
+  const editorial=inOutlet||state.tab==='watches'||(isCatalogTab()&&window.DiscoveryPages?.definitions[window.SiteSEO?.page?.path?.split('/')[2]]);
   document.querySelector(".brand")?.classList.toggle("is-discovery-page",Boolean(editorial));
   document.querySelector(".brand")?.classList.toggle("is-information-page",inSell||inServices||inWebPage||Boolean(editorial));
   document.querySelector(".brand")?.classList.toggle("is-catalog-page",isCatalogTab()&&!editorial);
@@ -468,6 +468,7 @@ function liveCartProduct(row){const p=products.find(p=>String(p.id)===row.id);re
 function cartSnapshot(p){const snapshot=Object.fromEntries(['id','brand','name','category','price','currency','image_url','photos','size','fulfillment_status','reserved','stock_quantities','original_price'].map(k=>[k,['price','original_price'].includes(k)?window.ProductPricing.amount(p[k],p.currency):p[k]]));snapshot.price_basis=p.price_basis||{price:p.price,original_price:p.original_price};return snapshot}
 function saveCart(){cartRevision++;try{localStorage.setItem('jpCart',JSON.stringify(cart))}catch{document.getElementById('cartStatus').textContent='Корзина доступна в этом сеансе. Браузер не разрешил сохранить её.'}}
 function setTab(tab,options={}){
+  if(state.tab==='watches'&&tab!=='watches'){state.category=null;state.size=null}
   if(['home','about','hermes','chanel','watches','outlet'].includes(tab)&&isTelegramStore())return;
   if(window.SiteSEO?.page?.kind==='brand'&&!['catalog','hermes','chanel','watches'].includes(tab))state.brand=null;
   if(tab==='hermes'||tab==='chanel'){state.brand=tab==='hermes'?'Hermès':'Chanel';state.sale=false;state.saleCollection=null;state.product_condition=state.gender=state.fulfillment_status=state.category=state.size=null;state.search='';document.getElementById('search').value=''}
