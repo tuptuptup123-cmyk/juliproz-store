@@ -141,7 +141,7 @@
     await shareTelegram(data,version,status,e.target.closest('[data-share-action]'));return;
    }
    if(action==='bot-card'){
-    if(!inTelegram()||!/^[1-9]\d{0,15}$/.test(data.id)||!Number.isSafeInteger(Number(data.id)))return;
+    if(!data.staff||!/^[1-9]\d{0,15}$/.test(data.id)||!Number.isSafeInteger(Number(data.id)))return;
     try{
      const url='https://t.me/JuliProzBot?start=share_'+data.id;
      if(tgLinkAvailable())root.Telegram.WebApp.openTelegramLink(url);else externalLink(url);
@@ -149,23 +149,20 @@
     }catch{status.textContent='Не удалось открыть чат бота. Скопируйте ссылку на вещь ниже.'}
     return;
    }
-   const url=action==='manager'?data.manager:null;if(!url)return;
-   try{
-    if(inTelegram()&&root.Telegram?.WebApp?.openTelegramLink)root.Telegram.WebApp.openTelegramLink(url);
-    else externalLink(url);
-    if(action==='manager')root.StoreAnalytics?.track('manager_product',data.id);
-    status.textContent=action==='telegram'?'Выберите получателя и отправьте сообщение в Telegram.':'Отправьте подготовленное сообщение менеджеру в Telegram.';
-   }catch{status.textContent=action==='manager'?'Не удалось открыть чат. Скопируйте ссылку ниже.':'Не удалось открыть Telegram. Скопируйте ссылку ниже.'}
+   if(action==='manager'){
+    close();
+    if(root.ManagerContact.open(data.manager))root.StoreAnalytics?.track('manager_product',data.id);
+   }
   });
  }
  function tgLinkAvailable(){return typeof root.Telegram?.WebApp?.openTelegramLink==='function'}
  function open(product,options={}){
   const telegram=inTelegram(),data=links(product,{...options,inTelegram:telegram});if(!data)return false;
   if(!dialog)create();
-  current=data;epoch++;opener=document.activeElement;
+  current={...data,staff:options.staff===true};epoch++;opener=document.activeElement;
   dialog.querySelector('[data-share-action=telegram]').disabled=Boolean(nativeShare);
   dialog.querySelector('[data-share-action=telegram]').hidden=telegram;
-  const botCardAvailable=telegram&&/^[1-9]\d{0,15}$/.test(data.id)&&Number.isSafeInteger(Number(data.id));
+  const botCardAvailable=current.staff&&/^[1-9]\d{0,15}$/.test(data.id)&&Number.isSafeInteger(Number(data.id));
   dialog.querySelector('[data-share-action=bot-card]').hidden=!botCardAvailable;
   dialog.querySelector('.product-share-bot-hint').hidden=!botCardAvailable;
   dialog.querySelector('.product-share-name').textContent=data.title;

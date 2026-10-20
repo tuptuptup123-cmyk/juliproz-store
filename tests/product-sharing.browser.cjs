@@ -9,7 +9,7 @@ const base={brand:'Brioni',name:'Джинсы Brioni',category:'Джинсы',pr
 const rows=[{...base,id:301,size:'XXL',stock_quantities:{XXL:1}},{...base,id:302,size:'XL',stock_quantities:{XL:1}},...[[396,'Персиковая'],[397,'Лиловая']].map(([id,name])=>({...base,id,brand:'Loro Piana',name:name+' кепка',size:'XL'})),{...base,id:400,available:false,name:'Sold fixture'}];
 async function prepare(page,telegram){
  await page.addInitScript(telegram=>{
-  localStorage.setItem('jpAnalyticsConsent','declined');window.__shared=[];window.__copied=[];window.__clipboardDenied=false;
+  localStorage.setItem('jpAnalyticsConsent','declined');window.__shared=[];window.__copied=[];window.__clipboardDenied=false;window.open=url=>window.__shared.push(url);
   window.Telegram={WebApp:{ready(){},expand(){},initDataUnsafe:{},initData:telegram?'synthetic-launch':'',platform:telegram?'ios':'unknown',openTelegramLink:url=>window.__shared.push(url)}};
   Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText:async text=>{if(window.__clipboardDenied)throw Error('denied');window.__copied.push(text)}}});
   document.addEventListener('click',event=>{const a=event.target.closest?.('a');if(a?.href.startsWith('https://t.me/')){event.preventDefault();window.__shared.push(a.href)}},true);
@@ -36,11 +36,11 @@ async function prepare(page,telegram){
    let link;
    if(telegram){
     assert.equal(await page.locator('[data-share-action=telegram]').isVisible(),false);
-    await page.locator('[data-share-action=bot-card]').click();assert.equal(await page.evaluate(()=>window.__shared.at(-1)),'https://t.me/JuliProzBot?start=share_301');
+    assert.equal(await page.locator('[data-share-action=bot-card]').isVisible(),false);await page.locator('[data-share-action=bot-card]').evaluate(b=>b.click());assert.equal(await page.evaluate(()=>window.__shared.length),0);
    }else {
     await page.locator('[data-share-action=telegram]').click();link=new URL(await page.evaluate(()=>window.__shared.at(-1)));assert.equal(link.searchParams.get('url'),expected);assert.match(link.searchParams.get('text'),/XXL/);
    }
-   await page.locator('[data-share-action=manager]').click();link=new URL(await page.evaluate(()=>window.__shared.at(-1)));assert.equal(link.pathname,'/juliproz');assert.ok(link.searchParams.get('text').includes(expected));
+   await page.locator('[data-share-action=manager]').click();link=new URL(await page.evaluate(()=>window.__shared.at(-1)));assert.equal(link.pathname,'/juliproz');assert.ok(link.searchParams.get('text').includes(expected));if(telegram)await page.locator('[data-contact-close]').click();await page.locator('[data-action=share]').click();
    await page.evaluate(()=>window.__clipboardDenied=true);await page.locator('[data-share-action=copy]').click();await page.locator('.product-share-status').filter({hasText:'Скопируйте выделенную ссылку'}).waitFor();assert.equal(await page.locator('#productShareUrl').evaluate(e=>e.selectionEnd-e.selectionStart),expected.length);
    for(let i=0;i<8;i++){await page.keyboard.press('Tab');assert.ok(await dialog.evaluate(d=>d.contains(document.activeElement)),'focus stays in share dialog')}
    assert.ok(await dialog.evaluate(d=>d.scrollWidth<=d.clientWidth),'dialog has no horizontal overflow');assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
@@ -56,7 +56,7 @@ async function prepare(page,telegram){
   for(const width of [320,1280]){
    const page=await browser.newPage({viewport:{width,height:900}}),errors=[];page.on('pageerror',e=>errors.push(e.message));await prepare(page,false);await page.goto(origin+'/admin.html');
    await page.evaluate(rows=>{sessionClock.start();session={cookie_session:true,session_id:'synthetic-session',aal:'aal2',amr:[],expires_at:Date.now()/1000+3600,user:{id:'synthetic-owner'}};items=rows;$('authArea').classList.add('hidden');$('workspace').classList.remove('hidden');selectView('all',true)},rows);
-   await page.locator('[data-edit="302"]').click();await page.locator('#shareEditorProduct').click();await page.locator('#productShareDialog').waitFor();assert.equal(await page.locator('#productShareUrl').inputValue(),'https://www.juliproz.com/product/302');await page.keyboard.press('Escape');
+   await page.locator('[data-edit="302"]').click();await page.locator('#shareEditorProduct').click();await page.locator('#productShareDialog').waitFor();assert.equal(await page.locator('#productShareUrl').inputValue(),'https://www.juliproz.com/product/302');await page.locator('[data-share-action=bot-card]').click();assert.equal(await page.evaluate(()=>window.__shared.at(-1)),'https://t.me/JuliProzBot?start=share_302');await page.keyboard.press('Escape');
    await page.evaluate(p=>edit(p),rows[1]);await page.waitForFunction(()=>!document.querySelector('[name=internal_note]').disabled);await page.locator('[name=name]').fill('UNSAVED TITLE');await page.locator('#shareEditorProduct').click();await page.locator('.product-share-status').filter({hasText:'сохранённую карточку'}).waitFor();
    await page.locator('[data-share-action=telegram]').click();await page.locator('[data-share-action=copy]').click();assert.doesNotMatch(await page.evaluate(()=>JSON.stringify([window.__shared,window.__copied,document.querySelector('#productShareDialog').textContent])),/PRIVATE|UNSAVED/);
    assert.ok(await page.locator('#productShareDialog').evaluate(d=>d.scrollWidth<=d.clientWidth));await page.keyboard.press('Escape');
