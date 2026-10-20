@@ -24,6 +24,20 @@
    en:{subtitle:'Shoes, clothing and wardrobe details',intro:'Loro Piana personal shopping for shoes, cashmere and accessories. Browse the collection or ask us to source your model, size and colour.',about:'For a precise search, share the model name, size, colour and material. Add a reference or photograph if you want a particular version: similar pieces may have different finishes and seasonal details.',models:[['Shoes','approved-covers-20261012/358.webp','Looking for Summer Walk loafers or Open Walk ankle boots? Share the size, colour, upper material and lining. We will check available Loro Piana options and agree on the purchase.'],['Clothing',null,'Share the model, composition, size and preferred fit. Measurements of a piece that fits you can help with comparison.'],['Accessories','loro-cap-cleanup-20261011/339-cover.webp','We source caps and other wardrobe details by model, size and colour. Availability and final terms are confirmed before purchase.']]}
   }
  };
+ function jewellery(lang='ru',prefix=''){
+  const en=lang==='en',id=e(prefix),c=root.SeoContent?.pages?.jewellery||require('./seo-content.js').pages.jewellery;
+  const brands=[['Cartier','Love · Juste un Clou · Clash de Cartier'],['Van Cleef & Arpels','Alhambra · Perlée · Frivole'],['Messika','Move · My Twin · Lucky Move']];
+  const details=en?[
+   ['Model and reference','Send the brand, collection, reference or a photograph. Specify the metal, colour and preferred stones so we can compare the right versions.'],
+   ['Size and fit','For rings and bracelets, share the size and the sizing system. For necklaces, specify the length. We discuss measurements before agreeing on a piece.'],
+   ['Condition and accessories','Tell us whether you prefer new or pre-owned jewellery. We confirm the condition, photographs, included accessories, price and delivery before payment.']
+  ]:[
+   ['Модель и референс','Пришлите бренд, коллекцию, референс или фотографию. Укажите металл, цвет и пожелания по камням — так мы сможем сравнить нужные исполнения.'],
+   ['Размер и посадка','Для колец и браслетов укажите размер и систему измерения. Для колье — желаемую длину. Замеры обсудим до согласования конкретного украшения.'],
+   ['Состояние и комплект','Обсудим новые украшения или pre-owned. До оплаты уточним состояние, фотографии, комплектацию, итоговую стоимость и доставку.']
+  ];
+  return `<div class="discovery-page discovery-jewellery" data-no-translate><header class="watches-hero"><h1>${e(c.heading[lang])}</h1><p>${e(c.intro[lang])}</p><div class="discovery-actions">${action(en?'Find my jewellery':'Найти украшение',lang,en?'a piece of jewellery':'украшения')}<a class="discovery-text-link" href="#${id}jewelleryStock">${en?'View jewellery':'Смотреть украшения'} ↓</a></div></header><section class="discovery-section watches-brands" aria-label="${en?'Jewellery sourcing by brand':'Поиск украшений по бренду'}"><div class="discovery-features">${brands.map(([name,models])=>`<div><h2>${e(name)}</h2><p>${e(models)}</p>${action(en?'Request '+name:'Найти '+name,lang,name,true)}</div>`).join('')}</div></section><section class="discovery-section"><h2>${en?'Choosing your jewellery':'Как подобрать украшение'}</h2><div class="discovery-features">${details.map(([title,text])=>`<div><h3>${e(title)}</h3><p>${e(text)}</p></div>`).join('')}</div><p class="watches-note">${en?'Looking for another brand or a particular edition? Send a photograph or reference. Collections above are examples for enquiries; availability is confirmed individually.':'Ищете другой бренд или конкретный выпуск? Пришлите фото или референс. Коллекции выше — примеры для запроса; наличие конкретного украшения уточняется отдельно.'}</p></section><div class="discovery-stock-heading" id="${id}jewelleryStock"><h2>${en?'Jewellery in the collection':'Украшения в каталоге'}</h2><p>${en?'See the product page for the price, size, condition and availability.':'Цена, размер, состояние и наличие указаны в карточке украшения.'}</p></div></div>`;
+ }
  function watchesPortfolio(lang,prefix){
   const en=lang==='en';
   const pictures=[
@@ -141,6 +155,11 @@
    <section class="discovery-request outlet-request"><div><h2>${en?'Have a particular piece in mind?':'Ищете конкретную вещь?'}</h2><p>${en?'We also source to order. Send any piece you are looking for — a photograph, link or model name — along with your size and preferred colour. We will check our sources worldwide, find available offers and discuss the price and delivery with you.':'Находим вещи под заказ. Пришлите любую вещь, которую ищете: фотографию, ссылку или название модели, размер и желаемый цвет. Проверим наши источники по всему миру, найдём доступные предложения и обсудим с вами цену и доставку.'}</p></div>${action(en?'Send a request':'Отправить запрос',lang,en?'a specific piece':'конкретной вещи под заказ')}</section>
    <aside class="discovery-channels outlet-channels"><div><h2>${en?'More finds in our channels':'Больше находок — в наших каналах'}</h2><p>${en?'Outlet offers and private sale selections from Julia and Vasya.':'Предложения из аутлетов и подборки с приватных сейлов от Юли и Васи.'}</p></div><a href="https://t.me/+lz-ze3-GDEQ0YmFi" target="_blank" rel="noopener">${en?'Julia · Outlet':'Юля · Аутлет'}${arrow}</a><a href="https://t.me/+NWLPh8nc47kzMzI0" target="_blank" rel="noopener">${en?'Vasya · Outlet':'Вася · Аутлет'}${arrow}</a></aside></div>`;
  }
+ const editorialImages={
+  '/brands/hermes':['selection','blue','pockets','collection'].map(name=>'/images/editorial/hermes-sourced-'+name+'.webp'),
+  '/brands/chanel':['shopping','black-bag','giraffe-bag','tweed-bag','pink-bag'].map(name=>'/images/editorial/chanel-journal-'+name+'.webp'),
+  '/watches':['rolex-green','rolex-blue','audemars-piguet','cartier-rolex'].map(name=>'/images/editorial/watches-journal-'+name+'.webp')
+ };
  const publicAssets=['hermes-kelly-to-go-black-gold-352.webp','chanel-quilted-cc-beige-transparent-v3.webp','approved-covers-20261012/358.webp','covers-20261010/212.webp','loro-cap-cleanup-20261011/339-cover.webp','editorial'];
- const api={brand,watches,outlet,outletFind,outletReference,definitions,publicAssets};root.DiscoveryPages=api;if(typeof module==='object')module.exports=api;
+ const api={brand,jewellery,watches,outlet,outletFind,outletReference,definitions,publicAssets,editorialImages};root.DiscoveryPages=api;if(typeof module==='object')module.exports=api;
 })(typeof window==='object'?window:globalThis);
