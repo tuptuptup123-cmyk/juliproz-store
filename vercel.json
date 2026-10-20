@@ -110,28 +110,6 @@
   ],
   "redirects": [
     {
-      "source": "/",
-      "has": [
-        {
-          "type": "host",
-          "value": "juliproz-store.vercel.app"
-        }
-      ],
-      "destination": "https://www.juliproz.com/",
-      "statusCode": 301
-    },
-    {
-      "source": "/index.html",
-      "has": [
-        {
-          "type": "host",
-          "value": "juliproz-store.vercel.app"
-        }
-      ],
-      "destination": "https://www.juliproz.com/",
-      "statusCode": 301
-    },
-    {
       "source": "/catalog",
       "has": [
         {
@@ -231,6 +209,10 @@
           "type": "query",
           "key": "product",
           "value": "(?<productId>[1-9][0-9]*)"
+        },
+        {
+          "type": "host",
+          "value": "www.juliproz.com"
         }
       ],
       "destination": "/product/:productId",

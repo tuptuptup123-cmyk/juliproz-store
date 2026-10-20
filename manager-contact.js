@@ -20,17 +20,13 @@
   });
  }
  function t(ru,en){return current?.english?en:ru}
- function navigate(data,external=false){
+ function navigate(data){
   const app=root.Telegram?.WebApp;
   try{
-   if(data.telegram&&inTelegram()&&typeof app?.openTelegramLink==='function'&&!external){
+   if(data.telegram&&inTelegram()&&typeof app?.openTelegramLink==='function'){
     app.openTelegramLink(data.url);
-    // Since Bot API 7.0 openTelegramLink leaves the Mini App on screen.
-    // Hand control to the conversation; the cart was saved before this call.
-    app.close?.();
-   }else if(external&&inTelegram()&&typeof app?.openLink==='function'){
-    // This is a separate user click, within Telegram's user-activation window.
-    app.openLink(data.url);
+    // Let Telegram resolve the recipient and show the chat. Closing the view
+    // immediately can interrupt an asynchronous handoff in the native client.
    }else{
     // Checkout awaits stock validation. Same-tab navigation does not need a
     // popup permission, unlike window.open(..., '_blank') after that await.
@@ -44,7 +40,7 @@
  function close(){if(dialog?.open)dialog.close()}
  function create(){
   dialog=document.createElement('dialog');dialog.id='managerContactDialog';dialog.className='manager-contact-dialog';dialog.setAttribute('aria-labelledby','managerContactTitle');
-  dialog.innerHTML='<div class="manager-contact-heading"><h2 id="managerContactTitle"></h2><button type="button" data-contact-close>✕</button></div><p data-contact-intro></p><label for="managerContactMessage" data-contact-label></label><textarea id="managerContactMessage" readonly rows="6"></textarea><a data-contact-open target="_self" rel="noopener" class="manager-contact-primary"></a><button type="button" data-contact-copy></button><p data-contact-status role="status" aria-live="polite"></p><details><summary data-contact-help></summary><a data-contact-external target="_self" rel="noopener"></a><p data-contact-fallback></p><a data-contact-plain target="_self" rel="noopener"></a></details>';
+  dialog.innerHTML='<div class="manager-contact-heading"><h2 id="managerContactTitle"></h2><button type="button" data-contact-close>✕</button></div><p data-contact-intro></p><label for="managerContactMessage" data-contact-label></label><textarea id="managerContactMessage" readonly rows="6"></textarea><a data-contact-open target="_blank" rel="noopener noreferrer" class="manager-contact-primary"></a><button type="button" data-contact-copy></button><p data-contact-status role="status" aria-live="polite"></p><details><summary data-contact-help></summary><a data-contact-external target="_blank" rel="noopener noreferrer"></a><p data-contact-fallback></p><a data-contact-plain target="_blank" rel="noopener noreferrer"></a></details>';
   document.body.append(dialog);
   dialog.addEventListener('keydown',e=>e.stopPropagation());
   dialog.addEventListener('close',()=>{if(dialog.open)return;current=null;dialog.querySelector('textarea').value='';if(opener?.isConnected)opener.focus({preventScroll:true});opener=null});
@@ -57,9 +53,10 @@
     catch{if(current!==data)return;const field=dialog.querySelector('textarea');field.focus();field.select();dialog.querySelector('[data-contact-status]').textContent=t('Скопируйте выделенный текст и отправьте его менеджеру.','Copy the selected text and send it to our manager.')}
    }
    if(e.target.closest('[data-contact-open],[data-contact-external],[data-contact-plain]')){
-    e.preventDefault();
-    const plain=Boolean(e.target.closest('[data-contact-plain]'));
-    navigate(plain?{...data,url:data.telegram?'https://t.me/juliproz':'https://wa.me/message/LX6SBE3QCQXKG1'}:data,Boolean(e.target.closest('[data-contact-external]')));
+    // A visible recovery link must not repeat the SDK call that just failed.
+    // Keep the browser's normal anchor navigation and the current draft intact.
+    // Also avoid the SDK's delegated iframe link handler in Telegram Web.
+    e.stopPropagation();
    }
   });
  }
