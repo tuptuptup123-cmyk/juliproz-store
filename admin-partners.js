@@ -2,7 +2,7 @@
 (()=>{
  const panel=$('partnersPanel'),dialog=$('partnerDialog');if(!panel||!dialog)return;
  const statuses=['Не связывались','На проверке','Связались','Переговоры','Тестовый заказ','Партнёр','Отказ','Отложено'];
- let rows=[],generation=0,view='all',tag='Все',selected=null,dirty=false,saving=false;
+ let rows=[],generation=0,view='all',layout='cards',tag='Все',selected=null,dirty=false,saving=false;
  const rpc=(name,body={})=>request('/rest/v1/rpc/'+name,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
  const allowed=()=>Boolean(session&&adminSecurity.owner&&!adminSecurity.pending);
  const normalize=value=>String(value||'').normalize('NFKD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
@@ -20,6 +20,11 @@
   panel.querySelectorAll('[data-partner-tag]').forEach(b=>{const active=b.dataset.partnerTag===tag;b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active))});
   $('partnersTotal').textContent=rows.length;$('partnersPriority').textContent=rows.filter(r=>r.priority==='A').length;$('partnersFavorites').textContent=rows.filter(r=>r.favorite).length;
   $('partnersCount').textContent='Показано '+filtered.length+' из '+rows.length+' компаний';
+  panel.querySelectorAll('[data-partner-layout]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.partnerLayout===layout)));
+  $('partnersGrid').classList.toggle('partner-table-mode',layout==='table');
+  if(layout==='table'&&filtered.length){
+   $('partnersGrid').innerHTML='<div class="partner-table-scroll" role="region" aria-label="Таблица партнёров — прокрутка по горизонтали" tabindex="0"><table class="partner-table"><caption class="partner-sr-only">Компании и потенциальные партнёры JULI.PROZ</caption><thead><tr><th scope="col">Избранное</th><th scope="col">Компания</th><th scope="col">География</th><th scope="col">Направление</th><th scope="col">Приоритет</th><th scope="col">Статус</th><th scope="col">Контакт</th><th scope="col">Мои заметки</th></tr></thead><tbody>'+filtered.map(r=>'<tr><td><button type="button" class="partner-table-star" data-partner-star="'+esc(r.id)+'" aria-label="'+(r.favorite?'Убрать из избранного':'В избранное')+' — '+esc(r.name)+'" aria-pressed="'+r.favorite+'">'+(r.favorite?'★':'☆')+'</button></td><th scope="row"><button type="button" class="partner-table-open" data-partner-open="'+esc(r.id)+'" aria-label="Открыть '+esc(r.name)+'">'+esc(r.name)+'<span aria-hidden="true"> ↗</span></button></th><td>'+esc(r.geography)+'</td><td>'+esc(r.category)+'</td><td><span class="partner-pill '+(r.priority==='A'?'priority':'')+'">'+(r.priority==='A'?'Первая очередь':r.priority==='B'?'Потенциальный партнёр':'Изучить возможности')+'</span></td><td>'+esc(r.status)+'</td><td class="partner-table-contact">'+contactMarkup(r)+'</td><td><span class="partner-table-notes">'+esc(r.notes||'—')+'</span></td></tr>').join('')+'</tbody></table></div>';return;
+  }
   $('partnersGrid').innerHTML=filtered.map(r=>'<article class="partner-card"><button class="partner-open" data-partner-open="'+esc(r.id)+'" aria-label="Открыть '+esc(r.name)+'"><span class="partner-card-top"><span class="partner-monogram" aria-hidden="true">'+esc(r.name.split(' ').filter(w=>w.toLowerCase()!=='the').map(w=>w[0]).slice(0,2).join(''))+'</span><span><strong>'+esc(r.name)+'</strong><small>'+esc(r.geography)+'</small></span></span><span class="partner-category">'+esc(r.category)+'</span><span class="partner-description">'+esc(r.facts)+'</span><span class="partner-card-foot"><span class="partner-pill '+(r.priority==='A'?'priority':'')+'">'+(r.priority==='A'?'Первая очередь':r.priority==='B'?'Потенциальный партнёр':'Изучить возможности')+'</span><span>Подробнее ↗</span></span><span class="partner-state">'+esc(r.status)+'</span></button><button type="button" class="partner-star" data-partner-star="'+esc(r.id)+'" aria-label="'+(r.favorite?'Убрать из избранного':'В избранное')+' — '+esc(r.name)+'" aria-pressed="'+r.favorite+'">'+(r.favorite?'★':'☆')+'</button></article>').join('')||'<div class="partner-empty">Нет компаний с такими параметрами.<br><button id="partnersReset" type="button">Сбросить фильтры</button></div>';
  }
  async function load(){
@@ -61,6 +66,7 @@
   if(star){const row=rows.find(r=>r.id===star.dataset.partnerStar);if(!row||star.disabled)return;star.disabled=true;const epoch=sessionEpoch;try{if(await update(row,{favorite:!row.favorite}))message('Избранное обновлено.')}catch(e){if(epoch===sessionEpoch)message('Не сохранено: '+e.message)}finally{star.disabled=false}}
   if(event.target.id==='partnersReset'){view='all';tag='Все';$('partnersSearch').value='';$('partnersGeo').value='';$('partnersFilterStatus').value='';render()}
  };
+ panel.querySelectorAll('[data-partner-layout]').forEach(b=>b.onclick=()=>{layout=b.dataset.partnerLayout;render()});
  panel.querySelectorAll('[data-partner-view]').forEach(b=>b.onclick=()=>{view=b.dataset.partnerView;render()});
  panel.querySelectorAll('[data-partner-tag]').forEach(b=>b.onclick=()=>{tag=b.dataset.partnerTag;render()});
  $('partnersSearch').oninput=render;$('partnersGeo').onchange=render;$('partnersFilterStatus').onchange=render;
