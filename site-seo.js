@@ -27,6 +27,12 @@
  }
  function metadata(){
   const lang=language();document.title=data.title[lang];
+  for(const kind of ['services','sell']){
+   const host=document.getElementById(kind+'Page');if(!host)continue;
+   let extra=host.querySelector('[data-commercial-extra]');
+   if(!extra){extra=document.createElement('div');extra.dataset.commercialExtra='';extra.setAttribute('data-no-translate','');host.appendChild(extra)}
+   if(extra.dataset.lang!==lang){extra.innerHTML=discovery.commercial(kind,lang,false);extra.dataset.lang=lang}
+  }
   const paths={home:'/',catalog:'/catalog',hermes:'/brands/hermes',chanel:'/brands/chanel',watches:'/watches',jewellery:'/jewellery',outlet:'/outlet',favorites:'/?tab=favorites',cart:'/?tab=cart',sell:'/sell',services:'/services',about:'/?tab=about'};
   for(const link of document.querySelectorAll('a[data-tab],a[data-web-section]')){
    const path=paths[link.dataset.tab||link.dataset.webSection];if(path)link.setAttribute('href',path+(lang==='en'?(path.includes('?')?'&':'?')+'lang=en':''));
