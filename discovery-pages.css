@@ -206,3 +206,11 @@
 .jewellery-services p{font-size:13px;line-height:1.8;color:var(--muted);margin:0 0 16px}
 .jewellery-services .discovery-button{margin-top:8px}
 @media(max-width:680px){.jewellery-services{grid-template-columns:1fr;gap:16px}.jewellery-services>div{padding:22px}.jewellery-services h2{font-size:26px}}
+
+/* Completed purchase cases retain the original photo dimensions. */
+.hermes-portfolio-gallery figure{aspect-ratio:auto;background:transparent;overflow:visible}
+.hermes-portfolio-gallery img{height:auto;aspect-ratio:3/4;background:#f8f7f5}
+.purchase-case{margin-top:12px;font-size:12px;line-height:1.6;color:var(--muted)}
+.purchase-case h3{margin:0 0 6px;color:var(--ink);font-size:14px;line-height:1.4}
+.purchase-case p{margin:0 0 10px}
+.purchase-case .discovery-button{display:inline-flex;aspect-ratio:auto;background:transparent;justify-content:flex-start;padding:4px 0;border:0;border-radius:0;font-size:11px;min-height:36px;text-align:left}
