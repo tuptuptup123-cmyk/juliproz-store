@@ -26,6 +26,7 @@ jobs:
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" QA_BROWSER=webkit QA_OUTPUT="$RUNNER_TEMP/jp-qa" node tests/manager-contact.browser.cjs
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" node tests/detailed-analytics.browser.cjs
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" node tests/owner-statistics.browser.cjs
+      - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" QA_OUTPUT="$RUNNER_TEMP/jp-qa" node tests/admin-business.browser.cjs
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" node tests/manager-commission.browser.cjs
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" node tests/admin-google-search.browser.cjs
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" node tests/seo.browser.cjs

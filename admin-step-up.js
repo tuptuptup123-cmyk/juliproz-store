@@ -1,6 +1,6 @@
 /* UI convenience only. The database independently verifies fresh signed MFA claims. */
 (()=>{
- for(const id of ['financePanel','productFinanceCard','teamPanel','financeDialog','commissionDialog','financeLinkDialog']){
+ for(const id of ['businessCapitalDialog','financePanel','productFinanceCard','teamPanel','financeDialog','commissionDialog','financeLinkDialog']){
   const node=$(id);node.classList.add('sensitive-surface');const lock=document.createElement('div');lock.className='sensitive-lock';
   lock.innerHTML='<p>Для просмотра и изменения этих данных подтвердите доступ.</p><button type="button" data-unlock-sensitive>Ввести код аутентификатора</button>';node.prepend(lock);
  }
