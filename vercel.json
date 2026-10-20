@@ -56,6 +56,10 @@
   "outputDirectory": "dist",
   "rewrites": [
     {
+      "source": "/watches",
+      "destination": "/api/site-page?page=watches"
+    },
+    {
       "source": "/terms.html",
       "destination": "/api/legal-page?page=terms"
     },
@@ -109,6 +113,18 @@
     }
   ],
   "redirects": [
+    {
+      "source": "/catalog",
+      "has": [
+        {
+          "type": "query",
+          "key": "category",
+          "value": "watches"
+        }
+      ],
+      "destination": "/watches",
+      "permanent": true
+    },
     {
       "source": "/catalog",
       "has": [
@@ -224,7 +240,7 @@
       "permanent": true
     },
     {
-      "source": "/:page(catalog|outlet|services|sell)/",
+      "source": "/:page(catalog|watches|outlet|services|sell)/",
       "destination": "/:page",
       "permanent": true
     },
@@ -237,6 +253,17 @@
       "source": "/product/:id/",
       "destination": "/product/:id",
       "permanent": true
+    },
+    {
+      "source": "/watches",
+      "has": [
+        {
+          "type": "host",
+          "value": "juliproz-store.vercel.app"
+        }
+      ],
+      "destination": "https://www.juliproz.com/watches",
+      "statusCode": 301
     }
   ],
   "functions": {

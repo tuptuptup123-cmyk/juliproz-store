@@ -24,6 +24,20 @@
    en:{subtitle:'Shoes, clothing and wardrobe details',intro:'Loro Piana personal shopping for shoes, cashmere and accessories. Browse the collection or ask us to source your model, size and colour.',about:'For a precise search, share the model name, size, colour and material. Add a reference or photograph if you want a particular version: similar pieces may have different finishes and seasonal details.',models:[['Shoes','approved-covers-20261012/358.webp','Looking for Summer Walk loafers or Open Walk ankle boots? Share the size, colour, upper material and lining. We will check available Loro Piana options and agree on the purchase.'],['Clothing',null,'Share the model, composition, size and preferred fit. Measurements of a piece that fits you can help with comparison.'],['Accessories','loro-cap-cleanup-20261011/339-cover.webp','We source caps and other wardrobe details by model, size and colour. Availability and final terms are confirmed before purchase.']]}
   }
  };
+ function watches(lang='ru',prefix=''){
+  const en=lang==='en',id=e(prefix),c=root.SeoContent?.pages?.watches||((typeof module==='object')?require('./seo-content.js').pages.watches:null);
+  const brands=[['Rolex','Datejust · Daytona · Submariner'],['Cartier','Panthère · Tank · Santos'],['Patek Philippe','Nautilus · Aquanaut · Calatrava']];
+  const details=en?[
+   ['Model and reference','Send the brand, full model name and reference number, or a photograph. Include the case size, metal, dial colour and bracelet you prefer.'],
+   ['Condition and accessories','Tell us whether you want a new or pre-owned watch. We confirm the available condition photographs, box, documents and service information for the specific piece.'],
+   ['Price and delivery','Availability, final price, payment terms and delivery options depend on the watch and destination. We agree on these details and any requested authentication before payment.']
+  ]:[
+   ['Модель и референс','Пришлите бренд, полное название модели и референс либо фотографию. Укажите размер корпуса, металл, цвет циферблата и желаемый браслет.'],
+   ['Состояние и комплект','Обсудим новые часы или pre-owned. По конкретному экземпляру уточним фотографии состояния, наличие коробки, документов и информации об обслуживании.'],
+   ['Цена и доставка','Наличие, итоговая стоимость, условия оплаты и доставка зависят от часов и страны назначения. Эти детали и необходимую проверку подлинности согласуем до оплаты.']
+  ];
+  return `<div class="discovery-page discovery-watches" data-no-translate><header class="watches-hero"><h1>${e(c.heading[lang])}</h1><p>${e(c.intro[lang])}</p><div class="discovery-actions">${action(en?'Find my watch':'Найти часы',lang,en?'a watch':'часов')}<a class="discovery-text-link" href="#${id}watchStock">${en?'View watches':'Смотреть часы'} ↓</a></div></header><section class="discovery-section watches-brands" aria-label="${en?'Watch sourcing by brand':'Поиск часов по бренду'}"><div class="discovery-features">${brands.map(([name,models])=>`<div><h2>${name}</h2><p>${models}</p>${name==='Rolex'?`<a class="discovery-text-link" href="${route('/brands/rolex',lang)}">${en?'Explore Rolex':'Часы Rolex'} ${arrow}</a>`:action(en?'Request '+name:'Найти '+name,lang,name,true)}</div>`).join('')}</div></section><section class="discovery-section watches-details"><h2>${en?'Finding the right watch':'Как подобрать часы'}</h2><div class="discovery-features">${details.map(([title,text])=>`<div><h3>${e(title)}</h3><p>${e(text)}</p></div>`).join('')}</div><p class="watches-note">${en?'Looking for another brand or a rare edition? Send us the reference or a photograph — we will check sourcing options. Models listed above are examples for enquiries, not a guarantee of stock.':'Ищете другой бренд или редкий выпуск? Пришлите референс или фото — проверим возможности поиска. Модели выше приведены как примеры для запроса, их наличие уточняется отдельно.'}</p></section><div class="discovery-stock-heading" id="${id}watchStock"><h2>${en?'Watches in the collection':'Часы в каталоге'}</h2><p>${en?'See each watch’s page for its price, condition and availability.':'Цена, состояние и наличие — в карточке конкретных часов.'}</p></div></div>`;
+ }
  function hermesPortfolio(lang,prefix){
   const en=lang==='en';
   const pictures=[
@@ -107,5 +121,5 @@
    <aside class="discovery-channels outlet-channels"><div><h2>${en?'More finds in our channels':'Больше находок — в наших каналах'}</h2><p>${en?'Outlet offers and private sale selections from Julia and Vasya.':'Предложения из аутлетов и подборки с приватных сейлов от Юли и Васи.'}</p></div><a href="https://t.me/+lz-ze3-GDEQ0YmFi" target="_blank" rel="noopener">${en?'Julia · Outlet':'Юля · Аутлет'}${arrow}</a><a href="https://t.me/+NWLPh8nc47kzMzI0" target="_blank" rel="noopener">${en?'Vasya · Outlet':'Вася · Аутлет'}${arrow}</a></aside></div>`;
  }
  const publicAssets=['hermes-kelly-to-go-black-gold-352.webp','chanel-quilted-cc-beige-transparent-v3.webp','approved-covers-20261012/358.webp','covers-20261010/212.webp','loro-cap-cleanup-20261011/339-cover.webp','editorial'];
- const api={brand,outlet,outletFind,outletReference,definitions,publicAssets};root.DiscoveryPages=api;if(typeof module==='object')module.exports=api;
+ const api={brand,watches,outlet,outletFind,outletReference,definitions,publicAssets};root.DiscoveryPages=api;if(typeof module==='object')module.exports=api;
 })(typeof window==='object'?window:globalThis);
