@@ -219,3 +219,5 @@
 .commercial-details .sell-method:last-child:nth-child(odd){grid-column:1/-1}
 .commercial-details .discovery-text-link{display:inline-flex;align-items:center;gap:12px;color:var(--ink);text-decoration:none;border-bottom:1px solid currentColor;padding:8px 0}
 .commercial-details .discovery-text-link svg{fill:none;stroke:currentColor;stroke-width:1.5}
+
+@media(min-width:681px){.hermes-portfolio-gallery{grid-template-columns:repeat(5,minmax(0,1fr));max-width:none}}
