@@ -158,13 +158,7 @@
   return `<section class="discovery-section chanel-portfolio" aria-labelledby="${e(prefix)}chanelPortfolio"><div class="hermes-portfolio-heading"><h2 id="${e(prefix)}chanelPortfolio">${en?'Chanel we’ve sourced':'Наши выкупы Chanel'}</h2><p>${en?'Real Chanel purchases by our team, from quilted and tweed bags to unusual designs. Choose a case and ask us to source something similar.':'Реальные выкупы нашей команды: стёганые и твидовые сумки Chanel, необычные исполнения. Выберите понравившийся кейс — обсудим поиск похожей вещи.'}</p></div><div class="chanel-portfolio-gallery">${pictures.map(([file,w,h,title,alt])=>`<figure><a href="/images/editorial/chanel-journal-${file}.webp" target="_blank" rel="noopener" aria-label="${e((en?'Open photograph: ':'Открыть фото: ')+title)}"><img src="/images/editorial/chanel-journal-${file}.webp" alt="${e(alt)}" width="${w}" height="${h}" loading="lazy" decoding="async"></a>${purchaseCaption('chanel',file,title,lang)}</figure>`).join('')}</div><div class="hermes-portfolio-footer"><p>${en?'Completed purchases. We check availability and price for each new request.':'Выполненные выкупы. Наличие и стоимость для нового заказа уточним отдельно.'}</p>${action(en?'Find my Chanel':'Найти мой Chanel',lang,'Chanel')}</div></section>`;
  }
  function hermesAnimation(){
-  const models=[
-   ['Kelly','M39 49V39C39 17 81 17 81 39V49 M30 49H90L102 112H18Z M30 49L60 69L90 49 M24 77H96 M56 69H64V83H56Z'],
-   ['Birkin','M34 54V35C34 17 49 17 49 35V54 M71 54V35C71 17 86 17 86 35V54 M24 49H96L103 112H17Z M26 49L35 65H85L94 49 M21 78H99 M55 71H65V85H55Z M29 87V105 M91 87V105'],
-   ['Mini Kelly','M44 64V57C44 39 76 39 76 57V64 M35 64H85L95 110H25Z M35 64L60 81L85 64 M30 89H90 M56 80H64V94H56Z M84 65C113 39 113 103 94 105'],
-   ['HAC à Dos','M46 36V29C46 11 74 11 74 29V36 M35 36H85L90 113H30Z M35 36L43 55H77L85 36 M33 66H87 M56 57H64V73H56Z M40 82V103 M80 82V103 M84 38C105 48 101 97 90 105']
-  ];
-  return `<div class="hermes-motion" aria-label="Kelly, Birkin, Mini Kelly, HAC à Dos">${models.map(([name,path],i)=>`<div class="hermes-motion-item" style="--bag-delay:${i*180}ms"><svg viewBox="0 0 120 130" fill="none" aria-hidden="true"><ellipse class="hermes-motion-halo" cx="60" cy="78" rx="45" ry="43"/><path pathLength="1" d="${path}"/></svg><span>${name}</span></div>`).join('')}</div>`;
+  return `<div class="hermes-motion" aria-hidden="true">${['kelly','birkin','mini-kelly','hac','messenger'].map((model,i)=>`<div class="hermes-motion-item hermes-motion-${model}" style="--bag-delay:${i*120}ms"><span class="hermes-motion-art"></span></div>`).join('')}</div>`;
  }
  function brand(slug,lang='ru',prefix=''){
   const d=definitions[slug];if(!d)return '';const en=lang==='en',c=d[en?'en':'ru'],id=e(prefix),name=e(d.name);
