@@ -10,3 +10,5 @@
 
 #productFinanceCard{min-width:0}#productFinanceCard input{min-width:0;width:100%;box-sizing:border-box}#productFinanceCard .finance-entry{background:#faf8f6}#productFinanceCard .finance-entry button{white-space:normal}#productFinanceCard .finance-notice{margin-top:18px}#productFinanceCard .field-help{line-height:1.6}
 @media(max-width:600px){#productFinanceCard .form-grid{grid-template-columns:minmax(0,1fr)}#productFinanceCard h2{font-size:20px}#productFinanceCard .finance-entry-numbers{grid-template-columns:minmax(0,1fr)}#productFinanceCard .finance-entry-numbers>div{display:flex;justify-content:space-between;gap:12px}#productFinanceCard .finance-entry-numbers dd{margin:0}#productFinanceCard .finance-entry-numbers dt{font-size:12px}}
+
+.finance-entry .finance-missing{color:#754320;background:#fff4e6;border-radius:8px;padding:10px 12px;font-size:12px;line-height:1.6}
