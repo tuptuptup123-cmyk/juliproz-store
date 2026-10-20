@@ -116,7 +116,7 @@ function syncWebNavigation(){
 
 function initialStoreTab(){
  const params=new URLSearchParams(location.search);
- if(!isTelegramStore()&&location.pathname.replace(/\/$/,'')==='/catalog'&&params.get('category')==='watches')return 'watches';
+ if(!isTelegramStore()&&String(location.pathname||'').replace(/\/$/,'')==='/catalog'&&params.get('category')==='watches')return 'watches';
  const page=window.SiteSEO?.page,route=page?.kind;if(['brand','catalog','services','sell','outlet'].includes(route))return route==='brand'?(page.brand==='Hermès'?'hermes':page.brand==='Chanel'?'chanel':'catalog'):route;
  if(!isTelegramStore()&&['favorites','cart','about'].includes(params.get('tab')))return params.get('tab');
  const linked=/^\/product\/[1-9]\d*\/?$/.test(location.pathname)||params.has('product')||params.get('startapp')?.startsWith('p_')||params.get('tgWebAppStartParam')?.startsWith('p_')||window.Telegram?.WebApp?.initDataUnsafe?.start_param?.startsWith('p_');
