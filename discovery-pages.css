@@ -221,3 +221,5 @@
 .commercial-details .discovery-text-link svg{fill:none;stroke:currentColor;stroke-width:1.5}
 
 @media(min-width:681px){.hermes-portfolio-gallery{grid-template-columns:repeat(5,minmax(0,1fr));max-width:none}}
+
+.purchase-extra-photo{display:inline-flex;align-items:center;gap:8px;font-size:11px;color:var(--ink);margin-top:8px}.purchase-extra-photo svg{fill:none;stroke:currentColor;stroke-width:1.5}
