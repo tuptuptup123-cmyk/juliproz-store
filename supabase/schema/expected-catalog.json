@@ -4776,6 +4776,326 @@
   },
   {
     "kind": "column_grant",
+    "name": "store_private.partners.category.postgres.INSERT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.partners.category.postgres.REFERENCES",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.partners.category.postgres.SELECT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.partners.category.postgres.UPDATE",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.partners.checked_on.postgres.INSERT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.partners.checked_on.postgres.REFERENCES",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.partners.checked_on.postgres.SELECT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.partners.checked_on.postgres.UPDATE",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.partners.contact.postgres.INSERT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.partners.contact.postgres.REFERENCES",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.partners.contact.postgres.SELECT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.partners.contact.postgres.UPDATE",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.partners.facts.postgres.INSERT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.partners.facts.postgres.REFERENCES",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.partners.facts.postgres.SELECT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.partners.facts.postgres.UPDATE",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.partners.favorite.postgres.INSERT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.partners.favorite.postgres.REFERENCES",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.partners.favorite.postgres.SELECT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.partners.favorite.postgres.UPDATE",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.partners.geography.postgres.INSERT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.partners.geography.postgres.REFERENCES",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.partners.geography.postgres.SELECT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.partners.geography.postgres.UPDATE",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.partners.id.postgres.INSERT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.partners.id.postgres.REFERENCES",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.partners.id.postgres.SELECT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.partners.id.postgres.UPDATE",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.partners.idea.postgres.INSERT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.partners.idea.postgres.REFERENCES",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.partners.idea.postgres.SELECT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.partners.idea.postgres.UPDATE",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.partners.name.postgres.INSERT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.partners.name.postgres.REFERENCES",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.partners.name.postgres.SELECT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.partners.name.postgres.UPDATE",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.partners.notes.postgres.INSERT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.partners.notes.postgres.REFERENCES",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.partners.notes.postgres.SELECT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.partners.notes.postgres.UPDATE",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.partners.owner_id.postgres.INSERT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.partners.owner_id.postgres.REFERENCES",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.partners.owner_id.postgres.SELECT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.partners.owner_id.postgres.UPDATE",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.partners.priority.postgres.INSERT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.partners.priority.postgres.REFERENCES",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.partners.priority.postgres.SELECT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.partners.priority.postgres.UPDATE",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.partners.revision.postgres.INSERT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.partners.revision.postgres.REFERENCES",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.partners.revision.postgres.SELECT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.partners.revision.postgres.UPDATE",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.partners.source_url.postgres.INSERT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.partners.source_url.postgres.REFERENCES",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.partners.source_url.postgres.SELECT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.partners.source_url.postgres.UPDATE",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.partners.status.postgres.INSERT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.partners.status.postgres.REFERENCES",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.partners.status.postgres.SELECT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.partners.status.postgres.UPDATE",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.partners.updated_at.postgres.INSERT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.partners.updated_at.postgres.REFERENCES",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.partners.updated_at.postgres.SELECT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.partners.updated_at.postgres.UPDATE",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
     "name": "store_private.product_archive_migration_backup.available.postgres.INSERT",
     "definition": "YES"
   },
@@ -7461,6 +7781,126 @@
   },
   {
     "kind": "constraint",
+    "name": "store_private.partners.partners_category_not_null",
+    "definition": "NOT NULL category"
+  },
+  {
+    "kind": "constraint",
+    "name": "store_private.partners.partners_checked_on_not_null",
+    "definition": "NOT NULL checked_on"
+  },
+  {
+    "kind": "constraint",
+    "name": "store_private.partners.partners_contact_not_null",
+    "definition": "NOT NULL contact"
+  },
+  {
+    "kind": "constraint",
+    "name": "store_private.partners.partners_facts_not_null",
+    "definition": "NOT NULL facts"
+  },
+  {
+    "kind": "constraint",
+    "name": "store_private.partners.partners_favorite_not_null",
+    "definition": "NOT NULL favorite"
+  },
+  {
+    "kind": "constraint",
+    "name": "store_private.partners.partners_geography_not_null",
+    "definition": "NOT NULL geography"
+  },
+  {
+    "kind": "constraint",
+    "name": "store_private.partners.partners_id_check",
+    "definition": "CHECK ((id ~ '^P[0-9]{2,6}$'::text))"
+  },
+  {
+    "kind": "constraint",
+    "name": "store_private.partners.partners_id_not_null",
+    "definition": "NOT NULL id"
+  },
+  {
+    "kind": "constraint",
+    "name": "store_private.partners.partners_idea_not_null",
+    "definition": "NOT NULL idea"
+  },
+  {
+    "kind": "constraint",
+    "name": "store_private.partners.partners_name_check",
+    "definition": "CHECK (((length(name) >= 1) AND (length(name) <= 150)))"
+  },
+  {
+    "kind": "constraint",
+    "name": "store_private.partners.partners_name_not_null",
+    "definition": "NOT NULL name"
+  },
+  {
+    "kind": "constraint",
+    "name": "store_private.partners.partners_notes_check",
+    "definition": "CHECK ((length(notes) <= 10000))"
+  },
+  {
+    "kind": "constraint",
+    "name": "store_private.partners.partners_notes_not_null",
+    "definition": "NOT NULL notes"
+  },
+  {
+    "kind": "constraint",
+    "name": "store_private.partners.partners_owner_id_fkey",
+    "definition": "FOREIGN KEY (owner_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+  },
+  {
+    "kind": "constraint",
+    "name": "store_private.partners.partners_owner_id_not_null",
+    "definition": "NOT NULL owner_id"
+  },
+  {
+    "kind": "constraint",
+    "name": "store_private.partners.partners_pkey",
+    "definition": "PRIMARY KEY (owner_id, id)"
+  },
+  {
+    "kind": "constraint",
+    "name": "store_private.partners.partners_priority_check",
+    "definition": "CHECK ((priority = ANY (ARRAY['A'::text, 'B'::text, 'C'::text])))"
+  },
+  {
+    "kind": "constraint",
+    "name": "store_private.partners.partners_priority_not_null",
+    "definition": "NOT NULL priority"
+  },
+  {
+    "kind": "constraint",
+    "name": "store_private.partners.partners_revision_not_null",
+    "definition": "NOT NULL revision"
+  },
+  {
+    "kind": "constraint",
+    "name": "store_private.partners.partners_source_url_check",
+    "definition": "CHECK ((source_url ~ '^https://'::text))"
+  },
+  {
+    "kind": "constraint",
+    "name": "store_private.partners.partners_source_url_not_null",
+    "definition": "NOT NULL source_url"
+  },
+  {
+    "kind": "constraint",
+    "name": "store_private.partners.partners_status_check",
+    "definition": "CHECK ((status = ANY (ARRAY['Не связывались'::text, 'На проверке'::text, 'Связались'::text, 'Переговоры'::text, 'Тестовый заказ'::text, 'Партнёр'::text, 'Отказ'::text, 'Отложено'::text])))"
+  },
+  {
+    "kind": "constraint",
+    "name": "store_private.partners.partners_status_not_null",
+    "definition": "NOT NULL status"
+  },
+  {
+    "kind": "constraint",
+    "name": "store_private.partners.partners_updated_at_not_null",
+    "definition": "NOT NULL updated_at"
+  },
+  {
+    "kind": "constraint",
     "name": "store_private.product_archive_migration_backup.product_archive_migration_backup_id_not_null",
     "definition": "NOT NULL id"
   },
@@ -8066,6 +8506,16 @@
   },
   {
     "kind": "function",
+    "name": "public.store_partner_list()",
+    "definition": "CREATE OR REPLACE FUNCTION public.store_partner_list()\n RETURNS jsonb\n LANGUAGE sql\n SET search_path TO ''\nAS $function$select store_private.partner_list();$function$\n"
+  },
+  {
+    "kind": "function",
+    "name": "public.store_partner_update(p_id text, p_revision bigint, p_status text, p_favorite boolean, p_notes text)",
+    "definition": "CREATE OR REPLACE FUNCTION public.store_partner_update(p_id text, p_revision bigint, p_status text, p_favorite boolean, p_notes text)\n RETURNS jsonb\n LANGUAGE sql\n SET search_path TO ''\nAS $function$select store_private.partner_update(p_id,p_revision,p_status,p_favorite,p_notes);$function$\n"
+  },
+  {
+    "kind": "function",
     "name": "public.store_prepare_workspace_invite(p_email text, p_name text)",
     "definition": "CREATE OR REPLACE FUNCTION public.store_prepare_workspace_invite(p_email text, p_name text)\n RETURNS boolean\n LANGUAGE sql\n SET search_path TO ''\nAS $function$ select store_private.prepare_workspace_invite(p_email,p_name); $function$\n"
   },
@@ -8343,6 +8793,16 @@
     "kind": "function",
     "name": "store_private.own_retention_health()",
     "definition": "CREATE OR REPLACE FUNCTION store_private.own_retention_health()\n RETURNS jsonb\n LANGUAGE plpgsql\n STABLE SECURITY DEFINER\n SET search_path TO ''\nAS $function$\nDECLARE completed timestamptz; active_job boolean; backlog boolean; failed boolean;\nBEGIN\n if not store_private.statistics_owner() then raise exception 'Статистика доступна только главному администратору' using errcode='42501';end if;\n SELECT completed_at INTO completed FROM store_private.analytics_retention_state WHERE singleton;\n SELECT active INTO active_job FROM cron.job WHERE jobname='store-analytics-retention';\n SELECT status NOT IN ('succeeded','running','starting') INTO failed FROM cron.job_run_details\n  WHERE jobid IN(SELECT jobid FROM cron.job WHERE jobname='store-analytics-retention') ORDER BY runid DESC LIMIT 1;\n backlog:=EXISTS(SELECT 1 FROM store_private.analytics_events WHERE created_at<now()-interval '91 days')\n  OR EXISTS(SELECT 1 FROM store_private.analytics_sessions WHERE last_seen<now()-interval '91 days');\n RETURN jsonb_build_object('healthy',coalesce(active_job,false) AND coalesce(completed>now()-interval '26 hours',false) AND NOT backlog AND NOT coalesce(failed,false),'last_completed_at',completed,'retention_days',90);\nEND; $function$\n"
+  },
+  {
+    "kind": "function",
+    "name": "store_private.partner_list()",
+    "definition": "CREATE OR REPLACE FUNCTION store_private.partner_list()\n RETURNS jsonb\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\nbegin\n perform store_private.require_workspace_admin();\n if not exists(select 1 from public.store_admins where user_id=auth.uid() and access_role='owner') then\n  raise exception 'Раздел доступен только владельцу' using errcode='42501';\n end if;\n return coalesce((select jsonb_agg(to_jsonb(p)-'owner_id' order by p.priority,p.id) from store_private.partners p where p.owner_id=auth.uid()),'[]'::jsonb);\nend $function$\n"
+  },
+  {
+    "kind": "function",
+    "name": "store_private.partner_update(p_id text, p_revision bigint, p_status text, p_favorite boolean, p_notes text)",
+    "definition": "CREATE OR REPLACE FUNCTION store_private.partner_update(p_id text, p_revision bigint, p_status text, p_favorite boolean, p_notes text)\n RETURNS jsonb\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\ndeclare result jsonb;\nbegin\n perform store_private.require_workspace_admin();\n if not exists(select 1 from public.store_admins where user_id=auth.uid() and access_role='owner') then\n  raise exception 'Раздел доступен только владельцу' using errcode='42501';\n end if;\n if p_id is null or p_revision is null or p_status is null or p_favorite is null or p_notes is null\n  or p_status not in ('Не связывались','На проверке','Связались','Переговоры','Тестовый заказ','Партнёр','Отказ','Отложено')\n  or length(p_notes)>10000 then raise exception 'Проверьте статус и длину заметки' using errcode='22023';end if;\n update store_private.partners p set status=p_status,favorite=p_favorite,notes=p_notes,revision=revision+1,updated_at=now()\n where p.owner_id=auth.uid() and p.id=p_id and p.revision=p_revision\n returning to_jsonb(p)-'owner_id' into result;\n if result is null then raise exception 'Карточка изменилась или недоступна. Обновите список; скопируйте заметку перед обновлением.' using errcode='40001';end if;\n return result;\nend $function$\n"
   },
   {
     "kind": "function",
@@ -8646,6 +9106,16 @@
   },
   {
     "kind": "function_acl",
+    "name": "public.store_partner_list()",
+    "definition": "{postgres=X/postgres,authenticated=X/postgres}"
+  },
+  {
+    "kind": "function_acl",
+    "name": "public.store_partner_update(p_id text, p_revision bigint, p_status text, p_favorite boolean, p_notes text)",
+    "definition": "{postgres=X/postgres,authenticated=X/postgres}"
+  },
+  {
+    "kind": "function_acl",
     "name": "public.store_prepare_workspace_invite(p_email text, p_name text)",
     "definition": "{postgres=X/postgres,authenticated=X/postgres}"
   },
@@ -8922,6 +9392,16 @@
   {
     "kind": "function_acl",
     "name": "store_private.own_retention_health()",
+    "definition": "{postgres=X/postgres,authenticated=X/postgres}"
+  },
+  {
+    "kind": "function_acl",
+    "name": "store_private.partner_list()",
+    "definition": "{postgres=X/postgres,authenticated=X/postgres}"
+  },
+  {
+    "kind": "function_acl",
+    "name": "store_private.partner_update(p_id text, p_revision bigint, p_status text, p_favorite boolean, p_notes text)",
     "definition": "{postgres=X/postgres,authenticated=X/postgres}"
   },
   {
@@ -10041,6 +10521,41 @@
   },
   {
     "kind": "grant",
+    "name": "store_private.partners.postgres.DELETE",
+    "definition": "YES"
+  },
+  {
+    "kind": "grant",
+    "name": "store_private.partners.postgres.INSERT",
+    "definition": "YES"
+  },
+  {
+    "kind": "grant",
+    "name": "store_private.partners.postgres.REFERENCES",
+    "definition": "YES"
+  },
+  {
+    "kind": "grant",
+    "name": "store_private.partners.postgres.SELECT",
+    "definition": "YES"
+  },
+  {
+    "kind": "grant",
+    "name": "store_private.partners.postgres.TRIGGER",
+    "definition": "YES"
+  },
+  {
+    "kind": "grant",
+    "name": "store_private.partners.postgres.TRUNCATE",
+    "definition": "YES"
+  },
+  {
+    "kind": "grant",
+    "name": "store_private.partners.postgres.UPDATE",
+    "definition": "YES"
+  },
+  {
+    "kind": "grant",
     "name": "store_private.product_archive_migration_backup.postgres.DELETE",
     "definition": "YES"
   },
@@ -10691,6 +11206,11 @@
   },
   {
     "kind": "index",
+    "name": "store_private.partners_pkey",
+    "definition": "CREATE UNIQUE INDEX partners_pkey ON store_private.partners USING btree (owner_id, id)"
+  },
+  {
+    "kind": "index",
     "name": "store_private.product_archive_migration_backup_pkey",
     "definition": "CREATE UNIQUE INDEX product_archive_migration_backup_pkey ON store_private.product_archive_migration_backup USING btree (id)"
   },
@@ -11063,6 +11583,11 @@
     "kind": "table",
     "name": "store_private.operational_limits",
     "definition": "{\"rls\": true, \"columns\": [{\"name\": \"key\", \"type\": \"text\", \"default\": null, \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"window_at\", \"type\": \"timestamp with time zone\", \"default\": null, \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"hits\", \"type\": \"integer\", \"default\": null, \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}], \"force_rls\": false}"
+  },
+  {
+    "kind": "table",
+    "name": "store_private.partners",
+    "definition": "{\"rls\": true, \"columns\": [{\"name\": \"owner_id\", \"type\": \"uuid\", \"default\": null, \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"id\", \"type\": \"text\", \"default\": null, \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"name\", \"type\": \"text\", \"default\": null, \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"geography\", \"type\": \"text\", \"default\": \"''::text\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"category\", \"type\": \"text\", \"default\": \"''::text\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"facts\", \"type\": \"text\", \"default\": \"''::text\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"contact\", \"type\": \"text\", \"default\": \"''::text\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"source_url\", \"type\": \"text\", \"default\": null, \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"priority\", \"type\": \"text\", \"default\": null, \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"idea\", \"type\": \"text\", \"default\": \"''::text\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"checked_on\", \"type\": \"date\", \"default\": null, \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"status\", \"type\": \"text\", \"default\": \"'Не связывались'::text\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"favorite\", \"type\": \"boolean\", \"default\": \"false\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"notes\", \"type\": \"text\", \"default\": \"''::text\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"revision\", \"type\": \"bigint\", \"default\": \"1\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"updated_at\", \"type\": \"timestamp with time zone\", \"default\": \"now()\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}], \"force_rls\": false}"
   },
   {
     "kind": "table",
