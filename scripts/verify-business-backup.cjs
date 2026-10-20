@@ -5,12 +5,13 @@ const fs=require('node:fs'),path=require('node:path'),assert=require('node:asser
 const schemaRequire=require('node:module').createRequire(path.resolve(__dirname,'../tests/schema/package.json'));
 const {PGlite}=schemaRequire('@electric-sql/pglite');
 const {pgcrypto}=schemaRequire('@electric-sql/pglite/contrib/pgcrypto');
-const tables=['public.products','public.product_admin_notes','public.store_admins','store_private.product_sales','store_private.finance_entries','store_private.finance_changes','store_private.commission_terms','store_private.product_costs','store_private.upload_rotations','store_private.upload_day_overrides','store_private.upload_schedule_changes','store_private.product_archive_migration_backup'];
+const baseTables=['public.products','public.product_admin_notes','public.store_admins','store_private.product_sales','store_private.finance_entries','store_private.finance_changes','store_private.commission_terms','store_private.product_costs','store_private.upload_rotations','store_private.upload_day_overrides','store_private.upload_schedule_changes','store_private.product_archive_migration_backup'];
 const quote=s=>'"'+s.replaceAll('"','""')+'"';
 const canonical=x=>Array.isArray(x)?x.map(canonical):x&&typeof x==='object'?Object.fromEntries(Object.keys(x).sort().map(k=>[k,canonical(x[k])])):x;
 (async()=>{
  const source=process.argv[2];if(!source)throw Error('Usage: node scripts/verify-business-backup.cjs /absolute/path/business-data.json');
- const snapshot=JSON.parse(fs.readFileSync(source,'utf8'));assert.equal(snapshot.format_version,1);assert.equal(snapshot.complete_live_system_backup,false);
+ const snapshot=JSON.parse(fs.readFileSync(source,'utf8'));assert.ok([1,2].includes(snapshot.format_version));
+ const tables=snapshot.format_version===2?[...baseTables,'store_private.monthly_capital']:baseTables;assert.equal(snapshot.complete_live_system_backup,false);
  assert.deepEqual(Object.keys(snapshot.tables).sort(),[...tables].sort());
  const db=new PGlite({extensions:{pgcrypto}}),root=path.resolve(__dirname,'..'),manifest=require('../supabase/schema/manifest.json');
  try{

@@ -1,6 +1,6 @@
 # Business data snapshot
 
-`supabase/business-data-export.sql` is a read-only, allowlisted export of the current catalogue, internal notes, staff membership metadata, sales, finances, commission terms, purchase costs, schedule, financial history and historical archive mapping. One statement reads one MVCC snapshot. It does not retrieve Auth credentials, application secrets or active sessions.
+`supabase/business-data-export.sql` is a read-only, allowlisted export of the current catalogue, internal notes, staff membership metadata, sales, finances, commission terms, purchase costs, monthly invested-capital and business-expense settings, schedule, financial history and historical archive mapping. One statement reads one MVCC snapshot. It does not retrieve Auth credentials, application secrets or active sessions.
 
 Run through the authorized Supabase SQL connector and save the returned `snapshot` JSON as `business-data.json` in private storage outside this repository. Validate the complete JSON and all expected tables; never save a truncated response as a successful backup. Do not publish business rows in a pull request, build output or a public artifact.
 
@@ -25,3 +25,5 @@ Use the project owner's Supabase dashboard to verify actual database backup date
 4. Verify login/MFA recovery and record the successful test date, recovery point and time. Do not count the offline business-table test as full restoration.
 
 The connected SQL tools cannot inspect backup retention or download private Storage bytes. The source backup automation remains useful; a successful source ZIP is not evidence that full recovery works.
+
+Snapshot format 2 includes monthly_capital (13 tables). The verifier also accepts historical format 1 snapshots (12 tables) without inventing historical capital settings.

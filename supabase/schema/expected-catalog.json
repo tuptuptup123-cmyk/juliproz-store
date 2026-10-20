@@ -4596,6 +4596,126 @@
   },
   {
     "kind": "column_grant",
+    "name": "store_private.monthly_capital.invested_capital.postgres.INSERT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.monthly_capital.invested_capital.postgres.REFERENCES",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.monthly_capital.invested_capital.postgres.SELECT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.monthly_capital.invested_capital.postgres.UPDATE",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.monthly_capital.month.postgres.INSERT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.monthly_capital.month.postgres.REFERENCES",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.monthly_capital.month.postgres.SELECT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.monthly_capital.month.postgres.UPDATE",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.monthly_capital.monthly_expenses.postgres.INSERT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.monthly_capital.monthly_expenses.postgres.REFERENCES",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.monthly_capital.monthly_expenses.postgres.SELECT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.monthly_capital.monthly_expenses.postgres.UPDATE",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.monthly_capital.revision.postgres.INSERT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.monthly_capital.revision.postgres.REFERENCES",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.monthly_capital.revision.postgres.SELECT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.monthly_capital.revision.postgres.UPDATE",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.monthly_capital.updated_at.postgres.INSERT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.monthly_capital.updated_at.postgres.REFERENCES",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.monthly_capital.updated_at.postgres.SELECT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.monthly_capital.updated_at.postgres.UPDATE",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.monthly_capital.updated_by.postgres.INSERT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.monthly_capital.updated_by.postgres.REFERENCES",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.monthly_capital.updated_by.postgres.SELECT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.monthly_capital.updated_by.postgres.UPDATE",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
     "name": "store_private.operational_limits.hits.postgres.INSERT",
     "definition": "YES"
   },
@@ -7281,6 +7401,46 @@
   },
   {
     "kind": "constraint",
+    "name": "store_private.monthly_capital.monthly_capital_invested_capital_check",
+    "definition": "CHECK (((invested_capital > (0)::numeric) AND (invested_capital <= (999999999)::numeric) AND (invested_capital = trunc(invested_capital))))"
+  },
+  {
+    "kind": "constraint",
+    "name": "store_private.monthly_capital.monthly_capital_month_check",
+    "definition": "CHECK ((EXTRACT(day FROM month) = (1)::numeric))"
+  },
+  {
+    "kind": "constraint",
+    "name": "store_private.monthly_capital.monthly_capital_month_not_null",
+    "definition": "NOT NULL month"
+  },
+  {
+    "kind": "constraint",
+    "name": "store_private.monthly_capital.monthly_capital_monthly_expenses_check",
+    "definition": "CHECK (((monthly_expenses >= (0)::numeric) AND (monthly_expenses <= (999999999)::numeric) AND (monthly_expenses = trunc(monthly_expenses))))"
+  },
+  {
+    "kind": "constraint",
+    "name": "store_private.monthly_capital.monthly_capital_pkey",
+    "definition": "PRIMARY KEY (month)"
+  },
+  {
+    "kind": "constraint",
+    "name": "store_private.monthly_capital.monthly_capital_revision_not_null",
+    "definition": "NOT NULL revision"
+  },
+  {
+    "kind": "constraint",
+    "name": "store_private.monthly_capital.monthly_capital_updated_at_not_null",
+    "definition": "NOT NULL updated_at"
+  },
+  {
+    "kind": "constraint",
+    "name": "store_private.monthly_capital.monthly_capital_updated_by_fkey",
+    "definition": "FOREIGN KEY (updated_by) REFERENCES auth.users(id) ON DELETE SET NULL"
+  },
+  {
+    "kind": "constraint",
     "name": "store_private.operational_limits.operational_limits_hits_not_null",
     "definition": "NOT NULL hits"
   },
@@ -7861,6 +8021,11 @@
   },
   {
     "kind": "function",
+    "name": "public.store_business_overview(p_month date)",
+    "definition": "CREATE OR REPLACE FUNCTION public.store_business_overview(p_month date DEFAULT NULL::date)\n RETURNS jsonb\n LANGUAGE sql\n SET search_path TO ''\nAS $function$select store_private.business_overview(p_month)$function$\n"
+  },
+  {
+    "kind": "function",
     "name": "public.store_client_error_ingest(p_secret text, p_ip text, p_surface text, p_kind text, p_asset text, p_line integer, p_column integer, p_release text)",
     "definition": "CREATE OR REPLACE FUNCTION public.store_client_error_ingest(p_secret text, p_ip text, p_surface text, p_kind text, p_asset text, p_line integer, p_column integer, p_release text)\n RETURNS boolean\n LANGUAGE sql\n SET search_path TO ''\nAS $function$select store_gateway.client_error_ingest(p_secret,p_ip,p_surface,p_kind,p_asset,p_line,p_column,p_release)$function$\n"
   },
@@ -7938,6 +8103,11 @@
     "kind": "function",
     "name": "public.store_save_finance_entry(p_id uuid, p_revision bigint, p_values jsonb)",
     "definition": "CREATE OR REPLACE FUNCTION public.store_save_finance_entry(p_id uuid, p_revision bigint, p_values jsonb)\n RETURNS jsonb\n LANGUAGE sql\n SET search_path TO ''\nAS $function$ select store_private.save_finance_entry(p_id,p_revision,p_values); $function$\n"
+  },
+  {
+    "kind": "function",
+    "name": "public.store_save_monthly_financials(p_month date, p_revision bigint, p_capital numeric, p_expenses numeric)",
+    "definition": "CREATE OR REPLACE FUNCTION public.store_save_monthly_financials(p_month date, p_revision bigint, p_capital numeric, p_expenses numeric)\n RETURNS jsonb\n LANGUAGE sql\n SET search_path TO ''\nAS $function$select store_private.save_monthly_financials(p_month,p_revision,p_capital,p_expenses)$function$\n"
   },
   {
     "kind": "function",
@@ -8048,6 +8218,11 @@
     "kind": "function",
     "name": "store_private.begin_workspace_invite(p_email text, p_name text, p_operation uuid)",
     "definition": "CREATE OR REPLACE FUNCTION store_private.begin_workspace_invite(p_email text, p_name text, p_operation uuid)\n RETURNS boolean\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\nbegin\n perform store_private.require_workspace_admin(true);\n if p_operation is null or p_email is null or char_length(p_email)>320 or btrim(p_email)!~'^[^[:space:]@]+@[^[:space:]@]+[.][^[:space:]@]+$' or p_name is null or char_length(btrim(p_name)) not between 1 and 100 then raise exception 'Укажите корректные email и имя';end if;\n perform pg_advisory_xact_lock(840120261012::bigint);\n if exists(select 1 from auth.users where lower(email)=lower(btrim(p_email))) then raise exception 'Аккаунт уже создан. Используйте восстановление пароля и отдельное подтверждение доступа.';end if;\n if exists(select 1 from store_private.admin_invitations where email=lower(btrim(p_email)) and delivery_status='pending' and created_at>now()-interval '2 minutes') then raise exception 'Предыдущее приглашение ещё отправляется. Обновите список через две минуты.';end if;\n if (select count(*) from store_private.workspace_invite_attempts where attempted_at>now()-interval '1 hour' and delivery_status in ('sent','pending','unknown'))>=10 then raise exception 'Лимит отправки: 10 приглашений в час. Попробуйте позже.';end if;\n if (select count(*) from store_private.workspace_invite_attempts where attempted_at>now()-interval '1 hour')>=30 then raise exception 'Слишком много попыток отправки. Попробуйте через час.';end if;\n insert into store_private.workspace_invite_attempts(actor_id,operation_id,delivery_status) values(auth.uid(),p_operation,'pending');\n insert into store_private.admin_invitations(email,display_name,invited_by,created_at,expires_at,delivery_operation,delivery_status,delivery_error)\n values(lower(btrim(p_email)),btrim(p_name),auth.uid(),now(),now()+interval '7 days',p_operation,'pending',null)\n on conflict(email) do update set display_name=excluded.display_name,invited_by=excluded.invited_by,created_at=excluded.created_at,expires_at=excluded.expires_at,delivery_operation=excluded.delivery_operation,delivery_status='pending',delivery_error=null;\n return true;\nend $function$\n"
+  },
+  {
+    "kind": "function",
+    "name": "store_private.business_overview(p_month date)",
+    "definition": "CREATE OR REPLACE FUNCTION store_private.business_overview(p_month date DEFAULT NULL::date)\n RETURNS jsonb\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\ndeclare today date:=(now() at time zone store_private.business_time_zone())::date;\n first_day date:=coalesce(p_month,date_trunc('month',today)::date);last_day date;result jsonb;\nbegin\n perform store_private.require_workspace_admin(true);\n if first_day<date '2000-01-01' or first_day>today or extract(day from first_day)<>1 then\n  raise exception 'Выберите текущий или прошедший месяц' using errcode='22023';end if;\n last_day:=least(today,(first_day+interval '1 month'-interval '1 day')::date);\n with stock as (\n  select p.*,case when stock_quantities is null then 1 else coalesce((select sum(value::integer) from jsonb_each_text(stock_quantities)),0) end units\n  from public.products p where (available or archive_status='hidden') and fulfillment_status='in_stock'\n ), inventory as (\n  select count(*) filter(where units>0) cards,coalesce(sum(units),0) units,\n   coalesce(sum(price*units) filter(where price>0 and currency in ('EUR','€')),0) catalogue_value,\n   count(*) filter(where units>0 and (price is null or price=0 or currency not in ('EUR','€'))) price_missing,\n   coalesce(sum(price*units) filter(where not on_commission and price>0 and currency in ('EUR','€')),0) own_value,\n   coalesce(sum(price*units) filter(where on_commission and price>0 and currency in ('EUR','€')),0) commission_value,\n   count(*) filter(where units>0 and not available) hidden_cards,\n   coalesce(sum(units) filter(where reserved),0) reserved_units\n  from stock\n ), sales as (\n  select e.*,case when expenses is not null and (case when on_commission then owner_due else purchase_cost end) is not null\n   then amount-expenses-(case when on_commission then owner_due else purchase_cost end) end margin\n  from store_private.finance_entries e where merged_into is null and status='completed' and report_on between first_day and last_day\n ), totals as (\n  select count(*) sold_count,coalesce(sum(quantity),0) sold_units,coalesce(sum(amount),0) revenue,\n   coalesce(sum(margin),0) profit_known,count(*) filter(where margin is null) profit_missing from sales\n ), capital as (select * from store_private.monthly_capital where month=first_day)\n select jsonb_build_object('month',first_day,'through',last_day,'today',today,'time_zone',store_private.business_time_zone(),\n  'inventory',(select to_jsonb(i) from inventory i),\n  'sales',(select to_jsonb(t)||jsonb_build_object('profit',case when profit_missing=0 then profit_known end,\n   'net_profit',case when profit_missing=0 then profit_known-(select monthly_expenses from capital) end) from totals t),\n  'capital',coalesce((select to_jsonb(c) from capital c),jsonb_build_object('month',first_day,'invested_capital',null,'monthly_expenses',null,'revision',0)),\n  'goal',jsonb_build_object('target_percent',10,'target',(select invested_capital*0.10 from capital),\n   'return_percent',(select case when t.profit_missing=0 then round((t.profit_known-c.monthly_expenses)/c.invested_capital*100,4) end from totals t cross join capital c)),\n  'legacy_count',(select count(*) from public.products where archive_status='legacy')) into result;\n return result;\nend $function$\n"
   },
   {
     "kind": "function",
@@ -8218,6 +8393,11 @@
     "kind": "function",
     "name": "store_private.save_finance_entry(p_id uuid, p_revision bigint, p_values jsonb)",
     "definition": "CREATE OR REPLACE FUNCTION store_private.save_finance_entry(p_id uuid, p_revision bigint, p_values jsonb)\n RETURNS jsonb\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\ndeclare e store_private.finance_entries%rowtype; previous store_private.finance_entries%rowtype; existing boolean; target_sale bigint; today date:=(now() at time zone store_private.business_time_zone())::date;\nbegin\n perform store_private.require_workspace_admin(true);\n if p_id is null or p_revision is null or p_values is null or jsonb_typeof(p_values)<>'object' then raise exception 'Некорректная запись'; end if;\n if exists(select 1 from jsonb_object_keys(p_values) k where k not in ('product_id','product_label','status','on_commission','opened_on','completed_on','quantity','amount','received','purchase_cost','expenses','owner_due','owner_paid','owner_ref','client_ref','note')) then raise exception 'Неизвестное поле финансовой записи'; end if;\n -- Same order as the sale-void transaction: sale ledger, then finance row.\n select sale_id into target_sale from store_private.finance_entries where id=p_id;\n if target_sale is not null then perform 1 from store_private.product_sales where id=target_sale for update; end if;\n perform pg_advisory_xact_lock(hashtextextended(p_id::text,160215));\n select * into previous from store_private.finance_entries where id=p_id for update;existing:=found;\n if p_revision<>(case when existing then previous.revision else 0 end) then raise exception 'Запись уже изменена. Обновите отчёт и откройте её заново.' using errcode='40001'; end if;\n if previous.merged_into is not null then raise exception 'Заказ связан с продажей. Редактируйте объединённую запись.'; end if;\n if existing then e:=previous;\n else e.id:=p_id;e.kind:='order';e.status:='active';e.on_order:=true;e.on_commission:=false;e.quantity:=1;e.owner_ref:='';e.client_ref:='';e.note:=''; end if;\n if e.sale_id is not null and p_values ?| array['product_id','product_label','status','on_commission','opened_on','completed_on','quantity','amount'] then\n  raise exception 'Дату, сумму и статус продажи изменяют через историю продаж';\n end if;\n e:=jsonb_populate_record(e,p_values);\n if e.product_label is null or e.amount is null or e.quantity is null or e.on_commission is null or e.opened_on is null\n  or e.opened_on<date '2000-01-01' or e.opened_on>today or e.completed_on>today\n  or e.status is null or e.status not in ('active','completed','cancelled')\n  or (e.status='active' and e.completed_on is not null) then raise exception 'Проверьте название, сумму, количество, дату и статус'; end if;\n if e.product_id is not null and (not existing or e.product_id is distinct from previous.product_id)\n  and not exists(select 1 from public.products where id=e.product_id) then raise exception 'Товар с таким артикулом не найден'; end if;\n if existing then\n  update store_private.finance_entries set product_id=e.product_id,product_label=btrim(e.product_label),status=e.status,on_commission=e.on_commission,\n   opened_on=e.opened_on,completed_on=e.completed_on,quantity=e.quantity,amount=e.amount,received=e.received,purchase_cost=e.purchase_cost,expenses=e.expenses,\n   owner_due=e.owner_due,owner_paid=e.owner_paid,owner_ref=btrim(e.owner_ref),client_ref=btrim(e.client_ref),note=btrim(e.note),\n   revision=revision+1,updated_at=now(),updated_by=auth.uid() where id=p_id returning * into e;\n else\n  insert into store_private.finance_entries(id,product_id,product_label,kind,status,on_commission,on_order,opened_on,completed_on,quantity,amount,received,purchase_cost,expenses,owner_due,owner_paid,owner_ref,client_ref,note,updated_by)\n  values(p_id,e.product_id,btrim(e.product_label),'order',e.status,e.on_commission,true,e.opened_on,e.completed_on,e.quantity,e.amount,e.received,e.purchase_cost,e.expenses,e.owner_due,e.owner_paid,btrim(e.owner_ref),btrim(e.client_ref),btrim(e.note),auth.uid()) returning * into e;\n end if;\n return to_jsonb(e);\nend $function$\n"
+  },
+  {
+    "kind": "function",
+    "name": "store_private.save_monthly_financials(p_month date, p_revision bigint, p_capital numeric, p_expenses numeric)",
+    "definition": "CREATE OR REPLACE FUNCTION store_private.save_monthly_financials(p_month date, p_revision bigint, p_capital numeric, p_expenses numeric)\n RETURNS jsonb\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\n SET lock_timeout TO '2s'\nAS $function$\ndeclare previous store_private.monthly_capital%rowtype;saved store_private.monthly_capital%rowtype;\nbegin\n perform store_private.require_workspace_admin(true);\n if p_month is null or extract(day from p_month)<>1 or p_month<date '2000-01-01'\n  or p_month>date_trunc('month',now() at time zone store_private.business_time_zone())::date\n  or p_revision is null or p_revision<0 or (p_capital is null and p_expenses is null)\n  or (p_capital is not null and (p_capital<=0 or p_capital>999999999 or p_capital<>trunc(p_capital)))\n  or (p_expenses is not null and (p_expenses<0 or p_expenses>999999999 or p_expenses<>trunc(p_expenses))) then\n  raise exception 'Укажите капитал от 1 EUR или общие расходы от 0 EUR, целыми числами до 999 999 999' using errcode='22023';end if;\n perform pg_advisory_xact_lock(20261020,(p_month-date '2000-01-01')::integer);\n select * into previous from store_private.monthly_capital where month=p_month for update;\n if p_revision<>coalesce(previous.revision,0) then raise exception 'Параметры месяца уже изменены. Обновите данные и повторите.' using errcode='40001';end if;\n insert into store_private.monthly_capital(month,invested_capital,monthly_expenses,updated_by) values(p_month,p_capital,p_expenses,auth.uid())\n on conflict(month) do update set invested_capital=excluded.invested_capital,monthly_expenses=excluded.monthly_expenses,\n  revision=monthly_capital.revision+1,updated_at=now(),updated_by=auth.uid()\n returning * into saved;\n insert into store_private.finance_changes(entity,record_id,actor_id,actor_label,before_data,after_data)\n values('monthly_capital',p_month::text,auth.uid(),coalesce((select nullif(display_name,'') from public.store_admins where user_id=auth.uid()),'Владелец'),\n  case when previous.month is not null then to_jsonb(previous) end,to_jsonb(saved));\n return to_jsonb(saved);\nend $function$\n"
   },
   {
     "kind": "function",
@@ -8421,6 +8601,11 @@
   },
   {
     "kind": "function_acl",
+    "name": "public.store_business_overview(p_month date)",
+    "definition": "{postgres=X/postgres,authenticated=X/postgres}"
+  },
+  {
+    "kind": "function_acl",
     "name": "public.store_client_error_ingest(p_secret text, p_ip text, p_surface text, p_kind text, p_asset text, p_line integer, p_column integer, p_release text)",
     "definition": "{postgres=X/postgres,anon=X/postgres}"
   },
@@ -8497,6 +8682,11 @@
   {
     "kind": "function_acl",
     "name": "public.store_save_finance_entry(p_id uuid, p_revision bigint, p_values jsonb)",
+    "definition": "{postgres=X/postgres,authenticated=X/postgres}"
+  },
+  {
+    "kind": "function_acl",
+    "name": "public.store_save_monthly_financials(p_month date, p_revision bigint, p_capital numeric, p_expenses numeric)",
     "definition": "{postgres=X/postgres,authenticated=X/postgres}"
   },
   {
@@ -8607,6 +8797,11 @@
   {
     "kind": "function_acl",
     "name": "store_private.begin_workspace_invite(p_email text, p_name text, p_operation uuid)",
+    "definition": "{postgres=X/postgres,authenticated=X/postgres}"
+  },
+  {
+    "kind": "function_acl",
+    "name": "store_private.business_overview(p_month date)",
     "definition": "{postgres=X/postgres,authenticated=X/postgres}"
   },
   {
@@ -8777,6 +8972,11 @@
   {
     "kind": "function_acl",
     "name": "store_private.save_finance_entry(p_id uuid, p_revision bigint, p_values jsonb)",
+    "definition": "{postgres=X/postgres,authenticated=X/postgres}"
+  },
+  {
+    "kind": "function_acl",
+    "name": "store_private.save_monthly_financials(p_month date, p_revision bigint, p_capital numeric, p_expenses numeric)",
     "definition": "{postgres=X/postgres,authenticated=X/postgres}"
   },
   {
@@ -9771,6 +9971,41 @@
   },
   {
     "kind": "grant",
+    "name": "store_private.monthly_capital.postgres.DELETE",
+    "definition": "YES"
+  },
+  {
+    "kind": "grant",
+    "name": "store_private.monthly_capital.postgres.INSERT",
+    "definition": "YES"
+  },
+  {
+    "kind": "grant",
+    "name": "store_private.monthly_capital.postgres.REFERENCES",
+    "definition": "YES"
+  },
+  {
+    "kind": "grant",
+    "name": "store_private.monthly_capital.postgres.SELECT",
+    "definition": "YES"
+  },
+  {
+    "kind": "grant",
+    "name": "store_private.monthly_capital.postgres.TRIGGER",
+    "definition": "YES"
+  },
+  {
+    "kind": "grant",
+    "name": "store_private.monthly_capital.postgres.TRUNCATE",
+    "definition": "YES"
+  },
+  {
+    "kind": "grant",
+    "name": "store_private.monthly_capital.postgres.UPDATE",
+    "definition": "YES"
+  },
+  {
+    "kind": "grant",
     "name": "store_private.operational_limits.postgres.DELETE",
     "definition": "YES"
   },
@@ -10441,6 +10676,16 @@
   },
   {
     "kind": "index",
+    "name": "store_private.monthly_capital_pkey",
+    "definition": "CREATE UNIQUE INDEX monthly_capital_pkey ON store_private.monthly_capital USING btree (month)"
+  },
+  {
+    "kind": "index",
+    "name": "store_private.monthly_capital_updated_by_idx",
+    "definition": "CREATE INDEX monthly_capital_updated_by_idx ON store_private.monthly_capital USING btree (updated_by)"
+  },
+  {
+    "kind": "index",
     "name": "store_private.operational_limits_pkey",
     "definition": "CREATE UNIQUE INDEX operational_limits_pkey ON store_private.operational_limits USING btree (key)"
   },
@@ -10808,6 +11053,11 @@
     "kind": "table",
     "name": "store_private.finance_entries",
     "definition": "{\"rls\": true, \"columns\": [{\"name\": \"id\", \"type\": \"uuid\", \"default\": \"gen_random_uuid()\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"sale_id\", \"type\": \"bigint\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"product_id\", \"type\": \"bigint\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"product_label\", \"type\": \"text\", \"default\": null, \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"kind\", \"type\": \"text\", \"default\": null, \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"status\", \"type\": \"text\", \"default\": null, \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"on_commission\", \"type\": \"boolean\", \"default\": \"false\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"on_order\", \"type\": \"boolean\", \"default\": \"false\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"opened_on\", \"type\": \"date\", \"default\": null, \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"completed_on\", \"type\": \"date\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"report_on\", \"type\": \"date\", \"default\": \"COALESCE(completed_on, opened_on)\", \"notnull\": false, \"identity\": \"\", \"generated\": \"s\"}, {\"name\": \"quantity\", \"type\": \"integer\", \"default\": null, \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"amount\", \"type\": \"numeric\", \"default\": null, \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"received\", \"type\": \"numeric\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"purchase_cost\", \"type\": \"numeric\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"expenses\", \"type\": \"numeric\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"owner_due\", \"type\": \"numeric\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"owner_paid\", \"type\": \"numeric\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"owner_ref\", \"type\": \"text\", \"default\": \"''::text\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"client_ref\", \"type\": \"text\", \"default\": \"''::text\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"note\", \"type\": \"text\", \"default\": \"''::text\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"merged_into\", \"type\": \"uuid\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"revision\", \"type\": \"bigint\", \"default\": \"1\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"created_at\", \"type\": \"timestamp with time zone\", \"default\": \"now()\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"updated_at\", \"type\": \"timestamp with time zone\", \"default\": \"now()\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"updated_by\", \"type\": \"uuid\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}], \"force_rls\": false}"
+  },
+  {
+    "kind": "table",
+    "name": "store_private.monthly_capital",
+    "definition": "{\"rls\": true, \"columns\": [{\"name\": \"month\", \"type\": \"date\", \"default\": null, \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"invested_capital\", \"type\": \"numeric\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"revision\", \"type\": \"bigint\", \"default\": \"1\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"updated_at\", \"type\": \"timestamp with time zone\", \"default\": \"now()\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"updated_by\", \"type\": \"uuid\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"monthly_expenses\", \"type\": \"numeric\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}], \"force_rls\": false}"
   },
   {
     "kind": "table",
