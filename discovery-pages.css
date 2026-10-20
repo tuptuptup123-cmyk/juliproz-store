@@ -198,3 +198,11 @@
 
 .watches-portfolio-gallery{grid-template-columns:repeat(4,minmax(0,1fr))}
 .watches-portfolio-gallery a{aspect-ratio:3/4}
+
+.jewellery-services{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:32px}
+.jewellery-services>div{padding:28px;border:1px solid #e5e0e3;background:#faf8f9}
+.jewellery-services>div:last-child{background:#fff}
+.jewellery-services h2{font-size:30px;line-height:1.2;margin:0 0 18px}
+.jewellery-services p{font-size:13px;line-height:1.8;color:var(--muted);margin:0 0 16px}
+.jewellery-services .discovery-button{margin-top:8px}
+@media(max-width:680px){.jewellery-services{grid-template-columns:1fr;gap:16px}.jewellery-services>div{padding:22px}.jewellery-services h2{font-size:26px}}
