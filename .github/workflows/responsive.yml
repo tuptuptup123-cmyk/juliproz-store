@@ -17,6 +17,12 @@ jobs:
           node-version: '24'
       - run: npm install --prefix "$RUNNER_TEMP/jp-browser" --no-audit --no-fund --ignore-scripts playwright@1.56.1 axe-core@4.10.3
       - run: node "$RUNNER_TEMP/jp-browser/node_modules/playwright/cli.js" install --with-deps chromium webkit
+      - run: node scripts/stage-photo-assets.cjs
+      - run: node scripts/build-telegram.cjs
+      - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" node tests/telegram-origin.browser.cjs
+      - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" QA_BROWSER=webkit node tests/telegram-origin.browser.cjs
+      - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" QA_OUTPUT="$RUNNER_TEMP/jp-qa" node tests/manager-contact.browser.cjs
+      - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" QA_BROWSER=webkit QA_OUTPUT="$RUNNER_TEMP/jp-qa" node tests/manager-contact.browser.cjs
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" node tests/detailed-analytics.browser.cjs
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" node tests/owner-statistics.browser.cjs
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" node tests/manager-commission.browser.cjs
@@ -25,12 +31,6 @@ jobs:
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" node tests/audit-followup.browser.cjs
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" node tests/product-translation.browser.cjs
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" node tests/remaining-design.browser.cjs
-      - run: node scripts/stage-photo-assets.cjs
-      - run: node scripts/build-telegram.cjs
-      - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" node tests/telegram-origin.browser.cjs
-      - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" QA_BROWSER=webkit node tests/telegram-origin.browser.cjs
-      - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" QA_OUTPUT="$RUNNER_TEMP/jp-qa" node tests/manager-contact.browser.cjs
-      - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" QA_BROWSER=webkit QA_OUTPUT="$RUNNER_TEMP/jp-qa" node tests/manager-contact.browser.cjs
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" QA_OUTPUT="$RUNNER_TEMP/jp-qa" node tests/product-deeplink.browser.cjs
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" QA_BROWSER=webkit QA_OUTPUT="$RUNNER_TEMP/jp-qa" node tests/product-deeplink.browser.cjs
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" QA_OUTPUT="$RUNNER_TEMP/jp-qa" node tests/audit-review.browser.cjs
