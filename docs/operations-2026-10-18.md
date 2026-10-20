@@ -10,10 +10,16 @@ The website, Telegram Mini App and single admin deploy independently from this r
 
 | Local file identifier | Applied identifier observed in production | Migration |
 | --- | --- | --- |
+| 20261016144421 | 20261016154054 | external_audit_security_and_logic |
 | 20261017082140 | 20261017085816 | remaining_audit_sessions_delivery_observability |
 | 20261018051207 | 20261018051721 | analytics_acquisition_sources |
+| 20261018085636 | 20261018091830 | independent_audit_fixes |
+| 20261019062938 | 20261019063341 | manager_product_commission |
+| 20261020065527 | 20261020070612 | audit_finance_completeness |
 
 The other listed post-baseline migrations were present with matching identifiers. Historical files and migration history have intentionally not been renamed or replayed. Record any future divergence here with the exact SQL comparison.
+
+The 20 October finance migration was verified against all three live function bodies (finance_report, finance_commission and save_commission_terms). The new technical_cleanup_retention file uses its observed applied identifier 20261020072924; its body hash was verified before publication. Do not replay either change based only on a timestamp mismatch.
 
 ## New empty project
 
