@@ -4636,6 +4636,26 @@
   },
   {
     "kind": "column_grant",
+    "name": "store_private.monthly_capital.monthly_expenses.postgres.INSERT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.monthly_capital.monthly_expenses.postgres.REFERENCES",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.monthly_capital.monthly_expenses.postgres.SELECT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "store_private.monthly_capital.monthly_expenses.postgres.UPDATE",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
     "name": "store_private.monthly_capital.revision.postgres.INSERT",
     "definition": "YES"
   },
@@ -7386,11 +7406,6 @@
   },
   {
     "kind": "constraint",
-    "name": "store_private.monthly_capital.monthly_capital_invested_capital_not_null",
-    "definition": "NOT NULL invested_capital"
-  },
-  {
-    "kind": "constraint",
     "name": "store_private.monthly_capital.monthly_capital_month_check",
     "definition": "CHECK ((EXTRACT(day FROM month) = (1)::numeric))"
   },
@@ -7398,6 +7413,11 @@
     "kind": "constraint",
     "name": "store_private.monthly_capital.monthly_capital_month_not_null",
     "definition": "NOT NULL month"
+  },
+  {
+    "kind": "constraint",
+    "name": "store_private.monthly_capital.monthly_capital_monthly_expenses_check",
+    "definition": "CHECK (((monthly_expenses >= (0)::numeric) AND (monthly_expenses <= (999999999)::numeric) AND (monthly_expenses = trunc(monthly_expenses))))"
   },
   {
     "kind": "constraint",
@@ -8086,8 +8106,8 @@
   },
   {
     "kind": "function",
-    "name": "public.store_save_monthly_capital(p_month date, p_revision bigint, p_capital numeric)",
-    "definition": "CREATE OR REPLACE FUNCTION public.store_save_monthly_capital(p_month date, p_revision bigint, p_capital numeric)\n RETURNS jsonb\n LANGUAGE sql\n SET search_path TO ''\nAS $function$select store_private.save_monthly_capital(p_month,p_revision,p_capital)$function$\n"
+    "name": "public.store_save_monthly_financials(p_month date, p_revision bigint, p_capital numeric, p_expenses numeric)",
+    "definition": "CREATE OR REPLACE FUNCTION public.store_save_monthly_financials(p_month date, p_revision bigint, p_capital numeric, p_expenses numeric)\n RETURNS jsonb\n LANGUAGE sql\n SET search_path TO ''\nAS $function$select store_private.save_monthly_financials(p_month,p_revision,p_capital,p_expenses)$function$\n"
   },
   {
     "kind": "function",
@@ -8202,7 +8222,7 @@
   {
     "kind": "function",
     "name": "store_private.business_overview(p_month date)",
-    "definition": "CREATE OR REPLACE FUNCTION store_private.business_overview(p_month date DEFAULT NULL::date)\n RETURNS jsonb\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\ndeclare today date:=(now() at time zone store_private.business_time_zone())::date;\n first_day date:=coalesce(p_month,date_trunc('month',today)::date);last_day date;result jsonb;\nbegin\n perform store_private.require_workspace_admin(true);\n if first_day<date '2000-01-01' or first_day>today or extract(day from first_day)<>1 then\n  raise exception 'Выберите текущий или прошедший месяц' using errcode='22023';end if;\n last_day:=least(today,(first_day+interval '1 month'-interval '1 day')::date);\n with stock as (\n  select p.*,case when stock_quantities is null then 1 else coalesce((select sum(value::integer) from jsonb_each_text(stock_quantities)),0) end units\n  from public.products p where (available or archive_status='hidden') and fulfillment_status='in_stock'\n ), inventory as (\n  select count(*) filter(where units>0) cards,coalesce(sum(units),0) units,\n   coalesce(sum(price*units) filter(where price>0 and currency in ('EUR','€')),0) catalogue_value,\n   count(*) filter(where units>0 and (price is null or price=0 or currency not in ('EUR','€'))) price_missing,\n   coalesce(sum(price*units) filter(where not on_commission and price>0 and currency in ('EUR','€')),0) own_value,\n   coalesce(sum(price*units) filter(where on_commission and price>0 and currency in ('EUR','€')),0) commission_value,\n   count(*) filter(where units>0 and not available) hidden_cards,\n   coalesce(sum(units) filter(where reserved),0) reserved_units\n  from stock\n ), sales as (\n  select e.*,case when expenses is not null and (case when on_commission then owner_due else purchase_cost end) is not null\n   then amount-expenses-(case when on_commission then owner_due else purchase_cost end) end margin\n  from store_private.finance_entries e where merged_into is null and status='completed' and report_on between first_day and last_day\n ), totals as (\n  select count(*) sold_count,coalesce(sum(quantity),0) sold_units,coalesce(sum(amount),0) revenue,\n   coalesce(sum(margin),0) profit_known,count(*) filter(where margin is null) profit_missing from sales\n ), capital as (select * from store_private.monthly_capital where month=first_day)\n select jsonb_build_object('month',first_day,'through',last_day,'today',today,'time_zone',store_private.business_time_zone(),\n  'inventory',(select to_jsonb(i) from inventory i),\n  'sales',(select to_jsonb(t)||jsonb_build_object('profit',case when profit_missing=0 then profit_known end) from totals t),\n  'capital',coalesce((select to_jsonb(c) from capital c),jsonb_build_object('month',first_day,'invested_capital',null,'revision',0)),\n  'goal',jsonb_build_object('min_percent',10,'max_percent',20,\n   'minimum',(select invested_capital*0.10 from capital),'stretch',(select invested_capital*0.20 from capital),\n   'return_percent',(select case when t.profit_missing=0 then round(t.profit_known/c.invested_capital*100,4) end from totals t cross join capital c)),\n  'legacy_count',(select count(*) from public.products where archive_status='legacy')) into result;\n return result;\nend $function$\n"
+    "definition": "CREATE OR REPLACE FUNCTION store_private.business_overview(p_month date DEFAULT NULL::date)\n RETURNS jsonb\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\ndeclare today date:=(now() at time zone store_private.business_time_zone())::date;\n first_day date:=coalesce(p_month,date_trunc('month',today)::date);last_day date;result jsonb;\nbegin\n perform store_private.require_workspace_admin(true);\n if first_day<date '2000-01-01' or first_day>today or extract(day from first_day)<>1 then\n  raise exception 'Выберите текущий или прошедший месяц' using errcode='22023';end if;\n last_day:=least(today,(first_day+interval '1 month'-interval '1 day')::date);\n with stock as (\n  select p.*,case when stock_quantities is null then 1 else coalesce((select sum(value::integer) from jsonb_each_text(stock_quantities)),0) end units\n  from public.products p where (available or archive_status='hidden') and fulfillment_status='in_stock'\n ), inventory as (\n  select count(*) filter(where units>0) cards,coalesce(sum(units),0) units,\n   coalesce(sum(price*units) filter(where price>0 and currency in ('EUR','€')),0) catalogue_value,\n   count(*) filter(where units>0 and (price is null or price=0 or currency not in ('EUR','€'))) price_missing,\n   coalesce(sum(price*units) filter(where not on_commission and price>0 and currency in ('EUR','€')),0) own_value,\n   coalesce(sum(price*units) filter(where on_commission and price>0 and currency in ('EUR','€')),0) commission_value,\n   count(*) filter(where units>0 and not available) hidden_cards,\n   coalesce(sum(units) filter(where reserved),0) reserved_units\n  from stock\n ), sales as (\n  select e.*,case when expenses is not null and (case when on_commission then owner_due else purchase_cost end) is not null\n   then amount-expenses-(case when on_commission then owner_due else purchase_cost end) end margin\n  from store_private.finance_entries e where merged_into is null and status='completed' and report_on between first_day and last_day\n ), totals as (\n  select count(*) sold_count,coalesce(sum(quantity),0) sold_units,coalesce(sum(amount),0) revenue,\n   coalesce(sum(margin),0) profit_known,count(*) filter(where margin is null) profit_missing from sales\n ), capital as (select * from store_private.monthly_capital where month=first_day)\n select jsonb_build_object('month',first_day,'through',last_day,'today',today,'time_zone',store_private.business_time_zone(),\n  'inventory',(select to_jsonb(i) from inventory i),\n  'sales',(select to_jsonb(t)||jsonb_build_object('profit',case when profit_missing=0 then profit_known end,\n   'net_profit',case when profit_missing=0 then profit_known-(select monthly_expenses from capital) end) from totals t),\n  'capital',coalesce((select to_jsonb(c) from capital c),jsonb_build_object('month',first_day,'invested_capital',null,'monthly_expenses',null,'revision',0)),\n  'goal',jsonb_build_object('min_percent',10,'max_percent',20,\n   'minimum',(select invested_capital*0.10 from capital),'stretch',(select invested_capital*0.20 from capital),\n   'return_percent',(select case when t.profit_missing=0 then round((t.profit_known-c.monthly_expenses)/c.invested_capital*100,4) end from totals t cross join capital c)),\n  'legacy_count',(select count(*) from public.products where archive_status='legacy')) into result;\n return result;\nend $function$\n"
   },
   {
     "kind": "function",
@@ -8376,8 +8396,8 @@
   },
   {
     "kind": "function",
-    "name": "store_private.save_monthly_capital(p_month date, p_revision bigint, p_capital numeric)",
-    "definition": "CREATE OR REPLACE FUNCTION store_private.save_monthly_capital(p_month date, p_revision bigint, p_capital numeric)\n RETURNS jsonb\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\n SET lock_timeout TO '2s'\nAS $function$\ndeclare previous store_private.monthly_capital%rowtype;saved store_private.monthly_capital%rowtype;\nbegin\n perform store_private.require_workspace_admin(true);\n if p_month is null or extract(day from p_month)<>1 or p_month<date '2000-01-01'\n  or p_month>date_trunc('month',now() at time zone store_private.business_time_zone())::date\n  or p_revision is null or p_revision<0 or p_capital is null or p_capital<=0 or p_capital>999999999 or p_capital<>trunc(p_capital) then\n  raise exception 'Укажите месяц и вложенный капитал от 1 до 999 999 999 EUR без копеек' using errcode='22023';end if;\n perform pg_advisory_xact_lock(20261020,(p_month-date '2000-01-01')::integer);\n select * into previous from store_private.monthly_capital where month=p_month for update;\n if p_revision<>coalesce(previous.revision,0) then raise exception 'Капитал уже изменён. Обновите данные и повторите.' using errcode='40001';end if;\n insert into store_private.monthly_capital(month,invested_capital,updated_by) values(p_month,p_capital,auth.uid())\n on conflict(month) do update set invested_capital=excluded.invested_capital,revision=monthly_capital.revision+1,updated_at=now(),updated_by=auth.uid()\n returning * into saved;\n insert into store_private.finance_changes(entity,record_id,actor_id,actor_label,before_data,after_data)\n values('monthly_capital',p_month::text,auth.uid(),coalesce((select nullif(display_name,'') from public.store_admins where user_id=auth.uid()),'Владелец'),\n  case when previous.month is not null then to_jsonb(previous) end,to_jsonb(saved));\n return to_jsonb(saved);\nend $function$\n"
+    "name": "store_private.save_monthly_financials(p_month date, p_revision bigint, p_capital numeric, p_expenses numeric)",
+    "definition": "CREATE OR REPLACE FUNCTION store_private.save_monthly_financials(p_month date, p_revision bigint, p_capital numeric, p_expenses numeric)\n RETURNS jsonb\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\n SET lock_timeout TO '2s'\nAS $function$\ndeclare previous store_private.monthly_capital%rowtype;saved store_private.monthly_capital%rowtype;\nbegin\n perform store_private.require_workspace_admin(true);\n if p_month is null or extract(day from p_month)<>1 or p_month<date '2000-01-01'\n  or p_month>date_trunc('month',now() at time zone store_private.business_time_zone())::date\n  or p_revision is null or p_revision<0 or (p_capital is null and p_expenses is null)\n  or (p_capital is not null and (p_capital<=0 or p_capital>999999999 or p_capital<>trunc(p_capital)))\n  or (p_expenses is not null and (p_expenses<0 or p_expenses>999999999 or p_expenses<>trunc(p_expenses))) then\n  raise exception 'Укажите капитал от 1 EUR или общие расходы от 0 EUR, целыми числами до 999 999 999' using errcode='22023';end if;\n perform pg_advisory_xact_lock(20261020,(p_month-date '2000-01-01')::integer);\n select * into previous from store_private.monthly_capital where month=p_month for update;\n if p_revision<>coalesce(previous.revision,0) then raise exception 'Параметры месяца уже изменены. Обновите данные и повторите.' using errcode='40001';end if;\n insert into store_private.monthly_capital(month,invested_capital,monthly_expenses,updated_by) values(p_month,p_capital,p_expenses,auth.uid())\n on conflict(month) do update set invested_capital=excluded.invested_capital,monthly_expenses=excluded.monthly_expenses,\n  revision=monthly_capital.revision+1,updated_at=now(),updated_by=auth.uid()\n returning * into saved;\n insert into store_private.finance_changes(entity,record_id,actor_id,actor_label,before_data,after_data)\n values('monthly_capital',p_month::text,auth.uid(),coalesce((select nullif(display_name,'') from public.store_admins where user_id=auth.uid()),'Владелец'),\n  case when previous.month is not null then to_jsonb(previous) end,to_jsonb(saved));\n return to_jsonb(saved);\nend $function$\n"
   },
   {
     "kind": "function",
@@ -8666,7 +8686,7 @@
   },
   {
     "kind": "function_acl",
-    "name": "public.store_save_monthly_capital(p_month date, p_revision bigint, p_capital numeric)",
+    "name": "public.store_save_monthly_financials(p_month date, p_revision bigint, p_capital numeric, p_expenses numeric)",
     "definition": "{postgres=X/postgres,authenticated=X/postgres}"
   },
   {
@@ -8956,7 +8976,7 @@
   },
   {
     "kind": "function_acl",
-    "name": "store_private.save_monthly_capital(p_month date, p_revision bigint, p_capital numeric)",
+    "name": "store_private.save_monthly_financials(p_month date, p_revision bigint, p_capital numeric, p_expenses numeric)",
     "definition": "{postgres=X/postgres,authenticated=X/postgres}"
   },
   {
@@ -11037,7 +11057,7 @@
   {
     "kind": "table",
     "name": "store_private.monthly_capital",
-    "definition": "{\"rls\": true, \"columns\": [{\"name\": \"month\", \"type\": \"date\", \"default\": null, \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"invested_capital\", \"type\": \"numeric\", \"default\": null, \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"revision\", \"type\": \"bigint\", \"default\": \"1\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"updated_at\", \"type\": \"timestamp with time zone\", \"default\": \"now()\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"updated_by\", \"type\": \"uuid\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}], \"force_rls\": false}"
+    "definition": "{\"rls\": true, \"columns\": [{\"name\": \"month\", \"type\": \"date\", \"default\": null, \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"invested_capital\", \"type\": \"numeric\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"revision\", \"type\": \"bigint\", \"default\": \"1\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"updated_at\", \"type\": \"timestamp with time zone\", \"default\": \"now()\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"updated_by\", \"type\": \"uuid\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"monthly_expenses\", \"type\": \"numeric\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}], \"force_rls\": false}"
   },
   {
     "kind": "table",

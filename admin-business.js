@@ -12,28 +12,28 @@
  const fresh=()=>window.AdminStepUp?.fresh()===true;
  const monthLabel=month=>new Intl.DateTimeFormat('ru-RU',{month:'long',year:'numeric',timeZone:'UTC'}).format(new Date(month+'T12:00:00Z'));
  function resetValues(){data=null;loadedAt=0;$('businessMetrics').innerHTML='';$('businessGoal').innerHTML='';$('businessContent').classList.add('hidden')}
- function clear(){requestId++;loading=false;saving=false;draft=null;resetValues();dialog.close();form.reset();$('businessCapitalError').textContent='';$('businessStatus').textContent='';form.elements.capital.disabled=false;$('businessCapitalSave').disabled=false;panel.classList.add('hidden')}
+ function clear(){requestId++;loading=false;saving=false;draft=null;resetValues();dialog.close();form.reset();$('businessCapitalError').textContent='';$('businessStatus').textContent='';form.elements.capital.disabled=false;form.elements.expenses.disabled=false;$('businessCapitalSave').disabled=false;panel.classList.add('hidden')}
  function render(){
   const {inventory:i,sales:s,capital:c,goal:g}=data;
   $('businessTitle').textContent='Финансы · '+monthLabel(data.month);
   const stockValue=i.cards>0&&i.price_missing>=i.cards?'Цена не заполнена':(i.price_missing?'от ':'')+money(i.catalogue_value);
   const card=(label,value,note)=>`<article class="business-metric"><h3>${esc(label)}</h3><strong>${esc(value)}</strong><p>${esc(note)}</p></article>`;
-  const missing=s.profit_missing>0;
+  const missing=s.profit_missing>0,expensesUnknown=c.monthly_expenses==null,net=s.net_profit;
   $('businessMetrics').innerHTML=card('Наличие по ценам продажи',stockValue,`${i.units} шт. · свои: ${money(i.own_value)} · комиссия: ${money(i.commission_value)}${i.price_missing?' · без цены: '+i.price_missing:''}`)+
    card('Продано за месяц',money(s.revenue),`${s.sold_units} шт. · ${s.sold_count} завершённых сделок`)+
-   card('Прибыль по сделкам',missing?'Нужны данные':money(s.profit),missing?`Не заполнены закупка, выплата владельцу или расходы по ${s.profit_missing} сделкам.`:'После закупки, выплат владельцам и расходов по сделкам.');
+   card('Чистая прибыль за месяц',net==null?'Нужны данные':money(net),missing?`Не заполнены закупка, выплата владельцу или расходы по ${s.profit_missing} сделкам.${expensesUnknown?' Также укажите общие расходы месяца.':''}`:expensesUnknown?'Укажите общие расходы месяца. Если расходов нет, введите 0.':`Прибыль по сделкам ${money(s.profit)} − общие расходы ${money(c.monthly_expenses)}.`);
   let status='Укажите вложенный капитал, чтобы увидеть цель в евро.';
   if(c.invested_capital!=null){
-   if(missing)status='Прогресс появится после заполнения финансов всех продаж за месяц.';
-   else if(s.profit<0)status='Убыток за месяц: '+money(-s.profit)+'.';
-   else if(s.profit>=g.stretch)status='Цель 20% достигнута.';
-   else if(s.profit>=g.minimum)status='Цель 10% достигнута. До 20% осталось '+money(g.stretch-s.profit)+'.';
-   else status='До цели 10% осталось '+money(g.minimum-s.profit)+'.';
+   if(net==null)status='Прогресс появится после заполнения затрат по продажам и общих расходов месяца.';
+   else if(net<0)status='Убыток за месяц: '+money(-net)+'.';
+   else if(net>=g.stretch)status='Цель 20% достигнута.';
+   else if(net>=g.minimum)status='Цель 10% достигнута. До 20% осталось '+money(g.stretch-net)+'.';
+   else status='До цели 10% осталось '+money(g.minimum-net)+'.';
   }
-  $('businessGoal').innerHTML=`<div class="business-goal-heading"><div><span class="business-eyebrow">ЦЕЛЬ МЕСЯЦА</span><h3>Заработать 10–20% от вложений</h3><p>Вложенный капитал: <strong>${c.invested_capital==null?'не указан':esc(money(c.invested_capital))}</strong></p></div><button type="button" id="businessCapitalEdit">${c.invested_capital==null?'Указать капитал':'Изменить капитал'}</button></div>
-   <div class="business-targets"><div><span>Цель 10%</span><strong>${g.minimum==null?'—':esc(money(g.minimum))}</strong></div><div><span>Цель 20%</span><strong>${g.stretch==null?'—':esc(money(g.stretch))}</strong></div><div><span>Заработано от вложений</span><strong>${g.return_percent==null?'—':esc(percent(g.return_percent))}</strong></div></div>
-   <div class="business-progress"><progress max="100" value="${progress(s.profit,g.stretch)}" aria-label="Прогресс к цели 20%"${g.return_percent==null?' hidden':''}></progress><p>${esc(status)}</p></div>
-   <details class="business-explanation"><summary>Как считаются суммы</summary><p>Наличие — свои и комиссионные вещи по ценам продажи с учётом количества, включая бронь и скрытые карточки. Проданные вещи, старый архив и товары под заказ сюда не входят. Это стоимость товаров, а не вложенный капитал.</p><p>Продажи — фактические суммы завершённых сделок с ${esc(data.month.split('-').reverse().join('.'))} по ${esc(data.through.split('-').reverse().join('.'))}. Отменённые и связанные повторно заказы исключены. ${Number(data.legacy_count)||0} карточек старого архива не учитываются без подтверждённой продажи. Период — по времени Киева.</p><p>Прибыль = фактическая продажа − закупка или выплата владельцу − расходы по сделке. Общие расходы бизнеса отдельно не вычитаются. Неизвестные затраты не считаются нулём.</p><p>Вложенный капитал задаётся главным администратором для каждого месяца и не уменьшается автоматически после продажи. При пополнении вложений можно изменить сумму. Цель — ориентир по прибыли, а не по выручке или полученным оплатам.</p></details>`;
+  $('businessGoal').innerHTML=`<div class="business-goal-heading"><div><span class="business-eyebrow">ЦЕЛЬ МЕСЯЦА</span><h3>10–20% чистой прибыли от вложений</h3><p>Вложенный капитал: <strong>${c.invested_capital==null?'не указан':esc(money(c.invested_capital))}</strong><br>Общие расходы месяца: <strong>${expensesUnknown?'не указаны':esc(money(c.monthly_expenses))}</strong></p></div><button type="button" id="businessCapitalEdit">Капитал и расходы</button></div>
+   <div class="business-targets"><div><span>Цель 10%</span><strong>${g.minimum==null?'—':esc(money(g.minimum))}</strong></div><div><span>Цель 20%</span><strong>${g.stretch==null?'—':esc(money(g.stretch))}</strong></div><div><span>Чистая прибыль от вложений</span><strong>${g.return_percent==null?'—':esc(percent(g.return_percent))}</strong></div></div>
+   <div class="business-progress"><progress max="100" value="${progress(net,g.stretch)}" aria-label="Прогресс чистой прибыли к цели 20%"${g.return_percent==null?' hidden':''}></progress><p>${esc(status)}</p></div>
+   <details class="business-explanation"><summary>Как считаются суммы</summary><p>Наличие — свои и комиссионные вещи по ценам продажи с учётом количества, включая бронь и скрытые карточки. Проданные вещи, старый архив и товары под заказ сюда не входят. Это стоимость товаров, а не вложенный капитал.</p><p>Продажи — фактические суммы завершённых сделок с ${esc(data.month.split('-').reverse().join('.'))} по ${esc(data.through.split('-').reverse().join('.'))}. Отменённые и связанные повторно заказы исключены. ${Number(data.legacy_count)||0} карточек старого архива не учитываются без подтверждённой продажи. Период — по времени Киева.</p><p>Чистая прибыль = фактические продажи − закупка или выплаты владельцам − расходы по сделкам − общие расходы месяца. В общие расходы включайте зарплаты, аренду, рекламу, налоги и прочие затраты за период по сегодняшний день. Уже учтённые в сделках расходы повторно не добавляйте. Неизвестные затраты не считаются нулём; если общих расходов нет, явно укажите 0.</p><p>Вложенный капитал задаётся главным администратором для каждого месяца и не уменьшается автоматически после продажи. При пополнении вложений можно изменить сумму. Цель — 10–20% чистой прибыли от вложенного капитала. Общие расходы обновляйте по мере появления новых затрат.</p></details>`;
   $('businessContent').classList.remove('hidden');$('businessStatus').textContent='Обновлено '+new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});
  }
  async function load(force=false){
@@ -55,20 +55,21 @@
  $('businessCapitalCancel').onclick=close;dialog.addEventListener('cancel',e=>{e.preventDefault();close()});
  $('businessGoal').onclick=e=>{
   if(!e.target.closest('#businessCapitalEdit')||!data||!canViewStatistics()||!fresh()||saving)return;
-  draft={...data.capital,month:data.month};form.reset();form.elements.capital.value=draft.invested_capital??'';
+  draft={...data.capital,month:data.month};form.reset();form.elements.capital.value=draft.invested_capital??'';form.elements.expenses.value=draft.monthly_expenses??'';
   $('businessCapitalMonth').textContent=monthLabel(draft.month);$('businessCapitalError').textContent='';dialog.showModal();form.elements.capital.focus();
  };
  form.onsubmit=async e=>{
   e.preventDefault();if(saving||!draft||!canViewStatistics())return;
-  const value=Number(form.elements.capital.value);if(!Number.isSafeInteger(value)||value<1||value>999999999){$('businessCapitalError').textContent='Введите сумму от 1 до 999 999 999 EUR без копеек.';return}
-  const current=draft,epoch=sessionEpoch;saving=true;form.elements.capital.disabled=true;$('businessCapitalSave').disabled=true;$('businessCapitalError').textContent='Сохраняем…';
+  const value=form.elements.capital.value.trim()===''?null:Number(form.elements.capital.value),expenses=form.elements.expenses.value.trim()===''?null:Number(form.elements.expenses.value);
+  if(value==null&&expenses==null||value!=null&&(!Number.isSafeInteger(value)||value<1||value>999999999)||expenses!=null&&(!Number.isSafeInteger(expenses)||expenses<0||expenses>999999999)){$('businessCapitalError').textContent='Укажите капитал от 1 EUR или расходы от 0 EUR, целыми числами до 999 999 999. Пустое поле означает неизвестную сумму.';return}
+  const current=draft,epoch=sessionEpoch;saving=true;form.elements.capital.disabled=true;form.elements.expenses.disabled=true;$('businessCapitalSave').disabled=true;$('businessCapitalError').textContent='Сохраняем…';
   try{
-   const saved=await rpc('store_save_monthly_capital',{p_month:current.month,p_revision:current.revision,p_capital:value});
+   const saved=await rpc('store_save_monthly_financials',{p_month:current.month,p_revision:current.revision,p_capital:value,p_expenses:expenses});
    if(epoch!==sessionEpoch||draft!==current||!canViewStatistics())return;
    if(saved?.month!==current.month||Number(saved.revision)!==Number(current.revision)+1)throw Error('Сервер не подтвердил запись.');
    dialog.close();draft=null;form.reset();loadedAt=0;
   }catch(error){if(epoch===sessionEpoch&&draft===current)$('businessCapitalError').textContent=error.message+' Закройте форму и обновите показатели перед повторной попыткой.'}
-  finally{if(epoch===sessionEpoch){saving=false;form.elements.capital.disabled=false;$('businessCapitalSave').disabled=false;if(!draft)await load(true)}}
+  finally{if(epoch===sessionEpoch){saving=false;form.elements.capital.disabled=false;form.elements.expenses.disabled=false;$('businessCapitalSave').disabled=false;if(!draft)await load(true)}}
  };
  $('businessRefresh').onclick=()=>load(true);
  $('businessUnlock').onclick=async()=>{try{await AdminStepUp.ensure();await load(true)}catch(error){status(error.message)}};
