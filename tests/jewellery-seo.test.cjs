@@ -11,5 +11,5 @@ test('existing editorial pages have distinct titles, language URLs and image ref
  const titles=new Set();for(const [kind,slug] of [['brand','hermes'],['brand','chanel'],['brand','loro-piana'],['watches'],['jewellery'],['outlet']])for(const lang of ['ru','en']){
  const page=seo.page(kind,slug),h=site.render(template,kind,slug,lang,[]);assert.ok(!titles.has(page.title[lang]));titles.add(page.title[lang]);assert.ok(h.includes('rel="canonical" href="'+seo.url(page.path,lang)+'"'));assert.ok(h.includes('hreflang="ru"'));assert.ok(h.includes('hreflang="en"'));
  }
- const images=require('../discovery-pages.js').editorialImages;assert.equal(Object.values(images).flat().length,14);for(const [path,photos] of Object.entries(images)){assert.ok(path.startsWith('/'));for(const src of photos)assert.match(src,/^\/images\/editorial\/[a-z-]+\.webp$/)}
+ const images=require('../discovery-pages.js').editorialImages;assert.equal(Object.values(images).flat().length,15);for(const [path,photos] of Object.entries(images)){assert.ok(path.startsWith('/'));for(const src of photos)assert.match(src,/^\/images\/editorial\/[a-z-]+\.webp$/)}
 });
