@@ -19,6 +19,7 @@ jobs:
       - run: node "$RUNNER_TEMP/jp-browser/node_modules/playwright/cli.js" install --with-deps chromium webkit
       - run: node scripts/stage-photo-assets.cjs
       - run: node scripts/build-telegram.cjs
+      - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" QA_OUTPUT="$RUNNER_TEMP/jp-qa" node tests/product-save-review.browser.cjs
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" node tests/telegram-origin.browser.cjs
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" QA_BROWSER=webkit node tests/telegram-origin.browser.cjs
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" QA_OUTPUT="$RUNNER_TEMP/jp-qa" node tests/manager-contact.browser.cjs

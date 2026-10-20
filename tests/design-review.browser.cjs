@@ -44,7 +44,7 @@ for(const width of [390,1280]){
  assert.deepEqual(await page.locator('#categoryFilter option').allTextContents(),['Все категории','Головной убор','Обувь','Украшения']);
  await page.evaluate(()=>{$('categoryFilter').value='Головной убор';render()});assert.equal(await page.locator('#inventory article').count(),2);
  await page.evaluate(p=>edit(p),aliases[0]);assert.equal(await page.locator('[name=brand]').inputValue(),'Amiri');assert.equal(await page.locator('[name=category]').inputValue(),'Головной убор');assert.equal(await page.locator('[data-quantity-size="One Size"]').inputValue(),'4');
- await page.locator('#save').click();await page.locator('#status').filter({hasText:'Товар сохранён'}).waitFor();assert.equal(saved.brand,'Amiri');assert.equal(saved.category,'Головной убор');assert.deepEqual(saved.stock_quantities,{'One Size':4});
+ await page.locator('#save').click();await require('./admin-action-helper.cjs').confirmProductReview(page);await page.locator('#status').filter({hasText:'Товар сохранён'}).waitFor();assert.equal(saved.brand,'Amiri');assert.equal(saved.category,'Головной убор');assert.deepEqual(saved.stock_quantities,{'One Size':4});
  await page.close();console.log(width+' PASS taxonomy: aliases stay discoverable, collaboration filters include all records, legacy size stock survives editor save');
 }
 await browser.close();server.close()})().catch(e=>{console.error(e);server.close();process.exit(1)});

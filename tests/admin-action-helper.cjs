@@ -18,4 +18,9 @@ async function openAdminSection(page,id){
  const details=page.locator('#'+id+' > details');
  if(await details.count()&&!await details.evaluate(e=>e.open))await details.locator(':scope > summary').click();
 }
-module.exports={clickAdminAction,clickAdminControl,openAdminSection};
+async function confirmProductReview(page){
+ await page.locator('#productSaveReview').waitFor({state:'visible'});
+ for(const checkbox of await page.locator('#productSaveReview input[type=checkbox]').all())await checkbox.check();
+ await page.locator('#productSaveReviewConfirm').click();
+}
+module.exports={clickAdminAction,clickAdminControl,openAdminSection,confirmProductReview};

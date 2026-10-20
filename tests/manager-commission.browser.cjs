@@ -41,12 +41,12 @@ const server=http.createServer((req,res)=>{
   await page.locator('#editor [name=price]').fill('100');
   await page.locator('#editor [name=available]').uncheck();
   await field.check();
-  await page.locator('#save').click();
+  await page.locator('#save').click();await require('./admin-action-helper.cjs').confirmProductReview(page);
   await page.waitForFunction(()=>!busy&&document.getElementById('status').textContent.startsWith('Товар сохранён'));
   assert.equal(writes.length,1);assert.equal(saved.on_commission,true);
   await page.evaluate(p=>edit(p),saved);
   assert.equal(await field.isChecked(),true);assert.equal(await field.isEnabled(),true);
-  await field.uncheck();await page.locator('#save').click();
+  await field.uncheck();await page.locator('#save').click();await require('./admin-action-helper.cjs').confirmProductReview(page);
   await page.waitForFunction(()=>!busy&&document.getElementById('status').textContent.startsWith('Товар сохранён'));
   assert.equal(writes.length,2);assert.equal(saved.on_commission,false);
   await page.evaluate(p=>edit(p),saved);
