@@ -40,8 +40,8 @@ const types={'.html':'text/html','.js':'text/javascript','.css':'text/css','.wof
     if(native){
      await page.waitForFunction(()=>window.__nativeEvents.some(e=>e.name==='web_app_open_tg_link'));
      const events=await page.evaluate(()=>window.__nativeEvents.filter(e=>['web_app_open_tg_link','web_app_close'].includes(e.name)));
-     assert.equal(events.at(-2).name,'web_app_open_tg_link');assert.equal(events.at(-1).name,'web_app_close','chat handoff removes the Mini App covering it');
-     target=new URL('https://t.me'+events.at(-2).data.path_full);
+     assert.equal(events.at(-1).name,'web_app_open_tg_link');assert.equal(events.some(e=>e.name==='web_app_close'),false,'do not interrupt recipient resolution by closing the view');
+     target=new URL('https://t.me'+events.at(-1).data.path_full);
      assert.equal(await page.locator('#managerContactMessage').inputValue(),target.searchParams.get('text'));
      assert.ok(await page.locator('#managerContactDialog').evaluate(d=>d.scrollWidth<=d.clientWidth),'fallback fits the viewport');
      assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
@@ -67,14 +67,19 @@ const types={'.html':'text/html','.js':'text/javascript','.css':'text/css','.wof
     await page.locator('[data-contact-copy]').click();assert.equal(await page.evaluate(()=>window.__copied.at(-1)),await page.locator('#managerContactMessage').inputValue());
     await page.screenshot({path:path.join(out,`contact-${engine}-${mode}-${width}.png`)});
     if(width===320&&mode==='ios'){
-     const closes=await page.evaluate(()=>window.__nativeEvents.filter(e=>e.name==='web_app_close').length);
-     await page.evaluate(()=>{window.Telegram.WebApp.openTelegramLink=()=>{throw Error('SDK unavailable')};window.__denyClipboard=true});
-     await page.locator('[data-contact-open]').click();await page.locator('[data-contact-status]').filter({hasText:'Не удалось открыть чат'}).waitFor();assert.equal(await page.evaluate(()=>window.__nativeEvents.filter(e=>e.name==='web_app_close').length),closes,'failed SDK call must not close the app');
+     await page.evaluate(()=>{window.Telegram.WebApp.openTelegramLink=()=>{throw Error('SDK unavailable')};window.Telegram.WebApp.openLink=()=>{throw Error('SDK unavailable')};window.__denyClipboard=true});
      await page.locator('[data-contact-copy]').click();assert.equal(await page.locator('#managerContactMessage').evaluate(e=>e.selectionEnd-e.selectionStart),await page.locator('#managerContactMessage').inputValue().then(v=>v.length));
-     await page.locator('[data-contact-help]').click();await page.locator('[data-contact-external]').click();const event=await page.evaluate(()=>window.__nativeEvents.filter(e=>e.name==='web_app_open_link').at(-1));assert.equal(new URL(event.data.url).pathname,'/juliproz');
+     for(const selector of ['[data-contact-open]','[data-contact-external]','[data-contact-plain]']){
+      if(selector==='[data-contact-external]')await page.locator('[data-contact-help]').click();
+      const [destination]=await Promise.all([context.waitForEvent('page'),page.locator(selector).click()]);
+      await destination.waitForURL(u=>u.hostname==='t.me');const url=new URL(destination.url());assert.equal(url.pathname,'/juliproz');
+      if(selector!=='[data-contact-plain]')assert.match(url.searchParams.get('text'),/Количество: 1/);
+      assert.equal(await page.locator('#managerContactDialog').isVisible(),true,'recovery keeps the draft available');await destination.close();
+     }
+
     }
    }
-   assert.deepEqual(errors,[]);await context.close();console.log(`PASS ${engine} ${width} ${mode}: direct inquiry, share inquiry, checked cart, exact recipient/draft and ${native?'official SDK open→close, saved cart, readable fallback':'same-tab navigation after await, no popup'}`);
+   assert.deepEqual(errors,[]);await context.close();console.log(`PASS ${engine} ${width} ${mode}: direct inquiry, share inquiry, checked cart, exact recipient/draft and ${native?'official SDK handoff without early close, saved cart, independent anchor recovery':'same-tab navigation after await, no popup'}`);
   }
  }finally{await browser.close()}
 })().catch(e=>{console.error(e);process.exitCode=1});

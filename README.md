@@ -114,3 +114,9 @@ Counts use the first qualified publication in the server-side audit: available=t
 Migration `20261015102752_manager_upload_schedule.sql` adds private RLS-protected schedule tables, guarded RPCs and an upload index. Reads require active membership/session/MFA; changes require the owner's second factor and revision checks. No raw product audit payloads or employee notes are returned by these RPCs. The original July sheet remains unchanged; its ambiguous historical date grid is not imported.
 
 Run `supabase/upload-schedule-probes.sql` for rollback-only synthetic permission, attribution, date boundary and concurrency checks. `tests/admin-schedule.browser.cjs` covers owner/staff controls, mobile layouts, replacements, queue order, private cleanup and load failures.
+
+### Telegram launch origin
+
+Keep the legacy BotFather entry at `https://juliproz-store.vercel.app/` on that origin. It serves the website template, whose early `telegram-entry.js` routes Mini App launches to the same-origin `/telegram/` proxy. `/index.html` may redirect to `/` on the same origin. Do not add a cross-origin canonical redirect ahead of this entry script: Telegram has rejected Mini App commands from a different launch origin since July 20, 2026 (Bot API 10.2). Normal website HTML retains the `https://www.juliproz.com/` canonical; indexed catalogue/product redirects are unchanged.
+
+`tests/telegram-origin.browser.cjs` exercises the actual Vercel redirect rules through local HTTP servers with separate origins. Native events are accepted only on the original origin; it checks both product inquiry and checked-cart drafts. This regression test does not replace an end-to-end check in the real Telegram client. Visible manager recovery links use native anchor navigation and do not repeat SDK calls.
