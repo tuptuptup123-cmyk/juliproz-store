@@ -33,3 +33,19 @@ test('shared condition notes keep model-specific translated search snippets',()=
  assert.doesNotMatch(description(first)+description(second),/[А-Яа-яЁё]/);
  assert.match(description(first),/2026, new, full set/);
 });
+
+
+test('image sitemap includes public gallery photos in both languages and rejects private or untrusted URLs',async()=>{
+ const prior=globalThis.fetch;
+ const cover='https://juliproz-store.vercel.app/images/cover.webp';
+ const gallery='https://juliproz-store.vercel.app/images/detail.webp';
+ globalThis.fetch=async()=>Response.json([{id:42,created_at:'2026-10-17T00:00:00Z',available:true,image_url:cover,photos:[cover,gallery,'https://evil.example/image.jpg','https://juliproz-store.vercel.app/images/private.jpg?token=SECRET','data:image/png;base64,SECRET']}]);
+ try{
+  const result={};await require('../api/sitemap.js')({method:'GET'},{setHeader(){},set statusCode(v){result.status=v},end(v){result.body=v}});
+  assert.equal(result.status,200);assert.match(result.body,/xmlns:image="http:\/\/www.google.com\/schemas\/sitemap-image\/1.1"/);
+  const entries=result.body.match(/<url>[\s\S]*?<\/url>/g).filter(s=>s.includes('/product/42</loc>')||s.includes('/product/42?lang=en</loc>'));
+  assert.equal(entries.length,2);
+  for(const entry of entries){assert.equal((entry.match(/<image:image>/g)||[]).length,2);assert.ok(entry.includes('<image:loc>'+cover+'</image:loc>'));assert.ok(entry.includes('<image:loc>'+gallery+'</image:loc>'));}
+  assert.doesNotMatch(result.body,/SECRET|evil.example|data:image/);
+ }finally{globalThis.fetch=prior}
+});
