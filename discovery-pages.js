@@ -109,7 +109,7 @@
    }
   };
   const c=cases[group][file],name=c[en?1:0],copy=c[en?3:2];
-  return `<figcaption class="purchase-case"><h3>${e(name)}</h3><p>${e(copy)}</p>${action(en?'Find similar':'Найти похожую',lang,en?'a piece similar to '+name:'вещи по примеру кейса «'+name+'»',true)}</figcaption>`;
+  return `<figcaption class="purchase-case"><h3>${e(name)}</h3><p>${e(copy)}</p></figcaption>`;
  }
  function watchesPortfolio(lang,prefix){
   const en=lang==='en';
