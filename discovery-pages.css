@@ -265,3 +265,16 @@
  .hermes-motion-messenger{left:39%;bottom:24px;top:auto;right:auto;width:86px;--bag-angle:-7deg}
  .hermes-motion-art{transform:rotate(var(--bag-angle))}
 }
+
+/* Consistent, centred completed-purchase cards across all portfolios. */
+:is(.hermes-portfolio-gallery,.chanel-portfolio-gallery) figure{display:flex;flex-direction:column;align-self:stretch}
+.purchase-photo{position:relative;flex:none;min-width:0}
+.purchase-photo>img{width:100%;display:block}
+:is(.hermes-portfolio-gallery,.chanel-portfolio-gallery) .purchase-case{display:flex;flex:1;flex-direction:column;align-items:center;text-align:center;margin-top:16px}
+.purchase-case h3{width:100%}
+.purchase-case p{margin:0 0 18px;width:100%}
+.discovery-page .purchase-case .discovery-button{display:flex;align-items:center;justify-content:center;gap:12px;box-sizing:border-box;width:100%;max-width:260px;min-height:44px;aspect-ratio:auto;padding:12px 14px;margin-top:auto;border:1px solid #e4d9df;border-radius:14px;background:#f4eaf0;font-size:12px;line-height:1.4;text-align:center;text-decoration:none}
+.discovery-page .purchase-photo .purchase-extra-photo{position:absolute;right:12px;bottom:12px;display:inline-flex;align-items:center;justify-content:center;gap:8px;width:auto;height:auto;min-height:36px;aspect-ratio:auto;padding:8px 12px;margin:0;border:1px solid #e4d9df;border-radius:12px;background:#fffffff2;color:var(--ink);font-size:11px;line-height:1.2;text-decoration:none;box-shadow:0 2px 8px #0000000a}
+.purchase-extra-photo svg{width:14px;height:14px}
+.purchase-extra-photo:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+@media(hover:hover){.discovery-page .purchase-case .discovery-button:hover{background:#e8d4e0;text-decoration:none}.discovery-page .purchase-photo .purchase-extra-photo:hover{background:#f4eaf0;text-decoration:none}}
