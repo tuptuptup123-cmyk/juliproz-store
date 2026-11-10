@@ -15,5 +15,6 @@
   "auth_restored": false,
   "storage_files_restored": false,
   "production_connected": false,
-  "method": "Offline in-memory restoration into current schema, exact backed-up field comparison; nullable SEO timestamp remains null."
+  "method": "Offline in-memory restoration into current schema, exact backed-up field comparison; nullable SEO timestamp remains null.",
+  "restored_at": "2026-11-10T06:59:35.340Z"
 }
