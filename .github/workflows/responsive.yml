@@ -6,6 +6,10 @@ permissions:
   contents: read
 jobs:
   browser:
+    strategy:
+      fail-fast: false
+      matrix:
+        suite: [contact, editor, admin, storefront]
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
@@ -20,44 +24,80 @@ jobs:
       - run: node scripts/stage-photo-assets.cjs
       - run: node scripts/build-telegram.cjs
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" QA_OUTPUT="$RUNNER_TEMP/jp-qa" node tests/product-save-review.browser.cjs
+        if: matrix.suite == 'editor'
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" node tests/telegram-origin.browser.cjs
+        if: matrix.suite == 'contact'
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" QA_BROWSER=webkit node tests/telegram-origin.browser.cjs
+        if: matrix.suite == 'contact'
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" QA_OUTPUT="$RUNNER_TEMP/jp-qa" node tests/manager-contact.browser.cjs
+        if: matrix.suite == 'contact'
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" QA_BROWSER=webkit QA_OUTPUT="$RUNNER_TEMP/jp-qa" node tests/manager-contact.browser.cjs
+        if: matrix.suite == 'contact'
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" node tests/detailed-analytics.browser.cjs
+        if: matrix.suite == 'admin'
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" node tests/owner-statistics.browser.cjs
+        if: matrix.suite == 'admin'
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" QA_OUTPUT="$RUNNER_TEMP/jp-qa" node tests/admin-business.browser.cjs
+        if: matrix.suite == 'admin'
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" node tests/manager-commission.browser.cjs
+        if: matrix.suite == 'admin'
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" node tests/admin-google-search.browser.cjs
+        if: matrix.suite == 'admin'
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" node tests/seo.browser.cjs
+        if: matrix.suite == 'storefront'
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" node tests/audit-followup.browser.cjs
+        if: matrix.suite == 'storefront'
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" node tests/product-translation.browser.cjs
+        if: matrix.suite == 'editor'
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" node tests/remaining-design.browser.cjs
+        if: matrix.suite == 'storefront'
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" QA_OUTPUT="$RUNNER_TEMP/jp-qa" node tests/product-deeplink.browser.cjs
+        if: matrix.suite == 'storefront'
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" QA_BROWSER=webkit QA_OUTPUT="$RUNNER_TEMP/jp-qa" node tests/product-deeplink.browser.cjs
+        if: matrix.suite == 'storefront'
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" QA_OUTPUT="$RUNNER_TEMP/jp-qa" node tests/audit-review.browser.cjs
+        if: matrix.suite == 'editor'
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" QA_OUTPUT="$RUNNER_TEMP/jp-qa" node tests/team-picks.browser.cjs
+        if: matrix.suite == 'storefront'
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" QA_OUTPUT="$RUNNER_TEMP/jp-qa" node tests/admin-product-finance.browser.cjs
+        if: matrix.suite == 'editor'
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" QA_OUTPUT="$RUNNER_TEMP/jp-qa" node tests/admin-finance.browser.cjs
+        if: matrix.suite == 'admin'
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" node tests/admin-step-up.browser.cjs
+        if: matrix.suite == 'admin'
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" QA_OUTPUT="$RUNNER_TEMP/jp-qa" node tests/admin-schedule.browser.cjs
+        if: matrix.suite == 'admin'
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" node tests/admin-performance.browser.cjs
+        if: matrix.suite == 'admin'
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" QA_OUTPUT="$RUNNER_TEMP/jp-qa" node tests/admin-design.browser.cjs
+        if: matrix.suite == 'editor'
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" QA_OUTPUT="$RUNNER_TEMP/jp-qa" node tests/admin-sales.browser.cjs
+        if: matrix.suite == 'admin'
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" QA_OUTPUT="$RUNNER_TEMP/jp-qa" node tests/separate-storefronts.browser.cjs
+        if: matrix.suite == 'storefront'
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" QA_OUTPUT="$RUNNER_TEMP/jp-qa" node tests/site-language.browser.cjs
+        if: matrix.suite == 'storefront'
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" QA_OUTPUT="$RUNNER_TEMP/jp-qa" node tests/catalog-notice.browser.cjs
+        if: matrix.suite == 'storefront'
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" node tests/product-sharing.browser.cjs
+        if: matrix.suite == 'storefront'
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" node tests/admin-invitation.browser.cjs
+        if: matrix.suite == 'admin'
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" node tests/admin-mfa.browser.cjs
+        if: matrix.suite == 'admin'
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" node tests/admin-session.browser.cjs
+        if: matrix.suite == 'admin'
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" node tests/admin-reload.browser.cjs
+        if: matrix.suite == 'admin'
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" QA_OUTPUT="$RUNNER_TEMP/jp-qa" node tests/admin-workspace.browser.cjs
+        if: matrix.suite == 'admin'
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" QA_OUTPUT="$RUNNER_TEMP/jp-qa" node tests/light-shadow.browser.cjs
+        if: matrix.suite == 'storefront'
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" QA_OUTPUT="$RUNNER_TEMP/jp-qa" node tests/catalog-prices.browser.cjs
+        if: matrix.suite == 'storefront'
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: catalog-preview
+          name: catalog-preview-${{ matrix.suite }}
           path: |
             ${{ runner.temp }}/jp-qa/live-sale-catalog-*.png
             ${{ runner.temp }}/jp-qa/services-*.png
@@ -65,15 +105,22 @@ jobs:
             ${{ runner.temp }}/jp-qa/light-shadow-comparison-*.png
           retention-days: 7
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" QA_OUTPUT="$RUNNER_TEMP/jp-qa" node tests/brioni-group.browser.cjs
+        if: matrix.suite == 'storefront'
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" QA_OUTPUT="$RUNNER_TEMP/jp-qa" node tests/loro-colors.browser.cjs
+        if: matrix.suite == 'storefront'
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" QA_OUTPUT="$RUNNER_TEMP/jp-qa" node tests/responsive.browser.cjs
+        if: matrix.suite == 'storefront'
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" QA_OUTPUT="$RUNNER_TEMP/jp-qa" node tests/action-guards.browser.cjs
+        if: matrix.suite == 'storefront'
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" QA_OUTPUT="$RUNNER_TEMP/jp-qa" node tests/photo-analytics.browser.cjs
+        if: matrix.suite == 'editor'
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" QA_OUTPUT="$RUNNER_TEMP/jp-qa" node tests/audit-fixes.browser.cjs
+        if: matrix.suite == 'storefront'
       - run: NODE_PATH="$RUNNER_TEMP/jp-browser/node_modules" QA_OUTPUT="$RUNNER_TEMP/jp-qa" node tests/design-review.browser.cjs
+        if: matrix.suite == 'storefront'
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:
-          name: responsive-screenshots
+          name: responsive-screenshots-${{ matrix.suite }}
           path: ${{ runner.temp }}/jp-qa
           retention-days: 7
