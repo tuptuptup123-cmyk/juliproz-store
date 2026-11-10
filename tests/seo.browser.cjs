@@ -22,7 +22,7 @@ const server=http.createServer((req,res)=>{const url=new URL(req.url,'http://loc
  const homeRequests=[];page.on('request',r=>{if(/\/images\/home-(boutique|lifestyle)\.jpg/.test(r.url()))homeRequests.push(r.url())});
  await page.goto(origin+'/catalog?lang=en');await page.locator('html:not([data-server-view])').waitFor();
  assert.equal(homeRequests.length,0,'Hidden homepage photos must not download in the catalogue');
- assert.equal(await page.locator('.bottom-nav a[href][data-tab]').count(),9);
+ assert.equal(await page.locator('.bottom-nav a[href][data-tab]').count(),12);
  assert.equal(await page.locator('.bottom-nav [data-tab=hermes]').getAttribute('href'),'/brands/hermes?lang=en');
  if(width>=900){const popupPromise=context.waitForEvent('page');await page.locator('.bottom-nav [data-tab=outlet]').click({modifiers:['Control']});const popup=await popupPromise;await popup.waitForURL(url=>url.pathname==='/outlet');assert.equal(new URL(popup.url()).pathname,'/outlet');assert.equal(new URL(page.url()).pathname,'/catalog');await popup.close();}
  await page.locator('.bottom-nav [data-tab=home]').click();await page.waitForFunction(()=>[...document.querySelectorAll('.home-photographs img')].every(img=>img.complete&&img.naturalWidth>0));
@@ -55,12 +55,10 @@ const server=http.createServer((req,res)=>{const url=new URL(req.url,'http://loc
  assert.equal(await page.locator('#homeBuyerContent a[data-contact-event]').getAttribute('href'),'https://t.me/juliproz');
  console.log('PASS homepage steps, FAQ keyboard, anchor, RU/EN contacts, reload and layout',width);
  const nav=page.locator('.bottom-nav');
- assert.deepEqual(await nav.locator('[data-tab]:visible').evaluateAll(items=>items.map(x=>x.dataset.tab)),width<900?['home','catalog','watches','favorites','cart']:['home','catalog','hermes','chanel','watches','jewellery','outlet','favorites','cart','sell','services','about']);
+ assert.deepEqual(await nav.locator('[data-tab]:visible').evaluateAll(items=>items.map(x=>x.dataset.tab)),['home','catalog','hermes','chanel','watches','jewellery','outlet','favorites','cart','sell','services','about']);
  await clickSiteTab(page,'hermes');await page.waitForURL(url=>url.pathname==='/brands/hermes');
  assert.equal(await nav.locator('[aria-current=page]').getAttribute('data-tab'),'hermes');
- assert.equal(await page.locator('#seoCatalogIntro .discovery-model').count(),3);
- await page.locator('#seoCatalogIntro .discovery-model summary').first().click();assert.equal(await page.locator('#seoCatalogIntro .discovery-model').first().getAttribute('open'),'');
- await page.locator('#seoCatalogIntro .discovery-model summary').first().click();
+ assert.equal(await page.locator('#seoCatalogIntro .model-links [data-model]').count(),2);
  await clickSiteTab(page,'outlet');await page.waitForURL(url=>url.pathname==='/outlet');
  assert.equal(await page.locator('#webOutletPage h1').innerText(),'Аутлеты и приватные сейлы');
  assert.equal(await page.locator('#webOutletPage .discovery-breadcrumb, #webOutletPage .discovery-eyebrow').count(),0);

@@ -1456,6 +1456,56 @@
   },
   {
     "kind": "column_grant",
+    "name": "public.products.seo_updated_at.anon.SELECT",
+    "definition": "NO"
+  },
+  {
+    "kind": "column_grant",
+    "name": "public.products.seo_updated_at.authenticated.SELECT",
+    "definition": "NO"
+  },
+  {
+    "kind": "column_grant",
+    "name": "public.products.seo_updated_at.postgres.INSERT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "public.products.seo_updated_at.postgres.REFERENCES",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "public.products.seo_updated_at.postgres.SELECT",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "public.products.seo_updated_at.postgres.UPDATE",
+    "definition": "YES"
+  },
+  {
+    "kind": "column_grant",
+    "name": "public.products.seo_updated_at.service_role.INSERT",
+    "definition": "NO"
+  },
+  {
+    "kind": "column_grant",
+    "name": "public.products.seo_updated_at.service_role.REFERENCES",
+    "definition": "NO"
+  },
+  {
+    "kind": "column_grant",
+    "name": "public.products.seo_updated_at.service_role.SELECT",
+    "definition": "NO"
+  },
+  {
+    "kind": "column_grant",
+    "name": "public.products.seo_updated_at.service_role.UPDATE",
+    "definition": "NO"
+  },
+  {
+    "kind": "column_grant",
     "name": "public.products.size.anon.SELECT",
     "definition": "NO"
   },
@@ -8896,6 +8946,11 @@
   },
   {
     "kind": "function",
+    "name": "store_private.track_product_seo_update()",
+    "definition": "CREATE OR REPLACE FUNCTION store_private.track_product_seo_update()\n RETURNS trigger\n LANGUAGE plpgsql\n SET search_path TO ''\nAS $function$\nbegin\n if TG_OP = 'INSERT' then\n  new.seo_updated_at := statement_timestamp();\n elsif (to_jsonb(new) - array['revision','creation_key','archive_status','seo_updated_at']) is distinct from\n       (to_jsonb(old) - array['revision','creation_key','archive_status','seo_updated_at']) then\n  new.seo_updated_at := statement_timestamp();\n else\n  new.seo_updated_at := old.seo_updated_at;\n end if;\n return new;\nend;\n$function$\n"
+  },
+  {
+    "kind": "function",
     "name": "store_private.upload_duty(p_day date)",
     "definition": "CREATE OR REPLACE FUNCTION store_private.upload_duty(p_day date)\n RETURNS TABLE(day date, manager_id uuid, manager_label text, target integer, is_override boolean, revision bigint, note text, active boolean)\n LANGUAGE sql\n STABLE\n SET search_path TO ''\nAS $function$\n with chosen as (\n  select r.manager_ids[1+((p_day-r.starts_on)%cardinality(r.manager_ids))] as id,r.manager_labels\n  from store_private.upload_rotations r where r.starts_on<=p_day order by r.starts_on desc limit 1\n ), resolved as (\n  select case when o.day is not null then o.manager_id else c.id end as id,\n   case when o.day is not null then o.manager_label else c.manager_labels->>c.id::text end as label,\n   o.day is not null as overridden,coalesce(o.revision,0) as rev,coalesce(o.note,'') as memo\n  from (select 1) seed left join chosen c on true left join store_private.upload_day_overrides o on o.day=p_day\n )\n select p_day,r.id,coalesce(nullif(a.display_name,''),r.label,''),case when r.id is null then 0 else 10 end,\n  r.overridden,r.rev,r.memo,a.user_id is not null\n from resolved r left join public.store_admins a on a.user_id=r.id;\n$function$\n"
   },
@@ -9493,6 +9548,11 @@
     "kind": "function_acl",
     "name": "store_private.touch_own_admin_session()",
     "definition": "{postgres=X/postgres,authenticated=X/postgres}"
+  },
+  {
+    "kind": "function_acl",
+    "name": "store_private.track_product_seo_update()",
+    "definition": "{postgres=X/postgres}"
   },
   {
     "kind": "function_acl",
@@ -11482,7 +11542,7 @@
   {
     "kind": "table",
     "name": "public.products",
-    "definition": "{\"rls\": true, \"columns\": [{\"name\": \"id\", \"type\": \"bigint\", \"default\": null, \"notnull\": true, \"identity\": \"d\", \"generated\": \"\"}, {\"name\": \"created_at\", \"type\": \"timestamp with time zone\", \"default\": \"now()\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"brand\", \"type\": \"text\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"name\", \"type\": \"text\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"category\", \"type\": \"text\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"size\", \"type\": \"text\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"price\", \"type\": \"numeric\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"currency\", \"type\": \"text\", \"default\": \"'EUR'::text\", \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"image_url\", \"type\": \"text\", \"default\": null, \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"available\", \"type\": \"boolean\", \"default\": \"true\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"description\", \"type\": \"text\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"photos\", \"type\": \"jsonb\", \"default\": \"'[]'::jsonb\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"revision\", \"type\": \"bigint\", \"default\": \"1\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"creation_key\", \"type\": \"uuid\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"fulfillment_status\", \"type\": \"text\", \"default\": \"'in_stock'::text\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"gender\", \"type\": \"text\", \"default\": \"'unisex'::text\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"reserved\", \"type\": \"boolean\", \"default\": \"false\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"product_condition\", \"type\": \"text\", \"default\": \"'new'::text\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"stock_quantities\", \"type\": \"jsonb\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"on_commission\", \"type\": \"boolean\", \"default\": \"false\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"original_price\", \"type\": \"numeric\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"wear_condition\", \"type\": \"text\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"archive_status\", \"type\": \"text\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"team_pick\", \"type\": \"boolean\", \"default\": \"false\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"name_en\", \"type\": \"text\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"description_en\", \"type\": \"text\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}], \"force_rls\": false}"
+    "definition": "{\"rls\": true, \"columns\": [{\"name\": \"id\", \"type\": \"bigint\", \"default\": null, \"notnull\": true, \"identity\": \"d\", \"generated\": \"\"}, {\"name\": \"created_at\", \"type\": \"timestamp with time zone\", \"default\": \"now()\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"brand\", \"type\": \"text\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"name\", \"type\": \"text\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"category\", \"type\": \"text\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"size\", \"type\": \"text\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"price\", \"type\": \"numeric\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"currency\", \"type\": \"text\", \"default\": \"'EUR'::text\", \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"image_url\", \"type\": \"text\", \"default\": null, \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"available\", \"type\": \"boolean\", \"default\": \"true\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"description\", \"type\": \"text\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"photos\", \"type\": \"jsonb\", \"default\": \"'[]'::jsonb\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"revision\", \"type\": \"bigint\", \"default\": \"1\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"creation_key\", \"type\": \"uuid\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"fulfillment_status\", \"type\": \"text\", \"default\": \"'in_stock'::text\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"gender\", \"type\": \"text\", \"default\": \"'unisex'::text\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"reserved\", \"type\": \"boolean\", \"default\": \"false\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"product_condition\", \"type\": \"text\", \"default\": \"'new'::text\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"stock_quantities\", \"type\": \"jsonb\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"on_commission\", \"type\": \"boolean\", \"default\": \"false\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"original_price\", \"type\": \"numeric\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"wear_condition\", \"type\": \"text\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"archive_status\", \"type\": \"text\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"team_pick\", \"type\": \"boolean\", \"default\": \"false\", \"notnull\": true, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"name_en\", \"type\": \"text\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"description_en\", \"type\": \"text\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}, {\"name\": \"seo_updated_at\", \"type\": \"timestamp with time zone\", \"default\": null, \"notnull\": false, \"identity\": \"\", \"generated\": \"\"}], \"force_rls\": false}"
   },
   {
     "kind": "table",
@@ -11688,6 +11748,11 @@
     "kind": "trigger",
     "name": "public.products.invalidate_product_translation",
     "definition": "CREATE TRIGGER invalidate_product_translation BEFORE UPDATE ON public.products FOR EACH ROW EXECUTE FUNCTION store_private.invalidate_product_translation()"
+  },
+  {
+    "kind": "trigger",
+    "name": "public.products.track_product_seo_update",
+    "definition": "CREATE TRIGGER track_product_seo_update BEFORE INSERT OR UPDATE ON public.products FOR EACH ROW EXECUTE FUNCTION store_private.track_product_seo_update()"
   },
   {
     "kind": "trigger",

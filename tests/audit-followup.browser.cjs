@@ -27,7 +27,7 @@ const server=http.createServer((req,res)=>{
    await context.addInitScript(()=>{localStorage.setItem('jpAnalyticsConsent','declined');localStorage.setItem('jpAntiScamSeenV1','1')});
    const page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
    await page.goto(origin+'/catalog?lang=en');await page.locator('#grid .product').first().waitFor();
-   const bag=await page.locator('.bottom-nav [data-tab=cart]').boundingBox();assert.ok(bag.x>=0&&bag.x+bag.width<=width,'Bag immediately visible');
+   const nav=await page.locator('.bottom-nav').boundingBox();assert.ok(nav.x>=0&&nav.x+nav.width<=width,'Navigation viewport fits');
    await page.locator('#toggleSearch').click();await page.locator('#search').fill('Kelly');await page.locator('#grid .product').waitFor();
    await page.locator('.product-open').click();await page.waitForURL(u=>u.pathname==='/product/99001');assert.match(await page.title(),/Hermès/);
    await page.locator('[data-size="28"]').click();assert.equal(new URL(page.url()).searchParams.get('size'),'28');
@@ -39,10 +39,7 @@ const server=http.createServer((req,res)=>{
    const schema=await page.locator('script[type="application/ld+json"]').evaluateAll(nodes=>nodes.map(n=>JSON.parse(n.textContent)).find(s=>s['@type']==='Product'));
    assert.equal(schema.sku,'475');assert.equal(schema.offers.price,600);assert.equal(schema.offers.url,'https://www.juliproz.com/product/475?lang=en');
    await page.locator('#backProduct').click();await page.waitForURL(u=>u.pathname==='/catalog');await page.locator('#grid .product').waitFor();assert.equal(await page.evaluate(()=>state.search),'Kelly');
-   if(width<900){
-    await page.locator('#moreNavigation').click();await page.locator('[data-more-tab=about]').click();assert.equal(await page.evaluate(()=>state.tab),'about');
-    await page.locator('#moreNavigation').focus();await page.keyboard.press('Enter');await page.keyboard.press('Escape');await page.waitForFunction(()=>!document.getElementById('moreNavigationDialog').open);assert.equal(await page.evaluate(()=>document.activeElement.id),'moreNavigation');
-   }
+   await require('./site-action-helper.cjs').clickSiteTab(page,'about');assert.equal(await page.evaluate(()=>state.tab),'about');
    await page.screenshot({path:out+'/navigation-'+width+'.png',fullPage:false});
    await page.goto(origin+'/product/302?lang=en');await page.locator('[data-size=XXL]').click();await page.waitForURL(u=>u.pathname==='/product/301');
    await page.reload();await page.locator('[data-size=XXL][aria-pressed=true]').waitFor();
