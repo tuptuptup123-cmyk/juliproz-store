@@ -1,6 +1,14 @@
 const {test}=require('node:test'),assert=require('node:assert/strict'),{render,createHandler}=require('../server/product-page.cjs');
 const template='<!doctype html><html><head><title>Old</title><meta name="description" content="Old"><meta property="og:title" content="Old"><script src="app.js"></script></head><body></body></html>';
 const product={id:42,brand:'Brand',name:'Model <test>',description:'Full description',available:true,size:'M',price:150,currency:'EUR',stock_quantities:{M:1},image_url:'https://juliproz-store.vercel.app/images/test.webp',internal_note:'PRIVATE',purchase_cost:100};
+test('crawlable delivery terms match stock status in both languages without fabricated merchant policies',()=>{
+ for(const lang of ['ru','en'])for(const fulfillment_status of ['in_stock','on_order']){
+  const html=render(template,{...product,fulfillment_status},lang),terms='https://www.juliproz.com/terms.html'+(lang==='en'?'?lang=en':'');
+  assert.ok(html.includes(terms+'#delivery'));assert.ok(html.includes(terms+'#returns'));
+  assert.ok(html.includes((fulfillment_status==='on_order'?'10–14':'7–10')+' '+(lang==='en'?'business days':'рабочих дней')));
+  assert.doesNotMatch(html,/OfferShippingDetails|MerchantReturnNotPermitted|MerchantReturnFiniteReturnWindow/);
+ }
+});
 test('product HTML includes canonical, public metadata and safe JSON-LD without private fields',()=>{
  const html=render(template,{...product,name:'Model </script><script>alert(1)</script>'});
  assert.match(html,/rel="canonical" href="https:\/\/www.juliproz.com\/product\/42"/);assert.match(html,/src="\/app.js"/);assert.equal((html.match(/og:title/g)||[]).length,1);
