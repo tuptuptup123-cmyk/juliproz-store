@@ -1,0 +1,663 @@
+{
+  "batch": "2026-11-10-variant-clarifications",
+  "scope": "Names and translations, plus correction of Rplex brand typo. No price, availability, stock, photos or deletion changes.",
+  "items": [
+    {
+      "id": 63,
+      "expected_revision": 8,
+      "before": {
+        "name": "Кроссовки Week End Walk",
+        "name_en": null
+      },
+      "after": {
+        "name": "Кроссовки Week End Walk — коричневые",
+        "name_en": "Week End Walk sneakers — brown"
+      },
+      "evidence": "Visible colour or print in current public product cover; no official colourway or material inferred."
+    },
+    {
+      "id": 178,
+      "expected_revision": 10,
+      "before": {
+        "name": "Худи",
+        "name_en": null
+      },
+      "after": {
+        "name": "Худи — молочного цвета",
+        "name_en": "Hoodie — cream"
+      },
+      "evidence": "Visible colour or print in current public product cover; no official colourway or material inferred."
+    },
+    {
+      "id": 184,
+      "expected_revision": 9,
+      "before": {
+        "name": "Худи",
+        "name_en": null
+      },
+      "after": {
+        "name": "Худи — чёрное",
+        "name_en": "Hoodie — black"
+      },
+      "evidence": "Visible colour or print in current public product cover; no official colourway or material inferred."
+    },
+    {
+      "id": 189,
+      "expected_revision": 8,
+      "before": {
+        "name": "Ремень Kelly 18",
+        "name_en": null
+      },
+      "after": {
+        "name": "Ремень Kelly 18 — белый",
+        "name_en": "Kelly 18 belt — white"
+      },
+      "evidence": "Visible colour or print in current public product cover; no official colourway or material inferred."
+    },
+    {
+      "id": 193,
+      "expected_revision": 8,
+      "before": {
+        "name": "Ремень Kelly 18",
+        "name_en": null
+      },
+      "after": {
+        "name": "Ремень Kelly 18 — коричневый",
+        "name_en": "Kelly 18 belt — brown"
+      },
+      "evidence": "Visible colour or print in current public product cover; no official colourway or material inferred."
+    },
+    {
+      "id": 204,
+      "expected_revision": 6,
+      "before": {
+        "name": "Худи",
+        "name_en": null
+      },
+      "after": {
+        "name": "Худи — красное с принтом",
+        "name_en": "Hoodie — red with print"
+      },
+      "evidence": "Visible colour or print in current public product cover; no official colourway or material inferred."
+    },
+    {
+      "id": 205,
+      "expected_revision": 6,
+      "before": {
+        "name": "Худи",
+        "name_en": null
+      },
+      "after": {
+        "name": "Худи — чёрное с принтом",
+        "name_en": "Hoodie — black with print"
+      },
+      "evidence": "Visible colour or print in current public product cover; no official colourway or material inferred."
+    },
+    {
+      "id": 241,
+      "expected_revision": 11,
+      "before": {
+        "name": "Кроссовки Tabi Canvas",
+        "name_en": null
+      },
+      "after": {
+        "name": "Кроссовки Tabi Canvas — чёрные",
+        "name_en": "Tabi Canvas sneakers — black"
+      },
+      "evidence": "Visible colour or print in current public product cover; no official colourway or material inferred."
+    },
+    {
+      "id": 242,
+      "expected_revision": 11,
+      "before": {
+        "name": "Кроссовки Tabi Canvas",
+        "name_en": null
+      },
+      "after": {
+        "name": "Кроссовки Tabi Canvas — тёмно-синие",
+        "name_en": "Tabi Canvas sneakers — navy"
+      },
+      "evidence": "Visible colour or print in current public product cover; no official colourway or material inferred."
+    },
+    {
+      "id": 251,
+      "expected_revision": 9,
+      "before": {
+        "name": "Кроссовки Bouncing",
+        "name_en": null
+      },
+      "after": {
+        "name": "Кроссовки Bouncing — чёрно-белые",
+        "name_en": "Bouncing sneakers — black and white"
+      },
+      "evidence": "Visible colour or print in current public product cover; no official colourway or material inferred."
+    },
+    {
+      "id": 252,
+      "expected_revision": 8,
+      "before": {
+        "name": "Кроссовки Bouncing",
+        "name_en": null
+      },
+      "after": {
+        "name": "Кроссовки Bouncing — оливковые",
+        "name_en": "Bouncing sneakers — olive"
+      },
+      "evidence": "Visible colour or print in current public product cover; no official colourway or material inferred."
+    },
+    {
+      "id": 254,
+      "expected_revision": 9,
+      "before": {
+        "name": "Кроссовки Bouncing",
+        "name_en": null
+      },
+      "after": {
+        "name": "Кроссовки Bouncing — чёрные",
+        "name_en": "Bouncing sneakers — black"
+      },
+      "evidence": "Visible colour or print in current public product cover; no official colourway or material inferred."
+    },
+    {
+      "id": 258,
+      "expected_revision": 8,
+      "before": {
+        "name": "Брюки",
+        "name_en": null
+      },
+      "after": {
+        "name": "Брюки — чёрные, без выраженной фактуры",
+        "name_en": "Trousers — black, smooth appearance"
+      },
+      "evidence": "Visible colour or print in current public product cover; no official colourway or material inferred."
+    },
+    {
+      "id": 260,
+      "expected_revision": 8,
+      "before": {
+        "name": "Брюки",
+        "name_en": null
+      },
+      "after": {
+        "name": "Брюки — чёрные, с фактурным рисунком",
+        "name_en": "Trousers — black, textured pattern"
+      },
+      "evidence": "Visible colour or print in current public product cover; no official colourway or material inferred."
+    },
+    {
+      "id": 271,
+      "expected_revision": 10,
+      "before": {
+        "name": "Кроссовки Olympia",
+        "name_en": null
+      },
+      "after": {
+        "name": "Кроссовки Olympia — чёрные",
+        "name_en": "Olympia sneakers — black"
+      },
+      "evidence": "Visible colour or print in current public product cover; no official colourway or material inferred."
+    },
+    {
+      "id": 273,
+      "expected_revision": 10,
+      "before": {
+        "name": "Кроссовки Olympia",
+        "name_en": null
+      },
+      "after": {
+        "name": "Кроссовки Olympia — чёрно-белые",
+        "name_en": "Olympia sneakers — black and white"
+      },
+      "evidence": "Visible colour or print in current public product cover; no official colourway or material inferred."
+    },
+    {
+      "id": 280,
+      "expected_revision": 5,
+      "before": {
+        "name": "Ракетка для падела",
+        "name_en": null
+      },
+      "after": {
+        "name": "Ракетка для падела — золотистая с чёрным",
+        "name_en": "Padel racket — gold-tone and black"
+      },
+      "evidence": "Visible colour or print in current public product cover; no official colourway or material inferred."
+    },
+    {
+      "id": 281,
+      "expected_revision": 7,
+      "before": {
+        "name": "Ракетка для падела",
+        "name_en": null
+      },
+      "after": {
+        "name": "Ракетка для падела — чёрная с жёлтыми деталями",
+        "name_en": "Padel racket — black with yellow details"
+      },
+      "evidence": "Visible colour or print in current public product cover; no official colourway or material inferred."
+    },
+    {
+      "id": 295,
+      "expected_revision": 9,
+      "before": {
+        "name": "Джинсы",
+        "name_en": null
+      },
+      "after": {
+        "name": "Джинсы — тёмно-синие",
+        "name_en": "Jeans — dark blue"
+      },
+      "evidence": "Visible colour or print in current public product cover; no official colourway or material inferred."
+    },
+    {
+      "id": 297,
+      "expected_revision": 11,
+      "before": {
+        "name": "Кепка Baseball Cap",
+        "name_en": null
+      },
+      "after": {
+        "name": "Кепка Baseball Cap — синяя",
+        "name_en": "Baseball cap — blue"
+      },
+      "evidence": "Visible colour or print in current public product cover; no official colourway or material inferred."
+    },
+    {
+      "id": 303,
+      "expected_revision": 10,
+      "before": {
+        "name": "Кепка Baseball Cap",
+        "name_en": null
+      },
+      "after": {
+        "name": "Кепка Baseball Cap — розовая",
+        "name_en": "Baseball cap — pink"
+      },
+      "evidence": "Visible colour or print in current public product cover; no official colourway or material inferred."
+    },
+    {
+      "id": 304,
+      "expected_revision": 10,
+      "before": {
+        "name": "Кепка Baseball Cap",
+        "name_en": null
+      },
+      "after": {
+        "name": "Кепка Baseball Cap — бордовая",
+        "name_en": "Baseball cap — burgundy"
+      },
+      "evidence": "Visible colour or print in current public product cover; no official colourway or material inferred."
+    },
+    {
+      "id": 305,
+      "expected_revision": 10,
+      "before": {
+        "name": "Кепка Baseball Cap",
+        "name_en": null
+      },
+      "after": {
+        "name": "Кепка Baseball Cap — зелёная",
+        "name_en": "Baseball cap — green"
+      },
+      "evidence": "Visible colour or print in current public product cover; no official colourway or material inferred."
+    },
+    {
+      "id": 334,
+      "expected_revision": 9,
+      "before": {
+        "name": "Ботинки Napoli Chukka",
+        "name_en": null
+      },
+      "after": {
+        "name": "Ботинки Napoli Chukka — тёмно-синие",
+        "name_en": "Napoli Chukka boots — navy"
+      },
+      "evidence": "Visible colour or print in current public product cover; no official colourway or material inferred."
+    },
+    {
+      "id": 335,
+      "expected_revision": 9,
+      "before": {
+        "name": "Ботинки Napoli Chukka",
+        "name_en": null
+      },
+      "after": {
+        "name": "Ботинки Napoli Chukka — серо-бежевые",
+        "name_en": "Napoli Chukka boots — taupe"
+      },
+      "evidence": "Visible colour or print in current public product cover; no official colourway or material inferred."
+    },
+    {
+      "id": 438,
+      "expected_revision": 3,
+      "before": {
+        "name": "Кроссовки Week End Walk",
+        "name_en": null
+      },
+      "after": {
+        "name": "Кроссовки Week End Walk — бежево-коричневые",
+        "name_en": "Week End Walk sneakers — beige and brown"
+      },
+      "evidence": "Visible colour or print in current public product cover; no official colourway or material inferred."
+    },
+    {
+      "id": 440,
+      "expected_revision": 4,
+      "before": {
+        "name": "Кроссовки Week End Walk",
+        "name_en": null
+      },
+      "after": {
+        "name": "Кроссовки Week End Walk — оливковые",
+        "name_en": "Week End Walk sneakers — olive"
+      },
+      "evidence": "Visible colour or print in current public product cover; no official colourway or material inferred."
+    },
+    {
+      "id": 539,
+      "expected_revision": 2,
+      "before": {
+        "name": "Футболка Balenciaga",
+        "name_en": null
+      },
+      "after": {
+        "name": "Футболка с крупной надписью Balenciaga",
+        "name_en": "T-shirt with large Balenciaga lettering"
+      },
+      "evidence": "Visible colour or print in current public product cover; no official colourway or material inferred."
+    },
+    {
+      "id": 540,
+      "expected_revision": 3,
+      "before": {
+        "name": "Футболка Balenciaga",
+        "name_en": null
+      },
+      "after": {
+        "name": "Белая футболка с небольшим логотипом Balenciaga",
+        "name_en": "White T-shirt with small Balenciaga logo"
+      },
+      "evidence": "Visible colour or print in current public product cover; no official colourway or material inferred."
+    },
+    {
+      "id": 502,
+      "expected_revision": 3,
+      "before": {
+        "name": "Часы Datejust, 41 мм, сталь и белое золото, грифельный циферблат, ref. 126334",
+        "name_en": null
+      },
+      "after": {
+        "name": "Часы Datejust, 41 мм, сталь и белое золото, грифельный циферблат, часовые метки, ref. 126334",
+        "name_en": "Datejust watch, 41 mm, steel and white gold, slate dial, baton hour markers, ref. 126334"
+      },
+      "evidence": "Roman numerals versus baton markers visible in current product covers."
+    },
+    {
+      "id": 503,
+      "expected_revision": 3,
+      "before": {
+        "name": "Часы Datejust, 41 мм, сталь и белое золото, грифельный циферблат, ref. 126334",
+        "name_en": null
+      },
+      "after": {
+        "name": "Часы Datejust, 41 мм, сталь и белое золото, грифельный циферблат, римские цифры, ref. 126334",
+        "name_en": "Datejust watch, 41 mm, steel and white gold, slate dial, Roman numerals, ref. 126334"
+      },
+      "evidence": "Roman numerals versus baton markers visible in current product covers."
+    },
+    {
+      "id": 504,
+      "expected_revision": 3,
+      "before": {
+        "name": "Часы Datejust, 41 мм, сталь и белое золото, синий циферблат, ref. 126334",
+        "name_en": null
+      },
+      "after": {
+        "name": "Часы Datejust, 41 мм, сталь и белое золото, синий циферблат, часовые метки, ref. 126334",
+        "name_en": "Datejust watch, 41 mm, steel and white gold, blue dial, baton hour markers, ref. 126334"
+      },
+      "evidence": "Roman numerals versus baton markers visible in current product covers."
+    },
+    {
+      "id": 505,
+      "expected_revision": 4,
+      "before": {
+        "name": "Часы Datejust, 41 мм, сталь и белое золото, синий циферблат, ref. 126334",
+        "name_en": null
+      },
+      "after": {
+        "name": "Часы Datejust, 41 мм, сталь и белое золото, синий циферблат, римские цифры, ref. 126334",
+        "name_en": "Datejust watch, 41 mm, steel and white gold, blue dial, Roman numerals, ref. 126334"
+      },
+      "evidence": "Roman numerals versus baton markers visible in current product covers."
+    },
+    {
+      "id": 509,
+      "expected_revision": 3,
+      "before": {
+        "name": "Часы Datejust, 41 мм, сталь и белое золото, белый циферблат, ref. 126334",
+        "name_en": null
+      },
+      "after": {
+        "name": "Часы Datejust, 41 мм, сталь и белое золото, белый циферблат, часовые метки, ref. 126334",
+        "name_en": "Datejust watch, 41 mm, steel and white gold, white dial, baton hour markers, ref. 126334"
+      },
+      "evidence": "Roman numerals versus baton markers visible in current product covers."
+    },
+    {
+      "id": 510,
+      "expected_revision": 4,
+      "before": {
+        "name": "Часы Datejust, 41 мм, сталь и белое золото, белый циферблат, ref. 126334",
+        "name_en": null
+      },
+      "after": {
+        "name": "Часы Datejust, 41 мм, сталь и белое золото, белый циферблат, римские цифры, ref. 126334",
+        "name_en": "Datejust watch, 41 mm, steel and white gold, white dial, Roman numerals, ref. 126334"
+      },
+      "evidence": "Roman numerals versus baton markers visible in current product covers."
+    },
+    {
+      "id": 556,
+      "expected_revision": 2,
+      "before": {
+        "name": "Часы Day-Date, 40 мм, желтое золото, циферблат шампанского цвета, ref 228238",
+        "name_en": "Day-Date watch, 40 mm, yellow gold, champagne dial, ref. 228238"
+      },
+      "after": {
+        "name": "Часы Day-Date, 40 мм, желтое золото, циферблат шампанского цвета, часовые метки, ref 228238",
+        "name_en": "Day-Date watch, 40 mm, yellow gold, champagne dial, baton hour markers, ref. 228238"
+      },
+      "evidence": "Roman numerals versus baton markers visible in current product covers."
+    },
+    {
+      "id": 557,
+      "expected_revision": 2,
+      "before": {
+        "name": "Часы Day-Date, 40 мм, желтое золото, циферблат шампанского цвета, ref 228238",
+        "name_en": "Day-Date watch, 40 mm, yellow gold, champagne dial, ref. 228238"
+      },
+      "after": {
+        "name": "Часы Day-Date, 40 мм, желтое золото, циферблат шампанского цвета, римские цифры, ref 228238",
+        "name_en": "Day-Date watch, 40 mm, yellow gold, champagne dial, Roman numerals, ref. 228238"
+      },
+      "evidence": "Roman numerals versus baton markers visible in current product covers."
+    },
+    {
+      "id": 558,
+      "expected_revision": 2,
+      "before": {
+        "name": "Часы Day-Date, 40 мм, желтое золото, серебристый циферблат, ref 228238",
+        "name_en": "Day-Date watch, 40 mm, yellow gold, silver dial, ref. 228238"
+      },
+      "after": {
+        "name": "Часы Day-Date, 40 мм, желтое золото, серебристый циферблат, часовые метки, ref 228238",
+        "name_en": "Day-Date watch, 40 mm, yellow gold, silver dial, baton hour markers, ref. 228238"
+      },
+      "evidence": "Roman numerals versus baton markers visible in current product covers."
+    },
+    {
+      "id": 559,
+      "expected_revision": 2,
+      "before": {
+        "name": "Часы Day-Date, 40 мм, желтое золото, серебристый циферблат, ref 228238",
+        "name_en": "Day-Date watch, 40 mm, yellow gold, silver dial, ref. 228238"
+      },
+      "after": {
+        "name": "Часы Day-Date, 40 мм, желтое золото, серебристый циферблат, римские цифры, ref 228238",
+        "name_en": "Day-Date watch, 40 mm, yellow gold, silver dial, Roman numerals, ref. 228238"
+      },
+      "evidence": "Roman numerals versus baton markers visible in current product covers."
+    },
+    {
+      "id": 570,
+      "expected_revision": 2,
+      "before": {
+        "name": "Часы Day-Date, 40 мм, Платина, Цвет циферблата: Светло-голубой, ref 228236",
+        "name_en": "Day-Date watch, 40 mm, platinum, dial color: ice blue, ref. 228236"
+      },
+      "after": {
+        "name": "Часы Day-Date, 40 мм, Платина, Цвет циферблата: Светло-голубой, часовые метки, ref 228236",
+        "name_en": "Day-Date watch, 40 mm, platinum, dial color: ice blue, baton hour markers, ref. 228236"
+      },
+      "evidence": "Roman numerals versus baton markers visible in current product covers."
+    },
+    {
+      "id": 571,
+      "expected_revision": 2,
+      "before": {
+        "name": "Часы Day-Date, 40 мм, Платина, Цвет циферблата: Светло-голубой, ref 228236",
+        "name_en": "Day-Date watch, 40 mm, platinum, light blue dial, ref. 228236"
+      },
+      "after": {
+        "name": "Часы Day-Date, 40 мм, Платина, Цвет циферблата: Светло-голубой, римские цифры, ref 228236",
+        "name_en": "Day-Date watch, 40 mm, platinum, light blue dial, Roman numerals, ref. 228236"
+      },
+      "evidence": "Roman numerals versus baton markers visible in current product covers."
+    },
+    {
+      "id": 543,
+      "expected_revision": 2,
+      "before": {
+        "brand": "Rplex"
+      },
+      "after": {
+        "brand": "Rolex"
+      },
+      "evidence": "Typo Rplex corrected: Sky-Dweller reference 336934-0008 and Rolex-branded product image; https://www.rolex.com/watches/sky-dweller/m336934-0008"
+    },
+    {
+      "id": 516,
+      "expected_revision": 3,
+      "before": {
+        "name": "Часы Datejust 31mm Pink Diamond  Ref. 279174",
+        "name_en": null
+      },
+      "after": {
+        "name": "Часы Lady-Datejust, 28 мм, розовый циферблат с бриллиантами, ref. 279174",
+        "name_en": "Lady-Datejust watch, 28 mm, pink dial with diamonds, ref. 279174"
+      },
+      "evidence": "Official reference 279174 is 28 mm; https://www.rolex.com/en-us/watches/lady-datejust/m279174-0019"
+    },
+    {
+      "id": 567,
+      "expected_revision": 3,
+      "before": {
+        "name": "Часы Day-Date, 40 мм, Платина, Цвет циферблата: Cеребристый, ref 228236",
+        "name_en": "Day-Date watch, 40 mm, platinum, dial color: slate, ref. 228236"
+      },
+      "after": {
+        "name": "Часы Day-Date, 40 мм, платина, тёмно-серый циферблат, ref. 228236",
+        "name_en": "Day-Date watch, 40 mm, platinum, dark grey dial, ref. 228236"
+      },
+      "evidence": "Current product cover shows a dark grey dial, consistent with existing English slate; descriptive shade only, no exact official variant inferred."
+    },
+    {
+      "id": 615,
+      "expected_revision": 2,
+      "before": {
+        "name_en": "Watch Lady-Datejust, 28 mm, stainless steel and everose gold, olive green dial with factory-set diamonds, ref. 279161-0007"
+      },
+      "after": {
+        "name_en": "Lady-Datejust watch, 28 mm, steel and rose gold, olive-green dial with diamonds, ref. 279161-0007"
+      },
+      "evidence": "Remove unsupported factory-set claim; retain facts shared by Russian name and description."
+    },
+    {
+      "id": 646,
+      "expected_revision": 2,
+      "before": {
+        "name": "Сумка Chanel Peanut Minaudiere Enamel, Beige & Golden | Bragmybag",
+        "name_en": "Bag Chanel Peanut Minaudiere Enamel, Beige & Golden | Bragmybag"
+      },
+      "after": {
+        "name": "Сумка Chanel Peanut Minaudière — эмаль, бежевые и золотистые тона",
+        "name_en": "Chanel Peanut minaudière — enamel, beige and golden tones"
+      },
+      "evidence": "Remove imported website title tail | Bragmybag; preserve existing product details."
+    },
+    {
+      "id": 647,
+      "expected_revision": 2,
+      "before": {
+        "name": "Часы Audemars Piguet Royal Oak Selfwinding 34 mm, Белое золото, Бриллиантов безель, Цвет циферблата: Голубой, ref 77451ST.ZZ.1361ST.03",
+        "name_en": "Audemars Piguet Royal Oak Selfwinding 34 mm watch, white gold, diamond-set bezel, dial color: light blue, ref. 77451ST.ZZ.1361ST.03"
+      },
+      "after": {
+        "name": "Часы Audemars Piguet Royal Oak Selfwinding 34 mm, нержавеющая сталь, бриллиантовый безель, Цвет циферблата: Голубой, ref 77451ST.ZZ.1361ST.03",
+        "name_en": "Audemars Piguet Royal Oak Selfwinding 34 mm watch, stainless steel, diamond-set bezel, dial color: light blue, ref. 77451ST.ZZ.1361ST.03"
+      },
+      "evidence": "Official AP reference is stainless steel; https://www.audemarspiguet.com/us/en/watch-collection/royal-oak/77451ST.ZZ.1361ST.03"
+    },
+    {
+      "id": 648,
+      "expected_revision": 2,
+      "before": {
+        "name": "Часы Audemars Piguet Royal Oak Selfwinding 34 mm, Белое золото, Бриллиантов безель, Цвет циферблата: Синий, ref 77451ST.ZZ.1361ST.04",
+        "name_en": "Audemars Piguet Royal Oak Selfwinding 34 mm watch, white gold, diamond-set bezel, dial color: blue, ref. 77451ST.ZZ.1361ST.04"
+      },
+      "after": {
+        "name": "Часы Audemars Piguet Royal Oak Selfwinding 34 mm, нержавеющая сталь, бриллиантовый безель, Цвет циферблата: Синий, ref 77451ST.ZZ.1361ST.04",
+        "name_en": "Audemars Piguet Royal Oak Selfwinding 34 mm watch, stainless steel, diamond-set bezel, dial color: blue, ref. 77451ST.ZZ.1361ST.04"
+      },
+      "evidence": "Official AP reference is stainless steel; https://www.audemarspiguet.com/us/en/watch-collection/royal-oak/77451ST.ZZ.1361ST.04"
+    }
+  ],
+  "unresolved": [
+    {
+      "ids": [
+        296,
+        301
+      ],
+      "reason": "Similar light-blue jeans; wash and model difference not confirmed."
+    },
+    {
+      "ids": [
+        128,
+        129
+      ],
+      "reason": "Similar ring shown from different angles; exact model distinction not confirmed."
+    },
+    {
+      "ids": [
+        118,
+        119,
+        130
+      ],
+      "reason": "Eyewear cover artefacts; need original clear images or colour codes."
+    },
+    {
+      "ids": [
+        120,
+        121
+      ],
+      "reason": "Eyewear colour/finish requires clear original images."
+    },
+    {
+      "ids": [
+        489
+      ],
+      "reason": "Reference 278271 officially uses Everose, but cover shows yellow-tone metal and existing description says yellow gold. Confirm reference or replace image; do not guess which source is wrong."
+    }
+  ]
+}
