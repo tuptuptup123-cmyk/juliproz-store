@@ -1,0 +1,1353 @@
+{
+  "batch": "2026-11-10-priority-50",
+  "source": "Current public catalogue, verified via read-only SQL",
+  "products": [
+    {
+      "id": 676,
+      "before": {
+        "id": 676,
+        "brand": "Hermès",
+        "name": "Сумка Kelly to go, Noir Alligator Missi phw",
+        "name_en": null,
+        "description": null,
+        "description_en": null,
+        "size": null,
+        "product_condition": "new",
+        "wear_condition": null,
+        "fulfillment_status": "on_order",
+        "revision": 2,
+        "team_pick": false
+      },
+      "after": {
+        "name_en": "Kelly To Go bag, Noir Alligator Missi PHW",
+        "description": "Hermès Kelly To Go. Исполнение в каталоге: Noir Alligator Missi PHW. Состояние: новое. Доступно под заказ. Размеры и комплект конкретного экземпляра уточните у менеджера до оформления.",
+        "description_en": "Hermès Kelly To Go in the listed Noir Alligator Missi PHW version. Condition: new. Available to order. Confirm the dimensions and accessories of the individual piece with our team before ordering."
+      },
+      "provenance": "Existing public product name and structured catalogue fields only; no claims about year, authentication, full set or factory setting."
+    },
+    {
+      "id": 675,
+      "before": {
+        "id": 675,
+        "brand": "Hermès",
+        "name": "Сумка Kelly to go, Rouge Piment, Box phw",
+        "name_en": null,
+        "description": null,
+        "description_en": null,
+        "size": null,
+        "product_condition": "new",
+        "wear_condition": null,
+        "fulfillment_status": "on_order",
+        "revision": 4,
+        "team_pick": false
+      },
+      "after": {
+        "name_en": "Kelly To Go bag, Rouge Piment, Box PHW",
+        "description": "Hermès Kelly To Go. Исполнение в каталоге: Rouge Piment, Box PHW. Состояние: новое. Доступно под заказ. Размеры и комплект конкретного экземпляра уточните у менеджера до оформления.",
+        "description_en": "Hermès Kelly To Go in the listed Rouge Piment, Box PHW version. Condition: new. Available to order. Confirm the dimensions and accessories of the individual piece with our team before ordering."
+      },
+      "provenance": "Existing public product name and structured catalogue fields only; no claims about year, authentication, full set or factory setting."
+    },
+    {
+      "id": 674,
+      "before": {
+        "id": 674,
+        "brand": "Hermès",
+        "name": "Сумка Kelly to go, Gris Casis, Evercolor phw",
+        "name_en": null,
+        "description": null,
+        "description_en": null,
+        "size": null,
+        "product_condition": "new",
+        "wear_condition": null,
+        "fulfillment_status": "on_order",
+        "revision": 2,
+        "team_pick": false
+      },
+      "after": {
+        "name_en": "Kelly To Go bag, Gris Casis, Evercolor PHW",
+        "description": "Hermès Kelly To Go. Исполнение в каталоге: Gris Casis, Evercolor PHW. Состояние: новое. Доступно под заказ. Размеры и комплект конкретного экземпляра уточните у менеджера до оформления.",
+        "description_en": "Hermès Kelly To Go in the listed Gris Casis, Evercolor PHW version. Condition: new. Available to order. Confirm the dimensions and accessories of the individual piece with our team before ordering."
+      },
+      "provenance": "Existing public product name and structured catalogue fields only; no claims about year, authentication, full set or factory setting."
+    },
+    {
+      "id": 673,
+      "before": {
+        "id": 673,
+        "brand": "Hermès",
+        "name": "Сумка Kelly to go, Griss Etoupe, Evercolor ghw",
+        "name_en": null,
+        "description": null,
+        "description_en": null,
+        "size": null,
+        "product_condition": "new",
+        "wear_condition": null,
+        "fulfillment_status": "on_order",
+        "revision": 2,
+        "team_pick": false
+      },
+      "after": {
+        "name_en": "Kelly To Go bag, Griss Etoupe, Evercolor GHW",
+        "description": "Hermès Kelly To Go. Исполнение в каталоге: Griss Etoupe, Evercolor GHW. Состояние: новое. Доступно под заказ. Размеры и комплект конкретного экземпляра уточните у менеджера до оформления.",
+        "description_en": "Hermès Kelly To Go in the listed Griss Etoupe, Evercolor GHW version. Condition: new. Available to order. Confirm the dimensions and accessories of the individual piece with our team before ordering."
+      },
+      "provenance": "Existing public product name and structured catalogue fields only; no claims about year, authentication, full set or factory setting."
+    },
+    {
+      "id": 672,
+      "before": {
+        "id": 672,
+        "brand": "Hermès",
+        "name": "Сумка Kelly to go, Gris Bleu de Prusse,  Epsom phw",
+        "name_en": null,
+        "description": null,
+        "description_en": null,
+        "size": null,
+        "product_condition": "new",
+        "wear_condition": null,
+        "fulfillment_status": "on_order",
+        "revision": 2,
+        "team_pick": false
+      },
+      "after": {
+        "name_en": "Kelly To Go bag, Gris Bleu de Prusse, Epsom PHW",
+        "description": "Hermès Kelly To Go. Исполнение в каталоге: Gris Bleu de Prusse, Epsom PHW. Состояние: новое. Доступно под заказ. Размеры и комплект конкретного экземпляра уточните у менеджера до оформления.",
+        "description_en": "Hermès Kelly To Go in the listed Gris Bleu de Prusse, Epsom PHW version. Condition: new. Available to order. Confirm the dimensions and accessories of the individual piece with our team before ordering."
+      },
+      "provenance": "Existing public product name and structured catalogue fields only; no claims about year, authentication, full set or factory setting."
+    },
+    {
+      "id": 671,
+      "before": {
+        "id": 671,
+        "brand": "Hermès",
+        "name": "Сумка Kelly to go, Gris Pantin,  Epsom phw",
+        "name_en": null,
+        "description": null,
+        "description_en": null,
+        "size": null,
+        "product_condition": "new",
+        "wear_condition": null,
+        "fulfillment_status": "on_order",
+        "revision": 2,
+        "team_pick": false
+      },
+      "after": {
+        "name_en": "Kelly To Go bag, Gris Pantin, Epsom PHW",
+        "description": "Hermès Kelly To Go. Исполнение в каталоге: Gris Pantin, Epsom PHW. Состояние: новое. Доступно под заказ. Размеры и комплект конкретного экземпляра уточните у менеджера до оформления.",
+        "description_en": "Hermès Kelly To Go in the listed Gris Pantin, Epsom PHW version. Condition: new. Available to order. Confirm the dimensions and accessories of the individual piece with our team before ordering."
+      },
+      "provenance": "Existing public product name and structured catalogue fields only; no claims about year, authentication, full set or factory setting."
+    },
+    {
+      "id": 670,
+      "before": {
+        "id": 670,
+        "brand": "Hermès",
+        "name": "Сумка Kelly to go, Gold,  Epsom ghw",
+        "name_en": null,
+        "description": null,
+        "description_en": null,
+        "size": null,
+        "product_condition": "new",
+        "wear_condition": null,
+        "fulfillment_status": "on_order",
+        "revision": 2,
+        "team_pick": false
+      },
+      "after": {
+        "name_en": "Kelly To Go bag, Gold, Epsom GHW",
+        "description": "Hermès Kelly To Go. Исполнение в каталоге: Gold, Epsom GHW. Состояние: новое. Доступно под заказ. Размеры и комплект конкретного экземпляра уточните у менеджера до оформления.",
+        "description_en": "Hermès Kelly To Go in the listed Gold, Epsom GHW version. Condition: new. Available to order. Confirm the dimensions and accessories of the individual piece with our team before ordering."
+      },
+      "provenance": "Existing public product name and structured catalogue fields only; no claims about year, authentication, full set or factory setting."
+    },
+    {
+      "id": 669,
+      "before": {
+        "id": 669,
+        "brand": "Hermès",
+        "name": "Сумка Kelly to go, Bleu de Prusse,  Epsom ghw",
+        "name_en": null,
+        "description": null,
+        "description_en": null,
+        "size": null,
+        "product_condition": "new",
+        "wear_condition": null,
+        "fulfillment_status": "on_order",
+        "revision": 2,
+        "team_pick": false
+      },
+      "after": {
+        "name_en": "Kelly To Go bag, Bleu de Prusse, Epsom GHW",
+        "description": "Hermès Kelly To Go. Исполнение в каталоге: Bleu de Prusse, Epsom GHW. Состояние: новое. Доступно под заказ. Размеры и комплект конкретного экземпляра уточните у менеджера до оформления.",
+        "description_en": "Hermès Kelly To Go in the listed Bleu de Prusse, Epsom GHW version. Condition: new. Available to order. Confirm the dimensions and accessories of the individual piece with our team before ordering."
+      },
+      "provenance": "Existing public product name and structured catalogue fields only; no claims about year, authentication, full set or factory setting."
+    },
+    {
+      "id": 668,
+      "before": {
+        "id": 668,
+        "brand": "Hermès",
+        "name": "Сумка Kelly to go Etoupe, epsom ghw",
+        "name_en": null,
+        "description": null,
+        "description_en": null,
+        "size": null,
+        "product_condition": "new",
+        "wear_condition": null,
+        "fulfillment_status": "on_order",
+        "revision": 2,
+        "team_pick": false
+      },
+      "after": {
+        "name_en": "Kelly To Go bag, Etoupe, Epsom GHW",
+        "description": "Hermès Kelly To Go. Исполнение в каталоге: Etoupe, Epsom GHW. Состояние: новое. Доступно под заказ. Размеры и комплект конкретного экземпляра уточните у менеджера до оформления.",
+        "description_en": "Hermès Kelly To Go in the listed Etoupe, Epsom GHW version. Condition: new. Available to order. Confirm the dimensions and accessories of the individual piece with our team before ordering."
+      },
+      "provenance": "Existing public product name and structured catalogue fields only; no claims about year, authentication, full set or factory setting."
+    },
+    {
+      "id": 667,
+      "before": {
+        "id": 667,
+        "brand": "Hermès",
+        "name": "Сумка Kelly to go Rouge h, Epsom ghw",
+        "name_en": null,
+        "description": null,
+        "description_en": null,
+        "size": null,
+        "product_condition": "new",
+        "wear_condition": null,
+        "fulfillment_status": "on_order",
+        "revision": 2,
+        "team_pick": false
+      },
+      "after": {
+        "name_en": "Kelly To Go bag, Rouge h, Epsom GHW",
+        "description": "Hermès Kelly To Go. Исполнение в каталоге: Rouge h, Epsom GHW. Состояние: новое. Доступно под заказ. Размеры и комплект конкретного экземпляра уточните у менеджера до оформления.",
+        "description_en": "Hermès Kelly To Go in the listed Rouge h, Epsom GHW version. Condition: new. Available to order. Confirm the dimensions and accessories of the individual piece with our team before ordering."
+      },
+      "provenance": "Existing public product name and structured catalogue fields only; no claims about year, authentication, full set or factory setting."
+    },
+    {
+      "id": 666,
+      "before": {
+        "id": 666,
+        "brand": "Hermès",
+        "name": "Сумка Birkin 25, цвет: Noir, кожа: Togo, фурнитура: золотая",
+        "name_en": "Birkin 25 bag, color: Noir, leather: Togo, hardware: gold",
+        "description": null,
+        "description_en": null,
+        "size": null,
+        "product_condition": "new",
+        "wear_condition": null,
+        "fulfillment_status": "on_order",
+        "revision": 2,
+        "team_pick": true
+      },
+      "after": {
+        "name_en": "Birkin 25 bag, Noir, Togo, gold-tone hardware",
+        "description": "Hermès Birkin 25 в цвете Noir: кожа Togo, золотистая фурнитура. Состояние: новое. Доступно под заказ. Размеры и комплект конкретного экземпляра уточните у менеджера до оформления.",
+        "description_en": "Hermès Birkin 25 in Noir, with Togo leather and gold-tone hardware. Condition: new. Available to order. Confirm the dimensions and accessories of the individual piece with our team before ordering."
+      },
+      "provenance": "Existing public product name and structured catalogue fields only; no claims about year, authentication, full set or factory setting."
+    },
+    {
+      "id": 664,
+      "before": {
+        "id": 664,
+        "brand": "Hermès",
+        "name": "Сумка Birkin 25, цвет: Noir, кожа: Togo, фурнитура: серебряная",
+        "name_en": "Birkin 25 bag, color: Noir, leather: Togo, hardware: silver",
+        "description": null,
+        "description_en": null,
+        "size": null,
+        "product_condition": "new",
+        "wear_condition": null,
+        "fulfillment_status": "on_order",
+        "revision": 1,
+        "team_pick": true
+      },
+      "after": {
+        "name_en": "Birkin 25 bag, Noir, Togo, silver-tone hardware",
+        "description": "Hermès Birkin 25 в цвете Noir: кожа Togo, серебристая фурнитура. Состояние: новое. Доступно под заказ. Размеры и комплект конкретного экземпляра уточните у менеджера до оформления.",
+        "description_en": "Hermès Birkin 25 in Noir, with Togo leather and silver-tone hardware. Condition: new. Available to order. Confirm the dimensions and accessories of the individual piece with our team before ordering."
+      },
+      "provenance": "Existing public product name and structured catalogue fields only; no claims about year, authentication, full set or factory setting."
+    },
+    {
+      "id": 601,
+      "before": {
+        "id": 601,
+        "brand": "Hermès",
+        "name": "Сумка Birkin 25, цвет: Noir, кожа: Crocodile/Togo, фурнитура: серебряная",
+        "name_en": "Birkin 25 bag, color: Noir, leather: Crocodile/Togo, hardware: silver",
+        "description": null,
+        "description_en": null,
+        "size": null,
+        "product_condition": "new",
+        "wear_condition": null,
+        "fulfillment_status": "on_order",
+        "revision": 3,
+        "team_pick": true
+      },
+      "after": {
+        "name_en": "Birkin 25 bag, Noir, Crocodile/Togo, silver-tone hardware",
+        "description": "Hermès Birkin 25 в цвете Noir: исполнение Crocodile/Togo, серебристая фурнитура. Состояние: новое. Доступно под заказ. Размеры и комплект конкретного экземпляра уточните у менеджера до оформления.",
+        "description_en": "Hermès Birkin 25 in Noir, in the listed Crocodile/Togo version and silver-tone hardware. Condition: new. Available to order. Confirm the dimensions and accessories of the individual piece with our team before ordering."
+      },
+      "provenance": "Existing public product name and structured catalogue fields only; no claims about year, authentication, full set or factory setting."
+    },
+    {
+      "id": 579,
+      "before": {
+        "id": 579,
+        "brand": "Rolex",
+        "name": "Часы Day-Date, 40 мм, Платина, Цвет циферблата: Паве с Бриллиантами и Сапфирами, ref 228236",
+        "name_en": "Day-Date watch, 40 mm, platinum, dial: pavé-set with diamonds and sapphires, ref. 228236",
+        "description": null,
+        "description_en": null,
+        "size": null,
+        "product_condition": "new",
+        "wear_condition": null,
+        "fulfillment_status": "on_order",
+        "revision": 1,
+        "team_pick": false
+      },
+      "after": {
+        "name_en": "Day-Date watch, 40 mm, platinum, pavé-set dial with diamonds and sapphires, ref. 228236",
+        "description": "Rolex Day-Date: корпус 40 мм, платина, циферблат — паве с бриллиантами и сапфирами. Референс 228236. Состояние: новое. Доступно под заказ. Размеры и комплект конкретного экземпляра уточните у менеджера до оформления.",
+        "description_en": "Rolex Day-Date with a 40 mm case in platinum and a pavé-set dial with diamonds and sapphires. Reference 228236. Condition: new. Available to order. Confirm the dimensions and accessories of the individual piece with our team before ordering."
+      },
+      "provenance": "Existing public product name and structured catalogue fields only; no claims about year, authentication, full set or factory setting."
+    },
+    {
+      "id": 578,
+      "before": {
+        "id": 578,
+        "brand": "Rolex",
+        "name": "Часы Day-Date, 40 мм, Платина, Цвет циферблата: Белый перламутровый с Бриллиантами, ref 228236",
+        "name_en": "Day-Date watch, 40 mm, platinum, dial color: white mother-of-pearl with diamonds, ref. 228236",
+        "description": null,
+        "description_en": null,
+        "size": null,
+        "product_condition": "new",
+        "wear_condition": null,
+        "fulfillment_status": "on_order",
+        "revision": 1,
+        "team_pick": false
+      },
+      "after": {
+        "name_en": "Day-Date watch, 40 mm, platinum, white mother-of-pearl dial with diamonds, ref. 228236",
+        "description": "Rolex Day-Date: корпус 40 мм, платина, циферблат — белый перламутр с бриллиантами. Референс 228236. Состояние: новое. Доступно под заказ. Размеры и комплект конкретного экземпляра уточните у менеджера до оформления.",
+        "description_en": "Rolex Day-Date with a 40 mm case in platinum and a white mother-of-pearl dial with diamonds. Reference 228236. Condition: new. Available to order. Confirm the dimensions and accessories of the individual piece with our team before ordering."
+      },
+      "provenance": "Existing public product name and structured catalogue fields only; no claims about year, authentication, full set or factory setting."
+    },
+    {
+      "id": 577,
+      "before": {
+        "id": 577,
+        "brand": "Rolex",
+        "name": "Часы Day-Date, 40 мм, Платина, Цвет циферблата: Серебряный с Бриллиантами, ref 228236",
+        "name_en": "Day-Date watch, 40 mm, platinum, dial color: silver with diamonds, ref. 228236",
+        "description": null,
+        "description_en": null,
+        "size": null,
+        "product_condition": "new",
+        "wear_condition": null,
+        "fulfillment_status": "on_order",
+        "revision": 1,
+        "team_pick": false
+      },
+      "after": {
+        "name_en": "Day-Date watch, 40 mm, platinum, silver dial with diamonds, ref. 228236",
+        "description": "Rolex Day-Date: корпус 40 мм, платина, циферблат — серебристый с бриллиантами. Референс 228236. Состояние: новое. Доступно под заказ. Размеры и комплект конкретного экземпляра уточните у менеджера до оформления.",
+        "description_en": "Rolex Day-Date with a 40 mm case in platinum and a silver dial with diamonds. Reference 228236. Condition: new. Available to order. Confirm the dimensions and accessories of the individual piece with our team before ordering."
+      },
+      "provenance": "Existing public product name and structured catalogue fields only; no claims about year, authentication, full set or factory setting."
+    },
+    {
+      "id": 576,
+      "before": {
+        "id": 576,
+        "brand": "Rolex",
+        "name": "Часы Day-Date, 40 мм, Платина, Цвет циферблата: Метеорит с Бриллиантами, ref 228236",
+        "name_en": "Day-Date watch, 40 mm, platinum, dial color: meteorite with diamonds, ref. 228236",
+        "description": null,
+        "description_en": null,
+        "size": null,
+        "product_condition": "new",
+        "wear_condition": null,
+        "fulfillment_status": "on_order",
+        "revision": 1,
+        "team_pick": false
+      },
+      "after": {
+        "name_en": "Day-Date watch, 40 mm, platinum, meteorite dial with diamonds, ref. 228236",
+        "description": "Rolex Day-Date: корпус 40 мм, платина, циферблат — метеорит с бриллиантами. Референс 228236. Состояние: новое. Доступно под заказ. Размеры и комплект конкретного экземпляра уточните у менеджера до оформления.",
+        "description_en": "Rolex Day-Date with a 40 mm case in platinum and a meteorite dial with diamonds. Reference 228236. Condition: new. Available to order. Confirm the dimensions and accessories of the individual piece with our team before ordering."
+      },
+      "provenance": "Existing public product name and structured catalogue fields only; no claims about year, authentication, full set or factory setting."
+    },
+    {
+      "id": 575,
+      "before": {
+        "id": 575,
+        "brand": "Rolex",
+        "name": "Часы Day-Date, 40 мм, Платина, Цвет циферблата: Светло-голубой с бриллиантами, ref 228236",
+        "name_en": "Day-Date watch, 40 mm, platinum, dial color: ice blue with diamonds, ref. 228236",
+        "description": null,
+        "description_en": null,
+        "size": null,
+        "product_condition": "new",
+        "wear_condition": null,
+        "fulfillment_status": "on_order",
+        "revision": 1,
+        "team_pick": false
+      },
+      "after": {
+        "name_en": "Day-Date watch, 40 mm, platinum, light blue dial with diamonds, ref. 228236",
+        "description": "Rolex Day-Date: корпус 40 мм, платина, циферблат — светло-голубой с бриллиантами. Референс 228236. Состояние: новое. Доступно под заказ. Размеры и комплект конкретного экземпляра уточните у менеджера до оформления.",
+        "description_en": "Rolex Day-Date with a 40 mm case in platinum and a light blue dial with diamonds. Reference 228236. Condition: new. Available to order. Confirm the dimensions and accessories of the individual piece with our team before ordering."
+      },
+      "provenance": "Existing public product name and structured catalogue fields only; no claims about year, authentication, full set or factory setting."
+    },
+    {
+      "id": 574,
+      "before": {
+        "id": 574,
+        "brand": "Rolex",
+        "name": "Часы Day-Date, 40 мм, Платина, Цвет циферблата: Черный с бриллиантами, ref 228236",
+        "name_en": "Day-Date watch, 40 mm, platinum, dial color: black with diamonds, ref. 228236",
+        "description": null,
+        "description_en": null,
+        "size": null,
+        "product_condition": "new",
+        "wear_condition": null,
+        "fulfillment_status": "on_order",
+        "revision": 1,
+        "team_pick": false
+      },
+      "after": {
+        "name_en": "Day-Date watch, 40 mm, platinum, black dial with diamonds, ref. 228236",
+        "description": "Rolex Day-Date: корпус 40 мм, платина, циферблат — чёрный с бриллиантами. Референс 228236. Состояние: новое. Доступно под заказ. Размеры и комплект конкретного экземпляра уточните у менеджера до оформления.",
+        "description_en": "Rolex Day-Date with a 40 mm case in platinum and a black dial with diamonds. Reference 228236. Condition: new. Available to order. Confirm the dimensions and accessories of the individual piece with our team before ordering."
+      },
+      "provenance": "Existing public product name and structured catalogue fields only; no claims about year, authentication, full set or factory setting."
+    },
+    {
+      "id": 573,
+      "before": {
+        "id": 573,
+        "brand": "Rolex",
+        "name": "Часы Day-Date, 40 мм, Платина, Цвет циферблата: Белый, ref 228236",
+        "name_en": "Day-Date watch, 40 mm, platinum, dial color: white, ref. 228236",
+        "description": null,
+        "description_en": null,
+        "size": null,
+        "product_condition": "new",
+        "wear_condition": null,
+        "fulfillment_status": "on_order",
+        "revision": 1,
+        "team_pick": false
+      },
+      "after": {
+        "name_en": "Day-Date watch, 40 mm, platinum, white dial, ref. 228236",
+        "description": "Rolex Day-Date: корпус 40 мм, платина, циферблат — белый. Референс 228236. Состояние: новое. Доступно под заказ. Размеры и комплект конкретного экземпляра уточните у менеджера до оформления.",
+        "description_en": "Rolex Day-Date with a 40 mm case in platinum and a white dial. Reference 228236. Condition: new. Available to order. Confirm the dimensions and accessories of the individual piece with our team before ordering."
+      },
+      "provenance": "Existing public product name and structured catalogue fields only; no claims about year, authentication, full set or factory setting."
+    },
+    {
+      "id": 572,
+      "before": {
+        "id": 572,
+        "brand": "Rolex",
+        "name": "Часы Day-Date, 40 мм, Платина, Цвет циферблата: Оливково-зеленый, ref 228236",
+        "name_en": "Day-Date watch, 40 mm, platinum, dial color: olive green, ref. 228236",
+        "description": null,
+        "description_en": null,
+        "size": null,
+        "product_condition": "new",
+        "wear_condition": null,
+        "fulfillment_status": "on_order",
+        "revision": 1,
+        "team_pick": false
+      },
+      "after": {
+        "name_en": "Day-Date watch, 40 mm, platinum, olive green dial, ref. 228236",
+        "description": "Rolex Day-Date: корпус 40 мм, платина, циферблат — оливково-зелёный. Референс 228236. Состояние: новое. Доступно под заказ. Размеры и комплект конкретного экземпляра уточните у менеджера до оформления.",
+        "description_en": "Rolex Day-Date with a 40 mm case in platinum and a olive green dial. Reference 228236. Condition: new. Available to order. Confirm the dimensions and accessories of the individual piece with our team before ordering."
+      },
+      "provenance": "Existing public product name and structured catalogue fields only; no claims about year, authentication, full set or factory setting."
+    },
+    {
+      "id": 571,
+      "before": {
+        "id": 571,
+        "brand": "Rolex",
+        "name": "Часы Day-Date, 40 мм, Платина, Цвет циферблата: Светло-голубой, ref 228236",
+        "name_en": "Day-Date watch, 40 mm, platinum, dial color: ice blue, ref. 228236",
+        "description": null,
+        "description_en": null,
+        "size": null,
+        "product_condition": "new",
+        "wear_condition": null,
+        "fulfillment_status": "on_order",
+        "revision": 1,
+        "team_pick": false
+      },
+      "after": {
+        "name_en": "Day-Date watch, 40 mm, platinum, light blue dial, ref. 228236",
+        "description": "Rolex Day-Date: корпус 40 мм, платина, циферблат — светло-голубой. Референс 228236. Состояние: новое. Доступно под заказ. Размеры и комплект конкретного экземпляра уточните у менеджера до оформления.",
+        "description_en": "Rolex Day-Date with a 40 mm case in platinum and a light blue dial. Reference 228236. Condition: new. Available to order. Confirm the dimensions and accessories of the individual piece with our team before ordering."
+      },
+      "provenance": "Existing public product name and structured catalogue fields only; no claims about year, authentication, full set or factory setting."
+    },
+    {
+      "id": 569,
+      "before": {
+        "id": 569,
+        "brand": "Rolex",
+        "name": "Часы Day-Date, 40 мм, Платина, Цвет циферблата: Синий омбре, ref 228236",
+        "name_en": "Day-Date watch, 40 mm, platinum, dial color: blue ombré, ref. 228236",
+        "description": null,
+        "description_en": null,
+        "size": null,
+        "product_condition": "new",
+        "wear_condition": null,
+        "fulfillment_status": "on_order",
+        "revision": 3,
+        "team_pick": false
+      },
+      "after": {
+        "name_en": "Day-Date watch, 40 mm, platinum, blue ombré dial, ref. 228236",
+        "description": "Rolex Day-Date: корпус 40 мм, платина, циферблат — синий омбре. Референс 228236. Состояние: новое. Доступно под заказ. Размеры и комплект конкретного экземпляра уточните у менеджера до оформления.",
+        "description_en": "Rolex Day-Date with a 40 mm case in platinum and a blue ombré dial. Reference 228236. Condition: new. Available to order. Confirm the dimensions and accessories of the individual piece with our team before ordering."
+      },
+      "provenance": "Existing public product name and structured catalogue fields only; no claims about year, authentication, full set or factory setting."
+    },
+    {
+      "id": 568,
+      "before": {
+        "id": 568,
+        "brand": "Rolex",
+        "name": "Часы Day-Date, 40 мм, Платина, Цвет циферблата: Cиний, ref 228236",
+        "name_en": "Day-Date watch, 40 mm, platinum, dial color: blue, ref. 228236",
+        "description": null,
+        "description_en": null,
+        "size": null,
+        "product_condition": "new",
+        "wear_condition": null,
+        "fulfillment_status": "on_order",
+        "revision": 2,
+        "team_pick": false
+      },
+      "after": {
+        "name_en": "Day-Date watch, 40 mm, platinum, blue dial, ref. 228236",
+        "description": "Rolex Day-Date: корпус 40 мм, платина, циферблат — синий. Референс 228236. Состояние: новое. Доступно под заказ. Размеры и комплект конкретного экземпляра уточните у менеджера до оформления.",
+        "description_en": "Rolex Day-Date with a 40 mm case in platinum and a blue dial. Reference 228236. Condition: new. Available to order. Confirm the dimensions and accessories of the individual piece with our team before ordering."
+      },
+      "provenance": "Existing public product name and structured catalogue fields only; no claims about year, authentication, full set or factory setting."
+    },
+    {
+      "id": 566,
+      "before": {
+        "id": 566,
+        "brand": "Rolex",
+        "name": "Часы Day-Date, 40 мм, Платина, Цвет циферблата: Черный, ref 228236",
+        "name_en": "Day-Date watch, 40 mm, platinum, dial color: black, ref. 228236",
+        "description": null,
+        "description_en": null,
+        "size": null,
+        "product_condition": "new",
+        "wear_condition": null,
+        "fulfillment_status": "on_order",
+        "revision": 2,
+        "team_pick": false
+      },
+      "after": {
+        "name_en": "Day-Date watch, 40 mm, platinum, black dial, ref. 228236",
+        "description": "Rolex Day-Date: корпус 40 мм, платина, циферблат — чёрный. Референс 228236. Состояние: новое. Доступно под заказ. Размеры и комплект конкретного экземпляра уточните у менеджера до оформления.",
+        "description_en": "Rolex Day-Date with a 40 mm case in platinum and a black dial. Reference 228236. Condition: new. Available to order. Confirm the dimensions and accessories of the individual piece with our team before ordering."
+      },
+      "provenance": "Existing public product name and structured catalogue fields only; no claims about year, authentication, full set or factory setting."
+    },
+    {
+      "id": 565,
+      "before": {
+        "id": 565,
+        "brand": "Rolex",
+        "name": "Часы Day-Date, 40 мм, желтое золото, \"паве\" циферблат, ref 228238",
+        "name_en": "Day-Date watch, 40 mm, yellow gold, pave dial, ref. 228238",
+        "description": null,
+        "description_en": null,
+        "size": null,
+        "product_condition": "new",
+        "wear_condition": null,
+        "fulfillment_status": "on_order",
+        "revision": 1,
+        "team_pick": false
+      },
+      "after": {
+        "name_en": "Day-Date watch, 40 mm, yellow gold, pavé dial, ref. 228238",
+        "description": "Rolex Day-Date: корпус 40 мм, жёлтое золото, циферблат — паве. Референс 228238. Состояние: новое. Доступно под заказ. Размеры и комплект конкретного экземпляра уточните у менеджера до оформления.",
+        "description_en": "Rolex Day-Date with a 40 mm case in yellow gold and a pavé dial. Reference 228238. Condition: new. Available to order. Confirm the dimensions and accessories of the individual piece with our team before ordering."
+      },
+      "provenance": "Existing public product name and structured catalogue fields only; no claims about year, authentication, full set or factory setting."
+    },
+    {
+      "id": 564,
+      "before": {
+        "id": 564,
+        "brand": "Rolex",
+        "name": "Часы Day-Date, 40 мм, желтое золото, белый перламутровый циферблат с бриллиантами, ref 228238",
+        "name_en": "Day-Date watch, 40 mm, yellow gold, white mother-of-peral dial with diamonds, ref. 228238",
+        "description": null,
+        "description_en": null,
+        "size": null,
+        "product_condition": "new",
+        "wear_condition": null,
+        "fulfillment_status": "on_order",
+        "revision": 1,
+        "team_pick": false
+      },
+      "after": {
+        "name_en": "Day-Date watch, 40 mm, yellow gold, white mother-of-pearl dial with diamonds, ref. 228238",
+        "description": "Rolex Day-Date: корпус 40 мм, жёлтое золото, циферблат — белый перламутр с бриллиантами. Референс 228238. Состояние: новое. Доступно под заказ. Размеры и комплект конкретного экземпляра уточните у менеджера до оформления.",
+        "description_en": "Rolex Day-Date with a 40 mm case in yellow gold and a white mother-of-pearl dial with diamonds. Reference 228238. Condition: new. Available to order. Confirm the dimensions and accessories of the individual piece with our team before ordering."
+      },
+      "provenance": "Existing public product name and structured catalogue fields only; no claims about year, authentication, full set or factory setting."
+    },
+    {
+      "id": 563,
+      "before": {
+        "id": 563,
+        "brand": "Rolex",
+        "name": "Часы Day-Date, 40 мм, желтое золото, циферблат шампанского цвета с бриллиантами, ref 228238",
+        "name_en": "Day-Date watch, 40 mm, yellow gold, champagne dial with diamonds, ref. 228238",
+        "description": null,
+        "description_en": null,
+        "size": null,
+        "product_condition": "new",
+        "wear_condition": null,
+        "fulfillment_status": "on_order",
+        "revision": 1,
+        "team_pick": false
+      },
+      "after": {
+        "name_en": "Day-Date watch, 40 mm, yellow gold, champagne dial with diamonds, ref. 228238",
+        "description": "Rolex Day-Date: корпус 40 мм, жёлтое золото, циферблат — шампань с бриллиантами. Референс 228238. Состояние: новое. Доступно под заказ. Размеры и комплект конкретного экземпляра уточните у менеджера до оформления.",
+        "description_en": "Rolex Day-Date with a 40 mm case in yellow gold and a champagne dial with diamonds. Reference 228238. Condition: new. Available to order. Confirm the dimensions and accessories of the individual piece with our team before ordering."
+      },
+      "provenance": "Existing public product name and structured catalogue fields only; no claims about year, authentication, full set or factory setting."
+    },
+    {
+      "id": 562,
+      "before": {
+        "id": 562,
+        "brand": "Rolex",
+        "name": "Часы Day-Date, 40 мм, желтое золото, циферблат цвета оникса с бриллиантами, ref 228238",
+        "name_en": "Day-Date watch, 40 mm, yellow gold, onyx dial with diamonds, ref. 228238",
+        "description": null,
+        "description_en": null,
+        "size": null,
+        "product_condition": "new",
+        "wear_condition": null,
+        "fulfillment_status": "on_order",
+        "revision": 1,
+        "team_pick": false
+      },
+      "after": {
+        "name_en": "Day-Date watch, 40 mm, yellow gold, onyx-coloured dial with diamonds, ref. 228238",
+        "description": "Rolex Day-Date: корпус 40 мм, жёлтое золото, циферблат — цвета оникса с бриллиантами. Референс 228238. Состояние: новое. Доступно под заказ. Размеры и комплект конкретного экземпляра уточните у менеджера до оформления.",
+        "description_en": "Rolex Day-Date with a 40 mm case in yellow gold and a onyx-coloured dial with diamonds. Reference 228238. Condition: new. Available to order. Confirm the dimensions and accessories of the individual piece with our team before ordering."
+      },
+      "provenance": "Existing public product name and structured catalogue fields only; no claims about year, authentication, full set or factory setting."
+    },
+    {
+      "id": 561,
+      "before": {
+        "id": 561,
+        "brand": "Rolex",
+        "name": "Часы Day-Date, 40 мм, желтое золото, черный циферблат с бриллиантами, ref 228238",
+        "name_en": "Day-Date watch, 40 mm, yellow gold, black dial with diamonds, ref. 228238",
+        "description": null,
+        "description_en": null,
+        "size": null,
+        "product_condition": "new",
+        "wear_condition": null,
+        "fulfillment_status": "on_order",
+        "revision": 1,
+        "team_pick": false
+      },
+      "after": {
+        "name_en": "Day-Date watch, 40 mm, yellow gold, black dial with diamonds, ref. 228238",
+        "description": "Rolex Day-Date: корпус 40 мм, жёлтое золото, циферблат — чёрный с бриллиантами. Референс 228238. Состояние: новое. Доступно под заказ. Размеры и комплект конкретного экземпляра уточните у менеджера до оформления.",
+        "description_en": "Rolex Day-Date with a 40 mm case in yellow gold and a black dial with diamonds. Reference 228238. Condition: new. Available to order. Confirm the dimensions and accessories of the individual piece with our team before ordering."
+      },
+      "provenance": "Existing public product name and structured catalogue fields only; no claims about year, authentication, full set or factory setting."
+    },
+    {
+      "id": 560,
+      "before": {
+        "id": 560,
+        "brand": "Rolex",
+        "name": "Часы Day-Date, 40 мм, желтое золото, белый циферблат, ref 228238",
+        "name_en": "Day-Date watch, 40 mm, yellow gold, white dial, ref. 228238",
+        "description": null,
+        "description_en": null,
+        "size": null,
+        "product_condition": "new",
+        "wear_condition": null,
+        "fulfillment_status": "on_order",
+        "revision": 1,
+        "team_pick": false
+      },
+      "after": {
+        "name_en": "Day-Date watch, 40 mm, yellow gold, white dial, ref. 228238",
+        "description": "Rolex Day-Date: корпус 40 мм, жёлтое золото, циферблат — белый. Референс 228238. Состояние: новое. Доступно под заказ. Размеры и комплект конкретного экземпляра уточните у менеджера до оформления.",
+        "description_en": "Rolex Day-Date with a 40 mm case in yellow gold and a white dial. Reference 228238. Condition: new. Available to order. Confirm the dimensions and accessories of the individual piece with our team before ordering."
+      },
+      "provenance": "Existing public product name and structured catalogue fields only; no claims about year, authentication, full set or factory setting."
+    },
+    {
+      "id": 559,
+      "before": {
+        "id": 559,
+        "brand": "Rolex",
+        "name": "Часы Day-Date, 40 мм, желтое золото, серебристый циферблат, ref 228238",
+        "name_en": "Day-Date watch, 40 mm, yellow gold, silver dial, ref. 228238",
+        "description": null,
+        "description_en": null,
+        "size": null,
+        "product_condition": "new",
+        "wear_condition": null,
+        "fulfillment_status": "on_order",
+        "revision": 1,
+        "team_pick": false
+      },
+      "after": {
+        "name_en": "Day-Date watch, 40 mm, yellow gold, silver dial, ref. 228238",
+        "description": "Rolex Day-Date: корпус 40 мм, жёлтое золото, циферблат — серебристый. Референс 228238. Состояние: новое. Доступно под заказ. Размеры и комплект конкретного экземпляра уточните у менеджера до оформления.",
+        "description_en": "Rolex Day-Date with a 40 mm case in yellow gold and a silver dial. Reference 228238. Condition: new. Available to order. Confirm the dimensions and accessories of the individual piece with our team before ordering."
+      },
+      "provenance": "Existing public product name and structured catalogue fields only; no claims about year, authentication, full set or factory setting."
+    },
+    {
+      "id": 557,
+      "before": {
+        "id": 557,
+        "brand": "Rolex",
+        "name": "Часы Day-Date, 40 мм, желтое золото, циферблат шампанского цвета, ref 228238",
+        "name_en": "Day-Date watch, 40 mm, yellow gold, champagne dial, ref. 228238",
+        "description": null,
+        "description_en": null,
+        "size": null,
+        "product_condition": "new",
+        "wear_condition": null,
+        "fulfillment_status": "on_order",
+        "revision": 1,
+        "team_pick": false
+      },
+      "after": {
+        "name_en": "Day-Date watch, 40 mm, yellow gold, champagne dial, ref. 228238",
+        "description": "Rolex Day-Date: корпус 40 мм, жёлтое золото, циферблат — шампань. Референс 228238. Состояние: новое. Доступно под заказ. Размеры и комплект конкретного экземпляра уточните у менеджера до оформления.",
+        "description_en": "Rolex Day-Date with a 40 mm case in yellow gold and a champagne dial. Reference 228238. Condition: new. Available to order. Confirm the dimensions and accessories of the individual piece with our team before ordering."
+      },
+      "provenance": "Existing public product name and structured catalogue fields only; no claims about year, authentication, full set or factory setting."
+    },
+    {
+      "id": 555,
+      "before": {
+        "id": 555,
+        "brand": "Rolex",
+        "name": "Часы Day-Date, 40 мм, желтое золото, зеленый омбре циферблат, ref 228238",
+        "name_en": "Day-Date watch, 40 mm, yellow gold, green ombre dial, ref. 228238",
+        "description": null,
+        "description_en": null,
+        "size": null,
+        "product_condition": "new",
+        "wear_condition": null,
+        "fulfillment_status": "on_order",
+        "revision": 1,
+        "team_pick": false
+      },
+      "after": {
+        "name_en": "Day-Date watch, 40 mm, yellow gold, green ombré dial, ref. 228238",
+        "description": "Rolex Day-Date: корпус 40 мм, жёлтое золото, циферблат — зелёный омбре. Референс 228238. Состояние: новое. Доступно под заказ. Размеры и комплект конкретного экземпляра уточните у менеджера до оформления.",
+        "description_en": "Rolex Day-Date with a 40 mm case in yellow gold and a green ombré dial. Reference 228238. Condition: new. Available to order. Confirm the dimensions and accessories of the individual piece with our team before ordering."
+      },
+      "provenance": "Existing public product name and structured catalogue fields only; no claims about year, authentication, full set or factory setting."
+    },
+    {
+      "id": 554,
+      "before": {
+        "id": 554,
+        "brand": "Rolex",
+        "name": "Часы Day-Date, 40 мм, желтое золото, зеленый циферблат, ref 228238",
+        "name_en": "Day-Date watch, 40 mm, yellow gold, green dial, ref. 228238",
+        "description": null,
+        "description_en": null,
+        "size": null,
+        "product_condition": "new",
+        "wear_condition": null,
+        "fulfillment_status": "on_order",
+        "revision": 1,
+        "team_pick": false
+      },
+      "after": {
+        "name_en": "Day-Date watch, 40 mm, yellow gold, green dial, ref. 228238",
+        "description": "Rolex Day-Date: корпус 40 мм, жёлтое золото, циферблат — зелёный. Референс 228238. Состояние: новое. Доступно под заказ. Размеры и комплект конкретного экземпляра уточните у менеджера до оформления.",
+        "description_en": "Rolex Day-Date with a 40 mm case in yellow gold and a green dial. Reference 228238. Condition: new. Available to order. Confirm the dimensions and accessories of the individual piece with our team before ordering."
+      },
+      "provenance": "Existing public product name and structured catalogue fields only; no claims about year, authentication, full set or factory setting."
+    },
+    {
+      "id": 553,
+      "before": {
+        "id": 553,
+        "brand": "Rolex",
+        "name": "Часы Day-Date, 40 мм, желтое золото, черный циферблат, ref 228238",
+        "name_en": "Day-Date watch, 40 mm, yellow gold, black dial, ref. 228238",
+        "description": null,
+        "description_en": null,
+        "size": null,
+        "product_condition": "new",
+        "wear_condition": null,
+        "fulfillment_status": "on_order",
+        "revision": 1,
+        "team_pick": false
+      },
+      "after": {
+        "name_en": "Day-Date watch, 40 mm, yellow gold, black dial, ref. 228238",
+        "description": "Rolex Day-Date: корпус 40 мм, жёлтое золото, циферблат — чёрный. Референс 228238. Состояние: новое. Доступно под заказ. Размеры и комплект конкретного экземпляра уточните у менеджера до оформления.",
+        "description_en": "Rolex Day-Date with a 40 mm case in yellow gold and a black dial. Reference 228238. Condition: new. Available to order. Confirm the dimensions and accessories of the individual piece with our team before ordering."
+      },
+      "provenance": "Existing public product name and structured catalogue fields only; no claims about year, authentication, full set or factory setting."
+    },
+    {
+      "id": 552,
+      "before": {
+        "id": 552,
+        "brand": "Rolex",
+        "name": "Часы Oyster Perpetual Day-Date, 40 мм, Белый циферблат, Материал платина, Браслет President, ref 228236",
+        "name_en": "Oyster Perpetual Day-Date Watch, 40 mm, White Dial, Platinum, President Bracelet, Ref. 228236",
+        "description": null,
+        "description_en": null,
+        "size": null,
+        "product_condition": "new",
+        "wear_condition": null,
+        "fulfillment_status": "in_stock",
+        "revision": 1,
+        "team_pick": false
+      },
+      "after": {
+        "name_en": "Day-Date watch, 40 mm, platinum, white dial, President bracelet, ref. 228236",
+        "description": "Rolex Day-Date: корпус 40 мм, платина, циферблат — белый, браслет President. Референс 228236. Состояние: новое. В наличии. Актуальную доступность и комплект подтвердит менеджер.",
+        "description_en": "Rolex Day-Date with a 40 mm case in platinum and a white dial, with a President bracelet. Reference 228236. Condition: new. In stock. Our team confirms current availability and the accessories included."
+      },
+      "provenance": "Existing public product name and structured catalogue fields only; no claims about year, authentication, full set or factory setting."
+    },
+    {
+      "id": 612,
+      "before": {
+        "id": 612,
+        "brand": "Audemars Piguet",
+        "name": "Часы Audemars Piguet Royal Oak 34 mm, Rose Gold, Цвет циферблата: синий, Бриллиантовый безель, Rose Gold, ref 77451OR.ZZ.1361OR.04",
+        "name_en": "Audemars Piguet Royal Oak 34 mm watch, rose gold, blue dial, diamond-set bezel, rose gold, ref. 77451OR.ZZ.1361OR.04",
+        "description": null,
+        "description_en": null,
+        "size": null,
+        "product_condition": "pre_owned",
+        "wear_condition": "like_new",
+        "fulfillment_status": "in_stock",
+        "revision": 2,
+        "team_pick": true
+      },
+      "after": {
+        "name_en": "Royal Oak watch, 34 mm, rose gold, blue dial, diamond-set bezel, ref. 77451OR.ZZ.1361OR.04",
+        "description": "Audemars Piguet Royal Oak: корпус 34 мм, розовое золото, синий циферблат и бриллиантовый безель. Референс 77451OR.ZZ.1361OR.04. Вещь pre-owned в состоянии «как новое». В наличии. Актуальную доступность и комплект подтвердит менеджер.",
+        "description_en": "Audemars Piguet Royal Oak with a 34 mm case in rose gold, a blue dial and a diamond-set bezel. Reference 77451OR.ZZ.1361OR.04. Pre-owned, in like-new condition. In stock. Our team confirms current availability and the accessories included."
+      },
+      "provenance": "Existing public product name and structured catalogue fields only; no claims about year, authentication, full set or factory setting."
+    },
+    {
+      "id": 611,
+      "before": {
+        "id": 611,
+        "brand": "Hermès",
+        "name": "Сумка Hac 40 Haut a Courroies Hacarreaux фурнитура: палладий",
+        "name_en": "Hac 40 Haut a Courroies Hacarreaux, hardware: palladium",
+        "description": null,
+        "description_en": null,
+        "size": null,
+        "product_condition": "new",
+        "wear_condition": null,
+        "fulfillment_status": "in_stock",
+        "revision": 2,
+        "team_pick": true
+      },
+      "after": {
+        "name_en": "Hac 40 Haut a Courroies Hacarreaux bag, palladium hardware",
+        "description": "Hermès Hac 40 Haut a Courroies Hacarreaux с фурнитурой, указанной в каталоге как палладий. Состояние: новое. В наличии. Актуальную доступность и комплект подтвердит менеджер.",
+        "description_en": "Hermès Hac 40 Haut a Courroies Hacarreaux with the hardware listed as palladium. Condition: new. In stock. Our team confirms current availability and the accessories included."
+      },
+      "provenance": "Existing public product name and structured catalogue fields only; no claims about year, authentication, full set or factory setting."
+    },
+    {
+      "id": 527,
+      "before": {
+        "id": 527,
+        "brand": "Rolex",
+        "name": "Часы Cosmograph Daytona, 40мм, сталь, циферблат “Panda”, ref. 126500LN-0001",
+        "name_en": null,
+        "description": null,
+        "description_en": null,
+        "size": null,
+        "product_condition": "new",
+        "wear_condition": null,
+        "fulfillment_status": "in_stock",
+        "revision": 2,
+        "team_pick": true
+      },
+      "after": {
+        "name_en": "Cosmograph Daytona watch, 40 mm, steel, Panda dial, ref. 126500LN-0001",
+        "description": "Rolex Cosmograph Daytona: корпус 40 мм, сталь, циферблат «Panda». Референс 126500LN-0001. Состояние: новое. В наличии. Актуальную доступность и комплект подтвердит менеджер.",
+        "description_en": "Rolex Cosmograph Daytona with a 40 mm case in steel and a Panda dial. Reference 126500LN-0001. Condition: new. In stock. Our team confirms current availability and the accessories included."
+      },
+      "provenance": "Existing public product name and structured catalogue fields only; no claims about year, authentication, full set or factory setting."
+    },
+    {
+      "id": 622,
+      "before": {
+        "id": 622,
+        "brand": "Rolex",
+        "name": "Часы Lady-Datejust, 28 mm, сталь и белое золото, серебряный циферблат с бриллиантами, ref. 279174",
+        "name_en": "Watch Lady-Datejust, 28 mm, oystersteel and white gold, silver dial with diamond-set, ref. 279174",
+        "description": null,
+        "description_en": null,
+        "size": null,
+        "product_condition": "new",
+        "wear_condition": null,
+        "fulfillment_status": "in_stock",
+        "revision": 1,
+        "team_pick": false
+      },
+      "after": {
+        "name_en": "Lady-Datejust watch, 28 mm, steel and white gold, silver dial with diamonds, ref. 279174",
+        "description": "Rolex Lady-Datejust: корпус 28 мм, сталь и белое золото, серебристый циферблат с бриллиантами. Референс 279174. Состояние: новое. В наличии. Актуальную доступность и комплект подтвердит менеджер.",
+        "description_en": "Rolex Lady-Datejust with a 28 mm case in steel and white gold and a silver dial with diamonds. Reference 279174. Condition: new. In stock. Our team confirms current availability and the accessories included."
+      },
+      "provenance": "Existing public product name and structured catalogue fields only; no claims about year, authentication, full set or factory setting."
+    },
+    {
+      "id": 590,
+      "before": {
+        "id": 590,
+        "brand": "Hermès",
+        "name": "Сумка Hermes Kelly Messenger PM, цвет: Etoupe, кожа Togo, фурнитура: серебряная",
+        "name_en": "Hermes Kelly Messenger PM Bag, color: Etoupe, Togo leather, hardware: silver",
+        "description": null,
+        "description_en": null,
+        "size": null,
+        "product_condition": "new",
+        "wear_condition": null,
+        "fulfillment_status": "in_stock",
+        "revision": 1,
+        "team_pick": false
+      },
+      "after": {
+        "name_en": "Kelly Messenger PM bag, Etoupe, Togo leather, silver-tone hardware",
+        "description": "Hermès Kelly Messenger PM в цвете Etoupe, кожа Togo, серебристая фурнитура. Состояние: новое. В наличии. Актуальную доступность и комплект подтвердит менеджер.",
+        "description_en": "Hermès Kelly Messenger PM in Etoupe with Togo leather and silver-tone hardware. Condition: new. In stock. Our team confirms current availability and the accessories included."
+      },
+      "provenance": "Existing public product name and structured catalogue fields only; no claims about year, authentication, full set or factory setting."
+    },
+    {
+      "id": 551,
+      "before": {
+        "id": 551,
+        "brand": "Rolex",
+        "name": "Часы Perpetual Cosmograph Daytona, 40 мм, Ghost Dial, Браслет Oyster, ref 126509",
+        "name_en": "Perpetual Cosmograph Daytona Watch, 40 mm, Ghost Dial, Oyster Bracelet, Ref. 126509",
+        "description": null,
+        "description_en": null,
+        "size": null,
+        "product_condition": "new",
+        "wear_condition": null,
+        "fulfillment_status": "in_stock",
+        "revision": 1,
+        "team_pick": false
+      },
+      "after": {
+        "name_en": "Perpetual Cosmograph Daytona watch, 40 mm, Ghost Dial, Oyster bracelet, ref. 126509",
+        "description": "Rolex Perpetual Cosmograph Daytona: корпус 40 мм, циферблат Ghost Dial и браслет Oyster. Референс 126509. Состояние: новое. В наличии. Актуальную доступность и комплект подтвердит менеджер.",
+        "description_en": "Rolex Perpetual Cosmograph Daytona with a 40 mm case, Ghost Dial and Oyster bracelet. Reference 126509. Condition: new. In stock. Our team confirms current availability and the accessories included."
+      },
+      "provenance": "Existing public product name and structured catalogue fields only; no claims about year, authentication, full set or factory setting."
+    },
+    {
+      "id": 550,
+      "before": {
+        "id": 550,
+        "brand": "Rolex",
+        "name": "Часы Oyster Perpetual Sky-Dweller, 42 мм, Белый циферблат, браслет Jubilee, ref 336934",
+        "name_en": "Oyster Perpetual Sky-Dweller Watch, 42 mm, White Dial, Jubilee Bracelet, Ref. 336934",
+        "description": null,
+        "description_en": null,
+        "size": null,
+        "product_condition": "new",
+        "wear_condition": null,
+        "fulfillment_status": "in_stock",
+        "revision": 1,
+        "team_pick": false
+      },
+      "after": {
+        "name_en": "Oyster Perpetual Sky-Dweller watch, 42 mm, white dial, Jubilee bracelet, ref. 336934",
+        "description": "Rolex Oyster Perpetual Sky-Dweller: корпус 42 мм, белый циферблат и браслет Jubilee. Референс 336934. Состояние: новое. В наличии. Актуальную доступность и комплект подтвердит менеджер.",
+        "description_en": "Rolex Oyster Perpetual Sky-Dweller with a 42 mm case, a white dial and Jubilee bracelet. Reference 336934. Condition: new. In stock. Our team confirms current availability and the accessories included."
+      },
+      "provenance": "Existing public product name and structured catalogue fields only; no claims about year, authentication, full set or factory setting."
+    },
+    {
+      "id": 549,
+      "before": {
+        "id": 549,
+        "brand": "Rolex",
+        "name": "Часы Oyster Perpetual Sky-Dweller, 42 мм, Мятно-зеленый циферблат, браслет Jubilee, ref 336934",
+        "name_en": "Oyster Perpetual Sky-Dweller Watch, 42 mm, Mint Green Dial, Jubilee Bracelet, Ref. 336934",
+        "description": null,
+        "description_en": null,
+        "size": null,
+        "product_condition": "new",
+        "wear_condition": null,
+        "fulfillment_status": "in_stock",
+        "revision": 1,
+        "team_pick": false
+      },
+      "after": {
+        "name_en": "Oyster Perpetual Sky-Dweller watch, 42 mm, mint green dial, Jubilee bracelet, ref. 336934",
+        "description": "Rolex Oyster Perpetual Sky-Dweller: корпус 42 мм, мятно-зелёный циферблат и браслет Jubilee. Референс 336934. Состояние: новое. В наличии. Актуальную доступность и комплект подтвердит менеджер.",
+        "description_en": "Rolex Oyster Perpetual Sky-Dweller with a 42 mm case, a mint green dial and Jubilee bracelet. Reference 336934. Condition: new. In stock. Our team confirms current availability and the accessories included."
+      },
+      "provenance": "Existing public product name and structured catalogue fields only; no claims about year, authentication, full set or factory setting."
+    },
+    {
+      "id": 548,
+      "before": {
+        "id": 548,
+        "brand": "Rolex",
+        "name": "Часы Oyster Perpetual Sky-Dweller, 42 мм, Синий циферблат, материал сталь Oystersteel и белое золото, браслет Jubilee, ref 336934",
+        "name_en": "Oyster Perpetual Sky-Dweller watch, 42 mm, blue dial, Oystersteel and white gold, Jubilee bracelet, ref. 336934",
+        "description": null,
+        "description_en": null,
+        "size": null,
+        "product_condition": "new",
+        "wear_condition": null,
+        "fulfillment_status": "in_stock",
+        "revision": 1,
+        "team_pick": false
+      },
+      "after": {
+        "name_en": "Oyster Perpetual Sky-Dweller watch, 42 mm, Oystersteel and white gold, blue dial, Jubilee bracelet, ref. 336934",
+        "description": "Rolex Oyster Perpetual Sky-Dweller: корпус 42 мм, сталь Oystersteel и белое золото, синий циферблат и браслет Jubilee. Референс 336934. Состояние: новое. В наличии. Актуальную доступность и комплект подтвердит менеджер.",
+        "description_en": "Rolex Oyster Perpetual Sky-Dweller with a 42 mm case in Oystersteel and white gold, a blue dial and Jubilee bracelet. Reference 336934. Condition: new. In stock. Our team confirms current availability and the accessories included."
+      },
+      "provenance": "Existing public product name and structured catalogue fields only; no claims about year, authentication, full set or factory setting."
+    },
+    {
+      "id": 547,
+      "before": {
+        "id": 547,
+        "brand": "Rolex",
+        "name": "Часы Oyster Perpetual Sky-Dweller, 42 мм, Белый циферблат, материал сталь Oystersteel и белое золото, браслет Oyster, ref 336934",
+        "name_en": "Oyster Perpetual Sky-Dweller Watch, 42 mm, White Dial, Oystersteel and White Gold, Oyster Bracelet, Ref. 336934",
+        "description": null,
+        "description_en": null,
+        "size": null,
+        "product_condition": "new",
+        "wear_condition": null,
+        "fulfillment_status": "in_stock",
+        "revision": 1,
+        "team_pick": false
+      },
+      "after": {
+        "name_en": "Oyster Perpetual Sky-Dweller watch, 42 mm, Oystersteel and white gold, white dial, Oyster bracelet, ref. 336934",
+        "description": "Rolex Oyster Perpetual Sky-Dweller: корпус 42 мм, сталь Oystersteel и белое золото, белый циферблат и браслет Oyster. Референс 336934. Состояние: новое. В наличии. Актуальную доступность и комплект подтвердит менеджер.",
+        "description_en": "Rolex Oyster Perpetual Sky-Dweller with a 42 mm case in Oystersteel and white gold, a white dial and Oyster bracelet. Reference 336934. Condition: new. In stock. Our team confirms current availability and the accessories included."
+      },
+      "provenance": "Existing public product name and structured catalogue fields only; no claims about year, authentication, full set or factory setting."
+    },
+    {
+      "id": 546,
+      "before": {
+        "id": 546,
+        "brand": "Rolex",
+        "name": "Часы Oyster Perpetual Sky-Dweller, 42 мм,  Мятно-зеленый циферблат, материал сталь Oystersteel и белое золото, браслет Oyster, ref 336934",
+        "name_en": "Oyster Perpetual Sky-Dweller watch, 42 mm, mint green dial, Oystersteel and white gold, Oyster bracelet, ref. 336934",
+        "description": null,
+        "description_en": null,
+        "size": null,
+        "product_condition": "new",
+        "wear_condition": null,
+        "fulfillment_status": "in_stock",
+        "revision": 1,
+        "team_pick": false
+      },
+      "after": {
+        "name_en": "Oyster Perpetual Sky-Dweller watch, 42 mm, Oystersteel and white gold, mint green dial, Oyster bracelet, ref. 336934",
+        "description": "Rolex Oyster Perpetual Sky-Dweller: корпус 42 мм, сталь Oystersteel и белое золото, мятно-зелёный циферблат и браслет Oyster. Референс 336934. Состояние: новое. В наличии. Актуальную доступность и комплект подтвердит менеджер.",
+        "description_en": "Rolex Oyster Perpetual Sky-Dweller with a 42 mm case in Oystersteel and white gold, a mint green dial and Oyster bracelet. Reference 336934. Condition: new. In stock. Our team confirms current availability and the accessories included."
+      },
+      "provenance": "Existing public product name and structured catalogue fields only; no claims about year, authentication, full set or factory setting."
+    },
+    {
+      "id": 545,
+      "before": {
+        "id": 545,
+        "brand": "Rolex",
+        "name": "Часы Oyster Perpetual Sky-Dweller, 42 мм, Синий циферблат, материал сталь Oystersteel и белое золото, браслет Oyster, ref 336934",
+        "name_en": "Oyster Perpetual Sky-Dweller Watch, 42 mm, Blue Dial, Oystersteel and White Gold, Oyster Bracelet, Ref. 336934",
+        "description": null,
+        "description_en": null,
+        "size": null,
+        "product_condition": "new",
+        "wear_condition": null,
+        "fulfillment_status": "in_stock",
+        "revision": 1,
+        "team_pick": false
+      },
+      "after": {
+        "name_en": "Oyster Perpetual Sky-Dweller watch, 42 mm, Oystersteel and white gold, blue dial, Oyster bracelet, ref. 336934",
+        "description": "Rolex Oyster Perpetual Sky-Dweller: корпус 42 мм, сталь Oystersteel и белое золото, синий циферблат и браслет Oyster. Референс 336934. Состояние: новое. В наличии. Актуальную доступность и комплект подтвердит менеджер.",
+        "description_en": "Rolex Oyster Perpetual Sky-Dweller with a 42 mm case in Oystersteel and white gold, a blue dial and Oyster bracelet. Reference 336934. Condition: new. In stock. Our team confirms current availability and the accessories included."
+      },
+      "provenance": "Existing public product name and structured catalogue fields only; no claims about year, authentication, full set or factory setting."
+    },
+    {
+      "id": 544,
+      "before": {
+        "id": 544,
+        "brand": "Rolex",
+        "name": "Часы Oyster Perpetual Sky-Dweller, 42 мм, чёрный циферблат, материал сталь Oystersteel и белое золото, браслет Oyster, ref m336934-0007",
+        "name_en": "Oyster Perpetual Sky-Dweller watch, 42 mm, black dial, Oystersteel and white gold, Oyster bracelet, ref. m336934-0007",
+        "description": null,
+        "description_en": null,
+        "size": null,
+        "product_condition": "new",
+        "wear_condition": null,
+        "fulfillment_status": "in_stock",
+        "revision": 1,
+        "team_pick": false
+      },
+      "after": {
+        "name_en": "Oyster Perpetual Sky-Dweller watch, 42 mm, Oystersteel and white gold, black dial, Oyster bracelet, ref. m336934-0007",
+        "description": "Rolex Oyster Perpetual Sky-Dweller: корпус 42 мм, сталь Oystersteel и белое золото, чёрный циферблат и браслет Oyster. Референс m336934-0007. Состояние: новое. В наличии. Актуальную доступность и комплект подтвердит менеджер.",
+        "description_en": "Rolex Oyster Perpetual Sky-Dweller with a 42 mm case in Oystersteel and white gold, a black dial and Oyster bracelet. Reference m336934-0007. Condition: new. In stock. Our team confirms current availability and the accessories included."
+      },
+      "provenance": "Existing public product name and structured catalogue fields only; no claims about year, authentication, full set or factory setting."
+    }
+  ],
+  "duplicate_review": [
+    {
+      "key": "Loro Piana|Кроссовки Week End Walk|45",
+      "ids": [
+        63,
+        438,
+        440
+      ],
+      "status": "needs confirmation of distinguishing attributes; no automatic merge or deletion"
+    },
+    {
+      "key": "Chrome Hearts|Очки Pills III|",
+      "ids": [
+        118,
+        119,
+        130
+      ],
+      "status": "needs confirmation of distinguishing attributes; no automatic merge or deletion"
+    },
+    {
+      "key": "Chrome Hearts|Очки SOFFFFFFFFERS I|",
+      "ids": [
+        120,
+        121
+      ],
+      "status": "needs confirmation of distinguishing attributes; no automatic merge or deletion"
+    },
+    {
+      "key": "Chrome Hearts|Кольцо|10US",
+      "ids": [
+        128,
+        129
+      ],
+      "status": "needs confirmation of distinguishing attributes; no automatic merge or deletion"
+    },
+    {
+      "key": "Jil Sander|Худи|M",
+      "ids": [
+        178,
+        184
+      ],
+      "status": "needs confirmation of distinguishing attributes; no automatic merge or deletion"
+    },
+    {
+      "key": "Hermès|Ремень Kelly 18|",
+      "ids": [
+        189,
+        193
+      ],
+      "status": "needs confirmation of distinguishing attributes; no automatic merge or deletion"
+    },
+    {
+      "key": "Supreme × MM6|Худи|L",
+      "ids": [
+        204,
+        205
+      ],
+      "status": "needs confirmation of distinguishing attributes; no automatic merge or deletion"
+    },
+    {
+      "key": "Maison Margiela|Кроссовки Tabi Canvas|43",
+      "ids": [
+        241,
+        242
+      ],
+      "status": "needs confirmation of distinguishing attributes; no automatic merge or deletion"
+    },
+    {
+      "key": "Hermès|Кроссовки Bouncing|43",
+      "ids": [
+        251,
+        252,
+        254
+      ],
+      "status": "needs confirmation of distinguishing attributes; no automatic merge or deletion"
+    },
+    {
+      "key": "Off-White|Брюки|M",
+      "ids": [
+        258,
+        260
+      ],
+      "status": "needs confirmation of distinguishing attributes; no automatic merge or deletion"
+    },
+    {
+      "key": "Brioni|Кроссовки Olympia|43",
+      "ids": [
+        271,
+        273
+      ],
+      "status": "needs confirmation of distinguishing attributes; no automatic merge or deletion"
+    },
+    {
+      "key": "Babolat × Lamborghini|Ракетка для падела|",
+      "ids": [
+        280,
+        281
+      ],
+      "status": "needs confirmation of distinguishing attributes; no automatic merge or deletion"
+    },
+    {
+      "key": "Brioni|Джинсы|XXL",
+      "ids": [
+        295,
+        296,
+        301
+      ],
+      "status": "needs confirmation of distinguishing attributes; no automatic merge or deletion"
+    },
+    {
+      "key": "Loro Piana|Кепка Baseball Cap|XL",
+      "ids": [
+        297,
+        303,
+        304,
+        305
+      ],
+      "status": "needs confirmation of distinguishing attributes; no automatic merge or deletion"
+    },
+    {
+      "key": "Kiton|Ботинки Napoli Chukka|44.5",
+      "ids": [
+        334,
+        335
+      ],
+      "status": "needs confirmation of distinguishing attributes; no automatic merge or deletion"
+    },
+    {
+      "key": "Rolex|Часы Datejust, 41 мм, сталь и белое золото, грифельный циферблат, ref. 126334|",
+      "ids": [
+        502,
+        503
+      ],
+      "status": "needs confirmation of distinguishing attributes; no automatic merge or deletion"
+    },
+    {
+      "key": "Rolex|Часы Datejust, 41 мм, сталь и белое золото, синий циферблат, ref. 126334|",
+      "ids": [
+        504,
+        505
+      ],
+      "status": "needs confirmation of distinguishing attributes; no automatic merge or deletion"
+    },
+    {
+      "key": "Rolex|Часы Datejust, 41 мм, сталь и белое золото, белый циферблат, ref. 126334|",
+      "ids": [
+        509,
+        510
+      ],
+      "status": "needs confirmation of distinguishing attributes; no automatic merge or deletion"
+    },
+    {
+      "key": "Balenciaga|Футболка Balenciaga|S",
+      "ids": [
+        539,
+        540
+      ],
+      "status": "needs confirmation of distinguishing attributes; no automatic merge or deletion"
+    },
+    {
+      "key": "Rolex|Часы Day-Date, 40 мм, желтое золото, циферблат шампанского цвета, ref 228238|",
+      "ids": [
+        556,
+        557
+      ],
+      "status": "needs confirmation of distinguishing attributes; no automatic merge or deletion"
+    },
+    {
+      "key": "Rolex|Часы Day-Date, 40 мм, желтое золото, серебристый циферблат, ref 228238|",
+      "ids": [
+        558,
+        559
+      ],
+      "status": "needs confirmation of distinguishing attributes; no automatic merge or deletion"
+    },
+    {
+      "key": "Rolex|Часы Day-Date, 40 мм, Платина, Цвет циферблата: Светло-голубой, ref 228236|",
+      "ids": [
+        570,
+        571
+      ],
+      "status": "needs confirmation of distinguishing attributes; no automatic merge or deletion"
+    },
+    {
+      "key": "Chanel|Сумка Chanel 25 mini|mini",
+      "ids": [
+        623,
+        624,
+        625,
+        627,
+        628,
+        629,
+        632
+      ],
+      "status": "needs confirmation of distinguishing attributes; no automatic merge or deletion"
+    }
+  ]
+}
