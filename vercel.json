@@ -305,6 +305,9 @@
     },
     "api/legal-page.js": {
       "includeFiles": "{terms.html,privacy.html,site-translations.js,product-translations.js,product-copy.js,site-language.js}"
+    },
+    "api/model-page.js": {
+      "includeFiles": "{site-translations.js,product-translations.js,product-copy.js,site-language.js}"
     }
   },
   "crons": [
