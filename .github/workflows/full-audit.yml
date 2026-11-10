@@ -20,6 +20,7 @@ jobs:
         with:
           node-version: '24'
       - run: npm install --prefix "$RUNNER_TEMP/jp-audit-browser" --no-audit --no-fund --ignore-scripts playwright@1.56.1 axe-core@4.10.3
+      - run: npm ci --no-audit --no-fund
       - run: node scripts/stage-photo-assets.cjs
       - run: node scripts/build-telegram.cjs
       - run: node --test tests/*.test.cjs
