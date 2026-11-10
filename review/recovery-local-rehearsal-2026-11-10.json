@@ -1,0 +1,22 @@
+{
+  "verified_at": "2026-11-10T13:03:20.227857+00:00",
+  "source_commit": "c56d070bcb08e8ab7b1806a611872639bb3b3d8a",
+  "historical_source_manifest_files_verified": 1241,
+  "historical_git_blobs_verified": 1238,
+  "current_business_snapshot_created_at": "2026-11-10T12:59:18.415664+00:00",
+  "current_business_tables": 13,
+  "current_business_rows": 1125,
+  "foreign_keys_checked": 5,
+  "storage_objects_restored_local": 1036,
+  "storage_bytes_restored_local": 234804802,
+  "decoded_images": 1477,
+  "unique_current_product_photo_references": 933,
+  "missing_current_product_photo_references": 0,
+  "storage_inventory_unchanged_since_export": true,
+  "storage_api_restored": false,
+  "auth_restored": false,
+  "server_secrets_restored": false,
+  "complete_live_system_restored": false,
+  "target": "isolated local filesystem plus in-memory PostgreSQL-compatible database",
+  "fresh_code_and_data_archive_sha256": "ceabaf1383544e6ca72c4244e4a7033f7fcc5e9befdb201a1b8628a94aead45b"
+}
