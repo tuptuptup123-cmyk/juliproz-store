@@ -20,7 +20,7 @@
    return [{...product,name,description:data.description[lang],url,...(product.offers?{offers:{...product.offers,url}}:{})},breadcrumb];
   }
   const organization={'@context':'https://schema.org','@type':'Organization','@id':content.origin+'/#organization',name:'JULI.PROZ',url:content.origin+'/',logo:content.origin+'/images/brand-paw.webp',sameAs:['https://www.instagram.com/juli.proz/','https://t.me/juli_proz','https://t.me/JuliProzBot']};
-  const result=[organization,{'@context':'https://schema.org','@type':['catalog','brand','watches','jewellery'].includes(data.kind)?'CollectionPage':'WebPage',name,description:data.description[lang],url,inLanguage:lang,isPartOf:{'@id':content.origin+'/#website'}}];
+  const result=[organization,{'@context':'https://schema.org','@type':['catalog','brand','model','watches','jewellery'].includes(data.kind)?'CollectionPage':'WebPage',name,description:data.description[lang],url,inLanguage:lang,isPartOf:{'@id':content.origin+'/#website'}}];
   if(data.kind==='home')result.push({'@context':'https://schema.org','@type':'WebSite','@id':content.origin+'/#website',name:'JULI.PROZ',url:content.origin+'/',inLanguage:['ru','en'],publisher:{'@id':content.origin+'/#organization'}});
   else result.push(breadcrumb);
   return result;
@@ -68,16 +68,17 @@
    const next=url.pathname+url.search+url.hash;if(next!==location.pathname+location.search+location.hash)history.replaceState(history.state,'',next);
   }
   if(inCatalog&&['watches','jewellery'].includes(data.kind)&&state.tab!==data.kind){data={...content.pages.catalog,kind:'catalog'};updateURL('catalog',true);metadata()}
+  if(inCatalog&&data.kind==='model'&&state.model!==data.modelSlug){data={...content.pages.catalog,kind:'catalog'};updateURL('catalog',true);metadata()}
   if(inCatalog&&data.kind==='brand'&&state.brand!==data.brand){data={...content.pages.catalog,kind:'catalog'};updateURL('catalog',true);metadata()}
   const intro=document.getElementById('seoCatalogIntro'),show=inCatalog&&data.kind!=='product'&&!(data.kind==='catalog'&&state.sale);
   if(intro){
    intro.hidden=!show;
    if(show){
-    const page=['brand','watches','jewellery'].includes(data.kind)?data:content.pages.catalog,slug=page.path.split('/')[2],rich=data.kind==='brand'&&discovery?.definitions[slug];
+    const page=['model','brand','watches','jewellery'].includes(data.kind)?data:content.pages.catalog,slug=page.path.split('/')[2],rich=data.kind==='brand'&&discovery?.definitions[slug];
     intro.classList.toggle('discovery-intro',Boolean(rich)||['watches','jewellery'].includes(data.kind));
-    intro.classList.toggle('catalog-intro-compact',data.kind==='catalog');
-    const html=data.kind==='jewellery'?discovery.jewellery(lang):data.kind==='watches'?discovery.watches(lang):rich?discovery.brand(slug,lang):`<h1>${escape(page.heading[lang])}</h1>${data.kind==='catalog'?'':`<p>${escape(page.intro[lang])}</p>`}`;
-    setHTML(intro,lang+'|'+page.path,html+(root.CatalogSEO?.modelLinks(data.kind==='brand'?data.brand:['watches'].includes(data.kind)?'Rolex':data.kind==='catalog'?null:'__none__',lang)||''));
+    intro.classList.toggle('catalog-intro-compact',['catalog','model'].includes(data.kind));
+    const html=data.kind==='jewellery'?discovery.jewellery(lang):data.kind==='watches'?discovery.watches(lang):rich?discovery.brand(slug,lang):`<h1>${escape(page.heading[lang])}</h1>${['catalog','model'].includes(data.kind)?'':`<p>${escape(page.intro[lang])}</p>`}`;
+    setHTML(intro,lang+'|'+page.path,html+(root.CatalogSEO?.modelLinks(['brand','model'].includes(data.kind)?data.brand:['watches'].includes(data.kind)?'Rolex':data.kind==='catalog'?null:'__none__',lang,state.model)||''));
    }
   }
   const outlet=document.getElementById('webOutletPage');if(outlet&&state.tab==='outlet'){
@@ -86,7 +87,7 @@
   }
  }
  function navigate(tab,options={}){
-  const next=['hermes','chanel'].includes(tab)?{...content.page('brand',tab),kind:'brand'}:content.pages[tab]?{...content.pages[tab],kind:tab}:['favorites','cart','about'].includes(tab)?{...content.pages.home,kind:'home'}:null;
+  const next=options.model?{...content.page('model',options.model),kind:'model'}:['hermes','chanel'].includes(tab)?{...content.page('brand',tab),kind:'brand'}:content.pages[tab]?{...content.pages[tab],kind:tab}:['favorites','cart','about'].includes(tab)?{...content.pages.home,kind:'home'}:null;
   if(!next)return;data=next;updateURL(tab,Boolean(options.replace));metadata();
  }
  function product(p,options={}){
@@ -110,8 +111,8 @@
   metadata();
  }
  function restore(){
-  const path=location.pathname.replace(/\/$/,'')||'/',slug=/^\/brands\/([^/]+)$/.exec(path)?.[1],kind=slug?'brand':Object.keys(content.pages).find(key=>content.pages[key].path===path)||'home';
-  data=productPages.get(path)||{...(content.page(kind,slug)||content.pages.home),kind};metadata();return data;
+  const path=location.pathname.replace(/\/$/,'')||'/',slug=/^\/brands\/([^/]+)$/.exec(path)?.[1],model=path.startsWith('/models/')?path.split('/')[2]:null,kind=model?'model':slug?'brand':Object.keys(content.pages).find(key=>content.pages[key].path===path)||'home';
+  data=productPages.get(path)||{...(content.page(kind,model||slug)||content.pages.home),kind};metadata();return data;
  }
  function ready(){document.getElementById('serverLanding')?.remove();document.documentElement.removeAttribute('data-server-view')}
  root.SiteSEO={sync,navigate,product,restore,ready,get page(){return data},get serverRendered(){return serverRendered}};
