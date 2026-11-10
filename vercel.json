@@ -56,6 +56,10 @@
   "outputDirectory": "dist",
   "rewrites": [
     {
+      "source": "/models/:slug",
+      "destination": "/api/model-page?slug=:slug"
+    },
+    {
       "source": "/jewellery",
       "destination": "/api/site-page?page=jewellery"
     },
@@ -279,6 +283,11 @@
       ],
       "destination": "https://www.juliproz.com/jewellery",
       "statusCode": 301
+    },
+    {
+      "source": "/models/:slug/",
+      "destination": "/models/:slug",
+      "permanent": true
     }
   ],
   "functions": {
