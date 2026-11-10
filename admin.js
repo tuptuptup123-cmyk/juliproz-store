@@ -388,7 +388,7 @@ async function saveInternalNote(id){
 function updatePreview(){syncInternalNote();const wf=$('editor').elements;if($('wearConditionField'))$('wearConditionField').classList.toggle('hidden',wf.product_condition?.value!=='pre_owned');if(wf.wear_condition){wf.wear_condition.disabled=wf.product_condition?.value!=='pre_owned';if(wf.wear_condition.disabled)wf.wear_condition.value=''}
  syncPriceMode();
  const f=$('editor').elements;
- const quality=window.ProductQuality?.issues({name:f.name.value,description:f.description.value,product_condition:f.product_condition.value,wear_condition:f.wear_condition.value,photos:[...photos,...pendingPreviews.map(p=>p.src)]})||[{target:'productBasics',message:'Подсказки недоступны. Проверьте данные по правилам добавления вещи.'}];
+ const quality=productQualityIssues({name:f.name.value,description:f.description.value,name_en:f.name_en?.value,description_en:f.description_en?.value,category:f.category?.value,size:f.size?.value,price:f.price_on_request?.checked?null:f.price?.value,price_on_request:f.price_on_request?.checked===true,product_condition:f.product_condition?.value,wear_condition:f.wear_condition?.value,photos:[...photos,...pendingPreviews.map(p=>p.src)]});
  $('productQualityList').innerHTML=quality.length?quality.map(q=>`<li><a href="#${esc(q.target)}">${esc(q.message)}</a></li>`).join(''):'<li class="quality-complete">Основные сведения заполнены. Проверьте точную модель и фотографии.</li>';
 
  $('previewTeamPick').classList.toggle('hidden',!f.team_pick?.checked);
@@ -482,9 +482,15 @@ $('inventory').onclick=async e=>{if(busy)return;const button=e.target.closest?.(
  if(deleting&&!adminSecurity.owner){status('Постоянно удалять товары может только владелец. Используйте «Скрыть с витрины».');return}
  if(deleting&&!confirm(`Удалить «${p.brand} ${p.name}» (№ ${p.id})? Карточка будет удалена из магазина. Это действие нельзя отменить.`))return;
  const editingProduct=!$('editor').classList.contains('hidden')&&String(editing)===id;
- busy=true;button.disabled=true;if(editingProduct)$('editorFields').disabled=true;
+ const actionEpoch=sessionEpoch;busy=true;button.disabled=true;if(editingProduct)$('editorFields').disabled=true;
  try{
   const change=reserving?{reserved:!p.reserved}:{available:button.dataset.hide!==undefined?false:!p.available,archive_status:button.dataset.hide!==undefined||p.available?'hidden':null,reserved:false};
+  if(!deleting&&change.available===true){
+   const problems=productQualityIssues(p);
+   if(problems.length){edit(p);status('Перед возвратом в каталог проверьте карточку: '+problems.map(q=>q.message).join(' '));return}
+   if(!await confirmProductSave(p))return;
+   if(actionEpoch!==sessionEpoch||!session)throw Error('Сессия завершена. Войди заново.');
+  }
   const row=verifiedRow(await request(`/rest/v1/products?id=eq.${encodeURIComponent(id)}&revision=eq.${p.revision}&select=${ADMIN_FIELDS}`,{method:deleting?'DELETE':'PATCH',headers:writeHeaders,...(deleting?{}:{body:JSON.stringify(change)})}),id);
   if(!deleting&&Object.entries(change).some(([k,v])=>row[k]!==v))throw Error('Не удалось подтвердить изменение. Обновите список.');
   const index=items.findIndex(item=>String(item.id)===String(id));
@@ -524,12 +530,18 @@ async function uploadPhoto(file){
  return photo;
 }
 $('editor').addEventListener('input',event=>{const field=event.target?.name;if(original&&['name','description'].includes(field)){const translated=$('editor').elements[field+'_en'];if(translated?.value===(original[field+'_en']||'')&&event.target.value!==(original[field]||''))translated.value=''}renderProductTranslationStatus()});
-function confirmProductSave(payload){
+function productQualityIssues(payload){
+ return window.ProductQuality?.issues({...payload,missing_translations:window.ProductCopy?.missing(payload)||[]})||[{target:'productBasics',message:'Подсказки недоступны. Проверьте данные по правилам добавления вещи.'}];
+}
+function confirmProductSave(payload,reviewPhotos){
  const dialog=$('productSaveReview'),form=$('productSaveReviewForm'),confirmButton=$('productSaveReviewConfirm');
  if(!dialog||!form||!confirmButton||typeof dialog.showModal!=='function')throw Error('Не удалось открыть проверку карточки. Обновите страницу и попробуйте снова.');
  if(dialog.open)throw Error('Проверка карточки уже открыта.');
  form.reset();dialog.returnValue='';confirmButton.disabled=true;
  $('productSaveReviewName').textContent=[payload.brand,payload.name].filter(Boolean).join(' · ');
+ const hints=productQualityIssues(reviewPhotos?{...payload,photos:reviewPhotos}:payload);
+ $('productSaveReviewIssues').replaceChildren(...hints.map(issue=>{const li=document.createElement('li');li.textContent=issue.message;return li}));
+ $('productSaveReviewIssuesPanel').hidden=!hints.length;
  const checks=[...form.querySelectorAll('input[type="checkbox"][required]')];
  const checked=()=>checks.length===5&&checks.every(input=>input.checked);
  $('productSaveReviewProgress').textContent='Проверено 0 из 5';
@@ -565,7 +577,7 @@ $('editor').onsubmit=async e=>{e.preventDefault();if(busy)return;busy=true;const
  if(!photos.every(safeProductImage))throw Error('Фото должно быть в магазине или его хранилище.');
  // Human review happens before any upload or product/note/finance write.
  if(saveEpoch!==sessionEpoch||!session)throw Error('Сессия завершена. Войди заново.');
- if(!await confirmProductSave(payload))return;
+ if(!await confirmProductSave(payload,[...photos,...pendingPreviews.map(p=>p.src)]))return;
  if(saveEpoch!==sessionEpoch||!session)throw Error('Сессия завершена. Войди заново.');
  // Check identity before uploads; a lost insert response must never create a second card.
  if(editing===null){const previous=await request(`/rest/v1/products?creation_key=eq.${creationKey}&select=${ADMIN_FIELDS}`);if(previous.length){const row=verifiedRow(previous);editing=row.id;original=row}}
