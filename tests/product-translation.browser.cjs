@@ -53,15 +53,17 @@ const server=http.createServer((req,res)=>{const file=path.resolve(root,'.'+new 
   assert.match(await page.locator('#productSeoTitleRu').innerText(),/Длинный заголовок/);
   await page.locator('[name=name]').fill('Авторская модель вне словаря');await page.locator('[name=description]').fill('Описание изделия с проверенными деталями.');
   await page.locator('#productEnglishFields').evaluate(el=>el.open=true);assert.match(await page.locator('#productTranslationStatus').innerText(),/Нужен английский перевод/);
-  await page.locator('#save').click();await page.waitForFunction(()=>!busy);assert.match(await page.locator('#status').innerText(),/Заполните английский перевод/);assert.equal(await page.evaluate(()=>savedWrites.length),0);
+  await page.locator('#save').click();await require('./admin-action-helper.cjs').confirmProductReview(page);await page.waitForFunction(()=>savedWrites.length===1&&!busy);
+  assert.equal(await page.evaluate(()=>testRow.available),true);assert.equal(await page.evaluate(()=>testRow.name_en),null);assert.equal(await page.evaluate(()=>testRow.description_en),null);
+  await page.evaluate(()=>{editorDirty=false;edit(testRow)});await page.locator('#productEnglishFields').evaluate(el=>el.open=true);
   await page.locator('[name=name_en]').fill('Reviewed special edition');await page.locator('[name=description_en]').fill('Reviewed item details.');
   await page.locator('#productBasics').screenshot({path:out+'/writing-fields-'+width+'.png'});
   await page.screenshot({path:out+'/editor-'+width+'.png',fullPage:true});
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
-  await page.locator('#save').click();await require('./admin-action-helper.cjs').confirmProductReview(page);await page.waitForFunction(()=>savedWrites.length===1&&!busy);
+  await page.locator('#save').click();await require('./admin-action-helper.cjs').confirmProductReview(page);await page.waitForFunction(()=>savedWrites.length===2&&!busy);
   assert.equal(await page.evaluate(()=>testRow.name_en),'Reviewed special edition');assert.equal(await page.evaluate(()=>testRow.description_en),'Reviewed item details.');
   await page.evaluate(()=>{editorDirty=false;edit(testRow)});await page.locator('#productEnglishFields').evaluate(el=>el.open=true);assert.equal(await page.locator('[name=name_en]').inputValue(),'Reviewed special edition');
   await page.locator('[name=name]').fill('Другая авторская модель');assert.equal(await page.locator('[name=name_en]').inputValue(),'');assert.match(await page.locator('#productTranslationStatus').innerText(),/Нужен английский перевод/);
-  assert.deepEqual(errors,[]);await page.close();console.log('PASS English product fields, publication guard, save/reopen, stale-copy reset and layout '+width);
+  assert.deepEqual(errors,[]);await page.close();console.log('PASS English product fields, optional translation publication, save/reopen, stale-copy reset and layout '+width);
  }
 }finally{await browser.close();server.close()}})().catch(e=>{console.error(e);server.close();process.exitCode=1});
