@@ -6,7 +6,8 @@ module.exports=async(req,res)=>{
  // Fixed content release date plus actual public edits. Never stamp every crawl with today's date.
  const date=p=>[catalogSEO.lastmod(catalogSEO.contentDate),catalogSEO.lastmod(p?.seo_updated_at),catalogSEO.lastmod(p?.created_at)].filter(Boolean).sort().at(-1);
  const dates=new Map(rows.map(p=>['/product/'+p.id,date(p)]));
- for(const model of catalogSEO.models)dates.set('/models/'+model.slug,[date(),...rows.filter(p=>catalogSEO.matches(model,p)).map(date)].sort().at(-1));
+ // Collection membership can change when a piece is hidden or deleted. Until a collection-level
+ // change log exists, omit collection lastmod rather than infer it from surviving products.
  const escape=value=>value.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&apos;');
  // Reuse the product page's allowlist; never publish arbitrary or private image URLs.
  const {photo}=require('../server/public-product-image.cjs');
