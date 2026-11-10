@@ -55,6 +55,12 @@
     }
     return {rows:result,changed};
   }
-  root.ProductSizes={variantLabel,parse:parseSizes,serialize:serializeSizes,compare:compare,normalize:normalize,stockFor,stockUnits,cartLimit,normalizeLegacyCart};
+  function seoSuffix(p,language='ru',translate=value=>value){
+    const values=parseSizes(p?.size);
+    if(!values.length||values.every(value=>value==='One Size'))return '';
+    const label=variantLabel(p,values.length>1),english={Размер:'Size',Размеры:'Sizes',Цвет:'Colour',Цвета:'Colours'};
+    return ' · '+(language==='en'?english[label]:label)+': '+translate(values.join(' / '));
+  }
+  root.ProductSizes={seoSuffix,variantLabel,parse:parseSizes,serialize:serializeSizes,compare:compare,normalize:normalize,stockFor,stockUnits,cartLimit,normalizeLegacyCart};
   if(typeof module==='object')module.exports=root.ProductSizes;
 })(typeof window==='object'?window:globalThis);
