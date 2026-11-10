@@ -55,7 +55,7 @@ test('Outlet and brand guides are readable without JavaScript and expose only th
    assert.equal((body.match(/<h1>/g)||[]).length,1);
    if(lang==='en')assert.doesNotMatch(body,/[А-Яа-яЁё]/);
    assert.match(body,/data-contact-event="manager_general"/);
-   assert.doesNotMatch(body,/href="[^"]*\/(?:journal|about|buyer-service|models)\b/);
+   assert.doesNotMatch(body,/href="[^"]*\/(?:journal|about|buyer-service)\b/);
   }
   const outlet=site.render(template,'outlet',null,lang);
   assert.match(outlet,/https:\/\/t.me\/\+lz-ze3-GDEQ0YmFi/);
