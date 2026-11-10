@@ -9,6 +9,7 @@ let browser;
  await new Promise(r=>server.listen(0,'127.0.0.1',r));const origin='http://127.0.0.1:'+server.address().port;
  browser=await chromium.launch();
  async function prepare(context,delay=0){
+  await context.route('**/api/catalog',r=>r.fulfill({json:[product]}));
   await context.route('https://telegram.org/**',r=>r.abort());
   await context.route('**/rest/v1/products?**',async r=>{if(delay)await new Promise(resolve=>setTimeout(resolve,delay));return r.fulfill({json:[product]})});
   await context.addInitScript(()=>localStorage.setItem('jpAnalyticsConsent','declined'));
@@ -28,8 +29,8 @@ let browser;
    assert.ok(await page.locator('.bottom-nav').evaluate(nav=>{
     const bounds=nav.getBoundingClientRect(),buttons=[...nav.querySelectorAll('[data-tab],#moreNavigation')].filter(b=>b.getBoundingClientRect().width>0);
     const visible=nav.scrollWidth>nav.clientWidth?buttons.filter(b=>b.getAttribute('aria-current')==='page'):buttons;
-    return buttons.length===(innerWidth<900?5:9)&&bounds.left>=0&&bounds.right<=innerWidth+1&&buttons.every(b=>{const label=b.querySelector('small');return label.scrollWidth<=label.clientWidth+1;})&&visible.length>0&&visible.every(b=>{const r=b.getBoundingClientRect();return r.left>=bounds.left-1&&r.right<=bounds.right+1;});
-   }),'All primary destinations fit; the bag is visible and secondary sections use More');
+    return buttons.length===12&&bounds.left>=0&&bounds.right<=innerWidth+1&&buttons.every(b=>{const label=b.querySelector('small');return label.scrollWidth<=label.clientWidth+1;})&&visible.length>0&&visible.every(b=>{const r=b.getBoundingClientRect();return r.left>=bounds.left-1&&r.right<=bounds.right+1;});
+   }),'Navigation labels fit and the active section stays visible');
   }else{
    assert.equal(await page.locator('.brand .buyer-education-card').isVisible(),true);
    assert.equal(await page.locator('.home-shop-link').isVisible(),true);

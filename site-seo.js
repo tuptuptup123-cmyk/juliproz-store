@@ -19,7 +19,7 @@
    if(!product||!product.offers)return [{'@context':'https://schema.org','@type':'WebPage',name,url,inLanguage:lang},breadcrumb];
    return [{...product,name,description:data.description[lang],url,...(product.offers?{offers:{...product.offers,url}}:{})},breadcrumb];
   }
-  const organization={'@context':'https://schema.org','@type':'Organization','@id':content.origin+'/#organization',name:'JULI.PROZ',url:content.origin+'/',logo:content.origin+'/images/brand-paw.webp',sameAs:['https://www.instagram.com/juli.proz/','https://t.me/juli_proz','https://t.me/JuliProzBot']};
+  const organization={'@context':'https://schema.org','@type':'Organization','@id':content.origin+'/#organization',name:'JULI.PROZ',url:content.origin+'/',logo:content.origin+'/images/brand-paw.webp',sameAs:['https://www.instagram.com/juli.proz/','https://t.me/juliproz','https://t.me/JuliProzBot']};
   const result=[organization,{'@context':'https://schema.org','@type':['catalog','brand','model','watches','jewellery'].includes(data.kind)?'CollectionPage':'WebPage',name,description:data.description[lang],url,inLanguage:lang,isPartOf:{'@id':content.origin+'/#website'}}];
   if(data.kind==='home')result.push({'@context':'https://schema.org','@type':'WebSite','@id':content.origin+'/#website',name:'JULI.PROZ',url:content.origin+'/',inLanguage:['ru','en'],publisher:{'@id':content.origin+'/#organization'}});
   else result.push(breadcrumb);

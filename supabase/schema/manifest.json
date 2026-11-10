@@ -15,7 +15,8 @@
     "supabase/migrations/20261020080206_monthly_business_overview.sql",
     "supabase/migrations/20261020081749_monthly_net_profit.sql",
     "supabase/migrations/20261020082305_monthly_single_profit_target.sql",
-    "supabase/migrations/20261020091411_private_partner_workspace.sql"
+    "supabase/migrations/20261020091411_private_partner_workspace.sql",
+    "supabase/migrations/20261110042810_track_public_product_seo_updates.sql"
   ],
   "postDeployment": [
     "supabase/rollout/private-product-photos.sql"

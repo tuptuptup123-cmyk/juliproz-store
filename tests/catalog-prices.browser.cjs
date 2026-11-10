@@ -147,7 +147,7 @@ const fixtures=[
   assert.match(await page.locator('#sellPage').textContent(),/продажу через наш магазин/);
   assert.equal(await page.locator('#sellPrepare').evaluate(e=>getComputedStyle(e).textAlign),'center');
   assert.equal(await page.locator('#sellTitle').evaluate(e=>getComputedStyle(e).textAlign),'center');
-  const sellModes=await page.locator('#sellPage .sell-method').evaluateAll(es=>es.map(e=>({bg:getComputedStyle(e).backgroundColor,color:getComputedStyle(e.querySelector('p')).color})));
+  const sellModes=await page.locator('#sellPage > .sell-methods > .sell-method').evaluateAll(es=>es.map(e=>({bg:getComputedStyle(e).backgroundColor,color:getComputedStyle(e.querySelector('p')).color})));
   assert.equal(sellModes.length,2);assert.ok(sellModes.every(e=>e.bg==='rgb(228, 202, 221)'&&e.color==='rgb(37, 57, 79)'),'Both Sell methods use powder pink with dark text');
   assert.doesNotMatch(await page.locator('#sellPage').textContent(),/JULI\.PROZ/);
   assert.equal(await page.locator('.services-page .sell-intro p').innerText(),'Поможем выкупить нужную вещь, проверить её подлинность, подобрать ателье и организовать профессиональный уход. Работаем с вашими вещами по всему миру.');
