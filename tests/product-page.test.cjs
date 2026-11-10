@@ -5,7 +5,7 @@ test('crawlable delivery terms match stock status in both languages without fabr
  for(const lang of ['ru','en'])for(const fulfillment_status of ['in_stock','on_order']){
   const html=render(template,{...product,fulfillment_status},lang),terms='https://www.juliproz.com/terms.html'+(lang==='en'?'?lang=en':'');
   assert.ok(html.includes(terms+'#delivery'));assert.ok(html.includes(terms+'#returns'));
-  assert.ok(html.includes(lang==='en'?'Delivery is included in the item price.':'Доставка включена в цену товара.'));
+  assert.ok(html.includes(lang==='en'?'Worldwide delivery is included in the item price.':'Доставка по всему миру включена в цену товара.'));
   assert.ok(html.includes((fulfillment_status==='on_order'?'10–14':'7–10')+' '+(lang==='en'?'business days':'рабочих дней')));
   assert.doesNotMatch(html,/OfferShippingDetails|MerchantReturnNotPermitted|MerchantReturnFiniteReturnWindow/);
  }

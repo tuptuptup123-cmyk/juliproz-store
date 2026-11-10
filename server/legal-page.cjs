@@ -16,7 +16,9 @@ function render(template,kind,lang){
  // Plain links allow switching languages even when JavaScript is disabled.
  template=template.replace('</main>',`<noscript><nav aria-label="Language"><a href="${page.path}">RU</a> · <a href="${page.path}?lang=en">EN</a></nav></noscript></main>`).replace('</head>',scripts+'</head>');
  const schema={'@context':'https://schema.org','@type':'WebPage',name:page.title[lang],description:page.description[lang],url:seo.url(page.path,lang),inLanguage:lang};
- return seo.decorate(template,page,lang,[schema]).replace(/ data-server-view="[^"]+"/,'');
+ const schemas=[schema];
+ if(kind==='terms')schemas.push({...seo.organization(),hasShippingService:{'@type':'ShippingService','@id':seo.origin+'/terms.html#worldwide-delivery',url:seo.url('/terms.html',lang)+'#delivery',name:lang==='en'?'Worldwide delivery included in item price':'Доставка по всему миру включена в цену товара',description:lang==='en'?'Worldwide delivery is included in the item price.':'Доставка по всему миру включена в цену товара.',shippingConditions:{'@type':'ShippingConditions',shippingRate:{'@type':'MonetaryAmount',value:0,currency:'EUR'}}}});
+ return seo.decorate(template,page,lang,schemas).replace(/ data-server-view="[^"]+"/,'');
 }
 function createHandler({readTemplate=kind=>fs.readFile(path.join(__dirname,'..',kind+'.html'),'utf8')}={}){return async(req,res)=>{
  res.setHeader('Cache-Control','no-store');res.setHeader('Content-Type','text/html; charset=utf-8');res.setHeader('X-Content-Type-Options','nosniff');
