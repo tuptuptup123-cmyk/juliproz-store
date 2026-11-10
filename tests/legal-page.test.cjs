@@ -18,3 +18,15 @@ test('legal handler rejects unknown pages and duplicate language parameters',asy
   const res={setHeader(){},end(){}};await handler({url,method:'GET'},res);assert.equal(res.statusCode,404);
  }
 });
+test('terms declare owner-confirmed worldwide included delivery without inventing transit or handling durations',()=>{
+ for(const lang of ['ru','en']){
+  const html=legal.render(fs.readFileSync(path.join(__dirname,'..','terms.html'),'utf8'),'terms',lang);
+  const schemas=[...html.matchAll(/type="application\/ld\+json">([^<]+)<\/script>/g)].map(m=>JSON.parse(m[1]));
+  const service=schemas.find(x=>x['@type']==='Organization').hasShippingService;
+  assert.equal(service['@type'],'ShippingService');
+  assert.deepEqual(service.shippingConditions.shippingRate,{'@type':'MonetaryAmount',value:0,currency:'EUR'});
+  assert.equal(service.shippingConditions.shippingDestination,undefined);
+  assert.equal(service.shippingConditions.transitTime,undefined);assert.equal(service.handlingTime,undefined);
+  assert.ok(html.includes(lang==='en'?'Worldwide delivery is included in the item price.':'Доставка по всему миру включена в цену товара.'));
+ }
+});
