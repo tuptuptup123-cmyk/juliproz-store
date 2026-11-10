@@ -1,0 +1,20 @@
+{
+  "manifest_verified_files": 1241,
+  "git_verified_source_files": 1238,
+  "commit": "ad7a66b72ec5f882eec9e8c85637cd9f1ae0e1a1",
+  "verified_at": "2026-11-10T06:58:45Z",
+  "business_snapshot_created_at": "2026-11-08T13:01:12.637469+00:00",
+  "tables_verified": 13,
+  "rows_verified": 1050,
+  "foreign_keys_checked": 5,
+  "additive_null_columns": {
+    "public.products": [
+      "seo_updated_at"
+    ]
+  },
+  "auth_restored": false,
+  "storage_files_restored": false,
+  "production_connected": false,
+  "method": "Offline in-memory restoration into current schema, exact backed-up field comparison; nullable SEO timestamp remains null.",
+  "restored_at": "2026-11-10T06:59:35.340Z"
+}

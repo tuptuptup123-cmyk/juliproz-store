@@ -6,8 +6,9 @@ const schemaRequire=require('node:module').createRequire(path.resolve(__dirname,
 const {PGlite}=schemaRequire('@electric-sql/pglite');
 const {pgcrypto}=schemaRequire('@electric-sql/pglite/contrib/pgcrypto');
 const baseTables=['public.products','public.product_admin_notes','public.store_admins','store_private.product_sales','store_private.finance_entries','store_private.finance_changes','store_private.commission_terms','store_private.product_costs','store_private.upload_rotations','store_private.upload_day_overrides','store_private.upload_schedule_changes','store_private.product_archive_migration_backup'];
+const {compareRestoredTable}=require('./backup-row-comparison.cjs');
 const quote=s=>'"'+s.replaceAll('"','""')+'"';
-const canonical=x=>Array.isArray(x)?x.map(canonical):x&&typeof x==='object'?Object.fromEntries(Object.keys(x).sort().map(k=>[k,canonical(x[k])])):x;
+
 (async()=>{
  const source=process.argv[2];if(!source)throw Error('Usage: node scripts/verify-business-backup.cjs /absolute/path/business-data.json');
  const snapshot=JSON.parse(fs.readFileSync(source,'utf8'));assert.ok([1,2].includes(snapshot.format_version));
@@ -30,10 +31,11 @@ const canonical=x=>Array.isArray(x)?x.map(canonical):x&&typeof x==='object'?Obje
   }
   await db.exec("set session_replication_role='origin'");
   // Check every restored value, including generated fields such as report_on.
+  const additiveNullColumns={};
   for(const table of tables){
-   const actual=(await db.query(`select to_jsonb(t) as row from ${table} t`)).rows.map(r=>JSON.stringify(canonical(r.row))).sort();
-   const expected=snapshot.tables[table].map(r=>JSON.stringify(canonical(r))).sort();
-   assert.ok(JSON.stringify(actual)===JSON.stringify(expected),table+' round-trip mismatch');
+   const actual=(await db.query(`select to_jsonb(t) as row from ${table} t`)).rows.map(r=>r.row);
+   const expected=snapshot.tables[table];
+   const added=compareRestoredTable(table,actual,expected);if(added.length)additiveNullColumns[table]=added;
   }
   const keys=(await db.query(`select con.conrelid::regclass::text as child,con.confrelid::regclass::text as parent,
    (select jsonb_agg(attname order by ord) from unnest(con.conkey) with ordinality as k(num,ord) join pg_attribute a on a.attrelid=con.conrelid and a.attnum=k.num) as cols,
@@ -46,6 +48,6 @@ const canonical=x=>Array.isArray(x)?x.map(canonical):x&&typeof x==='object'?Obje
    const count=(await db.query(`select count(*)::int as n from ${child} c where ${nonnull} and not exists(select 1 from ${key.parent} p where ${match})`)).rows[0].n;
    assert.equal(count,0,child+' orphan reference');checked++;
   }
-  console.log(JSON.stringify({verified_at:new Date().toISOString(),source_created_at:snapshot.created_at,verification:'in-memory business-table restore with exact row comparison',auth_restored:false,storage_files_restored:false,foreign_keys_checked:checked,rows:Object.fromEntries(tables.map(t=>[t,snapshot.tables[t].length]))},null,2));
+  console.log(JSON.stringify({verified_at:new Date().toISOString(),source_created_at:snapshot.created_at,verification:'in-memory business-table restore with exact row comparison',auth_restored:false,storage_files_restored:false,foreign_keys_checked:checked,additive_null_columns:additiveNullColumns,rows:Object.fromEntries(tables.map(t=>[t,snapshot.tables[t].length]))},null,2));
  }finally{await db.close()}
 })().catch(e=>{console.error('Business backup verification failed: '+e.message);process.exitCode=1});

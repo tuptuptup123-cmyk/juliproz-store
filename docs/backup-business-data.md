@@ -27,3 +27,9 @@ Use the project owner's Supabase dashboard to verify actual database backup date
 The connected SQL tools cannot inspect backup retention or download private Storage bytes. The source backup automation remains useful; a successful source ZIP is not evidence that full recovery works.
 
 Snapshot format 2 includes monthly_capital (13 tables). The verifier also accepts historical format 1 snapshots (12 tables) without inventing historical capital settings.
+
+## Rehearsal on 10 November 2026
+
+The 8 November archive passed SHA-256 checks for all 1,241 manifest entries and Git blob checks for 1,238 source files. Its 13 business tables (1,050 rows) were restored offline against the current schema, with exact backed-up values and five foreign keys verified. The new nullable `products.seo_updated_at` column remains null for historical rows; the verifier explicitly permits only this known additive null field. It still rejects changed or missing backed-up fields, extra rows, unexpected columns and invented timestamps.
+
+This does not restore Supabase Auth/MFA, server secrets or private Storage bytes, which are absent from that archive. Do not report this business-table rehearsal as a full-service recovery. The verification summary is in `review/backup-restore-verification-2026-11-10.json`; private data remains outside the repository.
