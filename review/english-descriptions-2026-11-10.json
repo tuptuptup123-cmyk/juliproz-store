@@ -1,0 +1,1361 @@
+{
+  "batch": "2026-11-10-final-71-english",
+  "scope": "English descriptions only; translations of existing Russian descriptions. No other product fields edited.",
+  "review_notes": [
+    {
+      "id": 489,
+      "note": "Source says yellow gold while reference 278271 warrants verification; English description omits the disputed gold colour."
+    }
+  ],
+  "items": [
+    {
+      "id": 3,
+      "expected_revision": 5,
+      "source": {
+        "id": 3,
+        "revision": 5,
+        "brand": "Chanel",
+        "name": "Балетки",
+        "name_en": null,
+        "description": "Бежевые стёганые балетки с крупным чёрным логотипом CC и бантом.",
+        "description_en": null
+      },
+      "before": {
+        "description_en": null
+      },
+      "after": {
+        "description_en": "Beige quilted ballet flats with a large black CC logo and a bow."
+      }
+    },
+    {
+      "id": 6,
+      "expected_revision": 6,
+      "source": {
+        "id": 6,
+        "revision": 6,
+        "brand": "Goyard",
+        "name": "Картхолдер",
+        "name_en": null,
+        "description": "Чёрный картхолдер с бирюзово-зелёным рисунком.",
+        "description_en": null
+      },
+      "before": {
+        "description_en": null
+      },
+      "after": {
+        "description_en": "Black cardholder with a turquoise-green pattern."
+      }
+    },
+    {
+      "id": 7,
+      "expected_revision": 8,
+      "source": {
+        "id": 7,
+        "revision": 8,
+        "brand": "Chrome Hearts",
+        "name": "Купальник",
+        "name_en": null,
+        "description": "Раздельный купальник с оранжево-чёрным тигровым принтом. Комплект: верх и низ. Верх L, маркировка C80. Низ L, маркировка 175/74.",
+        "description_en": null
+      },
+      "before": {
+        "description_en": null
+      },
+      "after": {
+        "description_en": "Two-piece swimsuit with an orange and black tiger print. Includes top and bottoms. Top: size L, label C80. Bottoms: size L, label 175/74."
+      }
+    },
+    {
+      "id": 8,
+      "expected_revision": 6,
+      "source": {
+        "id": 8,
+        "revision": 6,
+        "brand": "Hermès",
+        "name": "Кроссовки Bouncing",
+        "name_en": null,
+        "description": "Цвет Beige Esquisse.",
+        "description_en": null
+      },
+      "before": {
+        "description_en": null
+      },
+      "after": {
+        "description_en": "Colour: Beige Esquisse."
+      }
+    },
+    {
+      "id": 9,
+      "expected_revision": 8,
+      "source": {
+        "id": 9,
+        "revision": 8,
+        "brand": "Hermès",
+        "name": "Сандалии Oran",
+        "name_en": null,
+        "description": "Цвет Noir (чёрный).",
+        "description_en": null
+      },
+      "before": {
+        "description_en": null
+      },
+      "after": {
+        "description_en": "Colour: Noir (black)."
+      }
+    },
+    {
+      "id": 10,
+      "expected_revision": 9,
+      "source": {
+        "id": 10,
+        "revision": 9,
+        "brand": "Hermès",
+        "name": "Сандалии Oran — леопардовые",
+        "name_en": null,
+        "description": "Леопардовый принт.",
+        "description_en": null
+      },
+      "before": {
+        "description_en": null
+      },
+      "after": {
+        "description_en": "Leopard print."
+      }
+    },
+    {
+      "id": 11,
+      "expected_revision": 6,
+      "source": {
+        "id": 11,
+        "revision": 6,
+        "brand": "Hermès",
+        "name": "Кроссовки Bouncing — Beige Galet",
+        "name_en": null,
+        "description": "Цвет Beige Galet. Артикул H221176Z BG385.",
+        "description_en": null
+      },
+      "before": {
+        "description_en": null
+      },
+      "after": {
+        "description_en": "Colour: Beige Galet. Reference: H221176Z BG385."
+      }
+    },
+    {
+      "id": 12,
+      "expected_revision": 8,
+      "source": {
+        "id": 12,
+        "revision": 8,
+        "brand": "Jil Sander",
+        "name": "Джинсовая рубашка",
+        "name_en": null,
+        "description": "Джинсовая рубашка с короткими рукавами, двумя нагрудными карманами и нашивкой с логотипом на спине. Артикул J47DL0168 J45291 420. В галерее: вид спереди, сзади, логотип и бирка с размером.",
+        "description_en": null
+      },
+      "before": {
+        "description_en": null
+      },
+      "after": {
+        "description_en": "Short-sleeved denim shirt with two chest pockets and a logo patch on the back. Reference: J47DL0168 J45291 420. Gallery views include the front, back, logo and size label."
+      }
+    },
+    {
+      "id": 13,
+      "expected_revision": 8,
+      "source": {
+        "id": 13,
+        "revision": 8,
+        "brand": "Jil Sander",
+        "name": "Куртка",
+        "name_en": null,
+        "description": "Куртка с отложным воротником, двумя нагрудными карманами и эластичным низом. Артикул J22SW0004 J46192 049.",
+        "description_en": null
+      },
+      "before": {
+        "description_en": null
+      },
+      "after": {
+        "description_en": "Jacket with a turn-down collar, two chest pockets and an elasticated hem. Reference: J22SW0004 J46192 049."
+      }
+    },
+    {
+      "id": 14,
+      "expected_revision": 5,
+      "source": {
+        "id": 14,
+        "revision": 5,
+        "brand": "Balenciaga",
+        "name": "Чехол для телефона",
+        "name_en": null,
+        "description": "В наличии 2 штуки. Цена 220 € за одну штуку. Чёрный чехол для телефона с плечевым ремешком и отделениями для карт. Артикул 640536 1IZI3 1090.",
+        "description_en": null
+      },
+      "before": {
+        "description_en": null
+      },
+      "after": {
+        "description_en": "Two pieces available. Price: €220 per piece. Black phone case with a shoulder strap and card slots. Reference: 640536 1IZI3 1090."
+      }
+    },
+    {
+      "id": 15,
+      "expected_revision": 6,
+      "source": {
+        "id": 15,
+        "revision": 6,
+        "brand": "Dior",
+        "name": "Кроссовки с розовым принтом",
+        "name_en": null,
+        "description": "Розовый принт, светлая подошва и сиреневые шнурки.",
+        "description_en": null
+      },
+      "before": {
+        "description_en": null
+      },
+      "after": {
+        "description_en": "Pink print, a light-coloured sole and lilac laces."
+      }
+    },
+    {
+      "id": 16,
+      "expected_revision": 8,
+      "source": {
+        "id": 16,
+        "revision": 8,
+        "brand": "Hermès",
+        "name": "Сумка Herbag 31",
+        "name_en": null,
+        "description": "Чёрный кожаный верх, текстильный корпус с чёрно-белым рисунком и фурнитура золотистого цвета.",
+        "description_en": null
+      },
+      "before": {
+        "description_en": null
+      },
+      "after": {
+        "description_en": "Black leather upper section, a textile body with a black and white pattern, and gold-tone hardware."
+      }
+    },
+    {
+      "id": 17,
+      "expected_revision": 5,
+      "source": {
+        "id": 17,
+        "revision": 5,
+        "brand": "Hermès",
+        "name": "Сандалии Chypre",
+        "name_en": null,
+        "description": "Цвет Noir (чёрный).",
+        "description_en": null
+      },
+      "before": {
+        "description_en": null
+      },
+      "after": {
+        "description_en": "Colour: Noir (black)."
+      }
+    },
+    {
+      "id": 18,
+      "expected_revision": 6,
+      "source": {
+        "id": 18,
+        "revision": 6,
+        "brand": "Hermès",
+        "name": "Браслет Chaîne d’ancre Enchaînée Double",
+        "name_en": null,
+        "description": "Двойной браслет из серебра 925. Артикул H122405B. Размер уточняйте у менеджера.",
+        "description_en": null
+      },
+      "before": {
+        "description_en": null
+      },
+      "after": {
+        "description_en": "Double bracelet in 925 sterling silver. Reference: H122405B. Please contact the manager to confirm the size."
+      }
+    },
+    {
+      "id": 19,
+      "expected_revision": 6,
+      "source": {
+        "id": 19,
+        "revision": 6,
+        "brand": "Miu Miu",
+        "name": "Бежевая куртка",
+        "name_en": null,
+        "description": "Бежевая куртка свободного кроя с вышитым логотипом, воротником и застёжкой на пуговицы.",
+        "description_en": null
+      },
+      "before": {
+        "description_en": null
+      },
+      "after": {
+        "description_en": "Relaxed-fit beige jacket with an embroidered logo, a collar and button fastening."
+      }
+    },
+    {
+      "id": 20,
+      "expected_revision": 8,
+      "source": {
+        "id": 20,
+        "revision": 8,
+        "brand": "Gucci",
+        "name": "Лаковые туфли с цепочкой",
+        "name_en": null,
+        "description": "Чёрные лаковые туфли с острым носом, открытой пяткой и золотистой цепочкой на ремешке.",
+        "description_en": null
+      },
+      "before": {
+        "description_en": null
+      },
+      "after": {
+        "description_en": "Black patent slingback shoes with pointed toes and a gold-tone chain on the strap."
+      }
+    },
+    {
+      "id": 21,
+      "expected_revision": 4,
+      "source": {
+        "id": 21,
+        "revision": 4,
+        "brand": "Messika",
+        "name": "Колье Lucky Move",
+        "name_en": null,
+        "description": "Колье с круглой подвеской и бирюзовой вставкой. Артикул 13507-WG.",
+        "description_en": null
+      },
+      "before": {
+        "description_en": null
+      },
+      "after": {
+        "description_en": "Necklace with a round pendant and a turquoise insert. Reference: 13507-WG."
+      }
+    },
+    {
+      "id": 23,
+      "expected_revision": 8,
+      "source": {
+        "id": 23,
+        "revision": 8,
+        "brand": "Hermès",
+        "name": "Сандалии Chypre Beige Nude",
+        "name_en": null,
+        "description": "Сандалии из замши в оттенке Beige Nude с регулируемым ремешком и чёрной анатомической резиновой подошвой. Артикул H222297Z BN.",
+        "description_en": null
+      },
+      "before": {
+        "description_en": null
+      },
+      "after": {
+        "description_en": "Suede sandals in Beige Nude with an adjustable strap and a black contoured rubber sole. Reference: H222297Z BN."
+      }
+    },
+    {
+      "id": 24,
+      "expected_revision": 5,
+      "source": {
+        "id": 24,
+        "revision": 5,
+        "brand": "Hermès",
+        "name": "Кроссовки Bouncing из сетки",
+        "name_en": null,
+        "description": "Светло-бежевые кроссовки из фактурной сетки и замши с белой подошвой и чёрной вставкой у пятки.",
+        "description_en": null
+      },
+      "before": {
+        "description_en": null
+      },
+      "after": {
+        "description_en": "Light beige sneakers in textured mesh and suede, with a white sole and a black heel detail."
+      }
+    },
+    {
+      "id": 25,
+      "expected_revision": 7,
+      "source": {
+        "id": 25,
+        "revision": 7,
+        "brand": "Chanel",
+        "name": "Кроссовки с логотипом CC",
+        "name_en": null,
+        "description": "Белые кроссовки с чёрным логотипом CC, контрастным мысом и медовой подошвой.",
+        "description_en": null
+      },
+      "before": {
+        "description_en": null
+      },
+      "after": {
+        "description_en": "White sneakers with a black CC logo, a contrasting toe and a gum-coloured sole."
+      }
+    },
+    {
+      "id": 26,
+      "expected_revision": 8,
+      "source": {
+        "id": 26,
+        "revision": 8,
+        "brand": "Maison Margiela",
+        "name": "Туфли Mary Jane",
+        "name_en": null,
+        "description": "Чёрные лаковые туфли с боковыми вырезами, тонким ремешком и серебристой пряжкой. Модель S58WL0230P4347T8013.",
+        "description_en": null
+      },
+      "before": {
+        "description_en": null
+      },
+      "after": {
+        "description_en": "Black patent Mary Jane shoes with side cut-outs, a slim strap and a silver-tone buckle. Model: S58WL0230P4347T8013."
+      }
+    },
+    {
+      "id": 29,
+      "expected_revision": 8,
+      "source": {
+        "id": 29,
+        "revision": 8,
+        "brand": "Hermès",
+        "name": "Кроссовки Lift-On",
+        "name_en": null,
+        "description": "Белые кроссовки с оранжевыми и голубыми деталями.",
+        "description_en": null
+      },
+      "before": {
+        "description_en": null
+      },
+      "after": {
+        "description_en": "White sneakers with orange and light blue details."
+      }
+    },
+    {
+      "id": 30,
+      "expected_revision": 6,
+      "source": {
+        "id": 30,
+        "revision": 6,
+        "brand": "Maison Margiela",
+        "name": "Лоферы Décortiqué",
+        "name_en": null,
+        "description": "Чёрные кожаные лоферы с квадратным носом и открытой деталью на пятке.",
+        "description_en": null
+      },
+      "before": {
+        "description_en": null
+      },
+      "after": {
+        "description_en": "Black leather loafers with square toes and an open detail at the heel."
+      }
+    },
+    {
+      "id": 36,
+      "expected_revision": 7,
+      "source": {
+        "id": 36,
+        "revision": 7,
+        "brand": "Chanel",
+        "name": "Кроссовки с золотым CC",
+        "name_en": null,
+        "description": "Длина стельки: 24 см.",
+        "description_en": null
+      },
+      "before": {
+        "description_en": null
+      },
+      "after": {
+        "description_en": "Insole length: 24 cm."
+      }
+    },
+    {
+      "id": 40,
+      "expected_revision": 9,
+      "source": {
+        "id": 40,
+        "revision": 9,
+        "brand": "Gucci",
+        "name": "Кроссовки Ace Kitten Logo",
+        "name_en": null,
+        "description": "Белые кроссовки с чёрным принтом Gucci в форме кота и зелёной пяткой.",
+        "description_en": null
+      },
+      "before": {
+        "description_en": null
+      },
+      "after": {
+        "description_en": "White sneakers with a black cat-shaped Gucci print and a green heel."
+      }
+    },
+    {
+      "id": 41,
+      "expected_revision": 4,
+      "source": {
+        "id": 41,
+        "revision": 4,
+        "brand": "Chrome Hearts",
+        "name": "Майка T-Bar Cross",
+        "name_en": null,
+        "description": "Белая майка в рубчик с чёрным логотипом на груди и крупным крестом на спине.",
+        "description_en": null
+      },
+      "before": {
+        "description_en": null
+      },
+      "after": {
+        "description_en": "White ribbed tank top with a black logo on the chest and a large cross on the back."
+      }
+    },
+    {
+      "id": 42,
+      "expected_revision": 4,
+      "source": {
+        "id": 42,
+        "revision": 4,
+        "brand": "Hermès",
+        "name": "Косметичка Bride-à-Brac",
+        "name_en": null,
+        "description": "Маленькая косметичка из хлопкового канваса в цвете Naturel. Вышитая буква H, застёжка-молния и ручка с кнопками.",
+        "description_en": null
+      },
+      "before": {
+        "description_en": null
+      },
+      "after": {
+        "description_en": "Small cotton canvas toiletry bag in Naturel, with an embroidered H, a zip fastening and a handle with press studs."
+      }
+    },
+    {
+      "id": 44,
+      "expected_revision": 7,
+      "source": {
+        "id": 44,
+        "revision": 7,
+        "brand": "Fendi",
+        "name": "Худи Roma",
+        "name_en": null,
+        "description": "Белое худи с капюшоном, шнурками и чёрной вышивкой FENDI ROMA. Размер S. В наличии.",
+        "description_en": null
+      },
+      "before": {
+        "description_en": null
+      },
+      "after": {
+        "description_en": "White hoodie with drawstrings and black FENDI ROMA embroidery. Size S. In stock."
+      }
+    },
+    {
+      "id": 46,
+      "expected_revision": 9,
+      "source": {
+        "id": 46,
+        "revision": 9,
+        "brand": "Hermès",
+        "name": "Туфли Kiara 40",
+        "name_en": null,
+        "description": "Чёрные туфли из кожи Nappa с острым мысом, ремешком и пряжкой Kelly. Каблук 4 см. Размер 38.5. В наличии.",
+        "description_en": null
+      },
+      "before": {
+        "description_en": null
+      },
+      "after": {
+        "description_en": "Black Nappa leather shoes with pointed toes, a strap and a Kelly buckle. Heel height: 4 cm. Size 38.5. In stock."
+      }
+    },
+    {
+      "id": 49,
+      "expected_revision": 6,
+      "source": {
+        "id": 49,
+        "revision": 6,
+        "brand": "Hermès",
+        "name": "Кольцо Chaîne d’ancre Enchaînée, два ряда",
+        "name_en": null,
+        "description": "Серебряное кольцо Hermès Chaîne d’ancre Enchaînée в два ряда. Размер 53. Цена по запросу.",
+        "description_en": null
+      },
+      "before": {
+        "description_en": null
+      },
+      "after": {
+        "description_en": "Hermès Chaîne d’ancre Enchaînée silver ring with two rows. Size 53. Price on request."
+      }
+    },
+    {
+      "id": 50,
+      "expected_revision": 6,
+      "source": {
+        "id": 50,
+        "revision": 6,
+        "brand": "Bottega Veneta",
+        "name": "Сандалии Stretch",
+        "name_en": null,
+        "description": "Нюдовые сандалии Bottega Veneta Stretch с широкой кожаной перемычкой, квадратным мысом и высоким каблуком. Размер 38.5. В наличии.",
+        "description_en": null
+      },
+      "before": {
+        "description_en": null
+      },
+      "after": {
+        "description_en": "Nude Bottega Veneta Stretch sandals with a wide leather strap, square toes and a high heel. Size 38.5. In stock."
+      }
+    },
+    {
+      "id": 51,
+      "expected_revision": 8,
+      "source": {
+        "id": 51,
+        "revision": 8,
+        "brand": "Bottega Veneta",
+        "name": "Туфли Sparkle Stretch",
+        "name_en": null,
+        "description": "Зелёные кристаллы, квадратный мыс, завязки вокруг щиколотки.",
+        "description_en": null
+      },
+      "before": {
+        "description_en": null
+      },
+      "after": {
+        "description_en": "Green crystals, square toes and ankle ties."
+      }
+    },
+    {
+      "id": 53,
+      "expected_revision": 7,
+      "source": {
+        "id": 53,
+        "revision": 7,
+        "brand": "Gucci",
+        "name": "Сабо GG на платформе",
+        "name_en": null,
+        "description": "Чёрные сабо с перфорацией GG и массивной подошвой.",
+        "description_en": null
+      },
+      "before": {
+        "description_en": null
+      },
+      "after": {
+        "description_en": "Black clogs with GG perforations and a chunky sole."
+      }
+    },
+    {
+      "id": 55,
+      "expected_revision": 10,
+      "source": {
+        "id": 55,
+        "revision": 10,
+        "brand": "Gucci",
+        "name": "Кроссовки Rhyton",
+        "name_en": null,
+        "description": "Размер 43.5 — 2 пары. Стелька 27.5 см.",
+        "description_en": null
+      },
+      "before": {
+        "description_en": null
+      },
+      "after": {
+        "description_en": "Size 43.5: two pairs. Insole length: 27.5 cm."
+      }
+    },
+    {
+      "id": 57,
+      "expected_revision": 8,
+      "source": {
+        "id": 57,
+        "revision": 8,
+        "brand": "Gucci",
+        "name": "Носки Interlocking G",
+        "name_en": null,
+        "description": "Белые носки с чёрной вышивкой GG.",
+        "description_en": null
+      },
+      "before": {
+        "description_en": null
+      },
+      "after": {
+        "description_en": "White socks with black GG embroidery."
+      }
+    },
+    {
+      "id": 61,
+      "expected_revision": 11,
+      "source": {
+        "id": 61,
+        "revision": 11,
+        "brand": "Gucci",
+        "name": "Кроссовки Rhyton из коллекции в стиле SEGA",
+        "name_en": null,
+        "description": "Размеры: 43 и 44,5.",
+        "description_en": null
+      },
+      "before": {
+        "description_en": null
+      },
+      "after": {
+        "description_en": "Sizes: 43 and 44.5."
+      }
+    },
+    {
+      "id": 63,
+      "expected_revision": 7,
+      "source": {
+        "id": 63,
+        "revision": 7,
+        "brand": "Loro Piana",
+        "name": "Кроссовки Week End Walk",
+        "name_en": null,
+        "description": "Стелька 30 см.",
+        "description_en": null
+      },
+      "before": {
+        "description_en": null
+      },
+      "after": {
+        "description_en": "Insole length: 30 cm."
+      }
+    },
+    {
+      "id": 65,
+      "expected_revision": 6,
+      "source": {
+        "id": 65,
+        "revision": 6,
+        "brand": "Loro Piana",
+        "name": "Кроссовки Modular Walk",
+        "name_en": null,
+        "description": "Стелька 28 см.",
+        "description_en": null
+      },
+      "before": {
+        "description_en": null
+      },
+      "after": {
+        "description_en": "Insole length: 28 cm."
+      }
+    },
+    {
+      "id": 66,
+      "expected_revision": 7,
+      "source": {
+        "id": 66,
+        "revision": 7,
+        "brand": "Loro Piana",
+        "name": "Кроссовки Newport Walk с меховой подкладкой",
+        "name_en": null,
+        "description": "Стелька 28 см.",
+        "description_en": null
+      },
+      "before": {
+        "description_en": null
+      },
+      "after": {
+        "description_en": "Insole length: 28 cm."
+      }
+    },
+    {
+      "id": 82,
+      "expected_revision": 5,
+      "source": {
+        "id": 82,
+        "revision": 5,
+        "brand": "Stone Island × New Balance",
+        "name": "Бутсы Furon",
+        "name_en": null,
+        "description": "Цена от 600 €.",
+        "description_en": null
+      },
+      "before": {
+        "description_en": null
+      },
+      "after": {
+        "description_en": "Prices from €600."
+      }
+    },
+    {
+      "id": 84,
+      "expected_revision": 6,
+      "source": {
+        "id": 84,
+        "revision": 6,
+        "brand": "Stone Island × New Balance",
+        "name": "Футбольная форма",
+        "name_en": null,
+        "description": "Цена от 600 €.",
+        "description_en": null
+      },
+      "before": {
+        "description_en": null
+      },
+      "after": {
+        "description_en": "Prices from €600."
+      }
+    },
+    {
+      "id": 86,
+      "expected_revision": 10,
+      "source": {
+        "id": 86,
+        "revision": 10,
+        "brand": "Gucci",
+        "name": "Футболка из шёлка и хлопка",
+        "name_en": null,
+        "description": "Состав: 55% шёлк, 45% хлопок.",
+        "description_en": null
+      },
+      "before": {
+        "description_en": null
+      },
+      "after": {
+        "description_en": "Composition: 55% silk, 45% cotton."
+      }
+    },
+    {
+      "id": 207,
+      "expected_revision": 6,
+      "source": {
+        "id": 207,
+        "revision": 6,
+        "brand": "Louis Vuitton",
+        "name": "Сумка Avenue Sling Bag",
+        "name_en": null,
+        "description": "Минимальные следы носки.",
+        "description_en": null
+      },
+      "before": {
+        "description_en": null
+      },
+      "after": {
+        "description_en": "Minimal signs of wear."
+      }
+    },
+    {
+      "id": 310,
+      "expected_revision": 9,
+      "source": {
+        "id": 310,
+        "revision": 9,
+        "brand": "Gucci",
+        "name": "Подвеска Lion Head Necklace",
+        "name_en": null,
+        "description": "Это ожерелье Gucci Lion Head Necklace с черным кристаллом Swarovski в виде головы рычащего льва.",
+        "description_en": null
+      },
+      "before": {
+        "description_en": null
+      },
+      "after": {
+        "description_en": "Gucci Lion Head Necklace featuring a roaring lion's head and a black Swarovski crystal."
+      }
+    },
+    {
+      "id": 361,
+      "expected_revision": 8,
+      "source": {
+        "id": 361,
+        "revision": 8,
+        "brand": "Louis Vuitton",
+        "name": "Кроссовки Skate Sneaker",
+        "name_en": null,
+        "description": "Есть незначительные следы носки.",
+        "description_en": null
+      },
+      "before": {
+        "description_en": null
+      },
+      "after": {
+        "description_en": "Minor signs of wear."
+      }
+    },
+    {
+      "id": 363,
+      "expected_revision": 6,
+      "source": {
+        "id": 363,
+        "revision": 6,
+        "brand": "Dior",
+        "name": "Футболка Oblique, свободный крой",
+        "name_en": null,
+        "description": "Нет магазинной бирки.",
+        "description_en": null
+      },
+      "before": {
+        "description_en": null
+      },
+      "after": {
+        "description_en": "Retail tag missing."
+      }
+    },
+    {
+      "id": 367,
+      "expected_revision": 8,
+      "source": {
+        "id": 367,
+        "revision": 8,
+        "brand": "Brunello Cucinelli",
+        "name": "Льняные брюки",
+        "name_en": null,
+        "description": "Следы носки.",
+        "description_en": null
+      },
+      "before": {
+        "description_en": null
+      },
+      "after": {
+        "description_en": "Signs of wear."
+      }
+    },
+    {
+      "id": 431,
+      "expected_revision": 4,
+      "source": {
+        "id": 431,
+        "revision": 4,
+        "brand": "Gucci",
+        "name": "Очки Small Fit",
+        "name_en": null,
+        "description": "Оправа Small Fit. Маркировка размера: 45–18–145.",
+        "description_en": null
+      },
+      "before": {
+        "description_en": null
+      },
+      "after": {
+        "description_en": "Small Fit frame. Size marking: 45–18–145."
+      }
+    },
+    {
+      "id": 488,
+      "expected_revision": 8,
+      "source": {
+        "id": 488,
+        "revision": 8,
+        "brand": "Rolex",
+        "name": "Часы Rolex Oyster Perpetual Datejust 31 Ref. 278273",
+        "name_en": null,
+        "description": "Oyster 31mm, сталь Oystersteel и желтое золото",
+        "description_en": null
+      },
+      "before": {
+        "description_en": null
+      },
+      "after": {
+        "description_en": "Oyster, 31 mm, Oystersteel and yellow gold."
+      }
+    },
+    {
+      "id": 489,
+      "expected_revision": 8,
+      "source": {
+        "id": 489,
+        "revision": 8,
+        "brand": "Rolex",
+        "name": "Часы Rolex Oyster Perpetual Datejust 31mm Ref. 278271",
+        "name_en": null,
+        "description": "Oyster, 31mm, сталь Oystersteel и желтое золото",
+        "description_en": null
+      },
+      "before": {
+        "description_en": null
+      },
+      "after": {
+        "description_en": "Oyster, 31 mm, Oystersteel."
+      }
+    },
+    {
+      "id": 490,
+      "expected_revision": 6,
+      "source": {
+        "id": 490,
+        "revision": 6,
+        "brand": "Rolex",
+        "name": "Часы Datejust 31mm, Steel And Gold , MOP, Diamond Dial Ref. 278273",
+        "name_en": null,
+        "description": "Белый перламутровый, бриллианты \nOyster, 31mm, сталь Oystersteel и желтое золото",
+        "description_en": null
+      },
+      "before": {
+        "description_en": null
+      },
+      "after": {
+        "description_en": "White mother-of-pearl dial with diamonds. Oyster, 31 mm, Oystersteel and yellow gold."
+      }
+    },
+    {
+      "id": 491,
+      "expected_revision": 6,
+      "source": {
+        "id": 491,
+        "revision": 6,
+        "brand": "Rolex",
+        "name": "Часы Rolex  Datejust 31mm, Pink,  Roman Dial , Stainless Steel , Fluted Bezel , Jubilee Bracelet Ref. 278274",
+        "name_en": null,
+        "description": "Oyster, 31mm, сталь Oystersteel",
+        "description_en": null
+      },
+      "before": {
+        "description_en": null
+      },
+      "after": {
+        "description_en": "Oyster, 31 mm, Oystersteel."
+      }
+    },
+    {
+      "id": 492,
+      "expected_revision": 7,
+      "source": {
+        "id": 492,
+        "revision": 7,
+        "brand": "Rolex",
+        "name": "Часы Datejust 31mm Silver Diamond Dial on Jubilee Bracelet  Ref. 278273",
+        "name_en": null,
+        "description": "Серебристый, бриллианты \nOyster, 31mm, сталь Oystersteel и желтое золото",
+        "description_en": null
+      },
+      "before": {
+        "description_en": null
+      },
+      "after": {
+        "description_en": "Silver-coloured dial with diamonds. Oyster, 31 mm, Oystersteel and yellow gold."
+      }
+    },
+    {
+      "id": 493,
+      "expected_revision": 7,
+      "source": {
+        "id": 493,
+        "revision": 7,
+        "brand": "Rolex",
+        "name": "Часы Datejust 31mm Aubergine Roman Diamond Dial on Jubilee Ref.  278274",
+        "name_en": null,
+        "description": "Oyster, 31 mm, Oystersteel and white gold \nAubergine",
+        "description_en": null
+      },
+      "before": {
+        "description_en": null
+      },
+      "after": {
+        "description_en": "Oyster, 31 mm, Oystersteel and white gold. Aubergine dial."
+      }
+    },
+    {
+      "id": 494,
+      "expected_revision": 5,
+      "source": {
+        "id": 494,
+        "revision": 5,
+        "brand": "Rolex",
+        "name": "Часы Datejust 31mm Steel Pink Dial Ref. 278240",
+        "name_en": null,
+        "description": "Oyster, 31 mm, Edelstahl Oystersteel",
+        "description_en": null
+      },
+      "before": {
+        "description_en": null
+      },
+      "after": {
+        "description_en": "Oyster, 31 mm, Oystersteel stainless steel."
+      }
+    },
+    {
+      "id": 495,
+      "expected_revision": 5,
+      "source": {
+        "id": 495,
+        "revision": 5,
+        "brand": "Rolex",
+        "name": "Часы Datejust 31mm Steel Green Dial  Ref. 278274",
+        "name_en": null,
+        "description": "Oyster, 31 mm, Oystersteel and white gold",
+        "description_en": null
+      },
+      "before": {
+        "description_en": null
+      },
+      "after": {
+        "description_en": "Oyster, 31 mm, Oystersteel and white gold."
+      }
+    },
+    {
+      "id": 496,
+      "expected_revision": 5,
+      "source": {
+        "id": 496,
+        "revision": 5,
+        "brand": "Rolex",
+        "name": "Часы Datejust 31mm Dial Olive Green Ref. 278273",
+        "name_en": null,
+        "description": "Oyster, 31 mm, Oystersteel and yellow gold",
+        "description_en": null
+      },
+      "before": {
+        "description_en": null
+      },
+      "after": {
+        "description_en": "Oyster, 31 mm, Oystersteel and yellow gold."
+      }
+    },
+    {
+      "id": 500,
+      "expected_revision": 2,
+      "source": {
+        "id": 500,
+        "revision": 2,
+        "brand": "Rolex",
+        "name": "Часы Datejust, 41 мм, сталь и белое золото, черный циферблат, ref. 126334",
+        "name_en": null,
+        "description": "2026 год, новые, полный комплект",
+        "description_en": null
+      },
+      "before": {
+        "description_en": null
+      },
+      "after": {
+        "description_en": "Year: 2026. New, full set."
+      }
+    },
+    {
+      "id": 502,
+      "expected_revision": 2,
+      "source": {
+        "id": 502,
+        "revision": 2,
+        "brand": "Rolex",
+        "name": "Часы Datejust, 41 мм, сталь и белое золото, грифельный циферблат, ref. 126334",
+        "name_en": null,
+        "description": "2026 год, новые, полный комплект",
+        "description_en": null
+      },
+      "before": {
+        "description_en": null
+      },
+      "after": {
+        "description_en": "Year: 2026. New, full set."
+      }
+    },
+    {
+      "id": 503,
+      "expected_revision": 2,
+      "source": {
+        "id": 503,
+        "revision": 2,
+        "brand": "Rolex",
+        "name": "Часы Datejust, 41 мм, сталь и белое золото, грифельный циферблат, ref. 126334",
+        "name_en": null,
+        "description": "2026 год, новые, полный комплект",
+        "description_en": null
+      },
+      "before": {
+        "description_en": null
+      },
+      "after": {
+        "description_en": "Year: 2026. New, full set."
+      }
+    },
+    {
+      "id": 504,
+      "expected_revision": 2,
+      "source": {
+        "id": 504,
+        "revision": 2,
+        "brand": "Rolex",
+        "name": "Часы Datejust, 41 мм, сталь и белое золото, синий циферблат, ref. 126334",
+        "name_en": null,
+        "description": "2026 год, новые, полный комплект",
+        "description_en": null
+      },
+      "before": {
+        "description_en": null
+      },
+      "after": {
+        "description_en": "Year: 2026. New, full set."
+      }
+    },
+    {
+      "id": 505,
+      "expected_revision": 3,
+      "source": {
+        "id": 505,
+        "revision": 3,
+        "brand": "Rolex",
+        "name": "Часы Datejust, 41 мм, сталь и белое золото, синий циферблат, ref. 126334",
+        "name_en": null,
+        "description": "2026 год, новые, полный комплект",
+        "description_en": null
+      },
+      "before": {
+        "description_en": null
+      },
+      "after": {
+        "description_en": "Year: 2026. New, full set."
+      }
+    },
+    {
+      "id": 506,
+      "expected_revision": 3,
+      "source": {
+        "id": 506,
+        "revision": 3,
+        "brand": "Rolex",
+        "name": "Часы Datejust, 41 мм, сталь и белое золото, зеленый циферблат, ref. 126334",
+        "name_en": null,
+        "description": "2026 год, новые, полный комплект",
+        "description_en": null
+      },
+      "before": {
+        "description_en": null
+      },
+      "after": {
+        "description_en": "Year: 2026. New, full set."
+      }
+    },
+    {
+      "id": 507,
+      "expected_revision": 3,
+      "source": {
+        "id": 507,
+        "revision": 3,
+        "brand": "Rolex",
+        "name": "Часы Datejust, 41 мм, сталь и белое золото, мятный циферблат, ref. 126334",
+        "name_en": null,
+        "description": "2026 год, новые, полный комплект",
+        "description_en": null
+      },
+      "before": {
+        "description_en": null
+      },
+      "after": {
+        "description_en": "Year: 2026. New, full set."
+      }
+    },
+    {
+      "id": 508,
+      "expected_revision": 2,
+      "source": {
+        "id": 508,
+        "revision": 2,
+        "brand": "Rolex",
+        "name": "Часы Datejust, 41 мм, сталь и белое золото, серебристый циферблат, ref. 126334",
+        "name_en": null,
+        "description": "2026 год, новые, полный комплект",
+        "description_en": null
+      },
+      "before": {
+        "description_en": null
+      },
+      "after": {
+        "description_en": "Year: 2026. New, full set."
+      }
+    },
+    {
+      "id": 509,
+      "expected_revision": 2,
+      "source": {
+        "id": 509,
+        "revision": 2,
+        "brand": "Rolex",
+        "name": "Часы Datejust, 41 мм, сталь и белое золото, белый циферблат, ref. 126334",
+        "name_en": null,
+        "description": "2026 год, новые, полный комплект",
+        "description_en": null
+      },
+      "before": {
+        "description_en": null
+      },
+      "after": {
+        "description_en": "Year: 2026. New, full set."
+      }
+    },
+    {
+      "id": 510,
+      "expected_revision": 3,
+      "source": {
+        "id": 510,
+        "revision": 3,
+        "brand": "Rolex",
+        "name": "Часы Datejust, 41 мм, сталь и белое золото, белый циферблат, ref. 126334",
+        "name_en": null,
+        "description": "2026 год, новые, полный комплект",
+        "description_en": null
+      },
+      "before": {
+        "description_en": null
+      },
+      "after": {
+        "description_en": "Year: 2026. New, full set."
+      }
+    },
+    {
+      "id": 511,
+      "expected_revision": 3,
+      "source": {
+        "id": 511,
+        "revision": 3,
+        "brand": "Rolex",
+        "name": "Часы Datejust, 41 мм, сталь и белое золото, черный циферблат с бриллиантами, ref. 126334",
+        "name_en": null,
+        "description": "2026 год, новые, полный комплект",
+        "description_en": null
+      },
+      "before": {
+        "description_en": null
+      },
+      "after": {
+        "description_en": "Year: 2026. New, full set."
+      }
+    },
+    {
+      "id": 512,
+      "expected_revision": 2,
+      "source": {
+        "id": 512,
+        "revision": 2,
+        "brand": "Rolex",
+        "name": "Часы Datejust, 41 мм, сталь и белое золото, грифельный циферблат с бриллиантами, ref. 126334",
+        "name_en": null,
+        "description": "2026 год, новые, полный комплект",
+        "description_en": null
+      },
+      "before": {
+        "description_en": null
+      },
+      "after": {
+        "description_en": "Year: 2026. New, full set."
+      }
+    },
+    {
+      "id": 513,
+      "expected_revision": 2,
+      "source": {
+        "id": 513,
+        "revision": 2,
+        "brand": "Rolex",
+        "name": "Часы Datejust, 41 мм, сталь и белое золото, синий циферблат с бриллиантами, ref. 126334",
+        "name_en": null,
+        "description": "2026 год, новые, полный комплект",
+        "description_en": null
+      },
+      "before": {
+        "description_en": null
+      },
+      "after": {
+        "description_en": "Year: 2026. New, full set."
+      }
+    },
+    {
+      "id": 520,
+      "expected_revision": 3,
+      "source": {
+        "id": 520,
+        "revision": 3,
+        "brand": "Rolex",
+        "name": "Часы Datejust Ref. 278243",
+        "name_en": null,
+        "description": "31mm Oyster, Oystersteel and yellow gold",
+        "description_en": null
+      },
+      "before": {
+        "description_en": null
+      },
+      "after": {
+        "description_en": "Oyster, 31 mm, Oystersteel and yellow gold."
+      }
+    }
+  ]
+}
