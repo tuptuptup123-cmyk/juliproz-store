@@ -37,6 +37,7 @@ const server=http.createServer((req,res)=>{
   const dialog=page.locator('#productSaveReview'),checks=dialog.locator('input[type=checkbox]'),confirm=page.locator('#productSaveReviewConfirm');
   await page.locator('#save').click();await dialog.waitFor({state:'visible'});
   assert.equal(writes.length,0,'Opening review cannot write');assert.equal(await confirm.isDisabled(),true);
+  assert.match(await page.locator('#productSaveReviewIssues').innerText(),/ракурсы/,'Review includes the actual missing second photo');
   assert.equal(await dialog.locator('img').count(),0,'Product name rendered as text');
   for(let i=0;i<4;i++)await checks.nth(i).check();
   assert.equal(await confirm.isDisabled(),true);
