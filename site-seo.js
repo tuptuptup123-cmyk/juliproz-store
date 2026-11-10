@@ -61,7 +61,7 @@
  function sync(state,rows=null){
   if(rows!==null)outletRows=rows;
   const lang=language(),inCatalog=['catalog','hermes','chanel','watches','jewellery'].includes(state.tab);
-  if(state.tab==='home')for(const img of document.querySelectorAll('img[data-home-src]')){img.src=img.dataset.homeSrc;delete img.dataset.homeSrc}
+  if(state.tab==='home')for(const img of document.querySelectorAll('img[data-home-src]')){if(img.dataset.homeSizes)img.sizes=img.dataset.homeSizes;if(img.dataset.homeSrcset)img.srcset=img.dataset.homeSrcset;img.src=img.dataset.homeSrc;delete img.dataset.homeSrc;delete img.dataset.homeSrcset;delete img.dataset.homeSizes}
   if(serverRendered&&inCatalog&&data.kind==='catalog'){
    const url=new URL(location.href);url.searchParams.delete('sale');url.searchParams.delete('collection');url.searchParams.delete('category');if(state.tab==='watches')url.searchParams.set('category','watches');
    if(state.sale){url.searchParams.set('sale','1');if(window.SaleCollections?.groups[state.saleCollection])url.searchParams.set('collection',state.saleCollection)}
