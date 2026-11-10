@@ -19,7 +19,7 @@ const server=http.createServer((req,res)=>{const url=new URL(req.url,'http://loc
   const violations=await page.evaluate(async()=>{const r=await axe.run(document,{runOnly:{type:'tag',values:['wcag2a','wcag2aa','wcag21a','wcag21aa']}});return r.violations.map(v=>({id:v.id,targets:v.nodes.map(n=>n.target)}))});
   assert.deepEqual(violations,[],'Homepage accessibility '+language+' '+width);
  }
- const homeRequests=[];page.on('request',r=>{if(/\/images\/home-(boutique|lifestyle)\.jpg/.test(r.url()))homeRequests.push(r.url())});
+ const homeRequests=[];page.on('request',r=>{if(/\/images\/home-(boutique|lifestyle)(?:-\d+\.webp|\.jpg)/.test(r.url()))homeRequests.push(r.url())});
  await page.goto(origin+'/catalog?lang=en');await page.locator('html:not([data-server-view])').waitFor();
  assert.equal(homeRequests.length,0,'Hidden homepage photos must not download in the catalogue');
  assert.equal(await page.locator('.bottom-nav a[href][data-tab]').count(),12);
@@ -27,6 +27,7 @@ const server=http.createServer((req,res)=>{const url=new URL(req.url,'http://loc
  if(width>=900){const popupPromise=context.waitForEvent('page');await page.locator('.bottom-nav [data-tab=outlet]').click({modifiers:['Control']});const popup=await popupPromise;await popup.waitForURL(url=>url.pathname==='/outlet');assert.equal(new URL(popup.url()).pathname,'/outlet');assert.equal(new URL(page.url()).pathname,'/catalog');await popup.close();}
  await page.locator('.bottom-nav [data-tab=home]').click();await page.waitForFunction(()=>[...document.querySelectorAll('.home-photographs img')].every(img=>img.complete&&img.naturalWidth>0));
  assert.equal(new Set(homeRequests).size,2,'SPA home navigation must load both photographs');
+ assert.ok(await page.locator('.home-photographs img').evaluateAll(images=>images.every(img=>/\/home-(boutique|lifestyle)-\d+\.webp$/.test(img.currentSrc))),'Home photographs must use responsive WebP sources');
 
  await page.goto(origin+'/');await page.locator('html:not([data-server-view])').waitFor();await page.evaluate(()=>document.fonts.ready);
  assert.match(await page.locator('#webHomeTitle').innerText(),/Buyer service/);

@@ -26,7 +26,7 @@ test('server pages expose one page heading and keep inactive application section
   const html=site.render(template,kind,null,'en',[]);
   assert.equal((html.match(/<h1[\s>]/g)||[]).length,1,kind);
   assert.match(html,/id="storefrontShell"/);assert.match(html,/src="\/storefront-shell.js"/);
-  const shell=JSON.parse(html.match(/id="storefrontShell">([\s\S]*?)<\/script>/)[1]);assert.match(shell,/id="grid"/);assert.match(shell,/src="\/images\/brand-paw.webp"/);
+  const shell=JSON.parse(html.match(/id="storefrontShell">([\s\S]*?)<\/script>/)[1]);assert.match(shell,/id="grid"/);assert.match(shell,/src="\/images\/brand-paw-320.webp"/);assert.match(shell,/srcset="\/images\/brand-paw-160.webp 160w,/);
  }
 });
 test('HTML revalidation checks current availability before returning a cached body',async()=>{
