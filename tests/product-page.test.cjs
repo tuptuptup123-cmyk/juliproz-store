@@ -1,6 +1,16 @@
 const {test}=require('node:test'),assert=require('node:assert/strict'),{render,createHandler}=require('../server/product-page.cjs');
 const template='<!doctype html><html><head><title>Old</title><meta name="description" content="Old"><meta property="og:title" content="Old"><script src="app.js"></script></head><body></body></html>';
 const product={id:42,brand:'Brand',name:'Model <test>',description:'Full description',available:true,size:'M',price:150,currency:'EUR',stock_quantities:{M:1},image_url:'https://juliproz-store.vercel.app/images/test.webp',internal_note:'PRIVATE',purchase_cost:100};
+test('SEO titles distinguish known sizes while headings and Product names retain the item name',()=>{
+ const page=(size,lang='en')=>render(template,{...product,name:'Model',size},lang);
+ assert.match(page('40'),/<title>Brand — Model · Size: 40 \| JULI.PROZ<\/title>/);
+ assert.match(page('41'),/<title>Brand — Model · Size: 41 \| JULI.PROZ<\/title>/);
+ assert.match(page('M; S','ru'),/<title>Brand — Model · Размеры: S \/ M \| JULI.PROZ<\/title>/);
+ for(const size of [null,'','One Size','OS'])assert.match(page(size),/<title>Brand — Model \| JULI.PROZ<\/title>/);
+ assert.match(page('40'),/<h1>Brand — Model<\/h1>/);
+ const schema=JSON.parse(page('40').match(/type="application\/ld\+json">([^<]+)<\/script>/)[1]);assert.equal(schema.name,'Brand — Model');
+ assert.equal(require('../product-sizes.js').seoSuffix({size:'розовый; Синий'},'en',v=>v.replace('розовый','Pink').replace('Синий','Blue')),' · Colours: Pink / Blue');
+});
 test('crawlable delivery terms match stock status in both languages without fabricated merchant policies',()=>{
  for(const lang of ['ru','en'])for(const fulfillment_status of ['in_stock','on_order']){
   const html=render(template,{...product,fulfillment_status},lang),terms='https://www.juliproz.com/terms.html'+(lang==='en'?'?lang=en':'');

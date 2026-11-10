@@ -35,7 +35,7 @@ test('rendered product heading, metadata, structured data and contact all use th
  const p={id:456,name:'Лоферы Summer Walk',brand:'Loro Piana',price:500,currency:'EUR',available:true,size:'40'};
  const html=product.render(fs.readFileSync('index.html','utf8'),p,'en');
  assert.match(html,/<h1>Loro Piana — Summer Walk loafers<\/h1>/);
- assert.match(html,/<title>Loro Piana — Summer Walk loafers \| JULI.PROZ<\/title>/);
+ assert.match(html,/<title>Loro Piana — Summer Walk loafers · Size: 40 \| JULI.PROZ<\/title>/);
  assert.match(html,/"name":"Loro Piana — Summer Walk loafers"/);
  const url=new URL(html.match(/class="seo-contact" href="([^"]+)"/)[1]);
  assert.match(url.searchParams.get('text'),/Summer Walk loafers/);

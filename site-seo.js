@@ -92,14 +92,14 @@
  }
  function product(p,options={}){
   if(!serverRendered)return;
-  const path='/product/'+p.id,title={},description={},translate=(s,lang)=>lang==='en'?root.SiteLanguage.english(s):String(s||'');
+  const path='/product/'+p.id,title={},description={},names={},translate=(s,lang)=>lang==='en'?root.SiteLanguage.english(s):String(s||'');
   for(const lang of ['ru','en']){
    const name=[p.brand,root.ProductCopy.value(p,'name',lang,s=>translate(s,lang))].filter(Boolean).join(' — ').slice(0,240),details=(root.ProductCopy.value(p,'description',lang,s=>translate(s,lang))||name).slice(0,500);
-   title[lang]=name+' | JULI.PROZ';description[lang]=[...new Set([name,details,translate(p.size,lang)].filter(Boolean))].join(' · ').slice(0,320);
+   names[lang]=name;title[lang]=name+root.ProductSizes.seoSuffix(p,lang,v=>translate(v,lang))+' | JULI.PROZ';description[lang]=[...new Set([name,details,translate(p.size,lang)].filter(Boolean))].join(' · ').slice(0,320);
   }
   const image=p.image_url&&root.publicProductImage?.(p.image_url),price=root.ProductPricing.amount(p.price,p.currency),lang=language(),url=content.url(path,lang);
   const availability=p.reserved?'OutOfStock':p.fulfillment_status==='on_order'?'PreOrder':root.ProductSizes.stockUnits(p)>0?'InStock':'OutOfStock';
-  const productSchema={...root.CatalogSEO?.properties(p,lang,v=>translate(v,lang)),'@context':'https://schema.org','@type':'Product',name:title[lang].replace(/ \| JULI\.PROZ$/,''),sku:String(p.id),url,description:description[lang],brand:{'@type':'Brand',name:p.brand},...(image?{image:[image]}:{}),itemCondition:'https://schema.org/'+(!p.product_condition||p.product_condition==='new'?'NewCondition':'UsedCondition')};
+  const productSchema={...root.CatalogSEO?.properties(p,lang,v=>translate(v,lang)),'@context':'https://schema.org','@type':'Product',name:names[lang],sku:String(p.id),url,description:description[lang],brand:{'@type':'Brand',name:p.brand},...(image?{image:[image]}:{}),itemCondition:'https://schema.org/'+(!p.product_condition||p.product_condition==='new'?'NewCondition':'UsedCondition')};
   if(price!==null)productSchema.offers={'@type':'Offer',url,price,priceCurrency:'EUR',availability:'https://schema.org/'+availability,seller:{'@type':'Organization',name:'JULI.PROZ'}};
   const wasProduct=/^\/product\/[1-9]\d*\/?$/.test(location.pathname);
   data={kind:'product',path,title,description,image,productSchema};productPages.set(path,data);

@@ -13,7 +13,7 @@ function render(template,p,lang='ru'){
  const breadcrumb={'@context':'https://schema.org','@type':'BreadcrumbList',itemListElement:[{'@type':'ListItem',position:1,name:'JULI.PROZ',item:seo.url('/',lang)},{'@type':'ListItem',position:2,name:lang==='en'?'Collection':'Каталог',item:seo.url('/catalog',lang)},{'@type':'ListItem',position:3,name:title,item:canonical}]};
  // A shared condition note such as 'new, full set' must not become an identical snippet for every model.
  const summaries=Object.fromEntries(['ru','en'].map(language=>[language,[...new Set([titles[language],descriptions[language],seo.translate(p.size||'',language)].filter(Boolean))].join(' · ').slice(0,320)]));
- const page={kind:'product',path:route,title:{ru:titles.ru+' | JULI.PROZ',en:titles.en+' | JULI.PROZ'},description:summaries,image:images[0]};
+ const page={kind:'product',path:route,title:Object.fromEntries(['ru','en'].map(language=>[language,titles[language]+sizes.seoSuffix(p,language,v=>seo.translate(v,language))+' | JULI.PROZ'])),description:summaries,image:images[0]};
  const html=seo.decorate(template,page,lang,[...(price===null?[{'@context':'https://schema.org','@type':'WebPage',name:title,url:canonical,inLanguage:lang}]:[schema]),breadcrumb]);
  const status=seo.translate(p.reserved?'На брони':p.fulfillment_status==='on_order'?'Под заказ':available==='InStock'?'В наличии':'Нет в наличии',lang);
  const delivery=p.fulfillment_status==='on_order'?'10–14':'7–10',terms=seo.url('/terms.html',lang);
