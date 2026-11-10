@@ -413,7 +413,7 @@ function edit(p){if(window.AdminPartners?.mayLeave()===false||window.AdminSchedu
 function renderProductTranslationStatus(){
  const f=$('editor').elements,el=$('productTranslationStatus');if(!el||!window.ProductCopy)return;
  const p={name:f.name.value,description:f.description.value,name_en:f.name_en.value,description_en:f.description_en.value},missing=ProductCopy.missing(p);
- el.textContent=missing.length?'Нужен английский перевод: '+missing.map(k=>k==='name'?'название':'описание').join(', ')+'. Заполните поля ниже для английской версии сайта.':'Перевод подготовлен. Проверьте точность модели и комплектации.';
+ el.textContent=missing.length?'Нужен английский перевод: '+missing.map(k=>k==='name'?'название':'описание').join(', ')+'. Можно опубликовать сейчас и добавить перевод позже.':'Перевод подготовлен. Проверьте точность модели и комплектации.';
  for(const lang of ['ru','en']){
   const output=$('productSeoTitle'+(lang==='ru'?'Ru':'En'));if(!output)continue;
   if(!p.name.trim()){output.textContent='';continue}
@@ -565,7 +565,6 @@ $('editor').onsubmit=async e=>{e.preventDefault();if(busy)return;busy=true;const
  if(!['in_stock','on_order'].includes(payload.fulfillment_status))throw Error('Выбери статус товара.');
  if(payload.brand.length>150)throw Error('Общая длина названий брендов — не больше 150 символов.');
  if(!payload.brand||!payload.name||!payload.category)throw Error('Заполни бренд, название и категорию.');
- if(window.ProductCopy&&payload.available&&(!original||!original.available||original.name!==payload.name||original.description!==payload.description||(original.name_en||null)!==payload.name_en||(original.description_en||null)!==payload.description_en)&&ProductCopy.missing(payload).length){$('productEnglishFields').open=true;throw Error('Заполните английский перевод названия и описания. Вещь можно сохранить скрытой до готовности перевода.')}
  if(payload.price!==null&&(!Number.isFinite(payload.price)||payload.price<0))throw Error('Проверь цену.');
  window.ProductPricing.validate(payload.original_price,payload.price);
  payload.price=window.ProductPricing.amount(payload.price,payload.currency);payload.original_price=window.ProductPricing.amount(payload.original_price,payload.currency);
