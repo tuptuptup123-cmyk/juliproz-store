@@ -49,3 +49,10 @@ test('photo reads and uploads get narrowly scoped Storage capabilities without e
  for(const url of ['https://evil.invalid/image.webp',origin+'/storage/v1/object/public/product-photos/x?token=secret'])assert.equal((await f.invoke('/session/photo',{cookie,csrf,method:'POST',body:{url}})).status,400);
  for(const path of ['other-user/file.webp',f.user.id+'/../file.webp'])assert.equal((await f.invoke('/session/upload',{cookie,csrf,method:'POST',body:{path}})).status,400);
 });
+
+test('legacy public photos never receive admin credentials',async()=>{
+ const f=fixture(),{cookie,csrf}=await f.login();
+ await f.invoke('/session/photo',{cookie,csrf,method:'POST',body:{url:'https://juliproz-store.vercel.app/images/fixture.webp'}});
+ const call=f.calls.find(c=>c.url==='https://juliproz-store.vercel.app/images/fixture.webp');
+ assert.ok(call);assert.deepEqual(call.options.headers,{});assert.equal(call.options.redirect,'error');
+});

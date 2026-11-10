@@ -156,7 +156,7 @@ function createHandler(env=process.env,request=fetch,now=()=>Date.now()){
     else if(target.origin==='https://juliproz-store.vercel.app'&&target.pathname.startsWith('/images/'))imageURL=target.href;
     else throw fail(400,'Недопустимое фото.');
     if(target.username||target.password||target.search||target.hash)throw fail(400,'Недопустимое фото.');
-    const r=await request(imageURL,{headers:{Authorization:'Bearer '+current.data.access_token,...(target.origin===config.url?{apikey:config.key}:{})},redirect:'error',signal:AbortSignal.timeout(15000)});
+    const r=await request(imageURL,{headers:target.origin===config.url?{Authorization:'Bearer '+current.data.access_token,apikey:config.key}:{},redirect:'error',signal:AbortSignal.timeout(15000)});
     if(!r.ok)throw fail(r.status,'Не удалось загрузить фото.');
     const type=r.headers.get('content-type')?.split(';')[0];if(!['image/png','image/jpeg','image/webp'].includes(type)||Number(r.headers.get('content-length'))>6*1024*1024)throw fail(400,'Недопустимое фото.');
     const bytes=Buffer.from(await r.arrayBuffer());if(bytes.length>6*1024*1024)throw fail(413,'Фото слишком большое.');res.statusCode=200;res.setHeader('Content-Type',type);return res.end(bytes);

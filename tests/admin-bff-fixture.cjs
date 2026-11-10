@@ -27,6 +27,7 @@ function fixture(options={}){
   if(path.endsWith('/verify')){aal='aal2';return response(auth())}
   if(path.startsWith('/storage/v1/object/sign/product-photos/'))return response({signedURL:path.slice('/storage/v1'.length)+'?token=short-capability'});
   if(path.startsWith('/storage/v1/object/upload/sign/product-photos/'))return response({url:path.slice('/storage/v1'.length)+'?token=upload-capability'});
+  if(new URL(url).origin==='https://juliproz-store.vercel.app'&&path.startsWith('/images/'))return new Response('{}',{headers:{'Content-Type':'image/webp'}});
   if(path==='/auth/v1/logout')return response({});
   if(path==='/rest/v1/store_admins')return response(options.membership===false?[]:[{user_id:owner}]);
   if(path.endsWith('/touch_store_admin_session')){if(touchGate)await touchGate;if(touchFailure)return response({message:'Synthetic interruption'},touchFailure);const row=[...rows.values()][0];return response({server_now:new Date(time).toISOString(),expires_at:row?.expires_at,idle_expires_at:row?.expires_at})}

@@ -1,0 +1,37 @@
+name: Full storefront and admin audit
+on:
+  pull_request:
+    paths: ['server/admin-bff.cjs', 'tests/admin-bff*', 'tests/system-chrome.cjs', 'scripts/audit-browser-suite.cjs', '.github/workflows/full-audit.yml']
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        group: [0, 1, 2, 3]
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24'
+      - run: npm install --prefix "$RUNNER_TEMP/jp-audit-browser" --no-audit --no-fund --ignore-scripts playwright@1.56.1 axe-core@4.10.3
+      - run: node scripts/stage-photo-assets.cjs
+      - run: node scripts/build-telegram.cjs
+      - run: node --test tests/*.test.cjs
+      - run: node scripts/audit-browser-suite.cjs
+        env:
+          NODE_PATH: ${{ runner.temp }}/jp-audit-browser/node_modules
+          QA_SYSTEM_CHROME: '1'
+          QA_GROUP: ${{ matrix.group }}
+          QA_OUTPUT: ${{ runner.temp }}/jp-audit-qa
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: full-audit-${{ matrix.group }}
+          path: ${{ runner.temp }}/jp-audit-qa
+          retention-days: 7
