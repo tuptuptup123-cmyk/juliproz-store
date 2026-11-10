@@ -4,7 +4,7 @@ const {escape}=seo,origin=seo.origin,fields='id,brand,name,name_en,description_e
 const {photo}=require('./public-product-image.cjs');
 function render(template,p,lang='ru'){
  lang=seo.language(lang);const route='/product/'+p.id,canonical=seo.url(route,lang),titles={},descriptions={};
- for(const language of ['ru','en']){titles[language]=[p.brand,seo.productCopy(p,'name',language)].filter(Boolean).join(' — ').slice(0,240);descriptions[language]=(seo.productCopy(p,'description',language)||[titles[language],seo.translate(p.size,language)].filter(Boolean).join(' · ')).slice(0,500)}
+ for(const language of ['ru','en']){titles[language]=[p.brand,seo.productCopy(p,'name',language)].filter(Boolean).join(' — ').slice(0,240);descriptions[language]=(seo.productCopy(p,'description',language)||titles[language]).slice(0,500)}
  const title=titles[lang],description=descriptions[lang],images=[...new Set([p.image_url,...(Array.isArray(p.photos)?p.photos:[])].map(photo).filter(Boolean))].slice(0,8),price=pricing.amount(p.price,p.currency);
  const available=p.reserved?'OutOfStock':p.fulfillment_status==='on_order'?'PreOrder':sizes.stockUnits(p)>0?'InStock':'OutOfStock';
  const schema={'@context':'https://schema.org','@type':'Product',name:title,sku:String(p.id),url:canonical,description,brand:{'@type':'Brand',name:p.brand},...(images.length?{image:images}:{}),itemCondition:p.product_condition==='new'||!p.product_condition?'https://schema.org/NewCondition':'https://schema.org/UsedCondition'};

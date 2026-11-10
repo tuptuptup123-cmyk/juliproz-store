@@ -93,7 +93,7 @@
   if(!serverRendered)return;
   const path='/product/'+p.id,title={},description={},translate=(s,lang)=>lang==='en'?root.SiteLanguage.english(s):String(s||'');
   for(const lang of ['ru','en']){
-   const name=[p.brand,root.ProductCopy.value(p,'name',lang,s=>translate(s,lang))].filter(Boolean).join(' — ').slice(0,240),details=(root.ProductCopy.value(p,'description',lang,s=>translate(s,lang))||[name,translate(p.size,lang)].filter(Boolean).join(' · ')).slice(0,500);
+   const name=[p.brand,root.ProductCopy.value(p,'name',lang,s=>translate(s,lang))].filter(Boolean).join(' — ').slice(0,240),details=(root.ProductCopy.value(p,'description',lang,s=>translate(s,lang))||name).slice(0,500);
    title[lang]=name+' | JULI.PROZ';description[lang]=[...new Set([name,details,translate(p.size,lang)].filter(Boolean))].join(' · ').slice(0,320);
   }
   const image=p.image_url&&root.publicProductImage?.(p.image_url),price=root.ProductPricing.amount(p.price,p.currency),lang=language(),url=content.url(path,lang);
