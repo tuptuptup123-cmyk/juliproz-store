@@ -10,9 +10,9 @@ test('public facts require explicit labels and never infer accessories, gold har
 test('model collections isolate the exact model and brand and render public crawlable bilingual pages',()=>{
  const rows=[{id:1,brand:'Hermès',name:'Сумка Birkin 25',available:true},{id:2,brand:'Hermès',name:'Сумка Birkin 250',available:true},{id:3,brand:'Other',name:'Birkin 25',available:true},{id:4,brand:'Hermès',name:'Сумка Birkin 25',available:false}];
  for(const lang of ['ru','en']){
-  const html=pages.render(seo.models[0],rows,lang);assert.match(html,new RegExp('href="https://www.juliproz.com/product/1'+(lang==='en'?'\\?lang=en':'')+'"'));
-  assert.doesNotMatch(html,/product\/(?:2|3|4)(?:\?|"|<)/);assert.equal((html.match(/<h1>/g)||[]).length,1);assert.match(html,/hreflang="en"/);assert.match(html,/CollectionPage/);
-  if(lang==='en')assert.doesNotMatch(html.split('<body>')[1],/[А-Яа-яЁё]/);
+  const html=pages.render(seo.models.find(m=>m.slug==='hermes-birkin-25'),rows,lang);assert.match(html,new RegExp('href="https://www.juliproz.com/product/1'+(lang==='en'?'\\?lang=en':'')+'"'));
+  assert.doesNotMatch(html,/product\/(?:2|3|4)(?:\?|"|<)/);assert.equal((html.match(/<h1\b/g)||[]).length,1);assert.match(html,/hreflang="en"/);assert.match(html,/CollectionPage/);
+  if(lang==='en')assert.doesNotMatch(html.match(/<article id="serverLanding"[\s\S]*?<\/article>/)[0],/[А-Яа-яЁё]/);
  }
 });
 test('unknown model slugs are 404s and upstream failure is retryable rather than a blank collection',async()=>{

@@ -117,13 +117,13 @@ function syncWebNavigation(){
 function initialStoreTab(){
  const params=new URLSearchParams(location.search);
  if(!isTelegramStore()&&String(location.pathname||'').replace(/\/$/,'')==='/catalog'&&params.get('category')==='watches')return 'watches';
- const page=window.SiteSEO?.page,route=page?.kind;if(['brand','catalog','watches','jewellery','services','sell','outlet'].includes(route))return route==='brand'?(page.brand==='Hermès'?'hermes':page.brand==='Chanel'?'chanel':'catalog'):route;
+ const page=window.SiteSEO?.page,route=page?.kind;if(['model','brand','catalog','watches','jewellery','services','sell','outlet'].includes(route))return route==='model'?'catalog':route==='brand'?(page.brand==='Hermès'?'hermes':page.brand==='Chanel'?'chanel':'catalog'):route;
  if(!isTelegramStore()&&['favorites','cart','about'].includes(params.get('tab')))return params.get('tab');
  const linked=/^\/product\/[1-9]\d*\/?$/.test(location.pathname)||params.has('product')||params.get('startapp')?.startsWith('p_')||params.get('tgWebAppStartParam')?.startsWith('p_')||window.Telegram?.WebApp?.initDataUnsafe?.start_param?.startsWith('p_');
  return isTelegramStore()||linked||params.get('tab')==='catalog'?'catalog':'home';
 }
 function catalogSelectionFromURL(){return !isTelegramStore()&&window.SaleCollections&&String(location.pathname||'').replace(/\/$/,'')==='/catalog'?window.SaleCollections.fromSearch(location.search):{sale:false,saleCollection:null}}
-let state={sort:"recommended",...catalogSelectionFromURL(),product_condition:null,gender:null,fulfillment_status:null,category:initialStoreTab()==='watches'?'Часы':initialStoreTab()==='jewellery'?'Украшения':null,brand:window.SiteSEO?.page?.brand||null,size:null,search:"",favorites:new Set((()=>{try{return JSON.parse(localStorage.getItem("jpFav")||"[]").map(String)}catch{return []}})()),tab:initialStoreTab()};
+let state={sort:"recommended",...catalogSelectionFromURL(),model:window.SiteSEO?.page?.modelSlug||null,product_condition:null,gender:null,fulfillment_status:null,category:initialStoreTab()==='watches'?'Часы':initialStoreTab()==='jewellery'?'Украшения':null,brand:window.SiteSEO?.page?.brand||null,size:null,search:"",favorites:new Set((()=>{try{return JSON.parse(localStorage.getItem("jpFav")||"[]").map(String)}catch{return []}})()),tab:initialStoreTab()};
 const grid=document.getElementById("grid"),count=document.getElementById("count"),sheet=document.getElementById("sheet"),options=document.getElementById("sheetOptions");
 let currentFilter=null,tempValue=null;
 
@@ -137,14 +137,15 @@ function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&l
 function matchesAvailability(p){return !state.fulfillment_status||(state.fulfillment_status==='on_order'?onOrder(p):!onOrder(p)&&!p.reserved&&ProductSizes.stockUnits(p)>0)}
 function matchesSale(p){return !state.sale||(window.SaleCollections?window.SaleCollections.matches(p,state.saleCollection):Boolean(window.ProductPricing.discount(p)))}
 function matchesGender(p){return !state.gender||p.gender===state.gender||p.gender==='unisex'||!p.gender}
+function matchesModel(p){const model=window.CatalogSEO?.models.find(m=>m.slug===state.model);return !model||window.CatalogSEO.matches(model,p)}
 function matchesContext(p,except){
-  return matchesSale(p)&&matchesGender(p)&&matchesCondition(p)&&matchesAvailability(p)&&(except==='category'||!state.category||hasCategory(p,state.category))&&(except==='brand'||!state.brand||hasBrand(p,state.brand))&&(except==='size'||!state.size||sizesOf(p).includes(state.size));
+  return matchesModel(p)&&matchesSale(p)&&matchesGender(p)&&matchesCondition(p)&&matchesAvailability(p)&&(except==='category'||!state.category||hasCategory(p,state.category))&&(except==='brand'||!state.brand||hasBrand(p,state.brand))&&(except==='size'||!state.size||sizesOf(p).includes(state.size));
 }
 function valuesFor(type){
   if(type==='product_condition')return ['Все','new','pre_owned','vintage','commission'];
   if(type==='fulfillment_status')return ['Все','in_stock','on_order'];
   // Offer categories within the audience, then brands and sizes within the category.
-  const scope=catalogueProducts().filter(p=>matchesSale(p)&&matchesGender(p)&&matchesCondition(p)&&matchesAvailability(p)&&(type==='category'||!state.category||hasCategory(p,state.category))&&(type!=='size'||!state.brand||hasBrand(p,state.brand)));
+  const scope=catalogueProducts().filter(p=>matchesModel(p)&&matchesSale(p)&&matchesGender(p)&&matchesCondition(p)&&matchesAvailability(p)&&(type==='category'||!state.category||hasCategory(p,state.category))&&(type!=='size'||!state.brand||hasBrand(p,state.brand)));
   const values=scope.flatMap(p=>type==='size'?(variantLabel(p)==='размер'?sizesOf(p):[]):type==='brand'?brandsOf(p):[type==='category'?categoryOf(p):p[type]]).filter(Boolean);
   return ['Все',...(type==='size'?[...new Set(values)]:taxonomy.unique(values)).sort((a,b)=>type==='size'?ProductSizes.compare(a,b):String(a).localeCompare(String(b),'ru'))];
 }
@@ -274,9 +275,10 @@ let menuOpenGroup='category';
 let menuCloseTimer=null;
 const menuLabels={product_condition:'Раздел',category:'Категория',size:'Размер',brand:'Бренд',fulfillment_status:'Наличие'};
 function renderCatalogMenu(){
+  const modelMenu=document.getElementById('menuModelCollections');if(modelMenu)modelMenu.innerHTML=window.CatalogSEO?.modelLinks(null,window.SiteLanguage?.language||'ru',state.model)||'';
   document.querySelectorAll('[data-hot-brand]').forEach(b=>b.setAttribute('aria-pressed',String(Boolean(state.brand)&&sameLabel(state.brand,b.dataset.hotBrand))));
   document.querySelectorAll('[data-sale]').forEach(b=>b.setAttribute('aria-pressed',String(state.sale)));
-  const labels=[state.sale?'SALE':null,state.sale?window.SaleCollections?.groups[state.saleCollection]?.ru:null,state.product_condition?conditionLabels[state.product_condition]:null,state.gender?({men:'Мужское',women:'Женское'}[state.gender]):null,state.category,state.brand,state.size,state.fulfillment_status?statusLabels[state.fulfillment_status]:null].filter(Boolean);
+  const labels=[window.CatalogSEO?.models.find(m=>m.slug===state.model)?.name,state.sale?'SALE':null,state.sale?window.SaleCollections?.groups[state.saleCollection]?.ru:null,state.product_condition?conditionLabels[state.product_condition]:null,state.gender?({men:'Мужское',women:'Женское'}[state.gender]):null,state.category,state.brand,state.size,state.fulfillment_status?statusLabels[state.fulfillment_status]:null].filter(Boolean);
   const badge=document.getElementById('menuBadge');badge.textContent=String(labels.length);badge.classList.toggle('hidden',!labels.length);
   const summary=document.getElementById('filterSummary');summary.textContent=labels.join(' · ');summary.classList.toggle('hidden',!labels.length);
   if(document.getElementById('catalogMenu').classList.contains('hidden'))return;
@@ -350,8 +352,8 @@ function showMoneyPaw(button){
   moneyPawTimer=setTimeout(()=>paw.classList.remove('is-presenting'),1050);
 }
 ['closeCatalogMenu','menuBackdrop'].forEach(id=>document.getElementById(id).onclick=()=>setCatalogMenu(false));
-document.getElementById('showMenuProducts').onclick=()=>{setTab('catalog');setCatalogMenu(false)};
-document.querySelectorAll('[data-hot-brand]').forEach(b=>b.onclick=()=>{const brand=state.brand&&sameLabel(state.brand,b.dataset.hotBrand)?null:b.dataset.hotBrand;state.sale=false;state.saleCollection=null;state.product_condition=state.gender=state.fulfillment_status=state.category=state.size=null;state.search='';document.getElementById('search').value='';state.brand=brand;if(state.tab!=='catalog')setTab('catalog');else render()});
+document.getElementById('showMenuProducts').onclick=()=>{setTab('catalog',{keepModel:true,model:state.model});setCatalogMenu(false)};
+document.querySelectorAll('[data-hot-brand]').forEach(b=>b.onclick=()=>{state.model=null;const brand=state.brand&&sameLabel(state.brand,b.dataset.hotBrand)?null:b.dataset.hotBrand;state.sale=false;state.saleCollection=null;state.product_condition=state.gender=state.fulfillment_status=state.category=state.size=null;state.search='';document.getElementById('search').value='';state.brand=brand;if(state.tab!=='catalog')setTab('catalog');else render()});
 document.querySelectorAll('[data-sale]').forEach(b=>b.onclick=()=>{state.sale=!state.sale;state.saleCollection=null;reconcileFilters();if(state.tab!=='catalog')setTab('catalog');else render()});
 document.getElementById('resetMenu').onclick=()=>{document.getElementById('reset').onclick();menuOpenGroup='category';renderCatalogMenu()};
 document.getElementById('menuGroups').onkeydown=e=>{if(e.key===' '&&e.target.matches('a.menu-choice[role="button"]')){e.preventDefault();e.target.click()}};
@@ -448,7 +450,7 @@ function openFilter(type){
 options.onclick=e=>{if(!e.target.dataset.v)return;tempValue=e.target.dataset.v==="Все"?null:e.target.dataset.v;[...options.children].forEach(x=>x.classList.toggle("selected",(tempValue===x.dataset.v)||(!tempValue&&x.dataset.v==="Все")))};
 document.getElementById("applyFilter").onclick=()=>{state[currentFilter]=tempValue;sheet.classList.add("hidden");render()};
 document.getElementById("closeSheet").onclick=()=>sheet.classList.add("hidden");
-document.getElementById("reset").onclick=()=>{setSortOpen(false);sortRevision++;state.sort="recommended";document.getElementById("sortStatus").textContent="";state.sale=false;state.saleCollection=null;state.product_condition=state.gender=state.fulfillment_status=state.category=state.brand=state.size=null;state.search="";document.getElementById("search").value="";render()};
+document.getElementById("reset").onclick=()=>{setSortOpen(false);sortRevision++;state.sort="recommended";document.getElementById("sortStatus").textContent="";state.sale=false;state.saleCollection=null;state.model=state.product_condition=state.gender=state.fulfillment_status=state.category=state.brand=state.size=null;state.search="";document.getElementById("search").value="";render()};
 grid.onclick=e=>{
   if(e.target.id==="retryProducts"){loadProducts();return}
   const h=e.target.closest("[data-heart]");
@@ -468,6 +470,7 @@ function liveCartProduct(row){const p=products.find(p=>String(p.id)===row.id);re
 function cartSnapshot(p){const snapshot=Object.fromEntries(['id','brand','name','category','price','currency','image_url','photos','size','fulfillment_status','reserved','stock_quantities','original_price'].map(k=>[k,['price','original_price'].includes(k)?window.ProductPricing.amount(p[k],p.currency):p[k]]));snapshot.price_basis=p.price_basis||{price:p.price,original_price:p.original_price};return snapshot}
 function saveCart(){cartRevision++;try{localStorage.setItem('jpCart',JSON.stringify(cart))}catch{document.getElementById('cartStatus').textContent='Корзина доступна в этом сеансе. Браузер не разрешил сохранить её.'}}
 function setTab(tab,options={}){
+  if(options.history!==false&&!options.keepModel){const model=window.CatalogSEO?.models.find(m=>m.slug===options.model);if(state.model||model){state.model=model?.slug||null;state.brand=model?.brand||null;state.sale=false;state.saleCollection=null;state.product_condition=state.gender=state.fulfillment_status=state.category=state.size=null;state.search='';document.getElementById('search').value=''}}
   if(['watches','jewellery'].includes(state.tab)&&tab!==state.tab){state.category=null;state.size=null}
   if(['home','about','hermes','chanel','watches','jewellery','outlet'].includes(tab)&&isTelegramStore())return;
   if(window.SiteSEO?.page?.kind==='brand'&&!['catalog','hermes','chanel','watches','jewellery'].includes(tab))state.brand=null;
@@ -640,7 +643,7 @@ function openProduct(id,linked=false){
   navigationRevision++;
   const raw=products.find(x=>String(x.id)===String(id));if(!raw)return;
   if(!isTelegramStore()&&window.SiteSEO?.serverRendered&&!/^\/product\//.test(location.pathname)){
-   const view=Object.fromEntries(['tab','sort','sale','saleCollection','product_condition','gender','fulfillment_status','category','brand','size','search'].map(key=>[key,state[key]]));
+   const view=Object.fromEntries(['model','tab','sort','sale','saleCollection','product_condition','gender','fulfillment_status','category','brand','size','search'].map(key=>[key,state[key]]));
    history.replaceState({...history.state,catalogView:view,catalogScroll:window.scrollY},'');
   }
   let p=presentationProduct(id);
@@ -822,7 +825,7 @@ document.addEventListener("click",event=>{if(event.target.closest('a[data-contac
 window.addEventListener('popstate',()=>{
  if(isTelegramStore()||!window.SiteSEO)return;
  productHistoryBackPending=false;
- const page=window.SiteSEO.restore();state.brand=page.brand||null;Object.assign(state,catalogSelectionFromURL());state.product_condition=state.gender=state.fulfillment_status=state.category=state.size=null;
+ const page=window.SiteSEO.restore();state.model=page.modelSlug||null;state.brand=page.brand||null;Object.assign(state,catalogSelectionFromURL());state.product_condition=state.gender=state.fulfillment_status=state.category=state.size=null;
  const returnFocus=productReturnFocus,productId=/^\/product\/([1-9]\d*)\/?$/.exec(location.pathname)?.[1],saved=!productId&&history.state?.catalogView;
  if(saved)Object.assign(state,saved);
  setTab(saved?.tab||initialStoreTab(),{history:false});
@@ -830,3 +833,6 @@ window.addEventListener('popstate',()=>{
  const lang=new URLSearchParams(location.search).get('lang')==='en'?'en':'ru';if(window.SiteLanguage?.language!==lang)window.SiteLanguage?.set(lang);
  if(productId)openLinkedProduct(productId);
 });
+
+// Model collections use the existing catalogue, cards, filters and menu.
+document.addEventListener('click',event=>{const link=event.target.closest('a[data-model]');if(!link||!followInPlace(event))return;const model=window.CatalogSEO?.models.find(m=>m.slug===link.dataset.model);if(!model)return;event.preventDefault();setCatalogMenu(false);setTab('catalog',{model:model.slug});window.scrollTo({top:0,behavior:'instant'})});

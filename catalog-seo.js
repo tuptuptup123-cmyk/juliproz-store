@@ -3,6 +3,7 @@
  'use strict';
  const origin='https://www.juliproz.com',contentDate='2026-11-10';
  const models=[
+  {slug:'rolex-day-date',brand:'Rolex',brandSlug:'rolex',name:'Rolex Day-Date',pattern:/\bday[- ]date\b/i,intro:{ru:'Rolex Day-Date в актуальном каталоге: фотографии, референсы, цены и поиск нужного исполнения.',en:'Explore current Rolex Day-Date listings, photos, references and prices, or request your preferred version.'},guide:{ru:'Укажите референс, диаметр, циферблат и бюджет.',en:'Share your preferred reference, diameter, dial and budget.'}},
   {slug:'hermes-birkin-25',brand:'Hermès',brandSlug:'hermes',name:'Hermès Birkin 25',pattern:/\bbirkin\s*25\b/i,
    intro:{ru:'Birkin 25 в актуальном каталоге JULI.PROZ. Сравните конкретные предложения по коже, цвету, фурнитуре и цене; наличие и итоговые условия подтвердит менеджер.',en:'Explore the current JULI.PROZ Birkin 25 selection. Compare the listed leather, colour, hardware and price of each piece; our team confirms availability and final terms.'},
    guide:{ru:'Для поиска Birkin 25 укажите желаемый цвет, кожу, фурнитуру и бюджет. Если важен конкретный комплект или состояние, сообщите об этом до согласования заказа.',en:'For a Birkin 25 sourcing request, share your preferred colour, leather, hardware and budget. Tell us before ordering if you require a particular condition or set of accessories.'}},
@@ -49,7 +50,8 @@
   const suffix=lang==='en'?'?lang=en':'';
   return '<nav class="product-collection-links" data-no-translate aria-label="'+(lang==='en'?'Explore the collection':'Смотреть коллекцию')+'">'+(brandSlug?'<a href="/brands/'+brandSlug+suffix+'">'+escape(p.brand)+'</a>':'')+(model?'<a href="/models/'+model.slug+suffix+'">'+escape(model.name)+'</a>':'')+'</nav>';
  }
- function modelLinks(brand,lang='ru'){const list=models.filter(m=>!brand||m.brand===brand);return '<nav class="model-links" data-no-translate aria-label="'+(lang==='en'?'Explore models':'Подборки по моделям')+'">'+list.map(m=>'<a href="/models/'+m.slug+(lang==='en'?'?lang=en':'')+'">'+escape(m.name)+'</a>').join('')+'</nav>'}
+ function modelLinks(brand,lang='ru',active=null){const list=models.filter(m=>!brand||m.brand===brand);if(!list.length)return '';return '<section class="popular-models" data-no-translate><h2>'+(lang==='en'?'Popular models':'Популярные модели')+'</h2><nav class="model-links" aria-label="'+(lang==='en'?'Popular models':'Популярные модели')+'">'+list.map(m=>'<a data-model="'+m.slug+'" href="/models/'+m.slug+(lang==='en'?'?lang=en':'')+'" '+(active===m.slug?'aria-current="page"':'')+'>'+escape(m.name)+'</a>').join('')+'</nav></section>'}
+
  function properties(p,lang='ru',translate){const f=facts(p,lang,translate),find=key=>f.find(v=>v.key===key)?.value;return {...(find('mpn')?{mpn:find('mpn')}:{}),...(find('color')?{color:find('color')}:{}),...(find('material')?{material:find('material')}:{}),...(find('size')?{size:find('size')}:{}),additionalProperty:f.filter(v=>['hardware','wear'].includes(v.key)).map(v=>({'@type':'PropertyValue',name:v.label,value:v.value}))}}
  function lastmod(value){if(!value||!/^\d{4}-\d\d-\d\d(?:T.*)?$/.test(String(value)))return null;const stamp=Date.parse(value);return Number.isFinite(stamp)&&stamp<=Date.now()?new Date(stamp).toISOString():null}
  return {origin,contentDate,models,matches,modelFor,facts,factsHTML,linksHTML,modelLinks,properties,lastmod,escape,englishFact};
