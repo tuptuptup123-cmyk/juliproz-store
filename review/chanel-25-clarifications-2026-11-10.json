@@ -1,0 +1,167 @@
+{
+  "batch": "2026-11-10-chanel-25-title-clarification",
+  "products": [
+    {
+      "id": 623,
+      "before": {
+        "id": 623,
+        "brand": "Chanel",
+        "name": "Сумка Chanel 25 mini",
+        "name_en": "CHANEL 25 BAG MINI",
+        "description": "Ref. AS5293-B20304-94305\nChanel 25 MINI Handbag\nМатериал: Grained Calfskin \nGHW",
+        "description_en": "Ref. AS5293-B20304-94305\nChanel 25 MINI Handbag\n:Grained Calfskin \nGHW",
+        "size": "mini",
+        "product_condition": "new",
+        "wear_condition": null,
+        "fulfillment_status": "on_order",
+        "revision": 3,
+        "team_pick": false
+      },
+      "after": {
+        "name": "Сумка 25 Mini, зернистая телячья кожа, ref. AS5293-B20304-94305",
+        "name_en": "25 Mini bag, grained calfskin, ref. AS5293-B20304-94305",
+        "description_en": "Chanel 25 Mini in grained calfskin. Hardware designation in the listing: GHW. Reference AS5293-B20304-94305. Condition: new. Available to order; confirm the individual piece and included accessories before ordering."
+      },
+      "provenance": "Distinct material/colour/reference explicitly present in original Russian description; original description retained."
+    },
+    {
+      "id": 624,
+      "before": {
+        "id": 624,
+        "brand": "Chanel",
+        "name": "Сумка Chanel 25 mini",
+        "name_en": "CHANEL 25 BAG MINI",
+        "description": "Chanel 25 Mini Handbag\nМатериал: Мягкая бархатистая телячья замша (Suede Calfskin)\nDark Brown\nGHW\nRef: AS5631-B18799-U3950",
+        "description_en": "Chanel 25 Mini Handbag\n(Suede Calfskin)\nDark Brown\nGHW\nRef: AS5631-B18799-U3950",
+        "size": "mini",
+        "product_condition": "new",
+        "wear_condition": null,
+        "fulfillment_status": "on_order",
+        "revision": 3,
+        "team_pick": false
+      },
+      "after": {
+        "name": "Сумка 25 Mini, тёмно-коричневая замша, ref. AS5631-B18799-U3950",
+        "name_en": "25 Mini bag, dark brown suede calfskin, ref. AS5631-B18799-U3950",
+        "description_en": "Chanel 25 Mini in dark brown suede calfskin. Hardware designation in the listing: GHW. Reference AS5631-B18799-U3950. Condition: new. Available to order; confirm the individual piece and included accessories before ordering."
+      },
+      "provenance": "Distinct material/colour/reference explicitly present in original Russian description; original description retained."
+    },
+    {
+      "id": 625,
+      "before": {
+        "id": 625,
+        "brand": "Chanel",
+        "name": "Сумка Chanel 25 mini",
+        "name_en": "CHANEL 25 BAG MINI",
+        "description": "Chanel 25 Mini Handbag\nSuede Calfskin\nGHW\nLight Yellow\nRef:AS5631 B18799 U5321",
+        "description_en": "Chanel 25 Mini Handbag\nSuede Calfskin\nLight Yellow\nGHW\nRef:AS5631 B18799 U5321",
+        "size": "mini",
+        "product_condition": "new",
+        "wear_condition": null,
+        "fulfillment_status": "on_order",
+        "revision": 3,
+        "team_pick": false
+      },
+      "after": {
+        "name": "Сумка 25 Mini, светло-жёлтая замша, ref. AS5631 B18799 U5321",
+        "name_en": "25 Mini bag, light yellow suede calfskin, ref. AS5631 B18799 U5321",
+        "description_en": "Chanel 25 Mini in light yellow suede calfskin. Hardware designation in the listing: GHW. Reference AS5631 B18799 U5321. Condition: new. Available to order; confirm the individual piece and included accessories before ordering."
+      },
+      "provenance": "Distinct material/colour/reference explicitly present in original Russian description; original description retained."
+    },
+    {
+      "id": 627,
+      "before": {
+        "id": 627,
+        "brand": "Chanel",
+        "name": "Сумка Chanel 25 mini",
+        "name_en": "CHANEL 25 BAG MINI",
+        "description": "Chanel 25 Mini Bag\nМатериал: Grained Calfskin / Caviar\nPHW\nRef: AS5631-B22716-U5341",
+        "description_en": "Chanel 25 Mini Bag\nGrained Calfskin / Caviar\nPHW\nRef: AS5631-B22716-U5341",
+        "size": "mini",
+        "product_condition": "new",
+        "wear_condition": null,
+        "fulfillment_status": "on_order",
+        "revision": 2,
+        "team_pick": false
+      },
+      "after": {
+        "name": "Сумка 25 Mini, зернистая телячья кожа, PHW, ref. AS5631-B22716-U5341",
+        "name_en": "25 Mini bag, grained calfskin, PHW, ref. AS5631-B22716-U5341",
+        "description_en": "Chanel 25 Mini in grained calfskin, PHW. Hardware designation in the listing: PHW. Reference AS5631-B22716-U5341. Condition: new. Available to order; confirm the individual piece and included accessories before ordering."
+      },
+      "provenance": "Distinct material/colour/reference explicitly present in original Russian description; original description retained."
+    },
+    {
+      "id": 628,
+      "before": {
+        "id": 628,
+        "brand": "Chanel",
+        "name": "Сумка Chanel 25 mini",
+        "name_en": "CHANEL 25 BAG MINI",
+        "description": "CHANEL 25 Mini Handbag\nRef:AS5631-B24704-UA954\nМатериал: Grained Calfskin / Caviar\nPHW\nLight Pink",
+        "description_en": "CHANEL 25 Mini Handbag\nRef:AS5631-B24704-UA954\nGrained Calfskin / Caviar\nPHW\nLight Pink",
+        "size": "mini",
+        "product_condition": "new",
+        "wear_condition": null,
+        "fulfillment_status": "on_order",
+        "revision": 2,
+        "team_pick": false
+      },
+      "after": {
+        "name": "Сумка 25 Mini, светло-розовая, зернистая телячья кожа, ref. AS5631-B24704-UA954",
+        "name_en": "25 Mini bag, light pink grained calfskin, ref. AS5631-B24704-UA954",
+        "description_en": "Chanel 25 Mini in light pink grained calfskin. Hardware designation in the listing: PHW. Reference AS5631-B24704-UA954. Condition: new. Available to order; confirm the individual piece and included accessories before ordering."
+      },
+      "provenance": "Distinct material/colour/reference explicitly present in original Russian description; original description retained."
+    },
+    {
+      "id": 629,
+      "before": {
+        "id": 629,
+        "brand": "Chanel",
+        "name": "Сумка Chanel 25 mini",
+        "name_en": "CHANEL 25 BAG MINI",
+        "description": "Chanel 25 Mini  Handbag \nМатериал: Washed Denim\nRef: AS5293-B23556-U7740\nGHW",
+        "description_en": "Chanel 25 Mini Handbag \nWashed Denim\nRef: AS5293-B23556-U7740\nGHW",
+        "size": "mini",
+        "product_condition": "new",
+        "wear_condition": null,
+        "fulfillment_status": "on_order",
+        "revision": 2,
+        "team_pick": false
+      },
+      "after": {
+        "name": "Сумка 25 Mini, Washed Denim, ref. AS5293-B23556-U7740",
+        "name_en": "25 Mini bag, washed denim, ref. AS5293-B23556-U7740",
+        "description_en": "Chanel 25 Mini in washed denim. Hardware designation in the listing: GHW. Reference AS5293-B23556-U7740. Condition: new. Available to order; confirm the individual piece and included accessories before ordering."
+      },
+      "provenance": "Distinct material/colour/reference explicitly present in original Russian description; original description retained."
+    },
+    {
+      "id": 632,
+      "before": {
+        "id": 632,
+        "brand": "Chanel",
+        "name": "Сумка Chanel 25 mini",
+        "name_en": "CHANEL 25 BAG MINI",
+        "description": "CHANEL 25 Mini Handbag\nМатериал: Lambskin\nGHW\nLight Beige & Black\nRef: AS5631 B24745 UB200",
+        "description_en": "CHANEL 25 Mini Handbag\n Lambskin\nGHW\nLight Beige & Black\nRef: AS5631 B24745 UB200",
+        "size": "mini",
+        "product_condition": "new",
+        "wear_condition": null,
+        "fulfillment_status": "on_order",
+        "revision": 2,
+        "team_pick": false
+      },
+      "after": {
+        "name": "Сумка 25 Mini, светло-бежевая и чёрная, Lambskin, ref. AS5631 B24745 UB200",
+        "name_en": "25 Mini bag, light beige and black lambskin, ref. AS5631 B24745 UB200",
+        "description_en": "Chanel 25 Mini in light beige and black lambskin. Hardware designation in the listing: GHW. Reference AS5631 B24745 UB200. Condition: new. Available to order; confirm the individual piece and included accessories before ordering."
+      },
+      "provenance": "Distinct material/colour/reference explicitly present in original Russian description; original description retained."
+    }
+  ]
+}
+
