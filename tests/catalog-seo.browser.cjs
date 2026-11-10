@@ -1,4 +1,4 @@
-const {chromium}=require('playwright'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),http=require('node:http');
+const playwright=require('playwright'),engine=process.env.QA_BROWSER||'chromium',assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),http=require('node:http');
 const root=path.resolve(__dirname,'..'),out=process.env.QA_OUTPUT||'/tmp/jp-catalog-seo-qa';fs.mkdirSync(out,{recursive:true});
 const rows=[{id:42,available:true,brand:'Hermès',name:'Сумка Birkin 25, цвет: Noir, кожа: Togo, фурнитура: золотая',name_en:'Birkin 25 bag, colour: Noir, leather: Togo, hardware: gold-tone',category:'Сумки',size:'25',price:20000,currency:'EUR',product_condition:'new',image_url:'https://juliproz-store.vercel.app/images/brands/hermes-birkin.png'},{id:43,available:true,brand:'Hermès',name:'Сумка Kelly to go, Gold',size:'One Size',price:null,image_url:'https://juliproz-store.vercel.app/images/brands/hermes-birkin.png'},{id:44,available:true,brand:'Rolex',name:'Часы Datejust, ref. 126334',size:'41 mm',price:12000,image_url:'https://juliproz-store.vercel.app/images/brands/hermes-birkin.png'}];
 rows.push({id:45,available:true,brand:'Rolex',name:'Часы Day-Date, ref. 228238',name_en:'Day-Date watch, ref. 228238',size:'40 mm',price:30000,image_url:rows[0].image_url});
@@ -7,7 +7,7 @@ const server=http.createServer((req,res)=>{const url=new URL(req.url,'http://loc
  if(url.pathname==='/product/42'){res.writeHead(200,{'Content-Type':'text/html; charset=utf-8'});return res.end(product.render(template,rows[0],url.searchParams.get('lang')==='en'?'en':'ru'))}
  const file=path.resolve(root,'.'+url.pathname);if(!file.startsWith(root+path.sep))return res.writeHead(403).end();fs.readFile(file,(err,data)=>{res.writeHead(err?404:200,{'Content-Type':file.endsWith('.css')?'text/css':file.endsWith('.js')?'text/javascript':file.endsWith('.woff2')?'font/woff2':'image/png'});res.end(err?'Missing':data)});
 });
-(async()=>{await new Promise(r=>server.listen(0,'127.0.0.1',r));const origin='http://127.0.0.1:'+server.address().port,browser=await chromium.launch(process.env.QA_BROWSER_CHANNEL?{channel:process.env.QA_BROWSER_CHANNEL}:{});try{
+(async()=>{await new Promise(r=>server.listen(0,'127.0.0.1',r));const origin='http://127.0.0.1:'+server.address().port,browser=await playwright[engine].launch(engine==='chromium'&&process.env.QA_BROWSER_CHANNEL?{channel:process.env.QA_BROWSER_CHANNEL}:{});try{
  for(const width of [320,390,1280])for(const lang of ['ru','en']){
   const context=await browser.newContext({viewport:{width,height:900},reducedMotion:'reduce'}),page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
   await context.route('https://www.juliproz.com/**',route=>route.fulfill({status:200,contentType:'text/html',body:'Local link target'}));
