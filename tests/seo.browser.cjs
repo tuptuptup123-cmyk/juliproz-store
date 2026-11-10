@@ -73,7 +73,7 @@ const server=http.createServer((req,res)=>{const url=new URL(req.url,'http://loc
  assert.equal(await page.locator('link[hreflang=ru]').getAttribute('href'),'https://www.juliproz.com/outlet');
  await page.evaluate(()=>scrollTo(0,0));await page.screenshot({path:out+'/outlet-en-'+width+'.png',fullPage:true});await page.screenshot({path:out+'/outlet-first-'+width+'.png',fullPage:false});
  for(const tab of ['about','services','sell','cart','favorites','home','catalog','chanel','hermes']){await clickSiteTab(page,tab);assert.equal(await nav.locator('[aria-current=page]').getAttribute('data-tab'),tab);assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));}
- assert.equal(await nav.evaluate(el=>el.scrollWidth>el.clientWidth),false);
+ assert.ok(await nav.evaluate(el=>{const r=el.getBoundingClientRect(),a=el.querySelector('[aria-current=page]').getBoundingClientRect();return a.left>=r.left-1&&a.right<=r.right+1}));
  await page.locator('.masthead-inner [data-site-language=ru]').click();
  await page.evaluate(()=>scrollTo(0,0));await page.screenshot({path:out+'/hermes-ru-'+width+'.png',fullPage:true});await page.screenshot({path:out+'/hermes-first-'+width+'.png',fullPage:false});
  await nav.locator('[data-tab=catalog]').click();

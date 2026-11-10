@@ -6,8 +6,7 @@
   const active=nav.querySelector('[data-tab][aria-current="page"]');
   if(!active||nav.scrollWidth<=nav.clientWidth)return;
   const bounds=nav.getBoundingClientRect(),item=active.getBoundingClientRect();
-  if(item.left<bounds.left)nav.scrollLeft-=bounds.left-item.left;
-  else if(item.right>bounds.right)nav.scrollLeft+=item.right-bounds.right;
+  if(item.left<bounds.left||item.right>bounds.right)nav.scrollTo({left:nav.scrollLeft+item.left+item.width/2-bounds.left-nav.clientWidth/2,behavior:'instant'});
  }
  const scheduleReveal=()=>requestAnimationFrame(revealActive);
  new MutationObserver(scheduleReveal).observe(nav,{subtree:true,attributes:true,attributeFilter:['aria-current']});
