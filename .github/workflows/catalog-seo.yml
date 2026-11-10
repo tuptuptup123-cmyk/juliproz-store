@@ -1,0 +1,27 @@
+name: Catalogue SEO browser checks
+on:
+  pull_request:
+    paths: ['catalog-seo.*', 'server/model-page.cjs', 'server/product-page.cjs', 'server/seo.cjs', 'site-seo.js', 'app.js', 'index.html', 'tests/catalog-seo.browser.cjs', '.github/workflows/catalog-seo.yml']
+permissions:
+  contents: read
+jobs:
+  seo:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24'
+      - run: npm install --prefix "$RUNNER_TEMP/jp-seo-browser" --no-audit --no-fund --ignore-scripts playwright@1.56.1
+      - run: node scripts/stage-photo-assets.cjs
+      # GitHub's Ubuntu image already includes Chrome; avoid an additional browser download.
+      - run: NODE_PATH="$RUNNER_TEMP/jp-seo-browser/node_modules" QA_BROWSER_CHANNEL=chrome QA_OUTPUT="$RUNNER_TEMP/jp-seo-qa" node tests/catalog-seo.browser.cjs
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: catalog-seo-screenshots
+          path: ${{ runner.temp }}/jp-seo-qa
+          retention-days: 7
