@@ -12,6 +12,10 @@ dist/
 
 private-product-assets/
 
+# Local encrypted exports are stored outside source control.
+/secure-backups/
+/backups/
+
 supabase/.temp/
 tests/schema/node_modules/
 
