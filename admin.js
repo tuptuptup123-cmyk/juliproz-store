@@ -439,7 +439,7 @@ function openPhotoStudio(index){const entry=pendingPreviews[index],epoch=preview
  PhotoStudio.open(entry,result=>{if(epoch!==previewEpoch||busy)return;stagedUploads.delete(entry.file);pendingPreviews[index]={...result,reviewed:true};syncPendingFiles();editorDirty=true;renderPhotos()},()=>{if(epoch!==previewEpoch||busy)return;stagedUploads.delete(entry.file);pendingPreviews[index]={src:entry.originalSrc,originalSrc:entry.originalSrc,name:entry.name,file:entry.originalFile,originalFile:entry.originalFile};syncPendingFiles();editorDirty=true;renderPhotos()});
 }
 $('uploads').onchange=async()=>{
- if(busy)return;const epoch=++previewEpoch,files=[...$('uploads').files],previous=[...pendingPreviews];editorDirty=true;
+ if(busy)return;const viewport={left:window.scrollX,top:window.scrollY};const epoch=++previewEpoch,files=[...$('uploads').files],previous=[...pendingPreviews];editorDirty=true;
  busy=true;$('editorFields').disabled=true;$('save').disabled=true;
  try{
   if(photos.length+previous.length+files.length>20)throw Error('Максимум 20 фотографий.');
@@ -454,7 +454,7 @@ $('uploads').onchange=async()=>{
   }
   if(epoch!==previewEpoch)return;pendingPreviews=[...previous,...previews];syncPendingFiles();renderPhotos();status(failures?`Для ${failures} фото не удалось удалить фон — оставлены оригиналы. Нажмите «Оформить фото», чтобы повторить.`:'Фотографии подготовлены. Проверьте результат перед сохранением карточки.',{scroll:false});
  }catch(err){if(epoch!==previewEpoch)return;pendingPreviews=previous;syncPendingFiles();renderPhotos();status(err.message,{scroll:false})}
- finally{busy=false;$('editorFields').disabled=false;$('save').disabled=false;$('photoProcessingStatus').textContent=''}
+ finally{busy=false;$('editorFields').disabled=false;$('save').disabled=false;$('photoProcessingStatus').textContent='';if(epoch===previewEpoch)window.scrollTo({...viewport,behavior:'instant'})}
 };
 $('photos').onclick=e=>{if(busy)return;const b=e.target.closest('button');if(!b)return;
  if(b.dataset.studio!==undefined){stylePending(Number(b.dataset.studio));return}
