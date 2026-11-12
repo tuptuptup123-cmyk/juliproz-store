@@ -14,6 +14,18 @@ const server=http.createServer((req,res)=>{const file=path.resolve(root,'.'+new 
    request=async(path,options={})=>{if(path.startsWith('/rest/v1/products')){if(options.method==='PATCH'){const patch=JSON.parse(options.body);savedWrites.push(patch);testRow={...testRow,...patch,revision:testRow.revision+1}}return [testRow]}if(path.includes('product_admin_notes'))return [];return null};
    items=[testRow];$('authArea').classList.add('hidden');$('workspace').classList.remove('hidden');edit(testRow);
   });
+  // Adding photos must preserve the editor viewport instead of scrolling to the global status.
+  await page.locator('#autoPhotoStyle').uncheck();
+  await page.locator('#uploads').scrollIntoViewIfNeeded();
+  const photoY=await page.evaluate(()=>scrollY);assert.ok(photoY>100);
+  const photoFile={name:'scroll-regression.png',mimeType:'image/png',buffer:Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jRZkAAAAASUVORK5CYII=','base64')};
+  await page.locator('#uploads').setInputFiles(photoFile);await page.waitForFunction(()=>!busy&&pendingPreviews.length===1);
+  assert.ok(Math.abs(await page.evaluate(()=>scrollY)-photoY)<40,'Photo preparation preserves scroll '+width);
+  const errorY=await page.evaluate(()=>scrollY);
+  await page.locator('#uploads').setInputFiles({name:'invalid.txt',mimeType:'text/plain',buffer:Buffer.from('invalid')});await page.waitForFunction(()=>!busy);
+  assert.match(await page.locator('#status').innerText(),/Фото должно быть/);
+  assert.ok(Math.abs(await page.evaluate(()=>scrollY)-errorY)<40,'Photo validation preserves scroll '+width);
+  await page.evaluate(()=>{editorDirty=false;edit(testRow)});
   await page.locator('#productSeoGuide > summary').click();
   await page.locator('#jpGuideTitle').waitFor();
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Open writing guide fits '+width);

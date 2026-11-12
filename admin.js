@@ -78,7 +78,7 @@ function saveAdminSession(){
 let adminPreferences={autoPhoto:true,reducedMotion:false};
 try{const saved=JSON.parse(localStorage.getItem('jpAdminPreferences')||'{}');adminPreferences={autoPhoto:saved.autoPhoto!==false,reducedMotion:saved.reducedMotion===true}}catch{}
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-function status(s){$('status').textContent=s; if(s)$('status').scrollIntoView({block:'nearest'})}
+function status(s,{scroll=true}={}){$('status').textContent=s; if(s&&scroll)$('status').scrollIntoView({block:'nearest'})}
 const ADMIN_FIELDS='id,created_at,brand,name,name_en,description_en,category,size,price,currency,image_url,available,fulfillment_status,gender,description,photos,revision,creation_key,reserved,product_condition,stock_quantities,on_commission,original_price,wear_condition,archive_status,team_pick';
 let sessionEpoch=0,refreshPromise=null,original=null,creationKey=null;
 // A monotonic floor prevents a backwards device-clock change from extending a session.
@@ -452,8 +452,8 @@ $('uploads').onchange=async()=>{
    if($('autoPhotoStyle').checked)try{entry=await PhotoStudio.process(files[i])}catch{failures++}
    previews.push(entry);
   }
-  if(epoch!==previewEpoch)return;pendingPreviews=[...previous,...previews];syncPendingFiles();renderPhotos();status(failures?`Для ${failures} фото не удалось удалить фон — оставлены оригиналы. Нажмите «Оформить фото», чтобы повторить.`:'Фотографии подготовлены. Проверьте результат перед сохранением карточки.');
- }catch(err){if(epoch!==previewEpoch)return;pendingPreviews=previous;syncPendingFiles();renderPhotos();status(err.message)}
+  if(epoch!==previewEpoch)return;pendingPreviews=[...previous,...previews];syncPendingFiles();renderPhotos();status(failures?`Для ${failures} фото не удалось удалить фон — оставлены оригиналы. Нажмите «Оформить фото», чтобы повторить.`:'Фотографии подготовлены. Проверьте результат перед сохранением карточки.',{scroll:false});
+ }catch(err){if(epoch!==previewEpoch)return;pendingPreviews=previous;syncPendingFiles();renderPhotos();status(err.message,{scroll:false})}
  finally{busy=false;$('editorFields').disabled=false;$('save').disabled=false;$('photoProcessingStatus').textContent=''}
 };
 $('photos').onclick=e=>{if(busy)return;const b=e.target.closest('button');if(!b)return;
