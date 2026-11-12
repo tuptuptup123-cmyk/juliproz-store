@@ -78,7 +78,7 @@ function saveAdminSession(){
 let adminPreferences={autoPhoto:true,reducedMotion:false};
 try{const saved=JSON.parse(localStorage.getItem('jpAdminPreferences')||'{}');adminPreferences={autoPhoto:saved.autoPhoto!==false,reducedMotion:saved.reducedMotion===true}}catch{}
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-function status(s){$('status').textContent=s; if(s)$('status').scrollIntoView({block:'nearest'})}
+function status(s,{scroll=true}={}){$('status').textContent=s; if(s&&scroll)$('status').scrollIntoView({block:'nearest'})}
 const ADMIN_FIELDS='id,created_at,brand,name,name_en,description_en,category,size,price,currency,image_url,available,fulfillment_status,gender,description,photos,revision,creation_key,reserved,product_condition,stock_quantities,on_commission,original_price,wear_condition,archive_status,team_pick';
 let sessionEpoch=0,refreshPromise=null,original=null,creationKey=null;
 // A monotonic floor prevents a backwards device-clock change from extending a session.
@@ -439,7 +439,7 @@ function openPhotoStudio(index){const entry=pendingPreviews[index],epoch=preview
  PhotoStudio.open(entry,result=>{if(epoch!==previewEpoch||busy)return;stagedUploads.delete(entry.file);pendingPreviews[index]={...result,reviewed:true};syncPendingFiles();editorDirty=true;renderPhotos()},()=>{if(epoch!==previewEpoch||busy)return;stagedUploads.delete(entry.file);pendingPreviews[index]={src:entry.originalSrc,originalSrc:entry.originalSrc,name:entry.name,file:entry.originalFile,originalFile:entry.originalFile};syncPendingFiles();editorDirty=true;renderPhotos()});
 }
 $('uploads').onchange=async()=>{
- if(busy)return;const epoch=++previewEpoch,files=[...$('uploads').files],previous=[...pendingPreviews];editorDirty=true;
+ if(busy)return;const viewport={left:window.scrollX,top:window.scrollY};const epoch=++previewEpoch,files=[...$('uploads').files],previous=[...pendingPreviews];editorDirty=true;
  busy=true;$('editorFields').disabled=true;$('save').disabled=true;
  try{
   if(photos.length+previous.length+files.length>20)throw Error('Максимум 20 фотографий.');
@@ -452,9 +452,9 @@ $('uploads').onchange=async()=>{
    if($('autoPhotoStyle').checked)try{entry=await PhotoStudio.process(files[i])}catch{failures++}
    previews.push(entry);
   }
-  if(epoch!==previewEpoch)return;pendingPreviews=[...previous,...previews];syncPendingFiles();renderPhotos();status(failures?`Для ${failures} фото не удалось удалить фон — оставлены оригиналы. Нажмите «Оформить фото», чтобы повторить.`:'Фотографии подготовлены. Проверьте результат перед сохранением карточки.');
- }catch(err){if(epoch!==previewEpoch)return;pendingPreviews=previous;syncPendingFiles();renderPhotos();status(err.message)}
- finally{busy=false;$('editorFields').disabled=false;$('save').disabled=false;$('photoProcessingStatus').textContent=''}
+  if(epoch!==previewEpoch)return;pendingPreviews=[...previous,...previews];syncPendingFiles();renderPhotos();status(failures?`Для ${failures} фото не удалось удалить фон — оставлены оригиналы. Нажмите «Оформить фото», чтобы повторить.`:'Фотографии подготовлены. Проверьте результат перед сохранением карточки.',{scroll:false});
+ }catch(err){if(epoch!==previewEpoch)return;pendingPreviews=previous;syncPendingFiles();renderPhotos();status(err.message,{scroll:false})}
+ finally{busy=false;$('editorFields').disabled=false;$('save').disabled=false;$('photoProcessingStatus').textContent='';if(epoch===previewEpoch)window.scrollTo({...viewport,behavior:'instant'})}
 };
 $('photos').onclick=e=>{if(busy)return;const b=e.target.closest('button');if(!b)return;
  if(b.dataset.studio!==undefined){stylePending(Number(b.dataset.studio));return}
