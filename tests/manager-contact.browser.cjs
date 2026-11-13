@@ -34,7 +34,7 @@ const types={'.html':'text/html','.js':'text/javascript','.css':'text/css','.wof
     if(!file.startsWith(base+path.sep)||!fs.existsSync(file))return r.fulfill({status:404,body:''});
     return r.fulfill({contentType:types[path.extname(file)]||'application/octet-stream',body:fs.readFileSync(file)});
    });
-   async function product(){await page.goto('about:blank');await page.goto(url);await page.locator('#productModal:not(.hidden) [data-action=contact]').waitFor();if(native)await page.waitForFunction(()=>window.Telegram?.WebApp?.platform!=='unknown'&&Boolean(window.Telegram?.WebApp?.openTelegramLink))}
+   async function product(){await page.goto('about:blank');await page.goto(url);await page.locator('#productModal:not(.hidden) [data-action=add-cart]').waitFor();if(native)await page.waitForFunction(()=>window.Telegram?.WebApp?.platform!=='unknown'&&Boolean(window.Telegram?.WebApp?.openTelegramLink))}
    async function handoff(expectedText){
     let target;
     if(native){
@@ -54,7 +54,7 @@ const types={'.html':'text/html','.js':'text/javascript','.css':'text/css','.wof
     const draft=target.searchParams.get('text');assert.ok(draft.includes(native?'https://t.me/JuliProzBot/shop?startapp=p_501':'https://www.juliproz.com/product/501'));
     if(mode==='en')assert.doesNotMatch(draft,/[А-Яа-яЁё]/);
    }
-   await product();await page.locator('[data-action=contact]').click();await handoff(/501/);
+   await product();assert.equal(await page.locator('[data-action=contact]').count(),0,'Buy is the primary product action; no redundant contact button');
    await product();await page.locator('[data-action=share]').click();assert.equal(await page.locator('[data-share-action=bot-card]').isVisible(),false);await page.locator('[data-share-action=manager]').click();await handoff(/501/);
    await product();await page.locator('[data-action=add-cart]').click();await page.locator('.bottom-nav [data-tab=cart]').click();
    if(native&&width===320&&mode==='ios'){
@@ -79,7 +79,7 @@ const types={'.html':'text/html','.js':'text/javascript','.css':'text/css','.wof
 
     }
    }
-   assert.deepEqual(errors,[]);await context.close();console.log(`PASS ${engine} ${width} ${mode}: direct inquiry, share inquiry, checked cart, exact recipient/draft and ${native?'official SDK handoff without early close, saved cart, independent anchor recovery':'same-tab navigation after await, no popup'}`);
+   assert.deepEqual(errors,[]);await context.close();console.log(`PASS ${engine} ${width} ${mode}: no redundant contact action, share inquiry, checked cart, exact recipient/draft and ${native?'official SDK handoff without early close, saved cart, independent anchor recovery':'same-tab navigation after await, no popup'}`);
   }
  }finally{await browser.close()}
 })().catch(e=>{console.error(e);process.exitCode=1});
