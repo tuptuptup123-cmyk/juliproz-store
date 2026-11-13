@@ -1,8 +1,14 @@
 /* Public facts only. Never infer materials, authenticity, accessories or references from photos. */
 (function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;else root.CatalogSEO=api})(typeof window==='object'?window:globalThis,()=>{
  'use strict';
- const origin='https://www.juliproz.com',contentDate='2026-11-10';
+ const origin='https://www.juliproz.com',contentDate='2026-11-13';
  const models=[
+  {slug:'rolex-daytona',brand:'Rolex',brandSlug:'rolex',name:'Rolex Cosmograph Daytona',pattern:/\bdaytona\b/i,
+   intro:{ru:'Rolex Cosmograph Daytona: сравните часы по референсу, материалу корпуса, циферблату и цене. В каталоге представлены отдельные предложения; наличие и условия заказа подтверждает менеджер.',en:'Browse Rolex Cosmograph Daytona watches by reference, case material, dial and price. Each listing describes an individual offer; our team confirms availability and order details.'},
+   guide:{ru:'Начните с референса Daytona или фотографии нужной версии. Уточните материал корпуса, цвет циферблата, браслет, состояние и комплект конкретных часов до оплаты.',en:'Start with a Daytona reference or a photo of your preferred version. Confirm the case material, dial colour, bracelet, condition and included accessories for the individual watch before payment.'}},
+  {slug:'rolex-sky-dweller',brand:'Rolex',brandSlug:'rolex',name:'Rolex Sky-Dweller',pattern:/\bsky[- ]dweller\b/i,
+   intro:{ru:'Rolex Sky-Dweller в каталоге JULI.PROZ: варианты циферблатов и браслетов Oyster и Jubilee, указанные в конкретных карточках. Сравните референсы, цены и условия заказа.',en:'Explore Rolex Sky-Dweller listings at JULI.PROZ, including the dial colours and Oyster or Jubilee bracelets stated on individual product pages. Compare references, prices and order details.'},
+   guide:{ru:'Для поиска Sky-Dweller укажите референс, желаемый циферблат и браслет. Не ориентируйтесь только на общее название модели: исполнение, состояние и комплектацию подтверждаем по конкретному экземпляру.',en:'For Sky-Dweller sourcing, share the reference, preferred dial and bracelet. Confirm the exact version, condition and accessories for the individual watch rather than relying on the model name alone.'}},
   {slug:'rolex-day-date',brand:'Rolex',brandSlug:'rolex',name:'Rolex Day-Date',pattern:/\bday[- ]date\b/i,intro:{ru:'Rolex Day-Date в актуальном каталоге: фотографии, референсы, цены и поиск нужного исполнения.',en:'Explore current Rolex Day-Date listings, photos, references and prices, or request your preferred version.'},guide:{ru:'Укажите референс, диаметр, циферблат и бюджет.',en:'Share your preferred reference, diameter, dial and budget.'}},
   {slug:'hermes-birkin-25',brand:'Hermès',brandSlug:'hermes',name:'Hermès Birkin 25',pattern:/\bbirkin\s*25\b/i,
    intro:{ru:'Birkin 25 в актуальном каталоге JULI.PROZ. Сравните конкретные предложения по коже, цвету, фурнитуре и цене; наличие и итоговые условия подтвердит менеджер.',en:'Explore the current JULI.PROZ Birkin 25 selection. Compare the listed leather, colour, hardware and price of each piece; our team confirms availability and final terms.'},
@@ -30,7 +36,7 @@
   const model=modelFor(p);if(model)add('model',en?'Model':'Модель',model.name.replace(model.brand+' ',''));
   add('size',en?'Size':'Размер',en?englishFact(p.size||'',translate):p.size);
   // Only explicitly labelled attributes. No substring guesses (e.g. Gold as a colour is not gold hardware).
-  const source=[p.name,p.description].filter(Boolean).join('; ');
+  const source=[en?(p.name_en||p.name):p.name,en?(p.description_en||p.description):p.description].filter(Boolean).join('; ');
   for(const [key,ru,label,pattern] of [
    ['color','Цвет','Colour',/(?:^|[,;\n])\s*(?:цвет|colou?r)\s*:\s*([^,;\n]+)/i],
    ['material','Материал','Material',/(?:^|[,;\n])\s*(?:кожа|материал|leather|material)\s*:\s*([^,;\n]+)/i],
