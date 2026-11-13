@@ -16,7 +16,7 @@ test('style readiness waits for every sheet and a rendering frame',async()=>{
  let frame;const context={window:{},document:{querySelectorAll:()=>links},requestAnimationFrame:fn=>{frame=fn}};
  vm.runInNewContext(fs.readFileSync(path.join(root,'storefront-styles.js'),'utf8'),context);
  const state=context.window.StorefrontStyles;
- assert.equal(state.ready,false);listeners.find(l=>l.link===links[0]&&l.name==='load').fn();await Promise.resolve();assert.equal(state.ready,false);
+ assert.equal(state.ready,false);assert.deepEqual(links.map(link=>link.media),['print','print'],'do not switch media while the browser is still fetching CSS');listeners.find(l=>l.link===links[0]&&l.name==='load').fn();assert.equal(links[0].media,'all');assert.equal(links[1].media,'print');await Promise.resolve();assert.equal(state.ready,false);
  listeners.find(l=>l.link===links[1]&&l.name==='load').fn();await Promise.resolve();await Promise.resolve();assert.equal(state.ready,false);frame();await state.promise;assert.equal(state.ready,true);
 });
 test('failed stylesheet keeps readiness false for the server fallback',async()=>{

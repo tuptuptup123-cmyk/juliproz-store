@@ -16,6 +16,7 @@ const server=http.createServer((req,res)=>{const url=new URL(req.url,'http://loc
   await context.route('**/rest/v1/products?**',route=>route.fulfill({json:rows}));await context.route('**/api/catalog',route=>route.fulfill({json:rows}));await context.route('**/api/analytics',route=>route.fulfill({status:204}));
   await context.route('https://juliproz-store.vercel.app/images/**',route=>route.fulfill({path:root+'/images/brands/hermes-birkin.png',contentType:'image/png'}));
   await context.addInitScript(()=>{localStorage.setItem('jpAnalyticsConsent','declined');localStorage.setItem('jpAntiScamSeenV1','1')});
+  await context.addInitScript(()=>{window.__cssResourceErrors=[];window.addEventListener('error',event=>{if(event.target?.tagName==='LINK'&&event.target.rel==='stylesheet')window.__cssResourceErrors.push(event.target.href)},true)});
   let releaseStyles;const stylesGate=new Promise(resolve=>{releaseStyles=resolve});
   await page.route('**/style.css?**',async route=>{await stylesGate;await route.continue()});
   await page.goto(origin+'/'+(lang==='en'?'?lang=en':''),{waitUntil:'commit'});
@@ -23,8 +24,12 @@ const server=http.createServer((req,res)=>{const url=new URL(req.url,'http://loc
   assert.equal(await page.locator('html').getAttribute('data-server-view'),'landing');
   assert.equal(await page.locator('#homeCriticalStyles').count(),1);
   assert.equal(await page.locator('link[as=image][rel=preload]').count(),2);
+  await page.waitForFunction(()=>Boolean(window.StorefrontStyles));
+  assert.equal(await page.locator('link[href*="style.css?"]').evaluate(link=>link.media),'print','in-flight CSS must retain its media until its load event');
   releaseStyles();await page.locator('#serverLanding').waitFor({state:'detached'});
   assert.equal(await page.evaluate(()=>window.StorefrontStyles.ready),true);
+  assert.deepEqual(await page.evaluate(()=>window.__cssResourceErrors),[],'no stylesheet ResourceError during homepage loading');
+  assert.ok(await page.locator('link[data-storefront-deferred]').evaluateAll(links=>links.every(link=>link.media==='all'&&link.sheet)));
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
   await page.screenshot({path:out+'/home-'+lang+'-'+width+'.png',fullPage:true,animations:'disabled'});
   await page.unroute('**/style.css?**');
