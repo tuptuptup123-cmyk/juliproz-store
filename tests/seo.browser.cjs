@@ -59,7 +59,7 @@ const server=http.createServer((req,res)=>{const url=new URL(req.url,'http://loc
  assert.deepEqual(await nav.locator('[data-tab]:visible').evaluateAll(items=>items.map(x=>x.dataset.tab)),['home','catalog','hermes','chanel','watches','jewellery','outlet','favorites','cart','sell','services','about']);
  await clickSiteTab(page,'hermes');await page.waitForURL(url=>url.pathname==='/brands/hermes');
  assert.equal(await nav.locator('[aria-current=page]').getAttribute('data-tab'),'hermes');
- assert.equal(await page.locator('#seoCatalogIntro .model-links [data-model]').count(),2);
+ assert.deepEqual((await page.locator('#seoCatalogIntro .model-links [data-model]').evaluateAll(links=>links.map(link=>link.dataset.model))).sort(),['hermes-birkin-25','hermes-hac-a-dos','hermes-kelly-25','hermes-kelly-to-go']);
  await clickSiteTab(page,'outlet');await page.waitForURL(url=>url.pathname==='/outlet');
  assert.equal(await page.locator('#webOutletPage h1').innerText(),'Аутлеты и приватные сейлы');
  assert.equal(await page.locator('#webOutletPage .discovery-breadcrumb, #webOutletPage .discovery-eyebrow').count(),0);

@@ -114,7 +114,8 @@
   const path=location.pathname.replace(/\/$/,'')||'/',slug=/^\/brands\/([^/]+)$/.exec(path)?.[1],model=path.startsWith('/models/')?path.split('/')[2]:null,kind=model?'model':slug?'brand':Object.keys(content.pages).find(key=>content.pages[key].path===path)||'home';
   data=productPages.get(path)||{...(content.page(kind,model||slug)||content.pages.home),kind};metadata();return data;
  }
- function ready(){document.getElementById('serverLanding')?.remove();document.documentElement.removeAttribute('data-server-view')}
+ let waitingForStyles=false;
+ function ready(){const styles=root.StorefrontStyles;if(styles&&!styles.ready){if(!waitingForStyles){waitingForStyles=true;styles.promise.then(()=>{waitingForStyles=false;ready()},()=>{})}return}document.getElementById('serverLanding')?.remove();document.documentElement.removeAttribute('data-server-view')}
  root.SiteSEO={sync,navigate,product,restore,ready,get page(){return data},get serverRendered(){return serverRendered}};
  metadata();document.addEventListener('site-language-change',metadata);
 })(window);

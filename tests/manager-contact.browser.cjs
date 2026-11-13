@@ -54,7 +54,7 @@ const types={'.html':'text/html','.js':'text/javascript','.css':'text/css','.wof
     const draft=target.searchParams.get('text');assert.ok(draft.includes(native?'https://t.me/JuliProzBot/shop?startapp=p_501':'https://www.juliproz.com/product/501'));
     if(mode==='en')assert.doesNotMatch(draft,/[А-Яа-яЁё]/);
    }
-   await product();assert.equal(await page.locator('[data-action=contact]').count(),0,'Buy is the primary product action; no redundant contact button');
+   await product();if(native){assert.equal(await page.locator('[data-action=contact]').count(),1,'Telegram keeps its existing contact action');await page.locator('[data-action=contact]').click();await handoff(/501/)}else assert.equal(await page.locator('[data-action=contact]').count(),0,'Buy is the primary website action; no redundant contact button');
    await product();await page.locator('[data-action=share]').click();assert.equal(await page.locator('[data-share-action=bot-card]').isVisible(),false);await page.locator('[data-share-action=manager]').click();await handoff(/501/);
    await product();await page.locator('[data-action=add-cart]').click();await page.locator('.bottom-nav [data-tab=cart]').click();
    if(native&&width===320&&mode==='ios'){
