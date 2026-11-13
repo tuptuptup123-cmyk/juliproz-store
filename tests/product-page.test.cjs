@@ -68,3 +68,13 @@ test('image sitemap includes public gallery photos in both languages and rejects
   assert.doesNotMatch(result.body,/SECRET|evil.example|data:image/);
  }finally{globalThis.fetch=prior}
 });
+
+test('long reviewed descriptions remain complete in server HTML and Product JSON-LD',()=>{
+ const p={...product,description:'Русское описание. '.repeat(50)+'КОНЕЦ <не HTML>',description_en:'Reviewed English contents. '.repeat(50)+'FINAL ITEM <not HTML>'};
+ for(const lang of ['ru','en']){
+  const html=render(template,p,lang),expected=lang==='en'?p.description_en:p.description;
+  const schema=JSON.parse(html.match(/type="application\/ld\+json">([\s\S]*?)<\/script>/)[1]);
+  assert.equal(schema.description,expected);assert.match(html,lang==='en'?/FINAL ITEM &lt;not HTML&gt;/:/КОНЕЦ &lt;не HTML&gt;/);
+  assert.ok(html.match(/name="description" content="([^"]*)"/)[1].length<400);
+ }
+});
