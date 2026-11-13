@@ -23,3 +23,20 @@ test('unknown model slugs are 404s and upstream failure is retryable rather than
 test('lastmod rejects invalid and future dates and never uses the request time as an update',()=>{
  assert.equal(seo.lastmod('not a date'),null);assert.equal(seo.lastmod('2999-01-01'),null);assert.equal(seo.lastmod('2026-10-01'),'2026-10-01T00:00:00.000Z');
 });
+
+test('Rolex demand collections separate Daytona and Sky-Dweller and expose bilingual links',()=>{
+ const rows=[{id:1,brand:'Rolex',name:'Часы Cosmograph Daytona ref 126500LN',available:true},{id:2,brand:'Rolex',name:'Часы Sky-Dweller ref 336934',available:true},{id:3,brand:'Other',name:'Daytona',available:true},{id:4,brand:'Rolex',name:'Daytona',available:false}];
+ for(const [slug,id] of [['rolex-daytona',1],['rolex-sky-dweller',2]])for(const lang of ['ru','en']){
+  const model=seo.models.find(m=>m.slug===slug),html=pages.render(model,rows,lang);
+  assert.match(html,new RegExp('href="https://www.juliproz.com/product/'+id+(lang==='en'?'\\?lang=en':'')+'"'));
+  for(const other of rows.filter(p=>p.id!==id))assert.doesNotMatch(html,new RegExp('href="https://www.juliproz.com/product/'+other.id+'(?:\\?|"|<)'));
+  assert.match(seo.modelLinks('Rolex',lang),new RegExp('/models/'+slug));
+  assert.match(seo.linksHTML(rows[id-1],lang),new RegExp('/models/'+slug));
+ }
+});
+
+test('reviewed English attributes are used for English product details',()=>{
+ const p={brand:'Chanel',name:'Минодьер Pomegranate',description:'Материал: эмаль; Цвет: красный',name_en:'Pomegranate minaudière',description_en:'Material: enamel; Colour: red; Reference: AS6647-B26663-UF239'};
+ assert.equal(seo.properties(p,'en').material,'enamel');assert.equal(seo.properties(p,'en').color,'red');assert.equal(seo.properties(p,'en').mpn,'AS6647-B26663-UF239');
+ assert.equal(seo.properties(p,'ru').material,'эмаль');
+});
