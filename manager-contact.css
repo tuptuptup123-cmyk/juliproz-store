@@ -15,12 +15,9 @@
 .product-delivery>div{min-width:0}
 .product-service .purchase-note{margin:0;text-align:left;font-size:12px;line-height:1.65;color:var(--muted,#666)}
 .product-service .purchase-note:first-child{margin-bottom:4px;font-size:13px;font-weight:500;color:var(--ink,#333)}
-.product-service .purchase-terms-link{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:44px;margin:12px 0 14px;padding:4px 0;border-bottom:1px solid var(--line,#e5e3df);font-size:12px;line-height:1.5;color:var(--ink,#333);text-decoration:none}
+.product-service .purchase-terms-link{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:44px;margin:12px 0 0;padding:4px 0;border-bottom:1px solid var(--line,#e5e3df);font-size:12px;line-height:1.5;color:var(--ink,#333);text-decoration:none}
 .product-service .purchase-terms-link svg{flex:none;transition:transform .15s ease}
 .product-service .purchase-terms-link:hover svg{transform:translateX(3px)}
-.product-service .product-manager-contact{display:flex;align-items:center;justify-content:center;gap:10px;box-sizing:border-box;min-height:48px;padding:12px;border:1px solid var(--ink,#333);border-radius:8px;background:transparent;color:var(--ink,#333);font-size:12px;line-height:1.5;text-align:center;text-decoration:none;transition:background .15s ease,color .15s ease}
-.product-service .product-manager-contact svg{flex:none}
-.product-service .product-manager-contact:hover{background:var(--ink,#333);color:var(--bg,#fff)}
 .product-service .purchase-terms-link:focus-visible{outline:2px solid currentColor;outline-offset:4px}
-@media(max-width:380px){.product-service{padding:14px}.product-delivery{gap:10px}.product-service .product-manager-contact{gap:8px}}
-@media(prefers-reduced-motion:reduce){.product-service .purchase-terms-link svg,.product-service .product-manager-contact{transition:none}}
+@media(max-width:380px){.product-service{padding:14px}.product-delivery{gap:10px}}
+@media(prefers-reduced-motion:reduce){.product-service .purchase-terms-link svg{transition:none}}
