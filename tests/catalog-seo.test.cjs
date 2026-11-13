@@ -40,3 +40,8 @@ test('reviewed English attributes are used for English product details',()=>{
  assert.equal(seo.properties(p,'en').material,'enamel');assert.equal(seo.properties(p,'en').color,'red');assert.equal(seo.properties(p,'en').mpn,'AS6647-B26663-UF239');
  assert.equal(seo.properties(p,'ru').material,'эмаль');
 });
+
+test('Hermes and Chrome Hearts collections distinguish related names and other brands',()=>{
+ const cases=[['hermes-kelly-25','Hermès','Сумка Kelly 25','Сумка Kelly 250'],['hermes-hac-a-dos','Hermès','Рюкзак Hac à Dos PM','Сумка Haccess PM'],['chrome-hearts-hoodies','Chrome Hearts','Зип-худи Vertical Logo','Лонгслив Scroll Logo'],['chrome-hearts-long-sleeves','Chrome Hearts','Лонгслив Scroll Logo','Худи Vertical Logo']];
+ for(const [slug,brand,name,other] of cases){const model=seo.models.find(m=>m.slug===slug);assert.equal(seo.matches(model,{brand,name}),true);assert.equal(seo.matches(model,{brand,name:other}),false);assert.equal(seo.matches(model,{brand:'Other',name}),false);}
+});
