@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "dependencies": {
+    "clean-css": "5.3.3",
     "sharp": "0.35.5"
   }
 }
