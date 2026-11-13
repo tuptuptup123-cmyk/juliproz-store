@@ -1,6 +1,6 @@
 'use strict';
 const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto');
-const ui=['brand-paw-160.webp', 'brand-paw-320.webp', 'brand-paw-640.webp', 'home-boutique-1080.webp', 'home-boutique-320.webp', 'home-boutique-640.webp', 'home-lifestyle-320.webp', 'home-lifestyle-640.webp', 'home-lifestyle-853.webp', 'ms-fashion-institute-logo-320.webp', 'ms-fashion-institute-logo-632.webp','brand-paw.webp','home-boutique.jpg','home-lifestyle.jpg','ms-fashion-institute-logo.png','money-paw-v1.webp','admin-upload-standard-v1.webp','brands'];
+const ui=['home-boutique-400.webp','home-lifestyle-400.webp','brand-paw-160.webp', 'brand-paw-320.webp', 'brand-paw-640.webp', 'home-boutique-1080.webp', 'home-boutique-320.webp', 'home-boutique-640.webp', 'home-lifestyle-320.webp', 'home-lifestyle-640.webp', 'home-lifestyle-853.webp', 'ms-fashion-institute-logo-320.webp', 'ms-fashion-institute-logo-632.webp','brand-paw.webp','home-boutique.jpg','home-lifestyle.jpg','ms-fashion-institute-logo.png','money-paw-v1.webp','admin-upload-standard-v1.webp','brands'];
 module.exports=function(root,out,{privateAssets=false}={}){
  fs.mkdirSync(path.join(out,'images'),{recursive:true});
  for(const asset of [...ui,...(privateAssets?require('../discovery-pages.js').publicAssets:[])]){const from=path.join(root,'images',asset);if(fs.existsSync(from)){fs.mkdirSync(path.dirname(path.join(out,'images',asset)),{recursive:true});fs.cpSync(from,path.join(out,'images',asset),{recursive:true})}}
