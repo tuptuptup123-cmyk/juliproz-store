@@ -20,19 +20,19 @@ const server=http.createServer((req,res)=>{const url=new URL(req.url,'http://loc
   let releaseStyles;const stylesGate=new Promise(resolve=>{releaseStyles=resolve});
   await page.route('**/style.css?**',async route=>{await stylesGate;await route.continue()});
   await page.goto(origin+'/'+(lang==='en'?'?lang=en':''),{waitUntil:'commit'});
-  await page.locator('#serverLanding').waitFor();
-  assert.equal(await page.locator('html').getAttribute('data-server-view'),'landing');
-  assert.equal(await page.locator('#homeCriticalStyles').count(),1);
+  await page.locator('head link[rel=stylesheet]').nth(7).waitFor({state:'attached'});
+  assert.equal(await page.locator('head link[rel=stylesheet]').count(),8);
+  assert.equal(await page.locator('link[data-storefront-deferred],link[media=print],script[src="/storefront-styles.js"]').count(),0);
   assert.equal(await page.locator('link[as=image][rel=preload]').count(),2);
-  await page.waitForFunction(()=>Boolean(window.StorefrontStyles));
-  assert.equal(await page.locator('link[href*="style.css?"]').evaluate(link=>link.media),'print','in-flight CSS must retain its media until its load event');
-  releaseStyles();await page.locator('#serverLanding').waitFor({state:'detached'});
-  assert.equal(await page.evaluate(()=>window.StorefrontStyles.ready),true);
-  assert.deepEqual(await page.evaluate(()=>window.__cssResourceErrors),[],'no stylesheet ResourceError during homepage loading');
-  assert.ok(await page.locator('link[data-storefront-deferred]').evaluateAll(links=>links.every(link=>link.media==='all'&&link.sheet)));
+  releaseStyles();await page.locator('#webHomePage').waitFor();
+  assert.equal(await page.locator('#serverLanding').count(),0);
+  assert.deepEqual(await page.evaluate(()=>window.__cssResourceErrors),[],'no stylesheet ResourceError during native homepage loading');
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
   await page.screenshot({path:out+'/home-'+lang+'-'+width+'.png',fullPage:true,animations:'disabled'});
   await page.unroute('**/style.css?**');
+  await page.reload();await page.locator('#webHomePage').waitFor();
+  assert.equal(await page.locator('#serverLanding').count(),0);
+  assert.deepEqual(await page.evaluate(()=>window.__cssResourceErrors),[],'no stylesheet ResourceError after reload');
   for(const m of catalog.models){await page.goto(origin+'/models/'+m.slug+(lang==='en'?'?lang=en':''));await page.locator('#grid .product').first().waitFor();assert.equal(await page.locator('#seoCatalogIntro h1').innerText(),m.name);assert.equal(await page.locator('#grid .product').count(),1);assert.equal(await page.locator('.model-main,.model-header').count(),0);assert.equal(await page.locator('.brand').count(),1);assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));if(lang==='en')assert.doesNotMatch(await page.locator('#seoCatalogIntro').innerText(),/[А-Яа-яЁё]/);}
   await page.goto(origin+'/catalog'+(lang==='en'?'?lang=en':''));await page.locator('#grid .product').first().waitFor();await page.locator('#openCatalogMenu').click();await page.locator('#menuModelCollections [data-model=rolex-day-date]').click();assert.match(page.url(),/models\/rolex-day-date/);assert.equal(await page.locator('#grid .product').count(),1);assert.equal(await page.locator('#grid .product').getAttribute('data-id'),'45');await page.locator('.bottom-nav [data-tab=catalog]').click();assert.equal(new URL(page.url()).pathname,'/catalog');assert.equal(await page.locator('#grid .product').count(),rows.length);
   await page.screenshot({path:out+'/models-'+lang+'-'+width+'.png',fullPage:true,animations:'disabled'});
